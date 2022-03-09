@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - './backend:/match4healthcare-backend'
+    ports:
+      - '127.0.0.1:8000:8000'
+    environment:
+      - CI
+      - TRAVIS
+      - TRAVIS_PULL_REQUEST_SLUG
