@@ -1,0 +1,17 @@
+# This is a temporary file directory and should not be synced with git
+# Ignore all files
+*
+
+# Except for this .gitignore
+!.gitignore
+
+# Except for the static folder
+!static
+!static/.gitkeep
+# But its content
+static/*
+# Except for the media folder
+!media
+!media/.gitkeep
+# But its content
+media/*
