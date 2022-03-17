@@ -40,10 +40,10 @@ if MAIL_RELAY_OPTION == "file":
 # +++ Use local debug server
 elif MAIL_RELAY_OPTION == "external":
     pass
-    """EMAIL_HOST = "spahr.uberspace.de"
+    """EMAIL_HOST = ""
     EMAIL_PORT = 587
-    EMAIL_HOST_USER = "noreply@medisvs.spahr.uberspace.de"
-    EMAIL_HOST_PASSWORD = "jonathan"
+    EMAIL_HOST_USER = ""
+    EMAIL_HOST_PASSWORD = ""
     EMAIL_USE_TLS = False"""
 
 # +++ Use sendgrid
