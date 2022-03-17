@@ -1,5 +1,5 @@
 """
-WSGI config for match4healthcare project.
+WSGI config for match4crisis project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "match4healthcare.settings.production")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "match4crisis.settings.production")
 
 application = get_wsgi_application()

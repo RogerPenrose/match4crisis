@@ -112,8 +112,8 @@ def send_mail_student_id_list(request, id_list):
                         "Hallo {first_name} {last_name},\n\n "
                         "wir haben folgende Nachricht von {firmenname} für dich. "
                         "Falls du keine Nachrichten mehr erhalten möchtest, deaktiviere dein "
-                        "Konto bitte hier: https://match4healthcare.de/accounts/change_activation"
-                        "\n\nDein Match4Healthcare Team"
+                        "Konto bitte hier: https://match4crisis.de/accounts/change_activation"
+                        "\n\nDein match4crisis Team"
                         "\n----------------------------\n"
                         "{hospital_message}"
                     ),
@@ -127,7 +127,7 @@ def send_mail_student_id_list(request, id_list):
                     student=student,
                     hospital=request.user.hospital,
                     message=new_message,
-                    subject="[match4healthcare] " + subject,
+                    subject="[match4crisis] " + subject,
                     email_group=email_group,
                 )
                 mail.save()
@@ -158,12 +158,12 @@ def send_mails_for(hospital):
             sent_emailgroups.append(m.email_group_id)
             text = m.email_group.message
             send_mail(
-                _("[match4healthcare] Sie haben gerade potentielle Helfer*innen kontaktiert"),
+                _("[match4crisis] Sie haben gerade potentielle Helfer*innen kontaktiert"),
                 ("Hallo %s,\n\n" % hospital.ansprechpartner)
                 + (
                     "Sie haben potentielle Helfer*innen mit der folgenden Nachricht kontaktiert. "
                     "Diese Mails wurden gerade abgesendet."
-                    "\n\nLiebe Grüße,\nIhr match4healthcare Team\n\n=============\n\n"
+                    "\n\nLiebe Grüße,\nIhr match4crisis Team\n\n=============\n\n"
                 )
                 + text,
                 settings.NOREPLY_MAIL,

@@ -68,7 +68,7 @@ class DataBaseStats:
         return Student.objects.filter(is_activated=False).count()
 
     # TODO: helfende pro bundesland und großstadt. Requires
-    # https://github.com/match4everyone/match4healthcare/issues/492
+    # https://github.com/RogerPenrose/match4crisis/issues/492
 
     # Contact stats
     @stat_count.register(name=_("Kontaktanfragen an Helfende"))

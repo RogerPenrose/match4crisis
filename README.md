@@ -45,9 +45,9 @@ If you want to deploy manually follow these steps closly:
 (Run `export CURRENT_UID=$(id -u):$(id -g)` if you want to run the backend as non-root)
 `docker-compose -f docker-compose.dev.yml -f docker-compose.prod.yml up -d --build`
 2. Make messages
-`docker exec --env PYTHONPATH="/match4healthcare-backend:$PYTHONPATH" backend django-admin makemessages --no-location`
+`docker exec --env PYTHONPATH="/match4crisis-backend:$PYTHONPATH" backend django-admin makemessages --no-location`
 3. Compile messages
-`docker exec --env PYTHONPATH="/match4healthcare-backend:$PYTHONPATH" backend django-admin compilemessages`
+`docker exec --env PYTHONPATH="/match4crisis-backend:$PYTHONPATH" backend django-admin compilemessages`
 4. Collect static
 `docker exec backend python3 manage.py collectstatic --no-input`
 5. Migrate
@@ -114,4 +114,4 @@ You can create and delete random fake students and hospitals using `manage.py cr
 
 ## Forks
 Thanks for forking our repository. Pay attention that Travis CI doesn't test your code with sendgrid.
-If you want to use sendgrid for your tests, add your repository name to the list in the if statement for NOT_FORK in `backend/match4healthcare/settings/production.py` and specify the `SENDGRID_API_KEY` environment variable in the Travis run settings.
+If you want to use sendgrid for your tests, add your repository name to the list in the if statement for NOT_FORK in `backend/match4crisis/settings/production.py` and specify the `SENDGRID_API_KEY` environment variable in the Travis run settings.

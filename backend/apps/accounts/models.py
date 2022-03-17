@@ -147,7 +147,7 @@ class Newsletter(models.Model):
         email.send()
 
     def _subject(self):
-        return "[match4healthcare] " + str(self.subject)
+        return "[match4crisis] " + str(self.subject)
 
     def send_newsletter_out(self):
         if self.sending_state() != NewsletterState.READY_TO_SEND:

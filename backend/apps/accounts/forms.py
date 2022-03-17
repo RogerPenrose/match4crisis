@@ -105,7 +105,7 @@ class BaseNewsletterForm(forms.ModelForm):
                 Column("user_validation_required"),
             ),
             HTML("<hr>"),
-            PrependedText("subject", "[match4healthcare]", placeholder=_("Betreff")),
+            PrependedText("subject", "[match4crisis]", placeholder=_("Betreff")),
             "message",
         )
 

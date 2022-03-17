@@ -135,7 +135,7 @@ def hospital_view(request, uuid):
     initial = {
         "subject": _("Neues Hilfsangebot"),
         "message": _(
-            "Hallo, ich habe ihr Gesuche auf der Plattform match4healthcare gesehen und bin für die Stelle qualifiziert.\nIch bin...\nIch möchte helfen in dem..."
+            "Hallo, ich habe ihr Gesuche auf der Plattform match4crisis gesehen und bin für die Stelle qualifiziert.\nIch bin...\nIch möchte helfen in dem..."
         ),
     }
 
@@ -148,7 +148,7 @@ def hospital_view(request, uuid):
 
         if email_form.is_valid():
             start_text = _(
-                "Hallo %s,\n\nSie haben über unsere Plattform match4healthcare von %s (%s) eine Antwort auf Ihre Anzeige bekommen.\n"
+                "Hallo %s,\n\nSie haben über unsere Plattform match4crisis von %s (%s) eine Antwort auf Ihre Anzeige bekommen.\n"
                 "Falls Sie keine Anfragen mehr bekommen möchten, deaktivieren Sie Ihre "
                 "Anzeige im Profil online.\n\n"
                 % (h.ansprechpartner, s.name_first, request.user.email)
@@ -158,7 +158,7 @@ def hospital_view(request, uuid):
                 + "===============================================\n\n"
                 + email_form.cleaned_data["message"]
                 + "\n\n===============================================\n\n"
-                + "Mit freundlichen Grüßen,\nIhr match4healthcare Team"
+                + "Mit freundlichen Grüßen,\nIhr match4crisis Team"
             )
             emailtohospital = EmailToHospital.objects.create(
                 student=s,
@@ -168,7 +168,7 @@ def hospital_view(request, uuid):
             )
 
             email = EmailMessage(
-                subject="[match4healthcare] " + email_form.cleaned_data["subject"],
+                subject="[match4crisis] " + email_form.cleaned_data["subject"],
                 body=message,
                 from_email=settings.NOREPLY_MAIL,
                 to=[h.user.email],
