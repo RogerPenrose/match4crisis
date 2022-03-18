@@ -10,6 +10,7 @@ from apps.accounts.models import User
 from apps.iamstudent.models import EmailToHospital
 from apps.ineedstudent.models import Hospital
 
+#Auf neuen Usecase anpassen
 
 class HospitalFormO(ModelForm):
     class Meta:
@@ -67,7 +68,7 @@ class HospitalForm(HospitalFormO):
             )
         )
 
-
+#kann weg?
 class HospitalFormExtra(HospitalFormO):
     def __init__(self, *args, **kwargs):
         super(HospitalFormExtra, self).__init__(*args, **kwargs)
@@ -130,6 +131,7 @@ class HospitalFormInfoCreate(HospitalFormO):
     email = forms.EmailField()
 
 
+#Kann weg?
 class EmailToHospitalForm(forms.ModelForm):
     class Meta:
         model = EmailToHospital
