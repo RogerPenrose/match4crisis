@@ -35,7 +35,7 @@ A sample nginx configuration can be found at ./tools/nginx-sample-site.
 ## Setup
 Set `SECRET_KEY`, `SENDGRID_API_KEY` and `MAPBOX_TOKEN`in `backend.prod.env` for Django
 `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`  inside `database.prod.env` for postgres on your host machine.
-Also add a `SLACK_LOG_WEBHOOK` to enable slack logging.
+Also add a `DISCORD_LOG_WEBHOOK` to enable discord logging.
 
 To run a container in production and in a new environment execute the `deploy.sh` script which builds the containers, runs all configurations and starts the web service.
 
@@ -96,7 +96,7 @@ logger = logging.getLogger(__name__)
 logger.info('message',extra={ 'request': request })
 ```
 
-If the request is not logged as an extra parameter, the log entry will **NOT** be messaged to slack!
+If the request is not logged as an extra parameter, the log entry will **NOT** be messaged to discord!
 
 Adding the request as extra parameter will automatically extract logged on user information as well as POST variables and take care of removing sensitive information from
 the logs, respecting the @method_decorator(sensitive_post_parameters()). For example in user sign in, this will prevent logging of passwords.

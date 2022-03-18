@@ -182,17 +182,17 @@ LOGGING = {
             "maxBytes": 1024 * 1024 * 15,  # 15MB
             "backupCount": 10,
         },
-        "slack": {
+        "discord": {
             "level": "ERROR",
             "()": "match4crisis.logging.loggers.SlackMessageHandlerFactory",
-            "webhook_url": os.environ.get("SLACK_LOG_WEBHOOK", ""),
+            "webhook_url": os.environ.get("DISCORD_LOG_WEBHOOK", ""),
         },
     },
     # Now put it all together
     "loggers": {
         "": {  # Root Logger Configuration, should catch all remaining Warnings and Errors, that were not specifically handled below
             "level": "WARNING",
-            "handlers": ["errorlogfile", "console", "slack"],
+            "handlers": ["errorlogfile", "console", "discord"],
         },
         "apps": {  # Logging Configuration for all Django apps, i.e. our software, matches any loggers under apps subdirectory using __name__
             "level": "INFO",
@@ -201,7 +201,7 @@ LOGGING = {
         },
         "django.request": {  # Main error logger and last line of defense for #500 Errors, will log all errors
             "level": "WARNING",
-            "handlers": ["errorlogfile", "console", "slack"],
+            "handlers": ["errorlogfile", "console", "discord"],
             "propagate": False,
         },
         "django.server": {  # Only for development server, all of these are mirrored on django.request anyway
