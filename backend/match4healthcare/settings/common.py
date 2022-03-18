@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "apps.mapview",
     "apps.iamstudent",
     "apps.ineedstudent",
+    "apps.offers",
     "apps.accounts",
     "apps.use_statistics",
 ]
