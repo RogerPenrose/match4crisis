@@ -72,7 +72,7 @@ class SlackMessageHandler(logging.Handler):
             requests.post(self.webhook_url, data=json.dumps(message))
         except requests.exceptions.RequestException as e:  # Catch all request related exceptions
             logger.exception(
-                "Exception while trying to send a log message to Slack",
+                "Exception while trying to send a log message to Discord",
                 exc_info=e,
                 extra={"logHandlerException": self.__class__},
             )

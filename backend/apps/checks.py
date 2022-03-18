@@ -72,19 +72,17 @@ def check_fork(app_configs=None, **kwargs):
 
 
 @register_check(Tags.env_tag, [Environment.DEVELOPMENT, Environment.PRODUCTION])
-def check_slack_webhook(app_configs=None, **kwargs):
+def check_discord_webhook(app_configs=None, **kwargs):
     errors = []
-    if os.environ.get("SLACK_LOG_WEBHOOK") is None:
+    if os.environ.get("DISCORD_LOG_WEBHOOK") is None:
         errors.append(
             Warning(
-                "No Slack Webhook for logging set.",
+                "No Discord Webhook for logging set.",
                 hint=(
-                    "Currently no logging to Slack Channels is configured.\n\t"
+                    "Currently no logging to Discord Channels is configured.\n\t"
                     "This is not necessary, but recommended for production deployment. A key can be generated "
-                    "using the documentation at:\n\t"
-                    "https://slack.com/intl/en-at/help/articles/115005265063-Incoming-Webhooks-for-Slack\n\t"
-                    "To use Slack Error notifications set the webhook in your environment using "
-                    "'export SLACK_LOG_WEBHOOK=<<webhook URL>>="
+                    "in the corresponding discord channel."
+                    "'export DISCORD_LOG_WEBHOOK=<<webhook URL>>="
                 ),
                 id="env.E003",
             )
