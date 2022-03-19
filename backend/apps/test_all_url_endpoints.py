@@ -3,7 +3,7 @@ from django.test import Client, TestCase
 import numpy as np
 
 from apps.accounts.models import User
-from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
+from apps.iofferhelp.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
 from apps.iamorganisation.models import Hospital
 
 
@@ -321,7 +321,7 @@ class UrlEndpointTestCase(TestCase):
             {"username": student_email, "password": student_password,},
             follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid), follow=True)
+        response = self.client.get("/iofferhelp/view_student/" + str(student_uuid), follow=True)
         assert response.status_code == 200
         assert "/accounts/profile_student" in response.redirect_chain[0][0]
 
@@ -329,7 +329,7 @@ class UrlEndpointTestCase(TestCase):
         response = self.client.post(
             "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid))
+        response = self.client.get("/iofferhelp/view_student/" + str(student_uuid))
         assert response.status_code == 200
 
         # TOOD: test which emails can be seen here!
@@ -338,7 +338,7 @@ class UrlEndpointTestCase(TestCase):
             {"username": hospital_email, "password": hospital_password,},
             follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid))
+        response = self.client.get("/iofferhelp/view_student/" + str(student_uuid))
         assert response.status_code == 200
 
     def test_admin(self):

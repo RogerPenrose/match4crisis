@@ -3,8 +3,8 @@ import datetime
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
-from apps.iamstudent.forms import form_labels
-from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, EmailToHospital, EmailToSend, Student
+from apps.iofferhelp.forms import form_labels
+from apps.iofferhelp.models import AUSBILDUNGS_TYPEN_COLUMNS, EmailToHospital, EmailToSend, Student
 from apps.iamorganisation.models import Hospital
 
 from .models import Newsletter, User

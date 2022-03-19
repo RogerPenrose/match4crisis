@@ -10,7 +10,7 @@ from django.http import HttpResponse
 import numpy as np
 
 from apps.accounts.models import User
-from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
+from apps.iofferhelp.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
 from apps.iamorganisation.models import Hospital
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731

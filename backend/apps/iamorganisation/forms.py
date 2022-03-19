@@ -7,7 +7,7 @@ from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
-from apps.iamstudent.models import EmailToHospital
+from apps.iofferhelp.models import EmailToHospital
 from apps.iamorganisation.models import Hospital
 
 #Auf neuen Usecase anpassen

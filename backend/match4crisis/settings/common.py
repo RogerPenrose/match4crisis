@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "crispy_forms",
     "django_tables2",
     "apps.mapview",
-    "apps.iamstudent",
+    "apps.iofferhelp",
     "apps.iamorganisation",
     "apps.accounts",
     "apps.use_statistics",

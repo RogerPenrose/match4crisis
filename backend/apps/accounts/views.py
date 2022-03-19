@@ -14,9 +14,9 @@ from django.utils.translation import gettext as _
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
-from apps.iamstudent.forms import StudentForm, StudentFormAndMail, StudentFormEditProfile
-from apps.iamstudent.models import Student
-from apps.iamstudent.views import send_mails_for
+from apps.iofferhelp.forms import StudentForm, StudentFormAndMail, StudentFormEditProfile
+from apps.iofferhelp.models import Student
+from apps.iofferhelp.views import send_mails_for
 from apps.iamorganisation.forms import (
     HospitalFormEditProfile,
     HospitalFormInfoCreate,
@@ -54,7 +54,7 @@ def student_signup(request):
                 host=request.META["HTTP_HOST"],
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iamstudent/thanks")
+            return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -91,7 +91,7 @@ def hospital_signup(request):
                 template="registration/password_set_email_hospital.html",
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iamstudent/thanks")
+            return HttpResponseRedirect("/iofferhelp/thanks")
 
             # plz = form_info.cleaned_data['plz']
             # countrycode = form_info.cleaned_data['countrycode']
