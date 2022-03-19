@@ -1,5 +1,11 @@
 <form action="/offers/create" method="post">
     {% csrf_token %}
-    {{ form }}
+    <table border="1">
+    {% for field in form.visible_fields %}<tr>
+    
+    <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+    </tr>
+    {% endfor %}
+    </table>
     <input type="submit" value="Submit">
 </form>
