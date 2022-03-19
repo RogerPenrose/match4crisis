@@ -3,9 +3,9 @@ import datetime
 from django.db.models import Count
 from django.utils.translation import gettext_lazy as _
 
-from apps.iamstudent.forms import form_labels
-from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, EmailToHospital, EmailToSend, Student
-from apps.ineedstudent.models import Hospital
+from apps.iofferhelp.forms import form_labels
+from apps.iofferhelp.models import AUSBILDUNGS_TYPEN_COLUMNS, EmailToHospital, EmailToSend, Student
+from apps.iamorganisation.models import Hospital
 
 from .models import Newsletter, User
 
@@ -68,7 +68,7 @@ class DataBaseStats:
         return Student.objects.filter(is_activated=False).count()
 
     # TODO: helfende pro bundesland und großstadt. Requires
-    # https://github.com/match4everyone/match4healthcare/issues/492
+    # https://github.com/RogerPenrose/match4crisis/issues/492
 
     # Contact stats
     @stat_count.register(name=_("Kontaktanfragen an Helfende"))

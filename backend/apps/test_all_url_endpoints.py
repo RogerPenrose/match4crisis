@@ -3,8 +3,8 @@ from django.test import Client, TestCase
 import numpy as np
 
 from apps.accounts.models import User
-from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
-from apps.ineedstudent.models import Hospital
+from apps.iofferhelp.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
+from apps.iamorganisation.models import Hospital
 
 
 def generate_random_student(countrycode="DE", plz="14482", i=0, validated_email=False):
@@ -151,7 +151,7 @@ class UrlEndpointTestCase(TestCase):
         assert auth.get_user(self.client).username == student_email
 
         # Test view list of studens without being logged in as student. Should redirect!
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/students/DE/14482/0", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
@@ -163,10 +163,10 @@ class UrlEndpointTestCase(TestCase):
         m1, p1, uuid1 = generate_random_hospital("DE", "14482", 1337)
         m2, p2, uuid2 = generate_random_hospital("DE", "10115", 1234)
         m3, p3, uuid3 = generate_random_hospital("AT", "4020", 420)
-        response = self.client.get("/ineedstudent/hospital_view/" + str(uuid1) + "/")
+        response = self.client.get("/iamorganisation/hospital_view/" + str(uuid1) + "/")
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/hospitals/DE/14482")
+        response = self.client.get("/iamorganisation/hospitals/DE/14482")
         assert response.status_code == 200
 
         assert self.client.get("/accounts/delete_me_ask", {}).status_code == 200
@@ -180,12 +180,12 @@ class UrlEndpointTestCase(TestCase):
         assert auth.get_user(self.client).is_anonymous
 
         # Only available to logged in users, should redirect
-        response = self.client.get("/ineedstudent/hospital_view/" + str(uuid1) + "/", follow=True)
+        response = self.client.get("/iamorganisation/hospital_view/" + str(uuid1) + "/", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
         # Only available to logged in users, should redirect
-        response = self.client.get("/ineedstudent/hospitals/DE/14482", follow=True)
+        response = self.client.get("/iamorganisation/hospitals/DE/14482", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
@@ -253,7 +253,7 @@ class UrlEndpointTestCase(TestCase):
         assert auth.get_user(self.client).username == hospital_email
 
         # Test view list of students with being logged in as hospital. Should work!
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/students/DE/14482/0", follow=True)
         assert response.status_code == 200
         assert len(response.redirect_chain) == 0
 
@@ -262,22 +262,22 @@ class UrlEndpointTestCase(TestCase):
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/hospital_view/" + str(uuid) + "/")
+        response = self.client.get("/iamorganisation/hospital_view/" + str(uuid) + "/")
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/hospitals/DE/14482")
+        response = self.client.get("/iamorganisation/hospitals/DE/14482")
         assert response.status_code == 200
 
         m1, p1, uuid1 = generate_random_student("DE", "14482", 1337, validated_email=True)
         m2, p2, uuid2 = generate_random_student("DE", "10115", 1234, validated_email=True)
         m3, p3, uuid3 = generate_random_student("DE", "10115", 12345, validated_email=False)
         m4, p4, uuid4 = generate_random_student("AT", "4020", 420, validated_email=True)
-        response = self.client.get("/ineedstudent/students/DE/14482/0")
+        response = self.client.get("/iamorganisation/students/DE/14482/0")
 
         assert "1 Helfer*innen" in str(response.content)
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/students/DE/14482/50")
+        response = self.client.get("/iamorganisation/students/DE/14482/50")
         assert "2 Helfer*innen" in str(response.content)
         assert response.status_code == 200
 
@@ -292,7 +292,7 @@ class UrlEndpointTestCase(TestCase):
         assert auth.get_user(self.client).is_anonymous
 
         # Test view list of studens without being logged in. Should redirect!
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/students/DE/14482/0", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
@@ -321,7 +321,7 @@ class UrlEndpointTestCase(TestCase):
             {"username": student_email, "password": student_password,},
             follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid), follow=True)
+        response = self.client.get("/iofferhelp/view_student/" + str(student_uuid), follow=True)
         assert response.status_code == 200
         assert "/accounts/profile_student" in response.redirect_chain[0][0]
 
@@ -329,7 +329,7 @@ class UrlEndpointTestCase(TestCase):
         response = self.client.post(
             "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid))
+        response = self.client.get("/iofferhelp/view_student/" + str(student_uuid))
         assert response.status_code == 200
 
         # TOOD: test which emails can be seen here!
@@ -338,7 +338,7 @@ class UrlEndpointTestCase(TestCase):
             {"username": hospital_email, "password": hospital_password,},
             follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid))
+        response = self.client.get("/iofferhelp/view_student/" + str(student_uuid))
         assert response.status_code == 200
 
     def test_admin(self):
@@ -390,7 +390,7 @@ class UrlEndpointTestCase(TestCase):
         # Test view list of studens witbeing logged in as staff user
         # Current behavior: Should redirect!
         # TODO: discuss what the behavior of this should be! # noqa: T003
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/students/DE/14482/0", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
@@ -402,4 +402,4 @@ class UrlEndpointTestCase(TestCase):
         )
         assert auth.get_user(self.client).is_anonymous
 
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/students/DE/14482/0", follow=True)
