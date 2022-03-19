@@ -15,8 +15,16 @@ def validate_plz(value):
         )
 
 class GenericOffer(models.Model):
-    userId = models.ForeignKey(User, on_delete=models.PROTECT)# Can be blank for shell testing...
-    offerType = models.CharField(max_length=200)
+
+    OFFER_CHOICES = [
+    ('AC', 'Accomodation'),
+    ('TL', 'Translation'),
+    ('TR', 'Transportation')
+    ]
+    offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
+    
+    userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
+    offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published')
@@ -35,7 +43,7 @@ class AccomodationOffer(models.Model):
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     stayLength = models.DurationField(blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
-    cost = models.DecimalField(max_digits=3, decimal_places=2, null=True)
+    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
 
 class TransportationOffer(models.Model):
