@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django_tables2",
     "apps.mapview",
     "apps.iofferhelp",
+    "apps.ineedhelp",
     "apps.iamorganisation",
     "apps.accounts",
     "apps.use_statistics",
