@@ -5,7 +5,7 @@ import numpy as np
 
 from apps.accounts.models import User
 from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, BEZAHLUNG_CHOICES, Student
-from apps.ineedstudent.models import Hospital
+from apps.iamorganisation.models import Hospital
 
 from ._utils import BIG_CITY_PLZS
 

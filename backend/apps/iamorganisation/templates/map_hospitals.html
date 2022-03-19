@@ -145,8 +145,8 @@ $(window).on("resize", function () {
        radius: 500 + 100 * {{ location.count }}
    })
    .bindPopup('In {{ location.ort }} {{ location.countrycode }}(PLZ {{location.plz }}){% blocktrans %} gibt es {% endblocktrans %}{{ location.count|localize }}{% blocktrans %} Orte, an welchen Hilfe gebraucht wird. {% endblocktrans %}' +
-   {% if location.count > 1 %}'<a href=/ineedstudent/hospitals/{{location.countrycode}}/{{ location.plz }}>{% blocktrans %}Detailansicht{% endblocktrans %}</a>'
-   {% else %}'<a href=/ineedstudent/hospital_view/{{location.uuid}}>{% blocktrans %}Detailansicht{% endblocktrans %}</a>'
+   {% if location.count > 1 %}'<a href=/iamorganisation/hospitals/{{location.countrycode}}/{{ location.plz }}>{% blocktrans %}Detailansicht{% endblocktrans %}</a>'
+   {% else %}'<a href=/iamorganisation/hospital_view/{{location.uuid}}>{% blocktrans %}Detailansicht{% endblocktrans %}</a>'
    {% endif %}
     )
    .addTo(mymap);
@@ -156,7 +156,7 @@ $(window).on("resize", function () {
  <script type="text/javascript">
     var gototable = function() {
       if ($('#search').val()) {
-        window.location = "/ineedstudent/hospitals/" + $('#countrycode').val() + "/" + $('#search').val();
+        window.location = "/iamorganisation/hospitals/" + $('#countrycode').val() + "/" + $('#search').val();
       }
     }
     $("#search").keyup(function(event) {

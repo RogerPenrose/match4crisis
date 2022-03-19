@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
-from apps.ineedstudent.models import Hospital
+from apps.iamorganisation.models import Hospital
 from apps.mapview.utils import plzs
 
 

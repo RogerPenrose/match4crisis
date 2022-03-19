@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ineedstudent', '0001_initial'),
+        ('iamorganisation', '0001_initial'),
         ('iamstudent', '0002_auto_20200329_1618'),
     ]
 
@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('message', models.TextField(default='')),
                 ('uuid', models.CharField(blank=True, default=uuid.uuid4, max_length=100, unique=True)),
                 ('registration_date', models.DateTimeField(blank=True, default=datetime.datetime.now, null=True)),
-                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ineedstudent.Hospital')),
+                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='iamorganisation.Hospital')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='iamstudent.Student')),
             ],
         ),

@@ -24,7 +24,7 @@ handler500 = views.handler500
 urlpatterns = [
     path("mapview/", include("apps.mapview.urls")),
     path("iamstudent/", include("apps.iamstudent.urls")),
-    path("ineedstudent/", include("apps.ineedstudent.urls")),
+    path("iamorganisation/", include("apps.iamorganisation.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("use_statistics/", include("apps.use_statistics.urls")),
     path("admin/", admin.site.urls),

@@ -10,7 +10,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ineedstudent', '0001_initial'),
+        ('iamorganisation', '0001_initial'),
         ('iamstudent', '0001_initial'),
     ]
 
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
                 ('braucht_bezahlung', models.IntegerField(choices=[('', 'wissen wir nicht'), (1, 'ja'), (2, 'nein')], default=0)),
                 ('availability_start', models.DateField(default=datetime.datetime.now, null=True)),
                 ('unterkunft_gewuenscht', models.IntegerField(choices=[('', 'wissen wir nicht'), (True, 'ja'), (False, 'nein')], default=0)),
-                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ineedstudent.Hospital')),
+                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='iamorganisation.Hospital')),
             ],
         ),
         migrations.DeleteModel(

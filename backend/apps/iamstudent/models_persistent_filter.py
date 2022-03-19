@@ -5,7 +5,7 @@ from django.db import models
 import django.forms as forms
 import django_filters.fields as filter_fields
 
-from apps.ineedstudent.models import Hospital
+from apps.iamorganisation.models import Hospital
 
 from .filters import StudentJobRequirementsFilter
 from .models import *  # noqa: F401, F403

@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
 from apps.iamstudent.models import EmailToHospital
-from apps.ineedstudent.models import Hospital
+from apps.iamorganisation.models import Hospital
 
 #Auf neuen Usecase anpassen
 

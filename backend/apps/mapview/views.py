@@ -7,7 +7,7 @@ from django.template import loader
 from django.views.decorators.gzip import gzip_page
 
 from apps.iamstudent.models import Student
-from apps.ineedstudent.models import Hospital
+from apps.iamorganisation.models import Hospital
 from apps.mapview.utils import get_plz_data, plzs
 
 

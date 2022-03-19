@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('accounts', '0001_initial'),
-        ('ineedstudent', '0001_initial'),
+        ('iamorganisation', '0001_initial'),
     ]
 
     operations = [
@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
                 ('ausbildung_typ_physio_abschnitt_gt', models.IntegerField(choices=[(0, 'Keine Angabe'), (1, '1. Jahr'), (2, '2. Jahr'), (3, '3. Jahr'), (4, 'Berufstätig')], default=0, null=True)),
                 ('ausbildung_typ_kinderbetreung', models.CharField(choices=[('unknown', 'egal'), ('true', 'muss')], default='unknown', max_length=10)),
                 ('ausbildung_typ_kinderbetreung_ausgebildet_abschnitt', models.IntegerField(choices=[(0, 'Keine Angabe'), (1, 'Lediglich Erfahrungen'), (2, 'Abgeschlossene Ausbildung')], default=0, null=True)),
-                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ineedstudent.Hospital')),
+                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='iamorganisation.Hospital')),
             ],
         ),
         migrations.CreateModel(
@@ -130,7 +130,7 @@ class Migration(migrations.Migration):
                 ('was_sent', models.BooleanField(default=False)),
                 ('uuid', models.CharField(blank=True, default=uuid.uuid4, max_length=100, unique=True)),
                 ('registration_date', models.DateTimeField(blank=True, default=datetime.datetime.now, null=True)),
-                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ineedstudent.Hospital')),
+                ('hospital', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='iamorganisation.Hospital')),
                 ('student', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='iamstudent.Student')),
             ],
         ),

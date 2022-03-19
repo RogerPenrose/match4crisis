@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.gzip import gzip_page
 
 from apps.accounts.decorator import hospital_required
-from apps.ineedstudent.models import Hospital
+from apps.iamorganisation.models import Hospital
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 
