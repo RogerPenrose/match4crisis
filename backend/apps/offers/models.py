@@ -22,7 +22,11 @@ class GenericOffer(models.Model):
     ('TR', 'Transportation')
     ]
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
+    postCode = models.CharField(max_length=5, validators=[validate_plz])
+    streetName = models.CharField(max_length=200)
+    streetNumber = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
     
+    country = models.CharField(max_length=200) # Do this as a select ? 
     userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
     offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
@@ -36,22 +40,17 @@ class GenericOffer(models.Model):
 
 class AccomodationOffer(models.Model):
     newGenericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    country = models.CharField(max_length=200) # Do this as a select ? 
-    postCode = models.CharField(max_length=5, validators=[validate_plz])
     numberOfInhabitants = models.IntegerField()
     petsAllowed = models.BooleanField(default=False)
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
-    stayLength = models.DurationField(blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
+    stayLength = models.IntegerField(blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
     cost = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
 
 class TransportationOffer(models.Model):
     newGenericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     country = models.CharField(max_length=200) # Do this as a select ? 
-    postCodeStart = models.CharField(max_length=5, validators=[validate_plz])
-    streetNameStart = models.CharField(max_length=200)
-    streetNumberStart = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
     
     postCodeEnd = models.CharField(max_length=5, validators=[validate_plz])
     streetNameEnd = models.CharField(max_length=200)
@@ -71,9 +70,5 @@ class TransportationOffer(models.Model):
 
 class TranslationOffer(models.Model):
     newGenericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    country = models.CharField(max_length=200) # Do this as a select ? 
-    postCode = models.CharField(max_length=5, validators=[validate_plz])
-    streetName = models.CharField(max_length=200) # Maybe Skip this?
-    streetNumber = models.CharField(max_length=4)
     firstLanguage = models.CharField(max_length=50)
     secondLanguage = models.CharField(max_length=50)
