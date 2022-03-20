@@ -14,16 +14,16 @@ from django.utils.translation import gettext as _
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
-from apps.iamstudent.forms import StudentForm, StudentFormAndMail, StudentFormEditProfile
-from apps.iamstudent.models import Student
-from apps.iamstudent.views import send_mails_for
-from apps.ineedstudent.forms import (
+from apps.iofferhelp.forms import StudentForm, StudentFormAndMail, StudentFormEditProfile
+from apps.iofferhelp.models import Student
+from apps.iofferhelp.views import send_mails_for
+from apps.iamorganisation.forms import (
     HospitalFormEditProfile,
     HospitalFormInfoCreate,
     HospitalFormInfoSignUp,
 )
-from apps.ineedstudent.models import Hospital
-from apps.ineedstudent.views import ApprovalHospitalTable
+from apps.iamorganisation.models import Hospital
+from apps.iamorganisation.views import ApprovalHospitalTable
 
 from .decorator import hospital_required, student_required
 from .forms import CustomAuthenticationForm, NewsletterEditForm, NewsletterViewForm, TestMailForm
@@ -54,7 +54,7 @@ def student_signup(request):
                 host=request.META["HTTP_HOST"],
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iamstudent/thanks")
+            return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -91,13 +91,13 @@ def hospital_signup(request):
                 template="registration/password_set_email_hospital.html",
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iamstudent/thanks")
+            return HttpResponseRedirect("/iofferhelp/thanks")
 
             # plz = form_info.cleaned_data['plz']
             # countrycode = form_info.cleaned_data['countrycode']
             # distance = 0
             # login(request, user)
-            # return HttpResponseRedirect('/ineedstudent/students/%s/%s/%s'%(countrycode,plz,distance))
+            # return HttpResponseRedirect('/iamorganisation/students/%s/%s/%s'%(countrycode,plz,distance))
 
     else:
         form_info = HospitalFormInfoSignUp(
@@ -153,7 +153,7 @@ def login_redirect(request):
         return HttpResponseRedirect("/accounts/profile_student")
 
     elif user.is_hospital:
-        return HttpResponseRedirect("/ineedstudent/hospital_dashboard")
+        return HttpResponseRedirect("/iamorganisation/hospital_dashboard")
 
     elif user.is_staff:
         return HttpResponseRedirect("approve_hospitals")

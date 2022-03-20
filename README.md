@@ -35,7 +35,7 @@ A sample nginx configuration can be found at ./tools/nginx-sample-site.
 ## Setup
 Set `SECRET_KEY`, `SENDGRID_API_KEY` and `MAPBOX_TOKEN`in `backend.prod.env` for Django
 `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`  inside `database.prod.env` for postgres on your host machine.
-Also add a `SLACK_LOG_WEBHOOK` to enable slack logging.
+Also add a `DISCORD_LOG_WEBHOOK` to enable discord logging.
 
 To run a container in production and in a new environment execute the `deploy.sh` script which builds the containers, runs all configurations and starts the web service.
 
@@ -45,9 +45,9 @@ If you want to deploy manually follow these steps closly:
 (Run `export CURRENT_UID=$(id -u):$(id -g)` if you want to run the backend as non-root)
 `docker-compose -f docker-compose.dev.yml -f docker-compose.prod.yml up -d --build`
 2. Make messages
-`docker exec --env PYTHONPATH="/match4healthcare-backend:$PYTHONPATH" backend django-admin makemessages --no-location`
+`docker exec --env PYTHONPATH="/match4crisis-backend:$PYTHONPATH" backend django-admin makemessages --no-location`
 3. Compile messages
-`docker exec --env PYTHONPATH="/match4healthcare-backend:$PYTHONPATH" backend django-admin compilemessages`
+`docker exec --env PYTHONPATH="/match4crisis-backend:$PYTHONPATH" backend django-admin compilemessages`
 4. Collect static
 `docker exec backend python3 manage.py collectstatic --no-input`
 5. Migrate
@@ -96,7 +96,7 @@ logger = logging.getLogger(__name__)
 logger.info('message',extra={ 'request': request })
 ```
 
-If the request is not logged as an extra parameter, the log entry will **NOT** be messaged to slack!
+If the request is not logged as an extra parameter, the log entry will **NOT** be messaged to discord!
 
 Adding the request as extra parameter will automatically extract logged on user information as well as POST variables and take care of removing sensitive information from
 the logs, respecting the @method_decorator(sensitive_post_parameters()). For example in user sign in, this will prevent logging of passwords.
@@ -114,4 +114,4 @@ You can create and delete random fake students and hospitals using `manage.py cr
 
 ## Forks
 Thanks for forking our repository. Pay attention that Travis CI doesn't test your code with sendgrid.
-If you want to use sendgrid for your tests, add your repository name to the list in the if statement for NOT_FORK in `backend/match4healthcare/settings/production.py` and specify the `SENDGRID_API_KEY` environment variable in the Travis run settings.
+If you want to use sendgrid for your tests, add your repository name to the list in the if statement for NOT_FORK in `backend/match4crisis/settings/production.py` and specify the `SENDGRID_API_KEY` environment variable in the Travis run settings.
