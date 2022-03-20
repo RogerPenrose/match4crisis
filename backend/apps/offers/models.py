@@ -25,6 +25,7 @@ class GenericOffer(models.Model):
     postCode = models.CharField(max_length=5, validators=[validate_plz])
     streetName = models.CharField(max_length=200)
     streetNumber = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
+    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
     country = models.CharField(max_length=200) # Do this as a select ? 
     userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
@@ -39,17 +40,16 @@ class GenericOffer(models.Model):
         return self.offerType
 
 class AccomodationOffer(models.Model):
-    newGenericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfInhabitants = models.IntegerField()
     petsAllowed = models.BooleanField(default=False)
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     stayLength = models.IntegerField(blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
-    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True)
 
 
 class TransportationOffer(models.Model):
-    newGenericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     country = models.CharField(max_length=200) # Do this as a select ? 
     
     postCodeEnd = models.CharField(max_length=5, validators=[validate_plz])
@@ -65,10 +65,7 @@ class TransportationOffer(models.Model):
     ]
     typeOfCar = models.CharField(max_length=3, choices=CAR_CHOICES, default="CAR") # Use this to track between "Bus", "Car", "Transporter" ?
     numberOfPassengers = models.IntegerField()
-    petsAllowed = models.BooleanField(default=False)
-    cost = models.DecimalField(max_digits=3, decimal_places=2)
-
 class TranslationOffer(models.Model):
-    newGenericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     firstLanguage = models.CharField(max_length=50)
     secondLanguage = models.CharField(max_length=50)
