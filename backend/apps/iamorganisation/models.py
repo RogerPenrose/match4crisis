@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+import uuid
+
 
 from apps.accounts.models import User
 
@@ -25,6 +27,9 @@ class Organisation(models.Model):
 
     acceptedPrivacyStatement = models.BooleanField(default=False) # Datenschutzerklärung
     acceptedDataSharing = models.BooleanField(default=False) # Datenweitergabe
+
+    uuid = models.CharField(max_length=100, blank=True, unique=True, default=uuid.uuid4)
+
 
     def __str__(self):
         return self.organisationName

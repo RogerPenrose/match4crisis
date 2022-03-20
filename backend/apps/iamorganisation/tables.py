@@ -8,8 +8,8 @@ class ContactedTable(tables.Table):
     is_activated = tables.Column(empty_values=(), verbose_name=_("Helfer*in noch verfügbar"))
     details = tables.TemplateColumn(template_name="modal_button.html", verbose_name=_(""))
 
-    # TODO: add link to student detail view to button # noqa: T003
-    # student_info = tables.TemplateColumn(template_name='student_info_button.html',verbose_name=_(''))
+    # TODO: add link to helper detail view to button # noqa: T003
+    # helper_info = tables.TemplateColumn(template_name='helper_info_button.html',verbose_name=_(''))
 
     def render_is_activated(self, value):
         if value:

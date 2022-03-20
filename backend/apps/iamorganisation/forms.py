@@ -7,35 +7,32 @@ from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
-from apps.iofferhelp.models import EmailToHospital
-from apps.iamorganisation.models import Hospital
+from apps.iamorganisation.models import Organisation
 
-#Auf neuen Usecase anpassen
+# TODO Auf neuen Usecase anpassen
 
-class HospitalFormO(ModelForm):
+class OrganisationFormO(ModelForm):
     class Meta:
-        model = Hospital
+        model = Organisation
         exclude = [
             "uuid",
-            "registration_date",
             "user",
-            "sonstige_infos",
-            "max_mails_per_day",
-            "appears_in_map",
-            "approval_date",
-            "approved_by",
+            "generalInfo",
+            "appearsInMap",
+            "approvalDate",
+            "approvedBy",
         ]
 
         labels = {
-            "plz": _("Postleitzahl"),
-            "countrycode": _("Land"),
-            "firmenname": _("Offizieller Name Ihrer Institution"),
-            "ansprechpartner": _("Name der Kontaktperson"),
-            "appears_in_map": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
+            "postalCode": _("Postleitzahl"),
+            "country": _("Land"),
+            "organisationName": _("Offizieller Name Ihrer Organisation"),
+            "contactPerson": _("Name der Kontaktperson"),
+            "appearsInMap": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
         }
 
     def __init__(self, *args, **kwargs):
-        super(HospitalFormO, self).__init__(*args, **kwargs)
+        super(OrganisationFormO, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_id = "id-exampleForm"
         self.helper.form_class = "blueForms"
@@ -43,9 +40,9 @@ class HospitalFormO(ModelForm):
         self.helper.form_action = "submit_survey"
 
         self.helper.layout = Layout(
-            Row(Column("firmenname"), Column("ansprechpartner")),
-            Row(Column("telefon"), Column("email")),
-            Row(Column("plz"), Column("countrycode")),
+            Row(Column("organisationName"), Column("contactPerson")),
+            Row(Column("phoneNumber"), Column("email")),
+            Row(Column("postalCode"), Column("country")),
             HTML('<hr style="margin-top: 20px; margin-bottom:30px;">'),
             HTML(
                 '<div class="registration_disclaimer">{}</div>'.format(
@@ -57,9 +54,9 @@ class HospitalFormO(ModelForm):
         )
 
 
-class HospitalForm(HospitalFormO):
+class OrganisationForm(OrganisationFormO):
     def __init__(self, *args, **kwargs):
-        super(HospitalForm, self).__init__(*args, **kwargs)
+        super(OrganisationForm, self).__init__(*args, **kwargs)
         self.helper.add_input(
             Submit(
                 "submit",
@@ -68,49 +65,46 @@ class HospitalForm(HospitalFormO):
             )
         )
 
-#kann weg?
-class HospitalFormExtra(HospitalFormO):
+class OrganisationFormExtra(OrganisationFormO):
     def __init__(self, *args, **kwargs):
-        super(HospitalFormExtra, self).__init__(*args, **kwargs)
+        super(OrganisationFormExtra, self).__init__(*args, **kwargs)
         # !!! namen der knöpe dürfen nicht verändert werden, sonst geht code woanders kaputt
         self.helper.add_input(Submit("submit", _("Schicke Mails")))
         self.helper.add_input(Submit("submit", _("Schicke Mails + Erstelle Anzeige")))
 
 
-class HospitalFormEditProfile(HospitalFormO):
+class OrganisationFormEditProfile(OrganisationFormO):
     class Meta:
-        model = Hospital
+        model = Organisation
         exclude = [
             "uuid",
-            "registration_date",
             "user",
-            "max_mails_per_day",
-            "approval_date",
-            "approved_by",
+            "approvalDate",
+            "approvedBy",
         ]
 
         labels = {
-            "plz": _("Postleitzahl"),
-            "countrycode": _("Land"),
-            "sonstige_infos": _(
+            "postalCode": _("Postleitzahl"),
+            "country": _("Land"),
+            "generalInfo": _(
                 "Text Ihrer Suchanzeige. Wird nur öffentlich gezeigt wenn Sie auf der Karte sichtbar sind und kontaktbierbar sein möchten. Hier können Sie genau beschreiben, für welche Rollen Sie Unterstützung brauchen, welche Qualifikationen dafür notwendig sind, und unter welchen Bedingungen (z.B. Bezahlung) gesucht wird."
             ),
-            "firmenname": _("Offizieller Name Ihrer Institution"),
-            "ansprechpartner": _("Name der Kontaktperson"),
-            "appears_in_map": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
+            "organisationName": _("Offizieller Name Ihrer Institution"),
+            "contactPerson": _("Name der Kontaktperson"),
+            "appearsInMap": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
         }
 
     def __init__(self, *args, **kwargs):
-        super(HospitalFormEditProfile, self).__init__(*args, **kwargs)
-        self.fields["sonstige_infos"].required = False
+        super(OrganisationFormEditProfile, self).__init__(*args, **kwargs)
+        self.fields["generalInfo"].required = False
         # self.fields['appears_in_map'].required = False
         self.helper.add_input(
             Submit("submit", _("Daten aktualisieren"), css_class="btn blue text-white btn-md",)
         )
         self.helper.layout = Layout(
-            Row(Column("firmenname"), Column("ansprechpartner")),  # Row(Column('appears_in_map')),
-            Row(Column("telefon")),
-            Row(Column("plz"), Column("countrycode")),
+            Row(Column("organisationName"), Column("contactPerson")),  # Row(Column('appears_in_map')),
+            Row(Column("phoneNumber")),
+            Row(Column("postalCode"), Column("country")),
         )
 
 
@@ -120,58 +114,28 @@ def check_unique_email(value):
     return value
 
 
-class HospitalFormInfoSignUp(HospitalFormO):
+class OrganisationFormInfoSignUp(OrganisationFormO):
     email = forms.EmailField(
         validators=[check_unique_email], label=_("Offizielle E-Mail-Adresse der Kontaktperson"),
     )
 
 
-class HospitalFormInfoCreate(HospitalFormO):
+class OrganisationFormInfoCreate(OrganisationFormO):
     # Used internally to bypass duplicate email validation
     email = forms.EmailField()
 
-
-#Kann weg?
-class EmailToHospitalForm(forms.ModelForm):
-    class Meta:
-        model = EmailToHospital
-        fields = ["subject", "message"]
-        labels = {"subject": _("Betreff"), "message": _("Nachrichtentext")}
-
-        help_texts = {
-            "message": _(
-                "Gib hier deine Antwort auf das Angebot ein. Wer bist du? Welche Fähigkeiten bringst du für diese Stelle mit?"
-            )
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(EmailToHospitalForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_method = "post"
-        self.helper.add_input(
-            Submit("submit", _("Hilfsangebot abschicken"), css_class="btn blue text-white btn-md",)
-        )
-
-    def clean_message(self):
-        message = self.cleaned_data["message"]
-        initial_message = self.initial["message"]
-        if "".join(str(message).split()) == "".join(str(initial_message).split()):
-            raise ValidationError(_("Bitte personalisiere diesen Text"), code="invalid")
-        return message
-
-
 class PostingForm(forms.ModelForm):
     class Meta:
-        model = Hospital
+        model = Organisation
         labels = {
-            "appears_in_map": _("Anzeige soll angezeigt werden"),
-            "sonstige_infos": _("Anzeigetext"),
+            "appearsInMap": _("Anzeige soll angezeigt werden"),
+            "generalInfo": _("Anzeigetext"),
         }
-        fields = ["appears_in_map", "sonstige_infos"]
+        fields = ["appearsInMap", "generalInfo"]
 
     def __init__(self, *args, **kwargs):
         super(PostingForm, self).__init__(*args, **kwargs)
-        self.fields["sonstige_infos"].required = False
+        self.fields["generalInfo"].required = False
         self.helper = FormHelper()
         self.helper.form_method = "post"
         self.helper.layout = Layout(
@@ -180,8 +144,8 @@ class PostingForm(forms.ModelForm):
                     static("js/PostingForm.js")
                 )
             ),
-            "appears_in_map",
-            "sonstige_infos",
+            "appearsInMap",
+            "generalInfo",
         )
         self.helper.add_input(
             Submit("submit", _("Anzeige aktualisieren"), css_class="btn blue text-white btn-md",)

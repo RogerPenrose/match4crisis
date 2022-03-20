@@ -34,6 +34,10 @@ class User(AbstractUser):
     phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True)
     # Should the phone number be visible to contacts
     sharePhoneNumber = models.BooleanField(default=False)
+
+    isRefugee = models.BooleanField(default=False)
+    isHelper = models.BooleanField(default=False)
+    isOrganisation = models.BooleanField(default=False)
     REQUIRED_FIELDS = ["email"]
 
 class LanguageKnowledge(models.Model):

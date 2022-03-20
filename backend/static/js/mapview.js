@@ -6,12 +6,12 @@ mapViewPage = {
         facilitiesURL : '',
         supportersURL : '',
         supporterListURL  : '',
-        hospitalListURL   : '',
+        organisationListURL   : '',
         mapboxToken: '',
-        isStudent: true,
-        isHospital: true,
-        createPopupTextStudent  :  (countrycode,city, plz, count, url) => '',
-        createPopupTextHospital :  (countrycode,city, plz, count, url) => '',
+        isHelper: true,
+        isOrganisation: true,
+        createPopupTextHelper  :  (countrycode,city, plz, count, url) => '',
+        createPopupTextOrganisation :  (countrycode,city, plz, count, url) => '',
         createFacilitiesCountText: (count) => '',
         createSupportersCountText: (count) => '',
         facilityIcon: new L.Icon.Default(),
@@ -91,7 +91,7 @@ mapViewPage = {
         let navHeight = $('.navbar').outerHeight()
         let searchHeight = $('.search-map').innerHeight()
         let footerHeight = $('.footer').innerHeight()
-        let isSearchBarActive = document.getElementById('hospital_navbar') !== null
+        let isSearchBarActive = document.getElementById('organisation_navbar') !== null
         let newHeight = height - navHeight - ( isSearchBarActive ? searchHeight : 0 ) - footerHeight
         $(document.getElementById(mapViewPage.options.mapViewContainerId)).height(newHeight)
         mapViewPage.mapObject.invalidateSize()
@@ -111,7 +111,7 @@ mapViewPage = {
             return L.marker([lon,lat],{ 
                 icon:  this.createFacilityIcon(count),
                 itemCount: count,
-           }).bindPopup(this.options.createPopupTextHospital(countrycode,city, plz, count, this.options.hospitalListURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+           }).bindPopup(this.options.createPopupTextOrganisation(countrycode,city, plz, count, this.options.organisationListURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
 
         var supporterClusterMarkerGroup = L.markerClusterGroup({
@@ -121,7 +121,7 @@ mapViewPage = {
             return L.marker([lon,lat],{
                  icon:  this.createSupporterIcon(count),
                  itemCount: count,
-            }).bindPopup(this.options.createPopupTextStudent(countrycode,city, plz, count, this.options.supporterListURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+            }).bindPopup(this.options.createPopupTextHelper(countrycode,city, plz, count, this.options.supporterListURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
 
         supporterClusterMarkerGroup.addTo(this.mapObject)

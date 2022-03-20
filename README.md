@@ -102,15 +102,15 @@ Adding the request as extra parameter will automatically extract logged on user 
 the logs, respecting the @method_decorator(sensitive_post_parameters()). For example in user sign in, this will prevent logging of passwords.
 
 **Warning:** Special care must be taken to avoid errors from circular references. The extra parameters are written to the log file and serialized as JSON. Circular references will cause
-logging failure. One example would be adding the student to the extra dict:
+logging failure. One example would be adding the helper to the extra dict:
 
-Student has an attribute for the user, user has an attribute for the student, ...
+Helper has an attribute for the user, user has an attribute for the helper, ...
 
 These circular references will prevent the log entry from being written.
 Including request is always safe, because the logging formatter contains dedicated code for request logging.
 
 ## Creating fake data
-You can create and delete random fake students and hospitals using `manage.py createfakeusers --add-students 1000 --add-hospitals 50`. Use the `--help` flag to check out all the options. For creating a staff user, please use the builtin `createsuperuser` command.
+You can create and delete random fake helpers and organisations using `manage.py createfakeusers --add-helpers 1000 --add-organisations 50`. Use the `--help` flag to check out all the options. For creating a staff user, please use the builtin `createsuperuser` command.
 
 ## Forks
 Thanks for forking our repository. Pay attention that Travis CI doesn't test your code with sendgrid.

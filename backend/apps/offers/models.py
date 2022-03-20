@@ -6,7 +6,7 @@ from django.db import models
 from apps.accounts.models import User
 from django.utils.translation import gettext_lazy as _
 
-from backend.apps.iofferhelp.models import Helper
+from apps.iofferhelp.models import Helper
 def validate_plz(value):
     try:
         number = int(value)
@@ -23,7 +23,7 @@ class GenericOffer(models.Model):
     ('TL', 'Translation'),
     ('TR', 'Transportation')
     ]
-    
+
     # TODO if in the future refugees are supposed to be able to publish a "search offer", maybe change this from Helper to User
     createdBy = models.ForeignKey(Helper, on_delete=models.CASCADE) 
 
@@ -37,7 +37,7 @@ class GenericOffer(models.Model):
     offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
-    createdAt = models.DateTimeField('date published')
+    created_at = models.DateTimeField('date published')
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()
         super().save(*args, **kwargs)

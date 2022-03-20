@@ -6,15 +6,15 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
 
-from apps.iofferhelp.models import Student
-from apps.iamorganisation.models import Hospital
+from apps.iofferhelp.models import Helper
+from apps.iamorganisation.models import Organisation
 from apps.mapview.utils import get_plz_data, plzs
 
 
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
-    locations_and_number = prepare_students(ttl_hash=get_ttl_hash())
+    locations_and_number = prepare_helpers(ttl_hash=get_ttl_hash())
     template = loader.get_template("mapview/map.html")
     context = {
         "locations": list(locations_and_number.values()),
@@ -24,15 +24,15 @@ def index(request):
 
 
 @lru_cache(maxsize=1)
-def prepare_students(ttl_hash=None):
+def prepare_helpers(ttl_hash=None):
     # Source: https://stackoverflow.com/questions/31771286/python-in-memory-cache-with-time-to-live
     del ttl_hash  # to emphasize we don't use it and to shut pylint up
-    students = Student.objects.filter(user__validated_email=True)
+    helpers = Helper.objects.filter(user__validated_email=True)
     locations_and_number = {}
     i = 0
-    for student in students:
-        cc = student.countrycode
-        plz = student.plz
+    for helper in helpers:
+        cc = helper.countrycode
+        plz = helper.plz
         key = cc + "_" + plz
 
         if key in locations_and_number:
@@ -53,16 +53,16 @@ def prepare_students(ttl_hash=None):
 
 
 def facilitiesJSON(request):
-    hospitals = Hospital.objects.filter(
+    organisations = Organisation.objects.filter(
         user__validated_email=True, is_approved=True, appears_in_map=True
     )
-    facilities = group_by_zip_code(hospitals)
+    facilities = group_by_zip_code(organisations)
     return JsonResponse(facilities)
 
 
 def supportersJSON(request):
-    students = Student.objects.filter(user__validated_email=True)
-    supporters = group_by_zip_code(students)
+    helpers = Helper.objects.filter(user__validated_email=True)
+    supporters = group_by_zip_code(helpers)
     return JsonResponse(supporters)
 
 
