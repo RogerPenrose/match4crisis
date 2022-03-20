@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404,render
 from apps.accounts.models import User
 from django.http import HttpResponse
 from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer
-from .forms import AccomodationForm, GenericForm
+from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm
 from datetime import datetime, timedelta
 def index(request):
     latest_question_list = AccomodationOffer.objects.all()
@@ -14,6 +14,7 @@ def index(request):
 def create(request):
     if request.method == 'POST':
         form = GenericForm(request.POST)
+ #       return HttpResponse(str(request.POST))
         if form.is_valid():
            # return HttpResponse(str(form.cleaned_data))
             currentForm = form.cleaned_data
@@ -31,31 +32,41 @@ def create(request):
                 )
             g.save()
             if currentForm.get("offerType") == "AC":
-                a = AccomodationOffer(newGenericOffer=g, \
-                    numberOfInhabitants=currentForm.get("inhabitants"), \
-                    petsAllowed=currentForm.get("petsAllowed"), \
-                    cost= currentForm.get("cost"), stayLength= timedelta(days=currentForm.get("stayLength")) )
-                a.save()
-                return HttpResponse(str(a))
-            elif currentForm.get("offerType") == "TL":
-                t = TransportationOffer(newGenericOffer=g, \
-                    postCodeEnd=currentForm.get("postCodeEnd"), \
-                    streetNameEnd=currentForm.get("streetNameEnd"),\
-                    streetNumberEnd = currentForm.get("streetNumberEnd"),\
-                    typeOfCar = currentForm.get("typeOfCar"),\
-                    cost = currentForm.get("cost"),\
-                    petsAllowed = currentForm.get("petsAllowed"))
-                t.save()
-                return HttpResponse(str(t))
-            if currentForm.get("offerType") == "TR":
-                t = TranslationOffer(newGenericOffer=g, \
-                    firstLanguage=currentForm.get("firstLanguage"), \
-                    secondLanguage=currentForm.get("secondLanguage"))
-                t.save()
-                return HttpResponse(str(t))
+                
+                acForm = AccomodationForm(request.POST)
+                if acForm.isValid():
+                    currentForm = AcForm.cleaned_data
+                    a = AccomodationOffer(newGenericOffer=g, \
+                        numberOfInhabitants=currentForm.get("inhabitants"), \
+                        petsAllowed=currentForm.get("petsAllowed"), \
+                        cost= currentForm.get("cost"), stayLength= timedelta(days=currentForm.get("stayLength")) )
+                    a.save()
+                    return HttpResponse(str(a))
+            elif currentForm.get("offerType") == "TR":
+                trForm = TransportationForm(request.POST)
+                if trForm.isValid():
+                    currentForm = trForm.cleaned_data
+                    t = TransportationOffer(newGenericOffer=g, \
+                        postCodeEnd=currentForm.get("postCodeEnd"), \
+                        streetNameEnd=currentForm.get("streetNameEnd"),\
+                        streetNumberEnd = currentForm.get("streetNumberEnd"),\
+                        typeOfCar = currentForm.get("typeOfCar"),\
+                        cost = currentForm.get("cost"),\
+                        petsAllowed = currentForm.get("petsAllowed"))
+                    t.save()
+                    return HttpResponse(str(t))
+            if currentForm.get("offerType") == "TL":
+                tlForm = TranslationForm(request.POST)
+                if tlForm.is_valid():
+                    currentForm = tlForm.cleaned_data
+                    t = TranslationOffer(newGenericOffer=g, \
+                        firstLanguage=currentForm.get("firstLanguage"), \
+                        secondLanguage=currentForm.get("secondLanguage"))
+                    t.save()
+                    return HttpResponse(str(t))
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"form": form})
+        return render(request, 'offers/create.html', {"genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
 def detail(request, offer_id):
     question = get_object_or_404(GenericOffer, pk=offer_id)
     return render(request, 'detail.html', {'question': question})
