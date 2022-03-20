@@ -185,7 +185,7 @@ LOGGING = {
         },
         "discord": {
             "level": "ERROR",
-            "()": "match4crisis.logging.loggers.SlackMessageHandlerFactory",
+            "()": "match4crisis.logging.loggers.DiscordHandlerFactory",
             "webhook_url": os.environ.get("DISCORD_LOG_WEBHOOK", ""),
         },
     },
