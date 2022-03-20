@@ -22,15 +22,7 @@
 
   pageOptions = {
     mapViewContainerId: 'mapContainer',
-    facilitiesURL     : "{% url 'facilitiesJSON' %}",
-    supportersURL     : "{% url 'supportersJSON' %}",
-    supporterListURL  : "{% url 'list_by_plz' 'COUNTRYCODE' 'PLZ' 0 %}",
-    organisationListURL   : "{% url 'organisation_list' 'COUNTRYCODE' 'PLZ' %}",
-    mapboxToken       : "{{ mapbox_token }}",
-    createPopupTextHelper  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Helfer*innen.\n<a href="${url}" target="_blank">Detailansicht für Kliniken</a>{% endblocktrans %}`,
-    createPopupTextOrganisation :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Orte an denen Hilfe gebraucht wird.\n<a href="${url}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
-    createFacilitiesCountText: (count) => `<img src="{% static 'img/map/facility-marker.svg' %}"> ${count} {% trans "Einrichtungen" %}`,
-    createSupportersCountText: (count) => `<img src="{% static 'img/map/supporter-marker.svg' %}"> ${count} {% trans "Helfende" %}`,
+    mapboxToken: "{{ mapbox_token }}",
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],

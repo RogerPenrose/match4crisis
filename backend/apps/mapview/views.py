@@ -5,66 +5,25 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
-
-from apps.iofferhelp.models import Helper
-from apps.iamorganisation.models import Organisation
 from apps.mapview.utils import get_plz_data, plzs
 
 
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
-    locations_and_number = prepare_helpers(ttl_hash=get_ttl_hash())
     template = loader.get_template("mapview/map.html")
     context = {
-        "locations": list(locations_and_number.values()),
+        "locations": [],
         "mapbox_token": settings.MAPBOX_TOKEN,
     }
     return HttpResponse(template.render(context, request))
-
-
-@lru_cache(maxsize=1)
-def prepare_helpers(ttl_hash=None):
-    # Source: https://stackoverflow.com/questions/31771286/python-in-memory-cache-with-time-to-live
-    del ttl_hash  # to emphasize we don't use it and to shut pylint up
-    helpers = Helper.objects.filter(user__validated_email=True)
-    locations_and_number = {}
-    i = 0
-    for helper in helpers:
-        cc = helper.countrycode
-        plz = helper.plz
-        key = cc + "_" + plz
-
-        if key in locations_and_number:
-            locations_and_number[cc + "_" + plz]["count"] += 1
-        else:
-            lat, lon, ort = plzs[cc][plz]
-            locations_and_number[key] = {
-                "countrycode": cc,
-                "plz": plz,
-                "count": 1,
-                "lat": lat,
-                "lon": lon,
-                "ort": ort,
-                "i": i,
-            }
-            i += 1
-    return locations_and_number
-
-
-def facilitiesJSON(request):
-    organisations = Organisation.objects.filter(
-        user__validated_email=True, is_approved=True, appears_in_map=True
+    
+def get_mapJSON(request, type, filter={}):
+    objects_to_display = type.objects.filter(
+        **filter
     )
-    facilities = group_by_zip_code(organisations)
-    return JsonResponse(facilities)
-
-
-def supportersJSON(request):
-    helpers = Helper.objects.filter(user__validated_email=True)
-    supporters = group_by_zip_code(helpers)
-    return JsonResponse(supporters)
-
+    objects_zipped = group_by_zip_code(objects_to_display)
+    return JsonResponse(objects_zipped)
 
 def group_by_zip_code(entities):
     countrycode_plz_details = {}

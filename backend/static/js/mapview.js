@@ -3,39 +3,20 @@
 mapViewPage = {
     options: {
         mapViewContainerId: '',
-        facilitiesURL : '',
-        supportersURL : '',
-        supporterListURL  : '',
-        organisationListURL   : '',
-        mapboxToken: '',
-        isHelper: true,
-        isOrganisation: true,
-        createPopupTextHelper  :  (countrycode,city, plz, count, url) => '',
-        createPopupTextOrganisation :  (countrycode,city, plz, count, url) => '',
-        createFacilitiesCountText: (count) => '',
-        createSupportersCountText: (count) => '',
-        facilityIcon: new L.Icon.Default(),
+        mapboxToken: ''
     },
 
     mapObject: null,
     
-    createFacilityIcon: function createFacilityIcon(count) {
+    createIcon: function createIcon(count, CSSclass) {
         return L.divIcon({
-            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive facilityMarker',
+            className: `leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive ${ CSSclass }`,
             html: `<div><span>${count}</span></div>`,
             iconSize: [40, 40],
             popupAnchor: [-10,-10],
         })
     },
-
-    createSupporterIcon: function createSupporterIcon(count) {
-        return L.divIcon({
-            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive supporterMarker',
-            html: `<div><span>${count}</span></div>`,
-            iconSize: [40, 40],
-        })
-    },
-
+    
     cssClassedIconCreateFunction: function cssClassedIconCreateFunction(cssClass) {
         return (function (cluster) {
             var childCount = cluster.getChildCount();
@@ -102,50 +83,6 @@ mapViewPage = {
     },
 
     loadMapMarkers : async function loadMapMarkers() {
-        let [ facilities, supporters ] = await Promise.all([$.get(this.options.facilitiesURL),$.get(this.options.supportersURL)])
-
-        var facilityClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('facilityMarker'),
-        });
-        let facilityMarkers = L.featureGroup.subGroup(facilityClusterMarkerGroup, this.createMapMarkers(facilities,(lat,lon,countrycode,city,plz,count) => {
-            return L.marker([lon,lat],{ 
-                icon:  this.createFacilityIcon(count),
-                itemCount: count,
-           }).bindPopup(this.options.createPopupTextOrganisation(countrycode,city, plz, count, this.options.organisationListURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
-        }))
-
-        var supporterClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('supporterMarker'),
-        });
-        var supporterMarkers = L.featureGroup.subGroup(supporterClusterMarkerGroup, this.createMapMarkers(supporters,(lat,lon,countrycode,city,plz,count) => {
-            return L.marker([lon,lat],{
-                 icon:  this.createSupporterIcon(count),
-                 itemCount: count,
-            }).bindPopup(this.options.createPopupTextHelper(countrycode,city, plz, count, this.options.supporterListURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
-        }))
-
-        supporterClusterMarkerGroup.addTo(this.mapObject)
-        supporterMarkers.addTo(this.mapObject)
-        facilityClusterMarkerGroup.addTo(this.mapObject)
-        facilityMarkers.addTo(this.mapObject)
-        
-        const countItems = (o) => {
-            var count = 0
-            for (countryCode in o) {
-                for (zipCode in o[countryCode]) {
-                    count += o[countryCode][zipCode].count
-                }
-            }
-            return count
-        }
-
-        var overlays = {}
-        overlays[this.options.createFacilitiesCountText(countItems(facilities))] = facilityMarkers
-        overlays[this.options.createSupportersCountText(countItems(supporters))] = supporterMarkers
-
-        facilityMarkers.addTo(this.mapObject)
-
-        L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
     },
 
     createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
