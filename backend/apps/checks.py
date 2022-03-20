@@ -8,7 +8,7 @@ from django.core.checks import Error, register
 from django.core.checks import Tags as DjangoTags
 from django.core.checks import Warning
 
-from match4healthcare.constants.enum import Environment
+from match4crisis.constants.enum import Environment
 
 logger = logging.getLogger(__name__)
 

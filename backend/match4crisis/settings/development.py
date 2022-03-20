@@ -1,9 +1,9 @@
 import os
 from os import path
 
-from match4healthcare.constants.enum import Environment
-from match4healthcare.settings.common import *  # noqa
-from match4healthcare.settings.common import RUN_DIR
+from match4crisis.constants.enum import Environment
+from match4crisis.settings.common import *  # noqa
+from match4crisis.settings.common import RUN_DIR
 
 THIS_ENV = Environment.DEVELOPMENT
 

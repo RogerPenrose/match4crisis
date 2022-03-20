@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from match4healthcare import views
+from match4crisis import views
 
 handler404 = views.handler404
 handler500 = views.handler500

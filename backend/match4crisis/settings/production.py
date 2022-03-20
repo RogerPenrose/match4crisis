@@ -3,9 +3,9 @@ import os
 
 from django.utils.log import DEFAULT_LOGGING
 
-from match4healthcare.constants.enum import Environment
-from match4healthcare.settings.common import *  # noqa
-from match4healthcare.settings.common import IS_FORK, MIDDLEWARE, RUN_DIR
+from match4crisis.constants.enum import Environment
+from match4crisis.settings.common import *  # noqa
+from match4crisis.settings.common import IS_FORK, MIDDLEWARE, RUN_DIR
 
 logger = logging.getLogger(__name__)
 
