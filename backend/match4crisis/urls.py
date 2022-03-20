@@ -28,6 +28,7 @@ urlpatterns = [
     path("iamorganisation/", include("apps.iamorganisation.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("use_statistics/", include("apps.use_statistics.urls")),
+    path("offers/", include("apps.offers.urls")),
     path("admin/", admin.site.urls),
     path("404/", views.handler404),
     path("500/", views.handler500),
