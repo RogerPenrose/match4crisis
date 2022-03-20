@@ -1,15 +1,30 @@
-from datetime import datetime
-import uuid
-
-from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
-from apps.mapview.utils import plzs
 
-# Create your models here.
-"""A typical class defining a model, derived from the Model class."""
+class Organisation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 
-#Neue Datenbank
+    organisationName = models.CharField(max_length=300, default="")
+    contactPerson = models.CharField(max_length=100, default="")
+    # Phone number is already stored in User Table
+    clubNumber = models.CharField(max_length=20, default="0") # Vereinsnummer
+    country = models.CharField(max_length=50)
+    postalCode = models.CharField(max_length=15)
+    streetNameAndNumber = models.CharField(max_length=50)
+    
+    generalInfo = models.TextField(max_length=10000, default="")
+
+    isApproved = models.BooleanField(default=False)
+    approvalDate = models.DateTimeField(null=True)
+    approvedBy = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, related_name="approvedBy"
+    )
+    appearsInMap = models.BooleanField(default=False)
+
+    acceptedPrivacyStatement = models.BooleanField(default=False) # Datenschutzerklärung
+    acceptedDataSharing = models.BooleanField(default=False) # Datenweitergabe
+
+    def __str__(self):
+        return self.organisationName
