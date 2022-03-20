@@ -1,4 +1,4 @@
-"""match4healthcare URL Configuration.
+"""match4crisis URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.0/topics/http/urls/
@@ -23,8 +23,9 @@ handler500 = views.handler500
 
 urlpatterns = [
     path("mapview/", include("apps.mapview.urls")),
-    path("iamstudent/", include("apps.iamstudent.urls")),
-    path("ineedstudent/", include("apps.ineedstudent.urls")),
+    path("ineedhelp/", include("apps.ineedhelp.urls")),
+    path("iofferhelp/", include("apps.iofferhelp.urls")),
+    path("iamorganisation/", include("apps.iamorganisation.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("use_statistics/", include("apps.use_statistics.urls")),
     path("offers/", include("apps.offers.urls")),

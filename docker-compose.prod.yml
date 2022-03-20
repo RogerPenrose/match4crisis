@@ -4,7 +4,7 @@ services:
 
   backend:
     volumes:
-      - './backend:/match4healthcare-backend'
+      - './backend:/match4crisis-backend'
 #    ports:
 #      Port definitions from the .dev file will be carried on to prod
 #      so even if there is no port defined here, the docker image will be exposed
@@ -15,9 +15,9 @@ services:
       - backend.prod.env
       - database.prod.env
     environment:
-     - DJANGO_SETTINGS_MODULE=match4healthcare.settings.production
+     - DJANGO_SETTINGS_MODULE=match4crisis.settings.production
     user: ${CURRENT_UID:-0}
-    command: gunicorn -c /match4healthcare-backend/gunicorn.conf.py match4healthcare.wsgi
+    command: gunicorn -c /match4crisis-backend/gunicorn.conf.py match4crisis.wsgi
     depends_on:
       - database
 

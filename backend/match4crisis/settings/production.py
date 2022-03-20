@@ -18,12 +18,9 @@ DEBUG = False
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 ALLOWED_HOSTS = [
-    "matchmedisvsvirus.dynalias.org",
-    "helping-health.from-de.com",
-    "match4healthcare.de",
-    "match4healthcare.eu",
-    "match4healthcare.org",
-    "medis-vs-covid19.de",
+    "match4crisis.de",
+    "match4crisis.eu",
+    "match4crisis.org",
     "localhost",
 ]
 
@@ -47,7 +44,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # =============== MAIL RELAY SERVER CONFIGURATION ===============
 # TODO: add environment variable based detection whether we are on prod or staging # noqa: T003
-NOREPLY_MAIL = "match4healthcare<noreply@match4healthcare.de>"
+NOREPLY_MAIL = "match4crisis<noreply@match4crisis.de>"
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 # Use API instead of SMTP server

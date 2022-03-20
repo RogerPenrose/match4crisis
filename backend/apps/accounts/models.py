@@ -60,3 +60,4 @@ VALIDATION_CHOICES = (
     (VALIDATED_AND_APPROVED, _("validiert und von uns approved")),
 )
 """
+

@@ -26,7 +26,7 @@ DATABASES = {
 
 # =============== MAIL RELAY SERVER CONFIGURATION ===============
 # Don't use our domain, prevent bad reputation
-NOREPLY_MAIL = "match4healthcare-DEVELOPMENT<noreply@example.de>"
+NOREPLY_MAIL = "match4crisis-DEVELOPMENT<noreply@example.de>"
 
 # Possible values are 'file', 'external', 'sendgrid'
 # For storing mails local in files files, sending external (uberspace) or sending over sendgrid (production like)
@@ -39,11 +39,12 @@ if MAIL_RELAY_OPTION == "file":
 
 # +++ Use local debug server
 elif MAIL_RELAY_OPTION == "external":
-    EMAIL_HOST = "spahr.uberspace.de"
+    pass
+    """EMAIL_HOST = ""
     EMAIL_PORT = 587
-    EMAIL_HOST_USER = "noreply@medisvs.spahr.uberspace.de"
-    EMAIL_HOST_PASSWORD = "jonathan"
-    EMAIL_USE_TLS = False
+    EMAIL_HOST_USER = ""
+    EMAIL_HOST_PASSWORD = ""
+    EMAIL_USE_TLS = False"""
 
 # +++ Use sendgrid
 elif MAIL_RELAY_OPTION == "sendgrid":
@@ -51,7 +52,8 @@ elif MAIL_RELAY_OPTION == "sendgrid":
     use_sendgrid_api = True
 
     # Retrieve sendgrid api key
-    NOREPLY_MAIL = "match4healthcare<noreply@testing.match4healthcare.de>"
+    NOREPLY_MAIL = "match4crisis<noreply@testing.match4crisis.de>"
+
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
     if use_sendgrid_api:
