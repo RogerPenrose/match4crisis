@@ -5,4 +5,4 @@ We are happy that you want to contribute to our project! To get you started, we 
 * If you want to propose an idea or draft with code that is not ready to merge yet, please use the *Draft* option Github provides. Draft PRs can also be helpful to you, since we can give early feedback while knowing that it is still a work-in-progress.
 
 
-If you have any questions, feel free to reach out to the maintaining developers @maltezacharias, @bjrne, @Baschdl, @kevihiin, @feeds, and @josauder.
+If you have any questions, feel free to reach out to the maintaining developers @maltezacharias, @bjrne, @Baschdl, @kevihiin, @feeds, and @josauder..

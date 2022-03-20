@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "apps.iofferhelp",
     "apps.ineedhelp",
     "apps.iamorganisation",
+    "apps.offers",
     "apps.accounts",
     "apps.use_statistics",
 ]

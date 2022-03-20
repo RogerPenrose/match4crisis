@@ -1,0 +1,9 @@
+{% if latest_question_list %}
+    <ul>
+    {% for offer in latest_question_list %}
+        <li><a href="/polls/{{ offer.id }}/">{{ offer.offerType }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No polls are available.</p>
+{% endif %}
