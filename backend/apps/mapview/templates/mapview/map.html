@@ -4,7 +4,7 @@
 {% load l10n %}
 
 {% block title %}
-{% blocktrans %}Karte der Hilfsbereiten{% endblocktrans %}
+{% blocktrans %}Karte der Angebote{% endblocktrans %}
 {% endblock %}
 
 {% block header %}
@@ -22,15 +22,11 @@
 
   pageOptions = {
     mapViewContainerId: 'mapContainer',
-    facilitiesURL     : "{% url 'facilitiesJSON' %}",
-    supportersURL     : "{% url 'supportersJSON' %}",
+    facilitiesURL     : "{% url 'offersJSON' %}",
     supporterListURL  : "{% url 'list_by_plz' 'COUNTRYCODE' 'PLZ' 0 %}",
-    hospitalListURL   : "{% url 'hospital_list' 'COUNTRYCODE' 'PLZ' %}",
     mapboxToken       : "{{ mapbox_token }}",
-    createPopupTextStudent  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Helfer*innen.\n<a href="${url}" target="_blank">Detailansicht für Kliniken</a>{% endblocktrans %}`,
-    createPopupTextHospital :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Orte an denen Hilfe gebraucht wird.\n<a href="${url}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
-    createFacilitiesCountText: (count) => `<img src="{% static 'img/map/facility-marker.svg' %}"> ${count} {% trans "Einrichtungen" %}`,
-    createSupportersCountText: (count) => `<img src="{% static 'img/map/supporter-marker.svg' %}"> ${count} {% trans "Helfende" %}`,
+    createPopupText  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Angebote. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
+    createOfferCountText: (count) => `<img src="{% static 'img/map/supporter-marker.svg' %}"> ${count} {% trans "Angebote" %}`,
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],
