@@ -6,79 +6,146 @@ from django.http import HttpResponse
 from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer
 from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm
 from datetime import datetime, timedelta
+
+
+def updateGenericModel( form, offer_id=0):
+    if offer_id== 0:
+        #create an Object..
+        user = User.objects.get(pk=1) # Need to fix this to the currently logged in user.
+        g = GenericOffer(userId=user, \
+                offerType=form.get("offerType"),  \
+                created_at=datetime.now(), \
+                offerDescription=form.get("offerDescription"), \
+                isDigital=False,  \
+                active=False,  \
+                country=form.get("country"), \
+                postCode=form.get("postCode"), \
+                streetName=form.get("streetName"), \
+                streetNumber=form.get("streetNumber"), \
+                cost=form.get("cost"), \
+                )
+        g.save()
+        return g
+    else:
+        g = GenericOffer.objects.get(pk=offer_id)
+        g.offerType=form.get("offerType")
+        g.created_at=datetime.now()
+        g.offerDescription=form.get("offerDescription")
+        g.isDigital=False
+        g.active=False
+        g.country=form.get("country")
+        g.postCode=form.get("postCode")
+        g.streetName=form.get("streetName")
+        g.streetNumber=form.get("streetNumber")
+        g.cost=form.get("cost")
+        g.save()
+        return g
+
+def updateAccomodationModel(g, form, offer_id=0):
+    if offer_id == 0:
+        a = AccomodationOffer(genericOffer=g, \
+            numberOfInhabitants=form.get("numberOfInhabitants"), \
+            petsAllowed=form.get("petsAllowed"), \
+            stayLength= form.get("stayLength") )
+        a.save()
+        return a
+    else:
+        a = AccomodationOffer.objects.get(pk=offer_id)
+        a.genericOffer=g
+        a.numberOfInhabitants=form.get("numberOfInhabitants")
+        a.petsAllowed=form.get("petsAllowed")
+        a.stayLength= form.get("stayLength")
+        a.save()
+        return a
+
+def updateTransportationModel(g, form, offer_id=0):
+    if offer_id == 0:
+        t = TransportationOffer(genericOffer=g, \
+            postCodeEnd=form.get("postCodeEnd"), \
+            streetNameEnd=form.get("streetNameEnd"),\
+            streetNumberEnd = form.get("streetNumberEnd"),\
+            typeOfCar = form.get("typeOfCar"), \
+            numberOfPassengers=form.get("numberOfPassengers"))
+        t.save()
+        return t
+    else:
+        t = TransportationOffer.objects.get(pk=offer_id)
+        t.genericOffer=g
+        t.postCodeEnd=form.get("postCodeEnd")
+        t.streetNameEnd=form.get("streetNameEnd")
+        t.streetNumberEnd = form.get("streetNumberEnd")
+        t.typeOfCar = form.get("typeOfCar")
+        t.numberOfPassengers=form.get("numberOfPassengers")
+        t.save()
+        return t
+    
+def updateTranslationModel(g, form, offer_id=0):
+    if offer_id == 0:
+        t = TranslationOffer(genericOffer=g, \
+                        firstLanguage=form.get("firstLanguage"), \
+                        secondLanguage=form.get("secondLanguage"))
+        t.save()
+        return t
+    else:
+        t = TranslationOffer.objects.get(pk=offer_id)
+        t.genericOffer=g
+        t.firstLanguage=form.get("firstLanguage")
+        t.secondLanguage=form.get("secondLanguage")
+        t.save()
+        return t
 def index(request):
     context = {'AccomodationOffers': AccomodationOffer.objects.all(), \
                'TransportationOffers': TransportationOffer.objects.all(),\
                'TranslationOffers': TranslationOffer.objects.all()}
     
     return render(request, 'offers/index.html', context)
+
 def create(request):
     if request.method == 'POST':
-        form = GenericForm(request.POST)
-        #return HttpResponse(str(request.POST))
-        if form.is_valid():
-            currentForm = form.cleaned_data
-            user = User.objects.get(pk=1) # Need to fix this to the currently logged in user.
-            g = GenericOffer(userId=user, \
-                offerType=currentForm.get("offerType"),  \
-                created_at=datetime.now(), \
-                offerDescription=currentForm.get("offerDescription"), \
-                isDigital=False,  \
-                active=False,  \
-                country=currentForm.get("country"), \
-                postCode=currentForm.get("postCode"), \
-                streetName=currentForm.get("streetName"), \
-                streetNumber=currentForm.get("streetNumber"), \
-                cost=currentForm.get("cost"), \
-                )
-            g.save()
-            if currentForm.get("offerType") == "AC":
-                acForm = AccomodationForm(request.POST)
-                if acForm.is_valid():
-                    currentForm = acForm.cleaned_data
-                    a = AccomodationOffer(genericOffer=g, \
-                        numberOfInhabitants=currentForm.get("inhabitants"), \
-                        petsAllowed=currentForm.get("petsAllowed"), \
-                        stayLength= currentForm.get("stayLength") )
-                    a.save()
-                    return HttpResponse("Thanks")
-                else:
-                    return HttpResponse(str(acForm.errors))
-            elif currentForm.get("offerType") == "TR":
-                trForm = TransportationForm(request.POST)
-                if trForm.is_valid():
-                    currentForm = trForm.cleaned_data
-                    t = TransportationOffer(genericOffer=g, \
-                        postCodeEnd=currentForm.get("postCodeEnd"), \
-                        streetNameEnd=currentForm.get("streetNameEnd"),\
-                        streetNumberEnd = currentForm.get("streetNumberEnd"),\
-                        typeOfCar = currentForm.get("typeOfCar"), \
-                        numberOfPassengers=currentForm.get("numberOfPassengers"))
-                    t.save()
-                    return HttpResponse("Thanks")
-                else:
-                    return HttpResponse(str(trForm.errors))
-            if currentForm.get("offerType") == "TL":
-                tlForm = TranslationForm(request.POST)
-                if tlForm.is_valid():
-                    currentForm = tlForm.cleaned_data
-                    t = TranslationOffer(genericOffer=g, \
-                        firstLanguage=currentForm.get("firstLanguage"), \
-                        secondLanguage=currentForm.get("secondLanguage"))
-                    t.save()
-                    return HttpResponse("Thanks")
-                else:
-                    return HttpResponse(str(tlForm.errors))
-        
-        else:
-            return HttpResponse(str(form.errors))
+        update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
         return render(request, 'offers/create.html', {"genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
+
+def update(request, offer_id):
+    form = GenericForm(request.POST)
+    if form.is_valid():
+        currentForm = form.cleaned_data
+        g = updateGenericModel(currentForm, offer_id)
+        if currentForm.get("offerType") == "AC":
+            acForm = AccomodationForm(request.POST)
+            if acForm.is_valid():
+                currentForm = acForm.cleaned_data
+                a = updateAccomodationModel(g, currentForm, offer_id)
+                
+                return HttpResponse("Thanks")
+            else:
+                return HttpResponse(str(acForm.errors))
+        elif currentForm.get("offerType") == "TR":
+            trForm = TransportationForm(request.POST)
+            if trForm.is_valid():
+                currentForm = trForm.cleaned_data
+                t = updateTransportationModel(g, currentForm, offer_id)
+                
+                return HttpResponse("Thanks")
+            else:
+                return HttpResponse(str(trForm.errors))
+        if currentForm.get("offerType") == "TL":
+            tlForm = TranslationForm(request.POST)
+            if tlForm.is_valid():
+                currentForm = tlForm.cleaned_data
+                t = updateTranslationModel(g, currentForm,offer_id)
+                return HttpResponse("Thanks")
+            else:
+                return HttpResponse(str(tlForm.errors))
+    
+    else:
+        return HttpResponse(str(form.errors))
+
+        
 def detail(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     genericForm = GenericForm(model_to_dict(generic))
-    
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
