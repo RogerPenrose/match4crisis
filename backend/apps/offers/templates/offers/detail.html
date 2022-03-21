@@ -1,3 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
 <form action="/offers/{{id}}/update" method="post">
     {% csrf_token %}
 <table> 
@@ -15,3 +24,4 @@
 <input type="submit" value="Update">
 </form>
 <form action="/offers/" method="get"><input type="submit" value="Back"></form>
+{% endblock %}

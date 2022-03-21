@@ -1,4 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
 
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
     <table>
         <tr><td>Date</td><td>Offertype</td><td>Postcode</td><td>Cost</td><td>Details</td></tr>
     {% for entry in  AccomodationOffers %}
@@ -11,3 +19,5 @@
     <tr><td><a href="/offers/{{ entry.genericOffer.id }}/">{{ entry.genericOffer.created_at }}</a></td><td>{{ entry.genericOffer.get_offerType_display }}</td><td>{{entry.genericOffer.postCode}}</td><td>{{ entry.genericOffer.cost}}</td><td>Taking {{ entry.numberOfPassengers}} People by {{entry.get_typeOfCar_display}} to {{entry.streetNameEnd}} {{entry.streetNumberEnd}},{{entry.postCodeEnd}}</td>
     {% endfor %}
         </table>
+<form action="/offers/create"><input type="submit" value="Add"></form>
+{% endblock %}
