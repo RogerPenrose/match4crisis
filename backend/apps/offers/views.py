@@ -118,7 +118,7 @@ def index(request):
 @login_required
 def create(request):
     if request.method == 'POST':
-        update(request, 0)
+        return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
         return render(request, 'offers/create.html', {"genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
