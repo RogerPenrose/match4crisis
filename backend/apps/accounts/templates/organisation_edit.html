@@ -57,7 +57,7 @@ Profil - Institution
                 {% blocktrans %}Informationen über Ihre Institution{% endblocktrans %}
             </div>
             <div class="card-body">
-                <form action="profile_hospital" method="post">
+                <form action="profile_organisation" method="post">
                     {% csrf_token %}
                     {% crispy form form.helper %}
                 </form>

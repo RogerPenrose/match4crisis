@@ -14,9 +14,9 @@ logger = logging.getLogger("django")
 
 class Languages(models.Model):
     """ Database containing numerous languages. The ISO 639-1 Code is the Primary Key"""
-    iso_code = models.CharField(max_length=2, primary_key=True)
-    english_name = models.CharField(max_length=128)
-    native_name = models.CharField(max_length=128)
+    isoCode = models.CharField(max_length=2, primary_key=True)
+    englishName = models.CharField(max_length=128)
+    nativeName = models.CharField(max_length=128)
 
 
 class User(AbstractUser):
@@ -25,13 +25,19 @@ class User(AbstractUser):
     # Note: At the moment there is a username field that is required upon account creation.
     # In M4H this was always set to the E-Mail address
 
-    validated_email = models.BooleanField(default=False)
-    email_validation_date = models.DateTimeField(blank=True, null=True)
+    validatedEmail = models.BooleanField(default=False)
+    emailValidationDate = models.DateTimeField(blank=True, null=True)
     # m:n to the Languages Table using LanguageKnowledge as intermediary
-    spoken_languages = models.ManyToManyField(Languages, through='LanguageKnowledge')
+    spokenLanguages = models.ManyToManyField(Languages, through='LanguageKnowledge')
     # Regex for Phone Numbers in E164 format
-    phone_number_regex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
-    phone_number = models.CharField(validators = [phone_number_regex], max_length = 16, unique = True, null=True)
+    phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
+    phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True)
+    # Should the phone number be visible to contacts
+    sharePhoneNumber = models.BooleanField(default=False)
+
+    isRefugee = models.BooleanField(default=False)
+    isHelper = models.BooleanField(default=False)
+    isOrganisation = models.BooleanField(default=False)
     REQUIRED_FIELDS = ["email"]
 
 class LanguageKnowledge(models.Model):

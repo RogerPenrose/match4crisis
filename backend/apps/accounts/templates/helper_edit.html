@@ -119,7 +119,7 @@ var signUpHelper = {
                 {% blocktrans %}Informationen über dich{% endblocktrans %}
             </div>
             <div class="card-body" style="margin-bottom: 1rem;">
-                <form action="profile_student" method="post">
+                <form action="profile_helper" method="post">
                     {% csrf_token %}
                     {% crispy form form.helper %}
                 </form>

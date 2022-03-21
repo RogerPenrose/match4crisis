@@ -6,6 +6,7 @@ import sendgrid
 logger = logging.getLogger(__name__)
 
 
+# Keeping this function for now, since we will need to be able to send mass mails from organisations to helpers
 def send_mass_mail_sendgrid(
     recipient_list, subject, html_body, from_mail=settings.NOREPLY_MAIL, use_sandbox_mode=False,
 ):
