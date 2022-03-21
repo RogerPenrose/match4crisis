@@ -20,8 +20,8 @@ def updateGenericModel( form, offer_id=0, userId=None):
                 offerType=form.get("offerType"),  \
                 created_at=datetime.now(), \
                 offerDescription=form.get("offerDescription"), \
-                isDigital=False,  \
-                active=False,  \
+                isDigital=form.get("isDigital"),  \
+                active=form.get("active"),  \
                 country=form.get("country"), \
                 postCode=form.get("postCode"), \
                 streetName=form.get("streetName"), \
@@ -36,8 +36,8 @@ def updateGenericModel( form, offer_id=0, userId=None):
             g.offerType=form.get("offerType")
             g.created_at=datetime.now()
             g.offerDescription=form.get("offerDescription")
-            g.isDigital=False
-            g.active=False
+            g.isDigital=form.get("isDigital")
+            g.active=form.get("active")
             g.country=form.get("country")
             g.postCode=form.get("postCode")
             g.streetName=form.get("streetName")
