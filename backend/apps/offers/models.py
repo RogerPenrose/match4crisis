@@ -21,6 +21,7 @@ class GenericOffer(models.Model):
     ('TL', 'Translation'),
     ('TR', 'Transportation')
     ]
+    
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
     postCode = models.CharField(max_length=5, validators=[validate_plz])
     streetName = models.CharField(max_length=200)

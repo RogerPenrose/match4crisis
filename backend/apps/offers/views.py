@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404,render
+import logging
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
@@ -6,12 +7,15 @@ from django.http import HttpResponse
 from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer
 from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm
 from datetime import datetime, timedelta
+from django.contrib.auth.decorators import login_required
 
 
-def updateGenericModel( form, offer_id=0):
+
+logger = logging.getLogger("django")
+def updateGenericModel( form, offer_id=0, userId=None):
+    user = User.objects.get(pk=userId) 
     if offer_id== 0:
         #create an Object..
-        user = User.objects.get(pk=1) # Need to fix this to the currently logged in user.
         g = GenericOffer(userId=user, \
                 offerType=form.get("offerType"),  \
                 created_at=datetime.now(), \
@@ -28,18 +32,22 @@ def updateGenericModel( form, offer_id=0):
         return g
     else:
         g = GenericOffer.objects.get(pk=offer_id)
-        g.offerType=form.get("offerType")
-        g.created_at=datetime.now()
-        g.offerDescription=form.get("offerDescription")
-        g.isDigital=False
-        g.active=False
-        g.country=form.get("country")
-        g.postCode=form.get("postCode")
-        g.streetName=form.get("streetName")
-        g.streetNumber=form.get("streetNumber")
-        g.cost=form.get("cost")
-        g.save()
-        return g
+        if g.userId.id == userId or user.is_superuser :# If the same user is there to edit OR the user is a superuser...
+            g.offerType=form.get("offerType")
+            g.created_at=datetime.now()
+            g.offerDescription=form.get("offerDescription")
+            g.isDigital=False
+            g.active=False
+            g.country=form.get("country")
+            g.postCode=form.get("postCode")
+            g.streetName=form.get("streetName")
+            g.streetNumber=form.get("streetNumber")
+            g.cost=form.get("cost")
+            g.save()
+            return g
+        else:
+            logger.warning("Not allowed to update")
+            return None
 
 def updateAccomodationModel(g, form, offer_id=0):
     if offer_id == 0:
@@ -99,7 +107,7 @@ def index(request):
                'TranslationOffers': TranslationOffer.objects.all()}
     
     return render(request, 'offers/index.html', context)
-
+@login_required
 def create(request):
     if request.method == 'POST':
         update(request, 0)
@@ -111,33 +119,36 @@ def update(request, offer_id):
     form = GenericForm(request.POST)
     if form.is_valid():
         currentForm = form.cleaned_data
-        g = updateGenericModel(currentForm, offer_id)
-        if currentForm.get("offerType") == "AC":
-            acForm = AccomodationForm(request.POST)
-            if acForm.is_valid():
-                currentForm = acForm.cleaned_data
-                a = updateAccomodationModel(g, currentForm, offer_id)
-                
-                return index(request)
-            else:
-                return HttpResponse(str(acForm.errors))
-        elif currentForm.get("offerType") == "TR":
-            trForm = TransportationForm(request.POST)
-            if trForm.is_valid():
-                currentForm = trForm.cleaned_data
-                t = updateTransportationModel(g, currentForm, offer_id)
-                
-                return index(request)
-            else:
-                return HttpResponse(str(trForm.errors))
-        if currentForm.get("offerType") == "TL":
-            tlForm = TranslationForm(request.POST)
-            if tlForm.is_valid():
-                currentForm = tlForm.cleaned_data
-                t = updateTranslationModel(g, currentForm,offer_id)
-                return index(request)
-            else:
-                return HttpResponse(str(tlForm.errors))
+        g = updateGenericModel(currentForm, offer_id, request.user.id)
+        if g is not None:
+            if currentForm.get("offerType") == "AC":
+                acForm = AccomodationForm(request.POST)
+                if acForm.is_valid():
+                    currentForm = acForm.cleaned_data
+                    a = updateAccomodationModel(g, currentForm, offer_id)
+                    
+                    return index(request)
+                else:
+                    return HttpResponse(str(acForm.errors))
+            elif currentForm.get("offerType") == "TR":
+                trForm = TransportationForm(request.POST)
+                if trForm.is_valid():
+                    currentForm = trForm.cleaned_data
+                    t = updateTransportationModel(g, currentForm, offer_id)
+                    
+                    return index(request)
+                else:
+                    return HttpResponse(str(trForm.errors))
+            if currentForm.get("offerType") == "TL":
+                tlForm = TranslationForm(request.POST)
+                if tlForm.is_valid():
+                    currentForm = tlForm.cleaned_data
+                    t = updateTranslationModel(g, currentForm,offer_id)
+                    return index(request)
+                else:
+                    return HttpResponse(str(tlForm.errors))
+        else:
+            return HttpResponse("Wrong User")
     
     else:
         return HttpResponse(str(form.errors))

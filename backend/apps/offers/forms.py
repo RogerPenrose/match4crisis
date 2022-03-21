@@ -25,7 +25,8 @@ FIRSTLANGUAGE="Translating from"
 SECONDLANGUAGE="Translating to"
 STAYLENGTH= "Maximum length of stay (Days)"
 INHABITANTS="Maximum number of inhabitants"
-
+DIGITAL="Digital Offer"
+ACTIVE="Active Offer"
 class GenericForm(forms.Form):
     #Generic Fields
     OFFER_CHOICES = [
@@ -40,8 +41,8 @@ class GenericForm(forms.Form):
     streetName = forms.CharField(label=STREETNAME, max_length=200, required=False)
     streetNumber = forms.CharField(label=HOUSENUMBER, max_length=4, required=False)
     cost = forms.DecimalField(label=PRICE, max_digits=5, decimal_places=2)
-    
-
+    isDigital = forms.BooleanField(label=DIGITAL,initial=False, required=False)
+    active = forms.BooleanField(label=ACTIVE,initial=False, required=False)
     
 class TransportationForm(forms.Form):
     # Transportation Fields
