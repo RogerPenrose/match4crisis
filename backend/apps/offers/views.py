@@ -101,6 +101,14 @@ def updateTranslationModel(g, form, offer_id=0):
         t.secondLanguage=form.get("secondLanguage")
         t.save()
         return t
+
+def by_postCode(request, postCode):
+    logger.warning(str(postCode))
+    context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
+               'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
+               'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
+    
+    return render(request, 'offers/index.html', context)
 def index(request):
     context = {'AccomodationOffers': AccomodationOffer.objects.all(), \
                'TransportationOffers': TransportationOffer.objects.all(),\
