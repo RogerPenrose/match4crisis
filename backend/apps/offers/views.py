@@ -118,7 +118,7 @@ def update(request, offer_id):
                 currentForm = acForm.cleaned_data
                 a = updateAccomodationModel(g, currentForm, offer_id)
                 
-                return HttpResponse("Thanks")
+                return index(request)
             else:
                 return HttpResponse(str(acForm.errors))
         elif currentForm.get("offerType") == "TR":
@@ -127,7 +127,7 @@ def update(request, offer_id):
                 currentForm = trForm.cleaned_data
                 t = updateTransportationModel(g, currentForm, offer_id)
                 
-                return HttpResponse("Thanks")
+                return index(request)
             else:
                 return HttpResponse(str(trForm.errors))
         if currentForm.get("offerType") == "TL":
@@ -135,7 +135,7 @@ def update(request, offer_id):
             if tlForm.is_valid():
                 currentForm = tlForm.cleaned_data
                 t = updateTranslationModel(g, currentForm,offer_id)
-                return HttpResponse("Thanks")
+                return index(request)
             else:
                 return HttpResponse(str(tlForm.errors))
     
