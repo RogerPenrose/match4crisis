@@ -41,7 +41,7 @@ class OrganisationFormO(ModelForm):
 
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
-            Row(Column("phoneNumber"), Column("email")),
+            Row(Column("user.phoneNumber"), Column("email")), #TODO Phone number not showing yet
             Row(Column("postalCode"), Column("country")),
             HTML('<hr style="margin-top: 20px; margin-bottom:30px;">'),
             HTML(
@@ -103,7 +103,7 @@ class OrganisationFormEditProfile(OrganisationFormO):
         )
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),  # Row(Column('appears_in_map')),
-            Row(Column("phoneNumber")),
+            Row(Column("phoneNumber")), # TODO phone number not showing yet ( -> is stored in user)
             Row(Column("postalCode"), Column("country")),
         )
 
