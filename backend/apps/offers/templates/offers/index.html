@@ -1,9 +1,23 @@
-{% if latest_question_list %}
-    <ul>
-    {% for offer in latest_question_list %}
-        <li><a href="/polls/{{ offer.id }}/">{{ offer.offerType }}</a></li>
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block content %}
+    <table>
+        <tr><td>Date</td><td>Offertype</td><td>Postcode</td><td>Cost</td><td>Details</td></tr>
+    {% for entry in  AccomodationOffers %}
+        <tr><td><a href="/offers/{{ entry.genericOffer.id }}/">{{ entry.genericOffer.created_at }}</a></td><td>{{ entry.genericOffer.get_offerType_display }}</td><td>{{entry.genericOffer.postCode}}{{entry.genericOffer.streetName}}{{entry.genericOffer.streetNumber}}</td><td>{{ entry.genericOffer.cost}}</td><td>Taking {{entry.numberOfInhabitants}} People for {{entry.stayLength}} Days </td>
     {% endfor %}
-    </ul>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+    {% for entry in TranslationOffers %}
+    <tr><td><a href="/offers/{{ entry.genericOffer.id }}/">{{ entry.genericOffer.created_at }}</a></td><td>{{ entry.genericOffer.get_offerType_display }}</td><td>{{entry.genericOffer.postCode}}{{entry.genericOffer.streetName}}{{entry.genericOffer.streetNumber}}</td><td>{{ entry.genericOffer.cost}}</td><td>Translating {{entry.firstLanguage}} to {{entry.secondLanguage}}</td>
+    {% endfor %}
+    {% for entry in TransportationOffers %}
+    <tr><td><a href="/offers/{{ entry.genericOffer.id }}/">{{ entry.genericOffer.created_at }}</a></td><td>{{ entry.genericOffer.get_offerType_display }}</td><td>{{entry.genericOffer.postCode}}</td><td>{{ entry.genericOffer.cost}}</td><td>Taking {{ entry.numberOfPassengers}} People by {{entry.get_typeOfCar_display}} to {{entry.streetNameEnd}} {{entry.streetNumberEnd}},{{entry.postCodeEnd}}</td>
+    {% endfor %}
+        </table>
+<form action="/offers/create"><input type="submit" value="Add"></form>
+{% endblock %}

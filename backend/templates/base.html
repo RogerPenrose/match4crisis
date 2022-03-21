@@ -50,6 +50,7 @@
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarsExampleDefault">
       <ul class="navbar-nav ml-auto">
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>
+        <li class="nav-item {% if "offers/list" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/list">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
         {% if not user.is_authenticated %}
         <li class="nav-item {% if "signup_helper" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_helper">{% blocktrans %}Ich will
           helfen{% endblocktrans %}</a> </li>
@@ -68,6 +69,7 @@
         {% if user.is_authenticated %}
         <li class="nav-item {% if "profile" in request.path %}active{% endif %}"> <a class="nav-link" href="/accounts/profile_redirect">{% blocktrans %}Mein
           Profil{% endblocktrans %}</a> </li>
+          <li class="nav-item {% if "offers/create_offer" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/create_offer">{% blocktrans %}Angebot erstellen{% endblocktrans %}</a> </li>
         {% else %}
         <li class="nav-item {% if "login" in request.path %}active{% endif %}"> <a class="nav-link" href="/accounts/profile_redirect">{% blocktrans %}Login{% endblocktrans %}</a> </li>
         {% endif %}
