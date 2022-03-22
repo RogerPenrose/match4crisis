@@ -190,31 +190,46 @@ div.leaflet-control-layers-overlays {
 
 
 
-.supporterMarker.marker-cluster-small,
-.supporterMarker.marker-cluster-medium,
-.supporterMarker.marker-cluster-large {
-	background-color: rgba(237, 10, 113, 0.4);
+.transportationMarker.marker-cluster-small,
+.transportationMarker.marker-cluster-medium,
+.transportationMarker.marker-cluster-large {
+	background-color: rgba(140, 255, 102, 0.4);
 }
 
-.supporterMarker.marker-cluster-single div,
-.supporterMarker.marker-cluster-small div,
-.supporterMarker.marker-cluster-medium div,
-.supporterMarker.marker-cluster-large div {
-	background-color: rgba(237, 10, 113, 1);
+.transportationMarker.marker-cluster-single div,
+.transportationMarker.marker-cluster-small div,
+.transportationMarker.marker-cluster-medium div,
+.transportationMarker.marker-cluster-large div {
+	background-color: rgb(140, 255, 102);
 }
 
 
-.facilityMarker.marker-cluster-small,
-.facilityMarker.marker-cluster-medium,
-.facilityMarker.marker-cluster-large {
+.accomodationMarker.marker-cluster-small,
+.accomodationMarker.marker-cluster-medium,
+.accomodationMarker.marker-cluster-large {
 	background-color: rgba(0, 9, 67, 0.4);
 }
 
-.facilityMarker.marker-cluster-single div,
-.facilityMarker.marker-cluster-small div,
-.facilityMarker.marker-cluster-medium div,
-.facilityMarker.marker-cluster-large div {
+.accomodationMarker.marker-cluster-single div,
+.accomodationMarker.marker-cluster-small div,
+.accomodationMarker.marker-cluster-medium div,
+.accomodationMarker.marker-cluster-large div {
 	background-color: rgba(0, 9, 67, 1);
+}
+
+
+
+.translationMarker.marker-cluster-small,
+.translationMarker.marker-cluster-medium,
+.translationMarker.marker-cluster-large {
+	background-color: rgba(255, 51, 153, 0.4);
+}
+
+.translationMarker.marker-cluster-single div,
+.translationMarker.marker-cluster-small div,
+.translationMarker.marker-cluster-medium div,
+.translationMarker.marker-cluster-large div {
+	background-color: rgb(255, 51, 153);
 }
 
 
@@ -226,17 +241,18 @@ div.leaflet-control-layers-overlays {
 	color: white;
 }
 
-.supporterMarker.marker-cluster div, 
-.facilityMarker.marker-cluster div {
+.transportationMarker.marker-cluster div, 
+.accomodationMarker.marker-cluster div {
   font-weight: bold;
 }
 
-.marker-cluster-single.supporterMarker, 
-.marker-cluster-single.facilityMarker {
+.marker-cluster-single.transportationMarker, 
+.marker-cluster-single.accomodationMarker, 
+.marker-cluster-single.translationMarker {
   background-color: transparent;
 }
 
-.marker-cluster.facilityMarker {
+.marker-cluster.accomodationMarker {
   margin-left: -30px !important;
   margin-top: -30px !important;
 }

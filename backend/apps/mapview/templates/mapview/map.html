@@ -8,6 +8,8 @@
 {% endblock %}
 
 {% block header %}
+<!--<div>Icons made by <a href="https://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/bombasticon-studio" title="Bombasticon Studio">Bombasticon Studio</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+-->
 <link rel="stylesheet" href="{% static 'js/leaflet-1.6.0/leaflet.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.Default.css' %}" />
@@ -22,11 +24,17 @@
 
   pageOptions = {
     mapViewContainerId: 'mapContainer',
-    facilitiesURL     : "{% url 'offersJSON' %}",
-    supporterListURL  : "{% url 'list_by_plz' 'COUNTRYCODE' 'PLZ' 0 %}",
+    accomodationOfferURL     : "{% url 'accomodationOffersJSON' %}",
+    transportationOfferURL     : "{% url 'transportationOffersJSON' %}",
+    translationOfferURL     : "{% url 'translationOffersJSON' %}",
     mapboxToken       : "{{ mapbox_token }}",
-    createPopupText  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Angebote. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
-    createOfferCountText: (count) => `<img src="{% static 'img/map/supporter-marker.svg' %}"> ${count} {% trans "Angebote" %}`,
+    createPopupTextTranslation  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Logistikangebote. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
+    createPopupTextTransportation  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Übersetzungen. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
+    createPopupTextAccomodation :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Unterbringungen. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
+    createAccomodationCountText: (count) => `<img src="{% static 'img/map/accomodation-marker.svg' %}"> ${count} {% trans "Unterbringungs-Angebote" %}`,
+    createTransportationCountText: (count) => `<img src="{% static 'img/map/transportation-marker.svg' %}"> ${count} {% trans "Logistik-Angebote" %}`,
+    createTranslationCountText: (count) => `<img src="{% static 'img/map/translation-marker.svg' %}"> ${count} {% trans "Übersetzungs-Angebote" %}`,
+    createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}"> ${count} {% trans "Digitale Angebote" %}`,
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],
