@@ -27,7 +27,7 @@
             <li class="list-group-item">{{organisation.sonstige_infos}}</li>
             <li class="list-group-item text-muted">
                 <h5>{% blocktrans %}Gesuch kontaktieren{% endblocktrans %}</h5>
-                {% if user.is_authenticated and user.is_helper %}
+                {% if user.is_authenticated and user.isHelper %}
                     {% if user.validated_email %}
 
                     {% crispy email_form email_form.helper%}

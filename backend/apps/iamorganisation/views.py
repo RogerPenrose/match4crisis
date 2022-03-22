@@ -107,3 +107,6 @@ def change_posting(request):
 
     context = {"anzeige_form": anzeige_form}
     return render(request, "change_posting.html", context)
+
+def thx(request):
+    return render(request, "thanks_organisation.html")

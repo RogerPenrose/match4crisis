@@ -67,7 +67,7 @@ def register_helper_in_db(request, mail):
     # TODO: send mail with link to pwd # noqa: T003
     pwd = User.objects.make_random_password()
     username = mail  # generate_random_username()
-    user = User.objects.create(username=username, is_helper=True, email=username)
+    user = User.objects.create(username=username, isHelper=True, email=username)
     user.set_password(pwd)
     user.save()
     helper = Helper.objects.create(user=user)
@@ -83,14 +83,15 @@ def organisation_signup(request):
         form_info = OrganisationFormInfoSignUp(request.POST)
 
         if form_info.is_valid():
-            user, organisation = register_organisation_in_db(request, form_info.cleaned_data["email"])
+            user, organisation = register_organisation_in_db(request, form_info.cleaned_data["email"], form_info.cleaned_data["phoneNumber"])
             send_password_set_email(
                 email=form_info.cleaned_data["email"],
                 host=request.META["HTTP_HOST"],
                 template="registration/password_set_email_organisation.html",
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iofferhelp/thanks")
+            return HttpResponseRedirect("/iamorganisation/thanks_organisation")
+        #else: raise Exception(form_info.errors)
 
             # plz = form_info.cleaned_data['plz']
             # countrycode = form_info.cleaned_data['countrycode']
@@ -108,11 +109,12 @@ def organisation_signup(request):
 
 
 @transaction.atomic
-def register_organisation_in_db(request, m):
+def register_organisation_in_db(request, m, phoneNumber):
 
     pwd = User.objects.make_random_password()
-    user = User.objects.create(username=m, is_organisation=True, email=m)
+    user = User.objects.create(username=m, isOrganisation=True, email=m)
     user.set_password(pwd)
+    user.phoneNumber = phoneNumber
     print("Saving User")
     user.save()
 
@@ -127,10 +129,10 @@ def register_organisation_in_db(request, m):
 def profile_redirect(request):
     user = request.user
 
-    if user.is_helper:
+    if user.isHelper:
         return HttpResponseRedirect("profile_helper")
 
-    elif user.is_organisation:
+    elif user.isOrganisation:
         return HttpResponseRedirect("profile_organisation")
 
     elif user.is_staff:
@@ -148,10 +150,10 @@ def profile_redirect(request):
 def login_redirect(request):
     user = request.user
 
-    if user.is_helper:
+    if user.isHelper:
         return HttpResponseRedirect("/accounts/profile_helper")
 
-    elif user.is_organisation:
+    elif user.isOrganisation:
         return HttpResponseRedirect("/iamorganisation/organisation_dashboard")
 
     elif user.is_staff:
@@ -316,10 +318,10 @@ class UserCountView(APIView):
 
     def get(self, request, format=None):  # noqa: A002
         supporter_count = User.objects.filter(
-            is_helper__exact=True, validated_email__exact=True
+            isHelper__exact=True, validated_email__exact=True
         ).count()
         facility_count = User.objects.filter(
-            is_organisation__exact=True, validated_email__exact=True
+            isOrganisation__exact=True, validated_email__exact=True
         ).count()
         content = {"user_count": supporter_count, "facility_count": facility_count}
         return JsonResponse(content)

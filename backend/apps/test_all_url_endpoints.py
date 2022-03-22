@@ -17,7 +17,7 @@ def generate_random_helper(countrycode="DE", plz="14482", i=0, validated_email=F
         )
     )
 
-    u = User.objects.create(username=m, email=m, is_helper=True, validated_email=validated_email)
+    u = User.objects.create(username=m, email=m, isHelper=True, validated_email=validated_email)
     u.set_password(pwd)
     s = Helper.objects.create(
         user=u,
@@ -36,7 +36,7 @@ def generate_random_organisation(
 ):
     m = str(i) + "organisation@email.de"
     pwd = User.objects.make_random_password()
-    u = User.objects.create(username=m, email=m, is_organisation=True, validated_email=validated_email)
+    u = User.objects.create(username=m, email=m, isOrganisation=True, validated_email=validated_email)
     u.set_password(pwd)
     s = Organisation.objects.create(
         user=u, countrycode=countrycode, plz=plz, ansprechpartner="XY", sonstige_infos="yeaah",

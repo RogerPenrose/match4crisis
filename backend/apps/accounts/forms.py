@@ -2,10 +2,14 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, UsernameField
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from django.core import validators
 
 from .models import User
 
-
+class PhoneNumberField(forms.CharField):
+    """Custom form field for Phone numbers"""
+    default_validators = [validators.RegexValidator(regex = r"^\+?1?\d{8,15}$", message=_("Bitte geben Sie eine gültige Telefonnummer ein."))]
+    
 class OrganisationSignUpForm(UserCreationForm):
     # add more query fields
 
@@ -16,6 +20,19 @@ class OrganisationSignUpForm(UserCreationForm):
     @transaction.atomic
     def save(self):
         user = super().save(commit=False)
+        user.save()
+        return user
+
+class HelperSignUpForm(UserCreationForm):
+    # add more query fields
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.isHelper = True
         user.save()
         return user
 
@@ -45,19 +62,6 @@ class OrganisationEmailForm(forms.ModelForm):
         user.save()
         return user
 
-
-class HelperSignUpForm(UserCreationForm):
-    # add more query fields
-
-    class Meta(UserCreationForm.Meta):
-        model = User
-
-    @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
-        user.is_helper = True
-        user.save()
-        return user
 
 
 class CustomAuthenticationForm(AuthenticationForm):
