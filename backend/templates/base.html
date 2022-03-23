@@ -32,19 +32,19 @@
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://match4healthcare.de{% static 'img/facebook-share.jpg' %}">
-<meta property="og:image:secure_url" content="https://match4healthcare.de{% static 'img/facebook-share.jpg' %}">
-<meta name="twitter:image" content="https://match4healthcare.de{% static 'img/facebook-share.jpg' %}">
+<meta property="og:image" content="https://match4crisis.de{% static 'img/facebook-share.jpg' %}">
+<meta property="og:image:secure_url" content="https://match4crisis.de{% static 'img/facebook-share.jpg' %}">
+<meta name="twitter:image" content="https://match4crisis.de{% static 'img/facebook-share.jpg' %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<title>{% block title %} {% endblock %} | match4healthcare </title>
+<title>{% block title %} {% endblock %} | match4crisis </title>
 {% block header %}
     {% endblock %}
 </head>
 
 <body>
 <nav class="navbar navbar-expand-md fixed-top navbar-light bg-white">
-  <div class="container"> <a class="navbar-brand" href="/"><img src="{% static 'img/match4healthcare-logo.svg' %}" width="199px"></a>
+  <div class="container"> <a class="navbar-brand" href="/"><img src="{% static 'img/match4crisis-logo.svg' %}" width="199px"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarsExampleDefault">
@@ -52,16 +52,16 @@
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>
         <li class="nav-item {% if "offers/list" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/list">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
         {% if not user.is_authenticated %}
-        <li class="nav-item {% if "signup_student" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_student">{% blocktrans %}Ich will
+        <li class="nav-item {% if "signup_helper" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_helper">{% blocktrans %}Ich will
           helfen{% endblocktrans %}</a> </li>
-        <li class="nav-item  {% if "signup_hospital" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_hospital">{% blocktrans %}Ich brauche
+        <li class="nav-item  {% if "signup_organisation" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_organisation">{% blocktrans %}Ich brauche
           Hilfe{% endblocktrans %}</a> </li>
         {% endif %}
-        {% if user.is_authenticated and user.is_hospital %}
-        {% url 'list_by_plz' user.hospital.countrycode user.hospital.plz 10 as filter_student_url %}
-        <li class="nav-item  {% if "signup_hospital" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/ineedstudent/hospital_dashboard">{% blocktrans %}Helfer*innen finden{% endblocktrans %}</a> </li>
+        {% if user.is_authenticated and user.is_organisation %}
+        {% url 'list_by_plz' user.organisation.countrycode user.organisation.plz 10 as filter_helper_url %}
+        <li class="nav-item  {% if "signup_organisation" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/iamorganisation/organisation_dashboard">{% blocktrans %}Helfer*innen finden{% endblocktrans %}</a> </li>
         {% endif %}
-        {% if user.is_authenticated and user.is_student %}
+        {% if user.is_authenticated and user.is_helper %}
         <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview">{% blocktrans %}Einrichtungen finden{% endblocktrans %}</a> </li>
         {% else %}
         <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
@@ -111,11 +111,11 @@
                                                 href="https://twitter.com/match4health_" target="_blank"> <img
             width="25" style="margin-bottom:0px; border:none; display:inline;" height="25"
             src="{% static 'img/twitter.svg' %}" alt="Twitter"> </a>
-      <a style="text-decoration: none; display: inline;" href="https://www.instagram.com/match4healthcare/"
+      <a style="text-decoration: none; display: inline;" href="https://www.instagram.com/match4crisis/"
          target="_blank"> <img width="25" style="margin-bottom:0px; border:none; margin-left:8px; display:inline;"
                                height="25" src="{% static 'img/instagram.svg' %}" alt="Instagram"> </a>
       <a style="text-decoration: none; display: inline; margin-left:8px;"
-         href="https://www.facebook.com/Match4Healthcare/" target="_blank"> <img width="25"
+         href="https://www.facebook.com/match4crisis/" target="_blank"> <img width="25"
                                                                                  style="margin-bottom:0px; border:none; display:inline;"
                                                                                  height="25"
                                                                                  src="{% static 'img/facebook.svg' %}"
@@ -127,7 +127,7 @@
                                                                                                     src="{% static 'img/youtube.svg' %}"
                                                                                                     alt="Youtube"> </a>
       <a style="text-decoration: none; display: inline; margin-left:8px;"
-         href="https://github.com/match4everyone/match4healthcare" target="_blank"> <img width="25"
+         href="https://github.com/RogerPenrose/match4crisis" target="_blank"> <img width="25"
                                                                                                     style="margin-bottom:0px; border:none; display:inline;"
                                                                                                     height="25"
                                                                                                     src="{% static 'img/GitHub-Mark-Light-32px.png' %}"

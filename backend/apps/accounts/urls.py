@@ -2,9 +2,9 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
-from . import views, views_staff
+from . import views
 
-urlpatterns = [
+"""urlpatterns = [
     path(
         "logout/",
         auth_views.LogoutView.as_view(template_name="registration/logout.html"),
@@ -53,7 +53,8 @@ urlpatterns = [
             success_url="/accounts/validate_email",
         ),
         name="password_reset_confirm_",
-    ),
+    ),"""
+urlpatterns = [ 
     path(
         "resend_validation_email/<email>",
         views.resend_validation_email,
@@ -70,25 +71,24 @@ urlpatterns = [
     path("login_redirect", views.login_redirect, name="login_redirect"),
     path("delete_me_ask", views.delete_me_ask, name="delete_me_ask"),
     path("delete_me", views.delete_me, name="delete_me"),
-    path("signup_student", views.student_signup, name="student_signup"),
-    path("signup_hospital", views.hospital_signup, name="hospital_signup"),
-    path("profile_student", views.edit_student_profile, name="edit_student_profile"),
-    path("profile_hospital", views.edit_hospital_profile, name="edit_hospital_profile"),
-    path("approve_hospitals", views.approve_hospitals, name="approve_hospitals"),
-    path(
-        "change_hospital_approval/<str:uuid>/",
-        views.change_hospital_approval,
-        name="change_hospital_approval",
-    ),
-    path("delete_hospital/<str:uuid>/", views.delete_hospital, name="delete_hospitall"),
-    path("count", views.UserCountView.as_view(), name="count"),
-    path("change_activation", views.change_activation_ask, name="activate_student_ask"),
-    path("change_activation_confirm", views.change_activation, name="activate_student"),
-    path("view_newsletter/<uuid>", views.view_newsletter, name="view_newsletter"),
-    path("new_newsletter", views.new_newsletter, name="new_newsletter"),
-    path("list_newsletter", views.list_newsletter, name="list_newsletter"),
-    path("did_see_newsletter/<uuid>/<token>", views.did_see_newsletter, name="did_see_newsletter"),
-    path("stats", views_staff.view_statistics, name="statistics"),
+    #path("signup_helper", views.helper_signup, name="helper_signup"),
+    path("signup_organisation", views.organisation_signup, name="organisation_signup"),
+    #path("profile_helper", views.edit_helper_profile, name="edit_helper_profile"),
+    path("profile_organisation", views.edit_organisation_profile, name="edit_organisation_profile"),
+    #path("approve_organisations", views.approve_organisations, name="approve_organisations"),
+    # path(
+    #     "change_organisation_approval/<str:uuid>/",
+    #     views.change_organisation_approval,
+    #     name="change_organisation_approval",
+    # ),
+    path("delete_organisation/<str:uuid>/", views.delete_organisation, name="delete_organisationl"),
+    #path("count", views.UserCountView.as_view(), name="count"),
+    path("change_activation", views.change_activation_ask, name="activate_helper_ask"),
+    path("change_activation_confirm", views.change_activation, name="activate_helper"),
+    #path("view_newsletter/<uuid>", views.view_newsletter, name="view_newsletter"),
+    #path("new_newsletter", views.new_newsletter, name="new_newsletter"),
+    #path("list_newsletter", views.list_newsletter, name="list_newsletter"),
+    #path("did_see_newsletter/<uuid>/<token>", views.did_see_newsletter, name="did_see_newsletter"),
     path("profile_staff", views.staff_profile, name="staff_profile"),
     path("i18n/", include("django.conf.urls.i18n")),
 ]

@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
+
 from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer
 from apps.iamstudent.models import Student
 from apps.ineedstudent.models import Hospital
@@ -20,7 +21,7 @@ def index(request):
     locations_and_number = prepare_offers(ttl_hash=get_ttl_hash())
     template = loader.get_template("mapview/map.html")
     context = {
-        "locations": list(locations_and_number.values()),
+        "locations": [],
         "mapbox_token": settings.MAPBOX_TOKEN,
     }
     return HttpResponse(template.render(context, request))
@@ -75,7 +76,6 @@ def genericOffersJSON(request):
     )
     facilities = group_by_zip_code(offers)
     return JsonResponse(facilities)
-
 
 
 def group_by_zip_code(entities):

@@ -3,12 +3,12 @@ from django.test import Client, TestCase
 import numpy as np
 
 from apps.accounts.models import User
-from apps.iamstudent.models import AUSBILDUNGS_TYPEN_COLUMNS, Student
-from apps.ineedstudent.models import Hospital
+from apps.iofferhelp.models import AUSBILDUNGS_TYPEN_COLUMNS, Helper
+from apps.iamorganisation.models import Organisation
 
 
-def generate_random_student(countrycode="DE", plz="14482", i=0, validated_email=False):
-    m = str(i) + "student@email.de"
+def generate_random_helper(countrycode="DE", plz="14482", i=0, validated_email=False):
+    m = str(i) + "helper@email.de"
     pwd = User.objects.make_random_password()
     kwd = dict(
         zip(
@@ -17,9 +17,9 @@ def generate_random_student(countrycode="DE", plz="14482", i=0, validated_email=
         )
     )
 
-    u = User.objects.create(username=m, email=m, is_student=True, validated_email=validated_email)
+    u = User.objects.create(username=m, email=m, is_helper=True, validated_email=validated_email)
     u.set_password(pwd)
-    s = Student.objects.create(
+    s = Helper.objects.create(
         user=u,
         countrycode=countrycode,
         plz=plz,
@@ -31,14 +31,14 @@ def generate_random_student(countrycode="DE", plz="14482", i=0, validated_email=
     return m, pwd, s.uuid
 
 
-def generate_random_hospital(
+def generate_random_organisation(
     countrycode="DE", plz="14482", i=0, validated_email=False,
 ):
-    m = str(i) + "hospital@email.de"
+    m = str(i) + "organisation@email.de"
     pwd = User.objects.make_random_password()
-    u = User.objects.create(username=m, email=m, is_hospital=True, validated_email=validated_email)
+    u = User.objects.create(username=m, email=m, is_organisation=True, validated_email=validated_email)
     u.set_password(pwd)
-    s = Hospital.objects.create(
+    s = Organisation.objects.create(
         user=u, countrycode=countrycode, plz=plz, ansprechpartner="XY", sonstige_infos="yeaah",
     )
     u.save()
@@ -70,63 +70,63 @@ class UrlEndpointTestCase(TestCase):
         assert self.client.get("/mapview/", {}).status_code == 200
 
         # Accounts
-        assert self.client.get("/accounts/signup_student", {}).status_code == 200
-        assert self.client.get("/accounts/signup_hospital", {}).status_code == 200
+        assert self.client.get("/accounts/signup_helper", {}).status_code == 200
+        assert self.client.get("/accounts/signup_organisation", {}).status_code == 200
         assert self.client.get("/accounts/password_reset/", {}).status_code == 200
         assert self.client.get("/accounts/login/", {}).status_code == 200
 
     def test_count_url(self):
-        generate_random_student(validated_email=True)
+        generate_random_helper(validated_email=True)
         response = self.client.get("/accounts/count", {})
         assert response.status_code == 200
         self.assertJSONEqual(
             str(response.content, encoding="utf8"), {"facility_count": 0, "user_count": 1},
         )
 
-        generate_random_hospital(validated_email=True)
+        generate_random_organisation(validated_email=True)
         response = self.client.get("/accounts/count", {})
         assert response.status_code == 200
         self.assertJSONEqual(
             str(response.content, encoding="utf8"), {"facility_count": 1, "user_count": 1},
         )
 
-    def test_student(self):
-        student_email, student_password, _ = generate_random_student()
+    def test_helper(self):
+        helper_email, helper_password, _ = generate_random_helper()
         assert self.client.post("/accounts/logout/", {}).status_code == 200
 
         response = self.client.post(
-            "/accounts/password_reset", {"email": student_email}, follow=True
+            "/accounts/password_reset", {"email": helper_email}, follow=True
         )
         # print(response.redirect_chain)
         assert response.status_code == 200
         # TODO: why does this not redirect to /accounts/password_reset/done # noqa: T003
 
         response = self.client.post(
-            "/accounts/validate_email", {"email": student_email}, follow=True
+            "/accounts/validate_email", {"email": helper_email}, follow=True
         )
         assert "/accounts/login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": student_email, "password": student_password,},
+            {"username": helper_email, "password": helper_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == student_email
+        assert auth.get_user(self.client).username == helper_email
 
-        assert Student.objects.get(user__email=student_email).user.validated_email is False
+        assert Helper.objects.get(user__email=helper_email).user.validated_email is False
         response = self.client.post(
-            "/accounts/validate_email", {"email": student_email}, follow=True
+            "/accounts/validate_email", {"email": helper_email}, follow=True
         )
         assert response.status_code == 200
-        assert Student.objects.get(user__email=student_email).user.validated_email
+        assert Helper.objects.get(user__email=helper_email).user.validated_email
 
         response = self.client.post(
             "/accounts/password_change",
             {
-                "email": student_email,
-                "new_password1": student_password,
-                "new_password2": student_password,
+                "email": helper_email,
+                "new_password1": helper_password,
+                "new_password2": helper_password,
             },
             follow=True,
         )
@@ -137,36 +137,36 @@ class UrlEndpointTestCase(TestCase):
         assert self.client.get("/mapview/", {}).status_code == 200
 
         response = self.client.get("/accounts/profile_redirect", follow=True)
-        assert "profile_student" in response.redirect_chain[0][0]
-        assert self.client.get("/accounts/profile_student", {}).status_code == 200
+        assert "profile_helper" in response.redirect_chain[0][0]
+        assert self.client.get("/accounts/profile_helper", {}).status_code == 200
 
         assert self.client.get("/accounts/logout/", {}).status_code == 200
         assert auth.get_user(self.client).is_anonymous
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": student_email, "password": student_password,},
+            {"username": helper_email, "password": helper_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == student_email
+        assert auth.get_user(self.client).username == helper_email
 
-        # Test view list of studens without being logged in as student. Should redirect!
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        # Test view list of studens without being logged in as helper. Should redirect!
+        response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
-        # Test admin view when logged in as student. Should redirect
-        response = self.client.get("/accounts/approve_hospitals", follow=True)
+        # Test admin view when logged in as helper. Should redirect
+        response = self.client.get("/accounts/approve_organisations", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
-        m1, p1, uuid1 = generate_random_hospital("DE", "14482", 1337)
-        m2, p2, uuid2 = generate_random_hospital("DE", "10115", 1234)
-        m3, p3, uuid3 = generate_random_hospital("AT", "4020", 420)
-        response = self.client.get("/ineedstudent/hospital_view/" + str(uuid1) + "/")
+        m1, p1, uuid1 = generate_random_organisation("DE", "14482", 1337)
+        m2, p2, uuid2 = generate_random_organisation("DE", "10115", 1234)
+        m3, p3, uuid3 = generate_random_organisation("AT", "4020", 420)
+        response = self.client.get("/iamorganisation/organisation_view/" + str(uuid1) + "/")
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/hospitals/DE/14482")
+        response = self.client.get("/iamorganisation/organisations/DE/14482")
         assert response.status_code == 200
 
         assert self.client.get("/accounts/delete_me_ask", {}).status_code == 200
@@ -174,59 +174,59 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": student_email, "password": student_password,},
+            {"username": helper_email, "password": helper_password,},
             follow=True,
         )
         assert auth.get_user(self.client).is_anonymous
 
         # Only available to logged in users, should redirect
-        response = self.client.get("/ineedstudent/hospital_view/" + str(uuid1) + "/", follow=True)
+        response = self.client.get("/iamorganisation/organisation_view/" + str(uuid1) + "/", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
         # Only available to logged in users, should redirect
-        response = self.client.get("/ineedstudent/hospitals/DE/14482", follow=True)
+        response = self.client.get("/iamorganisation/organisations/DE/14482", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
-    def test_hospital(self):
-        hospital_email, hospital_password, uuid = generate_random_hospital()
+    def test_organisation(self):
+        organisation_email, organisation_password, uuid = generate_random_organisation()
 
         assert self.client.post("/accounts/logout/", {}).status_code == 200
 
         response = self.client.post(
-            "/accounts/password_reset", {"email": hospital_email}, follow=True
+            "/accounts/password_reset", {"email": organisation_email}, follow=True
         )
         # print(response.redirect_chain)
         assert response.status_code == 200
         # TODO: why does this not redirect to /accounts/password_reset/done # noqa: T003
 
         response = self.client.post(
-            "/accounts/validate_email", {"email": hospital_email}, follow=True
+            "/accounts/validate_email", {"email": organisation_email}, follow=True
         )
         assert "/accounts/login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": hospital_email, "password": hospital_password,},
+            {"username": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == hospital_email
+        assert auth.get_user(self.client).username == organisation_email
 
-        assert Hospital.objects.get(user__email=hospital_email).user.validated_email is False
+        assert Organisation.objects.get(user__email=organisation_email).user.validated_email is False
         response = self.client.post(
-            "/accounts/validate_email", {"email": hospital_email}, follow=True
+            "/accounts/validate_email", {"email": organisation_email}, follow=True
         )
         assert response.status_code == 200
-        assert Hospital.objects.get(user__email=hospital_email).user.validated_email
+        assert Organisation.objects.get(user__email=organisation_email).user.validated_email
 
         response = self.client.post(
             "/accounts/password_change",
             {
-                "email": hospital_email,
-                "new_password1": hospital_password,
-                "new_password2": hospital_password,
+                "email": organisation_email,
+                "new_password1": organisation_password,
+                "new_password2": organisation_password,
             },
             follow=True,
         )
@@ -235,49 +235,49 @@ class UrlEndpointTestCase(TestCase):
         # TODO: why does this not redirect to /accounts/password_change/done  # noqa: T003
 
         assert self.client.get("/mapview/", {}).status_code == 200
-        # TODO: Test Detailansicht for a hospital!  # noqa: T003
+        # TODO: Test Detailansicht for a organisation!  # noqa: T003
 
         response = self.client.get("/accounts/profile_redirect", follow=True)
         assert response.status_code == 200
-        assert "profile_hospital" in response.redirect_chain[0][0]
-        assert self.client.get("/accounts/profile_hospital", {}).status_code == 200
+        assert "profile_organisation" in response.redirect_chain[0][0]
+        assert self.client.get("/accounts/profile_organisation", {}).status_code == 200
 
         assert self.client.get("/accounts/logout/", {}).status_code == 200
         assert auth.get_user(self.client).is_anonymous
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": hospital_email, "password": hospital_password,},
+            {"username": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == hospital_email
+        assert auth.get_user(self.client).username == organisation_email
 
-        # Test view list of students with being logged in as hospital. Should work!
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        # Test view list of helpers with being logged in as organisation. Should work!
+        response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)
         assert response.status_code == 200
         assert len(response.redirect_chain) == 0
 
-        # Test admin view when logged in as hospital. Should redirect
-        response = self.client.get("/accounts/approve_hospitals", follow=True)
+        # Test admin view when logged in as organisation. Should redirect
+        response = self.client.get("/accounts/approve_organisations", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/hospital_view/" + str(uuid) + "/")
+        response = self.client.get("/iamorganisation/organisation_view/" + str(uuid) + "/")
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/hospitals/DE/14482")
+        response = self.client.get("/iamorganisation/organisations/DE/14482")
         assert response.status_code == 200
 
-        m1, p1, uuid1 = generate_random_student("DE", "14482", 1337, validated_email=True)
-        m2, p2, uuid2 = generate_random_student("DE", "10115", 1234, validated_email=True)
-        m3, p3, uuid3 = generate_random_student("DE", "10115", 12345, validated_email=False)
-        m4, p4, uuid4 = generate_random_student("AT", "4020", 420, validated_email=True)
-        response = self.client.get("/ineedstudent/students/DE/14482/0")
+        m1, p1, uuid1 = generate_random_helper("DE", "14482", 1337, validated_email=True)
+        m2, p2, uuid2 = generate_random_helper("DE", "10115", 1234, validated_email=True)
+        m3, p3, uuid3 = generate_random_helper("DE", "10115", 12345, validated_email=False)
+        m4, p4, uuid4 = generate_random_helper("AT", "4020", 420, validated_email=True)
+        response = self.client.get("/iamorganisation/helpers/DE/14482/0")
 
         assert "1 Helfer*innen" in str(response.content)
         assert response.status_code == 200
 
-        response = self.client.get("/ineedstudent/students/DE/14482/50")
+        response = self.client.get("/iamorganisation/helpers/DE/14482/50")
         assert "2 Helfer*innen" in str(response.content)
         assert response.status_code == 200
 
@@ -286,59 +286,59 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": hospital_email, "password": hospital_password,},
+            {"username": organisation_email, "password": organisation_password,},
             follow=True,
         )
         assert auth.get_user(self.client).is_anonymous
 
         # Test view list of studens without being logged in. Should redirect!
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
         # Test admin view as logged out user. Should redirect
-        response = self.client.get("/accounts/approve_hospitals", follow=True)
+        response = self.client.get("/accounts/approve_organisations", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
-        hospital_email, hospital_password, uuid = generate_random_hospital(i=9999)
+        organisation_email, organisation_password, uuid = generate_random_organisation(i=9999)
         response = self.client.post(
             "/accounts/login/",
-            {"username": hospital_email, "password": hospital_password,},
+            {"username": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == hospital_email
+        assert auth.get_user(self.client).username == organisation_email
         assert response.status_code == 200
         assert "login_redirect" in response.redirect_chain[0][0]
 
     def test_sudent_individual_view(self):
         staff_email, staff_password = generate_staff_user()
-        hospital_email, hospital_password, hospital_uuid = generate_random_hospital()
-        student_email, student_password, student_uuid = generate_random_student()
+        organisation_email, organisation_password, organisation_uuid = generate_random_organisation()
+        helper_email, helper_password, helper_uuid = generate_random_helper()
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": student_email, "password": student_password,},
+            {"username": helper_email, "password": helper_password,},
             follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid), follow=True)
+        response = self.client.get("/iofferhelp/view_helper/" + str(helper_uuid), follow=True)
         assert response.status_code == 200
-        assert "/accounts/profile_student" in response.redirect_chain[0][0]
+        assert "/accounts/profile_helper" in response.redirect_chain[0][0]
 
         # TOOD: test which emails can be seen here!
         response = self.client.post(
             "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid))
+        response = self.client.get("/iofferhelp/view_helper/" + str(helper_uuid))
         assert response.status_code == 200
 
         # TOOD: test which emails can be seen here!
         response = self.client.post(
             "/accounts/login/",
-            {"username": hospital_email, "password": hospital_password,},
+            {"username": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        response = self.client.get("/iamstudent/view_student/" + str(student_uuid))
+        response = self.client.get("/iofferhelp/view_helper/" + str(helper_uuid))
         assert response.status_code == 200
 
     def test_admin(self):
@@ -370,13 +370,13 @@ class UrlEndpointTestCase(TestCase):
         # TODO: why does this not redirect to /accounts/password_change/done # noqa: T003
 
         assert self.client.get("/mapview/", {}).status_code == 200
-        # TODO: Test Detailansicht for a hospital! # noqa: T003
+        # TODO: Test Detailansicht for a organisation! # noqa: T003
 
         response = self.client.get("/accounts/profile_redirect", follow=True)
         assert response.status_code == 200
         assert "profile_staff" in response.redirect_chain[0][0]
 
-        response = self.client.get("/accounts/approve_hospitals", follow=True)
+        response = self.client.get("/accounts/approve_organisations", follow=True)
         assert response.status_code == 200
 
         assert self.client.get("/accounts/logout/", {}).status_code == 200
@@ -390,7 +390,7 @@ class UrlEndpointTestCase(TestCase):
         # Test view list of studens witbeing logged in as staff user
         # Current behavior: Should redirect!
         # TODO: discuss what the behavior of this should be! # noqa: T003
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)
         assert "login" in response.redirect_chain[0][0]
         assert response.status_code == 200
 
@@ -402,4 +402,4 @@ class UrlEndpointTestCase(TestCase):
         )
         assert auth.get_user(self.client).is_anonymous
 
-        response = self.client.get("/ineedstudent/students/DE/14482/0", follow=True)
+        response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)

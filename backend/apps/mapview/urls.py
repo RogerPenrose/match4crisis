@@ -8,4 +8,5 @@ urlpatterns = [
     path("accomodationOffers", views.accomodationOffersJSON, name="accomodationOffersJSON"),
     path("translationOffers", views.translationOffersJSON, name="translationOffersJSON"),
     path("transportationOffers", views.transportationOffersJSON, name="transportationOffersJSON")
+
 ]

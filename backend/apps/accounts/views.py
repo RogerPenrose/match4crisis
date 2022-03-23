@@ -14,21 +14,20 @@ from django.utils.translation import gettext as _
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
-from apps.iamstudent.forms import StudentForm, StudentFormAndMail, StudentFormEditProfile
-from apps.iamstudent.models import Student
-from apps.iamstudent.views import send_mails_for
-from apps.ineedstudent.forms import (
-    HospitalFormEditProfile,
-    HospitalFormInfoCreate,
-    HospitalFormInfoSignUp,
+#from apps.iofferhelp.forms import HelperForm, HelperFormAndMail, HelperFormEditProfile
+from apps.iofferhelp.models import Helper
+#from apps.iofferhelp.views import send_mails_for
+from apps.iamorganisation.forms import (
+    OrganisationFormEditProfile,
+    OrganisationFormInfoCreate,
+    OrganisationFormInfoSignUp,
 )
-from apps.ineedstudent.models import Hospital
-from apps.ineedstudent.views import ApprovalHospitalTable
+from apps.iamorganisation.models import Organisation
+#from apps.iamorganisation.views import ApprovalOrganisationTable
 
-from .decorator import hospital_required, student_required
-from .forms import CustomAuthenticationForm, NewsletterEditForm, NewsletterViewForm, TestMailForm
-from .models import LetterApprovedBy, Newsletter, NewsletterState, User
-from .tables import NewsletterTable
+from .decorator import organisationRequired, helperRequired
+from .forms import CustomAuthenticationForm
+from .models import User
 
 logger = logging.getLogger(__name__)
 
@@ -39,100 +38,100 @@ def staff_profile(request):
     return render(request, "staff_profile.html", {})
 
 
-def student_signup(request):
+"""def helper_signup(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        logger.info("Student Signup request", extra={"request": request})
-        form = StudentFormAndMail(request.POST)
+        logger.info("Helper Signup request", extra={"request": request})
+        form = HelperFormAndMail(request.POST)
 
         # check whether it's valid:
         if form.is_valid():
-            user, student = register_student_in_db(request, mail=form.cleaned_data["email"])
+            user, helper = register_helper_in_db(request, mail=form.cleaned_data["email"])
             send_password_set_email(
                 email=form.cleaned_data["email"],
                 host=request.META["HTTP_HOST"],
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iamstudent/thanks")
+            return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = StudentFormAndMail()
+        form = HelperFormAndMail()
 
-    return render(request, "student_signup.html", {"form": form})
+    return render(request, "helper_signup.html", {"form": form})
 
 
 @transaction.atomic
-def register_student_in_db(request, mail):
+def register_helper_in_db(request, mail):
     # TODO: send mail with link to pwd # noqa: T003
     pwd = User.objects.make_random_password()
     username = mail  # generate_random_username()
-    user = User.objects.create(username=username, is_student=True, email=username)
+    user = User.objects.create(username=username, is_helper=True, email=username)
     user.set_password(pwd)
     user.save()
-    student = Student.objects.create(user=user)
-    student = StudentForm(request.POST, instance=student)
-    student.save()
-    # send_password(username, pwd, student.cleaned_data['name_first'])
-    return user, student
+    helper = Helper.objects.create(user=user)
+    helper = HelperForm(request.POST, instance=helper)
+    helper.save()
+    # send_password(username, pwd, helper.cleaned_data['name_first'])
+    return user, helper
+"""
 
-
-def hospital_signup(request):
+def organisation_signup(request):
     if request.method == "POST":
-        logger.info("Hospital registration request", extra={"request": request})
-        form_info = HospitalFormInfoSignUp(request.POST)
+        logger.info("Organisation registration request", extra={"request": request})
+        form_info = OrganisationFormInfoSignUp(request.POST)
 
         if form_info.is_valid():
-            user, hospital = register_hospital_in_db(request, form_info.cleaned_data["email"])
+            user, organisation = register_organisation_in_db(request, form_info.cleaned_data["email"])
             send_password_set_email(
                 email=form_info.cleaned_data["email"],
                 host=request.META["HTTP_HOST"],
-                template="registration/password_set_email_hospital.html",
+                template="registration/password_set_email_organisation.html",
                 subject_template="registration/password_reset_email_subject.txt",
             )
-            return HttpResponseRedirect("/iamstudent/thanks")
+            return HttpResponseRedirect("/iofferhelp/thanks")
 
             # plz = form_info.cleaned_data['plz']
             # countrycode = form_info.cleaned_data['countrycode']
             # distance = 0
             # login(request, user)
-            # return HttpResponseRedirect('/ineedstudent/students/%s/%s/%s'%(countrycode,plz,distance))
+            # return HttpResponseRedirect('/iamorganisation/helpers/%s/%s/%s'%(countrycode,plz,distance))
 
     else:
-        form_info = HospitalFormInfoSignUp(
+        form_info = OrganisationFormInfoSignUp(
             initial={"sonstige_infos": "Liebe Studis,\n\nwir suchen euch weil ...\n\nBeste Grüße! "}
         )
-        # form_user = HospitalSignUpForm()
+        # form_user = OrganisationSignUpForm()
     form_info.helper.form_tag = False
-    return render(request, "hospital_signup.html", {"form_info": form_info})
+    return render(request, "organisation_signup.html", {"form_info": form_info})
 
 
 @transaction.atomic
-def register_hospital_in_db(request, m):
+def register_organisation_in_db(request, m):
 
     pwd = User.objects.make_random_password()
-    user = User.objects.create(username=m, is_hospital=True, email=m)
+    user = User.objects.create(username=m, is_organisation=True, email=m)
     user.set_password(pwd)
     print("Saving User")
     user.save()
 
-    hospital = Hospital.objects.create(user=user)
-    hospital = HospitalFormInfoCreate(request.POST, instance=hospital)
-    print("Saving Hospital")
-    hospital.save()
-    return user, hospital
+    organisation = Organisation.objects.create(user=user)
+    organisation = OrganisationFormInfoCreate(request.POST, instance=organisation)
+    print("Saving Organisation")
+    organisation.save()
+    return user, organisation
 
 
 @login_required
 def profile_redirect(request):
     user = request.user
 
-    if user.is_student:
-        return HttpResponseRedirect("profile_student")
+    if user.is_helper:
+        return HttpResponseRedirect("profile_helper")
 
-    elif user.is_hospital:
-        return HttpResponseRedirect("profile_hospital")
+    elif user.is_organisation:
+        return HttpResponseRedirect("profile_organisation")
 
     elif user.is_staff:
         return HttpResponseRedirect("profile_staff")
@@ -149,14 +148,14 @@ def profile_redirect(request):
 def login_redirect(request):
     user = request.user
 
-    if user.is_student:
-        return HttpResponseRedirect("/accounts/profile_student")
+    if user.is_helper:
+        return HttpResponseRedirect("/accounts/profile_helper")
 
-    elif user.is_hospital:
-        return HttpResponseRedirect("/ineedstudent/hospital_dashboard")
+    elif user.is_organisation:
+        return HttpResponseRedirect("/iamorganisation/organisation_dashboard")
 
     elif user.is_staff:
-        return HttpResponseRedirect("approve_hospitals")
+        return HttpResponseRedirect("approve_organisations")
 
     else:
         # TODO: throw 404  # noqa: T003
@@ -165,15 +164,15 @@ def login_redirect(request):
         )
         HttpResponse("Something wrong in database")
 
-
+"""
 @login_required
-@student_required
-def edit_student_profile(request):
-    student = request.user.student
+@helperRequired
+def edit_helper_profile(request):
+    helper = request.user.helper
 
     if request.method == "POST":
-        logger.info("Update Student Profile", extra={"request": request})
-        form = StudentFormEditProfile(request.POST or None, instance=student, prefix="infos")
+        logger.info("Update Helper Profile", extra={"request": request})
+        form = HelperFormEditProfile(request.POST or None, instance=helper, prefix="infos")
 
         if form.is_valid():
             messages.success(
@@ -182,21 +181,21 @@ def edit_student_profile(request):
             form.save()
 
     else:
-        form = StudentFormEditProfile(instance=student, prefix="infos")
+        form = HelperFormEditProfile(instance=helper, prefix="infos")
 
     return render(
-        request, "student_edit.html", {"form": form, "is_activated": student.is_activated},
+        request, "helper_edit.html", {"form": form, "is_activated": helper.is_activated},
     )
-
+"""
 
 @login_required
-@hospital_required
-def edit_hospital_profile(request):
-    hospital = request.user.hospital
+@organisationRequired
+def edit_organisation_profile(request):
+    organisation = request.user.organisation
 
     if request.method == "POST":
-        logger.info("Update Hospital Profile", extra={"request": request})
-        form = HospitalFormEditProfile(request.POST or None, instance=hospital, prefix="infos")
+        logger.info("Update Organisation Profile", extra={"request": request})
+        form = OrganisationFormEditProfile(request.POST or None, instance=organisation, prefix="infos")
 
         if form.is_valid():
             messages.success(
@@ -211,36 +210,36 @@ def edit_hospital_profile(request):
             )
 
     else:
-        form = HospitalFormEditProfile(instance=hospital, prefix="infos")
+        form = OrganisationFormEditProfile(instance=organisation, prefix="infos")
 
-    return render(request, "hospital_edit.html", {"form": form})
+    return render(request, "organisation_edit.html", {"form": form})
 
-
+"""
 @login_required
 @staff_member_required
-def approve_hospitals(request):
-    table_approved = ApprovalHospitalTable(Hospital.objects.filter(is_approved=True))
+def approve_organisations(request):
+    table_approved = ApprovalOrganisationTable(Organisation.objects.filter(is_approved=True))
     table_approved.prefix = "approved"
     table_approved.paginate(page=request.GET.get(table_approved.prefix + "page", 1), per_page=5)
 
-    table_unapproved = ApprovalHospitalTable(Hospital.objects.filter(is_approved=False))
+    table_unapproved = ApprovalOrganisationTable(Organisation.objects.filter(is_approved=False))
     table_unapproved.prefix = "unapproved"
     table_unapproved.paginate(page=request.GET.get(table_unapproved.prefix + "page", 1), per_page=5)
 
     return render(
         request,
-        "approve_hospitals.html",
+        "approve_organisations.html",
         {"table_approved": table_approved, "table_unapproved": table_unapproved},
     )
 
 
 @login_required
 @staff_member_required
-def change_hospital_approval(request, uuid):
+def change_organisation_approval(request, uuid):
 
-    h = Hospital.objects.get(uuid=uuid)
+    h = Organisation.objects.get(uuid=uuid)
     logger.info(
-        "Set Hospital %s approval to %s", uuid, (not h.is_approved), extra={"request": request},
+        "Set Organisation %s approval to %s", uuid, (not h.is_approved), extra={"request": request},
     )
 
     if not h.is_approved:
@@ -256,21 +255,21 @@ def change_hospital_approval(request, uuid):
     if h.is_approved:
         send_mails_for(h)
 
-    return HttpResponseRedirect("/accounts/approve_hospitals")
-
+    return HttpResponseRedirect("/accounts/approve_organisations")
+"""
 
 @login_required
 @staff_member_required
-def delete_hospital(request, uuid):
-    h = Hospital.objects.get(uuid=uuid)
+def delete_organisation(request, uuid):
+    h = Organisation.objects.get(uuid=uuid)
     logger.info(
-        "Delete Hospital %s by %s", uuid, request.user, extra={"request": request},
+        "Delete Organisation %s by %s", uuid, request.user, extra={"request": request},
     )
     name = h.user
     h.delete()
     text = format_lazy(_("Du hast die Institution mit user '{name}' gelöscht."), name=name)
     messages.add_message(request, messages.INFO, text)
-    return HttpResponseRedirect("/accounts/approve_hospitals")
+    return HttpResponseRedirect("/accounts/approve_organisations")
 
 
 @login_required
@@ -317,10 +316,10 @@ class UserCountView(APIView):
 
     def get(self, request, format=None):  # noqa: A002
         supporter_count = User.objects.filter(
-            is_student__exact=True, validated_email__exact=True
+            is_helper__exact=True, validated_email__exact=True
         ).count()
         facility_count = User.objects.filter(
-            is_hospital__exact=True, validated_email__exact=True
+            is_organisation__exact=True, validated_email__exact=True
         ).count()
         content = {"user_count": supporter_count, "facility_count": facility_count}
         return JsonResponse(content)
@@ -343,17 +342,17 @@ class CustomLoginView(LoginView):
 
 
 @login_required
-@student_required
+@helperRequired
 def change_activation_ask(request):
     return render(
-        request, "change_activation_ask.html", {"is_activated": request.user.student.is_activated},
+        request, "change_activation_ask.html", {"is_activated": request.user.helper.is_activated},
     )
 
 
 @login_required
-@student_required
+@helperRequired
 def change_activation(request):
-    s = request.user.student
+    s = request.user.helper
     status = s.is_activated
     s.is_activated = not s.is_activated
     s.save()
@@ -373,10 +372,10 @@ def change_activation(request):
                 "Du hast dein Profil erfolgreich aktiviert, du kannst nun wieder von Hilfesuchenden kontaktiert werden."
             ),
         )
-    return HttpResponseRedirect("profile_student")
+    return HttpResponseRedirect("profile_helper")
 
 
-def switch_newsletter(nl, user, request, post=None, get=None):
+"""def switch_newsletter(nl, user, request, post=None, get=None):
     nl_state = nl.sending_state()
 
     if nl_state == NewsletterState.BEING_EDITED:
@@ -534,3 +533,4 @@ def did_see_newsletter(request, uuid, token):
     except Exception:
         return HttpResponse("Not registered")
     return HttpResponseRedirect("/accounts/view_newsletter/" + str(uuid))
+"""

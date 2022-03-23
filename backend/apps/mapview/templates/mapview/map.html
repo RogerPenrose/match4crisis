@@ -35,6 +35,7 @@
     createTransportationCountText: (count) => `<img src="{% static 'img/map/transportation-marker.svg' %}"> ${count} {% trans "Logistik-Angebote" %}`,
     createTranslationCountText: (count) => `<img src="{% static 'img/map/translation-marker.svg' %}"> ${count} {% trans "Übersetzungs-Angebote" %}`,
     createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}"> ${count} {% trans "Digitale Angebote" %}`,
+
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],
@@ -47,8 +48,8 @@
 {% endblock %}
 
 {% block content %}
-  {% if user.is_authenticated and user.is_hospital %}
-<nav class="navbar navbar-expand-sm navbar-dark bg-light search-map" id="hospital_navbar">
+  {% if user.is_authenticated and user.is_organisation %}
+<nav class="navbar navbar-expand-sm navbar-dark bg-light search-map" id="organisation_navbar">
   <div class="container">
     <div class="order-0">
       <select name="countrycode" id="countrycode" class="map-dropdown">
@@ -70,7 +71,7 @@
 <script type="text/javascript">
   var gototable = function() {
       if ($('#search').val()) {
-        window.location = "/ineedstudent/students/" + $('#countrycode').val() + "/" + $('#search').val() + "/0"
+        window.location = "/iamorganisation/helpers/" + $('#countrycode').val() + "/" + $('#search').val() + "/0"
       }
     };
   $("#search").keyup(function(event) {

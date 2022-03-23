@@ -9,13 +9,13 @@ Home
 
 <meta name="description" content="Der Glaube daran Mitmenschen in Not helfen können, die Liebe zum Fach Medizin und der Zusammenhalt untereinander sind in den letzten Wochen und Monaten im Gesundheitswesen noch viel präsenter denn je.">
 <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-<link rel="canonical" href="https://match4healthcare.de/">
-<meta property="og:title" content="match4healthcare - Wir vernetzen Helfende mit Hilfesuchenden.">
+<link rel="canonical" href="https://match4crisis.de/">
+<meta property="og:title" content="match4crisis - Wir vernetzen Helfende mit Hilfesuchenden.">
 <meta property="og:description" content="Der Glaube daran Mitmenschen in Not helfen können, die Liebe zum Fach Medizin und der Zusammenhalt untereinander sind in den letzten Wochen und Monaten im Gesundheitswesen noch viel präsenter denn je.">
-<meta property="og:url" content="https://match4healthcare.de/">
-<meta property="og:site_name" content="match4healthcare">
+<meta property="og:url" content="https://match4crisis.de/">
+<meta property="og:site_name" content="match4crisis">
 <meta name="twitter:description" content="Der Glaube daran Mitmenschen in Not helfen können, die Liebe zum Fach Medizin und der Zusammenhalt untereinander sind in den letzten Wochen und Monaten im Gesundheitswesen noch viel präsenter denn je.">
-<meta name="twitter:title" content="match4healthcare - Wir vernetzen Helfende mit Hilfesuchenden.">
+<meta name="twitter:title" content="match4crisis - Wir vernetzen Helfende mit Hilfesuchenden.">
 <style>
 	body {
   margin-top: 0px;
@@ -91,7 +91,7 @@ Home
   <div class="home-title">
     <div class="container">
       <div class="row align-self-center align-items-center">
-        <div class="col-md-8 col-xl-5"> <img src="{% static 'img/match4healthcare-logo.svg' %}" width="320px" class="logo-header">
+        <div class="col-md-8 col-xl-5"> <img src="{% static 'img/match4crisis-logo.svg' %}" width="320px" class="logo-header">
           <h1 class="text-white font-weight-light">{% blocktrans %}In Zeiten der Krise vernetzen wir Helfende mit Hilfesuchenden.{% endblocktrans %}</h1>
         </div>
       </div>
@@ -104,7 +104,7 @@ Home
           <h2 class="text-white font-weight-light">{% blocktrans %}Ich bin{% endblocktrans %}<br>
             <b>{% blocktrans %}Helfende/r{% endblocktrans %}</b></h2>
           <p class="text-white home-box-description">{% blocktrans %}Ich möchte eine medizinische Einrichtung unterstützen.{% endblocktrans %}</p>
-          <a href="/accounts/signup_student">
+          <a href="/accounts/signup_helper">
           <button type="button" class="btn blue text-white btn-lg">{% blocktrans %}Jetzt Hilfe anbieten{% endblocktrans %}
           <svg class="bi bi-person-plus" style="margin-left:3px;"  width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M11 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM1.022 13h9.956a.274.274 0 00.014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C9.516 10.68 8.289 10 6 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 00.022.004zm9.974.056v-.002.002zM6 7a2 2 0 100-4 2 2 0 000 4zm3-2a3 3 0 11-6 0 3 3 0 016 0zm4.5 0a.5.5 0 01.5.5v2a.5.5 0 01-.5.5h-2a.5.5 0 010-1H13V5.5a.5.5 0 01.5-.5z" clip-rule="evenodd"/>
@@ -118,8 +118,8 @@ Home
           <h2 class="text-white font-weight-light">{% blocktrans %}Wir sind eine{% endblocktrans %}<br>
             <b>{% blocktrans %}Institution{% endblocktrans %}</b></h2>
           <p class="text-white home-box-description">{% blocktrans %}Wir haben Bedarf an Unterstützung.{% endblocktrans %}</p>
-          {% if user.is_authenticated and user.is_hospital %}
-          {% url 'list_by_plz' user.hospital.countrycode user.hospital.plz 10 as filter_student_url %} <a href="{{ filter_student_url }}"> {% else %} <a href="/accounts/signup_hospital"> {% endif %}
+          {% if user.is_authenticated and user.is_organisation %}
+          {% url 'list_by_plz' user.organisation.countrycode user.organisation.plz 10 as filter_helper_url %} <a href="{{ filter_helper_url }}"> {% else %} <a href="/accounts/signup_organisation"> {% endif %}
           <button type="button" class="btn text-white btn-lg pink">{% blocktrans %}Jetzt Hilfe suchen{% endblocktrans %}
           <svg class="bi bi-search" style="margin-left:3px;" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z" clip-rule="evenodd"/>
@@ -134,10 +134,10 @@ Home
 
 	<div class="row" style="margin-bottom: 75px;">
         <div class="col-md-12 col-lg-8" style="text-align: left; margin: 0 auto;">
-          {% static 'img/match4healthcare-logo-text.svg' as static_m4h_svg_url %}
+          {% static 'img/match4crisis-logo-text.svg' as static_m4h_svg_url %}
 			 <h2 style="text-align:center; font-size: 1.5rem; font-weight:600; margin-bottom: 15px">{% blocktrans %}Wie funktioniert <img src="{{ static_m4h_svg_url }}" width="180px" style="vertical-align: baseline">?{% endblocktrans %}</h2>
         <hr style="width:60%; margin: 0 auto; margin-bottom:25px; border-width: 2px; ">
-			<p style="text-align:center;">{% blocktrans %}match4healthcare vernetzt Helfende und Hilfesuchende aus dem Gesundheitswesen anhand von Kriterien wie Qualifikation, Verfügbarkeit und Wunschtätigkeit auf der einen und Bedarf auf der anderen Seite. Die Bereitstellung der Plattform und die Durchführung der Vernetzung von Helfenden und Hilfesuchenden werden durch den ehrenamtlichen Einsatz vieler hilfsbereiter Freiwilliger ermöglicht und erfolgt unentgeltlich.{% endblocktrans %}</p>
+			<p style="text-align:center;">{% blocktrans %}match4crisis vernetzt Helfende und Hilfesuchende aus dem Gesundheitswesen anhand von Kriterien wie Qualifikation, Verfügbarkeit und Wunschtätigkeit auf der einen und Bedarf auf der anderen Seite. Die Bereitstellung der Plattform und die Durchführung der Vernetzung von Helfenden und Hilfesuchenden werden durch den ehrenamtlichen Einsatz vieler hilfsbereiter Freiwilliger ermöglicht und erfolgt unentgeltlich.{% endblocktrans %}</p>
 			<p style="text-align:center; margin-bottom:35px;">{% blocktrans %}Um den Datenschutz zu gewährleisten, werden Namen und Kontaktdaten der Helfenden den Gesundheitseinrichtungen während des gesamten Matchingprozesses nicht preisgegeben.{% endblocktrans %}</p>
       {% get_current_language as LANGUAGE_CODE %}
       <!-- { % if request.session.lang == "en" % } does not work until we save the language choice in cookie-->

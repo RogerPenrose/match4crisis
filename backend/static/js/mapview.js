@@ -18,6 +18,7 @@ mapViewPage = {
         createTranslationCountText: (count) => '',
         createDigitalCountText: (count) => '',
         facilityIcon: new L.Icon.Default(),
+
     },
 
     mapObject: null,
@@ -46,6 +47,7 @@ mapViewPage = {
             iconSize: [40, 40],
         })
     },
+
 
     cssClassedIconCreateFunction: function cssClassedIconCreateFunction(cssClass) {
         return (function (cluster) {
@@ -102,7 +104,7 @@ mapViewPage = {
         let navHeight = $('.navbar').outerHeight()
         let searchHeight = $('.search-map').innerHeight()
         let footerHeight = $('.footer').innerHeight()
-        let isSearchBarActive = document.getElementById('hospital_navbar') !== null
+        let isSearchBarActive = document.getElementById('organisation_navbar') !== null
         let newHeight = height - navHeight - ( isSearchBarActive ? searchHeight : 0 ) - footerHeight
         $(document.getElementById(mapViewPage.options.mapViewContainerId)).height(newHeight)
         mapViewPage.mapObject.invalidateSize()
@@ -171,6 +173,7 @@ mapViewPage = {
         overlays[this.options.createTranslationCountText(countItems(translations))] = transportationMarkers
 
         L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
+
     },
 
     createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {

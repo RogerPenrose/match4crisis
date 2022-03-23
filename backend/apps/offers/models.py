@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from apps.accounts.models import User
 from django.utils.translation import gettext_lazy as _
+
+from apps.iofferhelp.models import Helper
 def validate_plz(value):
     try:
         number = int(value)
@@ -21,14 +23,15 @@ class GenericOffer(models.Model):
     ('TL', 'Translation'),
     ('TR', 'Transportation')
     ]
-    
+
+
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
     postCode = models.CharField(max_length=5, validators=[validate_plz])
     streetName = models.CharField(max_length=200)
-    streetNumber = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
-    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    
+    streetNumber = models.CharField(max_length=10)#Edge case of number+Letter forces us to use a character field here...
+    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)    
     country = models.CharField(max_length=200) # Do this as a select ? 
+    # TODO maybe this should be Helper instead of User?
     userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
     offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
