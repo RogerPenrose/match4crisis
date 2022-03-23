@@ -7,21 +7,35 @@
 {% endblock %}
 
 {% block content %}
-<form action="/offers/{{id}}/update" method="post">
+<form action="/offers/{{id}}/update" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 <table> 
     {% for field in generic.visible_fields %}
     <tr>
-        <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}</td>   
+       {% if edit_allowed %}
+            <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}
+                {% if field.name == "image" %}<img src="{{ MEDIA_URL }}{{ field.value }}">{%endif%}</td>  
+       {%else   %}
+        <td>{{field.label_tag }}</td>
+            {% if field.name != "image" %}<td id="{{field.name}}">{{field.value}}</td> 
+            {% else %}<td><img src="{{ MEDIA_URL }}{{ field.value }}">{%endif%}</td> 
+        {% endif %}
+       
     </tr>
+
     {% endfor %}
     {% for field in detail.visible_fields %}
     <tr>
-        <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field}}</td>   
+        {% if edit_allowed %}<td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field}}</td>        
+        {%else%} <td>{{field.label_tag }}</td><td id="{{field.name}}">{{field.value}}</td>
+        {% endif %}
+       
     </tr>
     {% endfor %}
 </table>
 <input type="submit" value="Update">
 </form>
+
+
 <form action="/offers/" method="get"><input type="submit" value="Back"></form>
 {% endblock %}

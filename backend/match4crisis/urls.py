@@ -18,6 +18,9 @@ from django.urls import include, path
 
 from match4crisis import views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 handler404 = views.handler404
 handler500 = views.handler500
 
@@ -39,3 +42,4 @@ urlpatterns = [
     path("legal-questions/", views.legal_questions),
     path("terms-of-use/", views.terms_of_use),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
