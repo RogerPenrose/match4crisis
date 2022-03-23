@@ -71,6 +71,7 @@ urlpatterns = [
     path("login_redirect", views.login_redirect, name="login_redirect"),
     path("delete_me_ask", views.delete_me_ask, name="delete_me_ask"),
     path("delete_me", views.delete_me, name="delete_me"),
+    path("signup_refugee", views.refugee_signup, name="refugee_signup"),
     path("signup_helper", views.helper_signup, name="helper_signup"),
     path("signup_organisation", views.organisation_signup, name="organisation_signup"),
     #path("profile_helper", views.edit_helper_profile, name="edit_helper_profile"),

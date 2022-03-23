@@ -12,6 +12,7 @@ from django.shortcuts import render
 from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
 from apps.iofferhelp.forms import HelperCreationForm
+from apps.ineedhelp.forms import RefugeeCreationForm
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
@@ -38,6 +39,26 @@ def staff_profile(request):
     return render(request, "staff_profile.html", {})
 
 
+def refugee_signup(request):
+    # if this is a POST request we need to process the form data
+    if request.method == "POST":
+        # create a form instance and populate it with data from the request:
+        logger.info("Refugee Signup request", extra={"request": request})
+        form = RefugeeCreationForm(request.POST)
+
+        # check whether it's valid:
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect("/ineedhelp/thanks")
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = RefugeeCreationForm()
+
+    return render(request, "refugee_signup.html", {"form": form})
+
+
+
 def helper_signup(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
@@ -48,12 +69,6 @@ def helper_signup(request):
         # check whether it's valid:
         if form.is_valid():
             form.save()
-            #user, helper = register_helper_in_db(request, form.cleaned_data)
-            """send_password_set_email(
-                email=form.cleaned_data["email"],
-                host=request.META["HTTP_HOST"],
-                subject_template="registration/password_reset_email_subject.txt",
-            )"""
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
