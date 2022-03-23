@@ -6,7 +6,8 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
-from apps.offers.models import GenericOffer
+
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer
 from apps.mapview.utils import get_plz_data, plzs
 
 
@@ -52,15 +53,27 @@ def prepare_offers(ttl_hash=None):
             i += 1
     return locations_and_number
 
-
-def offersJSON(request):
-    offers = GenericOffer.objects.filter(
-        active = True, isDigital = False
-    )
-    logger.warning(str(len(offers)))
+def accomodationOffersJSON(request):
+    offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="AC")
+    facilities = group_by_zip_code(offers)
+    return JsonResponse(facilities)
+    
+def transportationOffersJSON(request):
+    offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="TR")
     facilities = group_by_zip_code(offers)
     return JsonResponse(facilities)
 
+def translationOffersJSON(request):
+    offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="TL")
+    facilities = group_by_zip_code(offers)
+    return JsonResponse(facilities)
+
+def genericOffersJSON(request):
+    offers = GenericOffer.objects.filter(
+        active = True, isDigital = False
+    )
+    facilities = group_by_zip_code(offers)
+    return JsonResponse(facilities)
 
 
 def group_by_zip_code(entities):
