@@ -8,8 +8,6 @@ from django.template import loader
 from django.views.decorators.gzip import gzip_page
 
 from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer
-from apps.iamstudent.models import Student
-from apps.ineedstudent.models import Hospital
 from apps.mapview.utils import get_plz_data, plzs
 
 
