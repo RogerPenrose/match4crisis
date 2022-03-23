@@ -21,7 +21,10 @@ from django.utils.translation import ugettext_lazy as _
 # add paths here and import: from django.conf import settings and use settings.XXX_DIR
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RUN_DIR = os.path.join(BASE_DIR, "run")
+MEDIA_URL = '/media/'
 
+# Path where media is stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Application definition
 
@@ -64,6 +67,8 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                
+                'django.template.context_processors.media', # set this explicitly
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",

@@ -19,6 +19,7 @@ def updateGenericModel( form, offer_id=0, userId=None):
         g = GenericOffer(userId=user, \
                 offerType=form.get("offerType"),  \
                 created_at=datetime.now(), \
+                image=form.get("image"), \
                 offerDescription=form.get("offerDescription"), \
                 isDigital=form.get("isDigital"),  \
                 active=form.get("active"),  \
@@ -29,6 +30,8 @@ def updateGenericModel( form, offer_id=0, userId=None):
                 cost=form.get("cost"), \
                 )
         g.save()
+        logger.warning("HAVE IMAGE IN FORM: "+str(form.get("image")))
+        logger.warning("IMAGE IN CREATION:"+str(g.image))
         return g
     else:
         g = GenericOffer.objects.get(pk=offer_id)
@@ -38,12 +41,15 @@ def updateGenericModel( form, offer_id=0, userId=None):
             g.offerDescription=form.get("offerDescription")
             g.isDigital=form.get("isDigital")
             g.active=form.get("active")
+            g.image=form.get("image")
             g.country=form.get("country")
             g.postCode=form.get("postCode")
             g.streetName=form.get("streetName")
             g.streetNumber=form.get("streetNumber")
             g.cost=form.get("cost")
             g.save()
+            logger.warning("HAVE IMAGE IN FORM: "+str(form.get("image")))
+            logger.warning("IMAGE IN UPDATE:"+str(g.image))
             return g
         else:
             logger.warning("Not allowed to update")
@@ -103,7 +109,6 @@ def updateTranslationModel(g, form, offer_id=0):
         return t
 
 def by_postCode(request, postCode):
-    logger.warning(str(postCode))
     context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
                'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
@@ -118,14 +123,20 @@ def index(request):
 @login_required
 def create(request):
     if request.method == 'POST':
-        update(request, 0)
+        ret = update(request, 0)
+        return ret
     elif request.method == 'GET':
         form = GenericForm()
         return render(request, 'offers/create.html', {"genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
 
 def update(request, offer_id):
-    form = GenericForm(request.POST)
+    form = GenericForm(request.POST, request.FILES)
+    if request.FILES != None:
+        logger.warning("Have file, trying to set.. "+str(request.FILES))
+        form.image = request.FILES
+        logger.warning("Set file: "+str(form.image))
     if form.is_valid():
+        logger.warning("FORM IS VALID")
         currentForm = form.cleaned_data
         g = updateGenericModel(currentForm, offer_id, request.user.id)
         if g is not None:
@@ -134,9 +145,10 @@ def update(request, offer_id):
                 if acForm.is_valid():
                     currentForm = acForm.cleaned_data
                     a = updateAccomodationModel(g, currentForm, offer_id)
-                    
+                    logger.warning("Done...")
                     return index(request)
                 else:
+                    logger.warning("Object empty")
                     return HttpResponse(str(acForm.errors))
             elif currentForm.get("offerType") == "TR":
                 trForm = TransportationForm(request.POST)
@@ -156,27 +168,40 @@ def update(request, offer_id):
                 else:
                     return HttpResponse(str(tlForm.errors))
         else:
+            logger.warning("No USER")
             return HttpResponse("Wrong User")
     
     else:
+        logger.warning("TEST")
         return HttpResponse(str(form.errors))
 
         
 def detail(request, offer_id):
+
     generic = get_object_or_404(GenericOffer, pk=offer_id)
-    genericForm = GenericForm(model_to_dict(generic))
+    genericForm = GenericForm(instance = generic)
+    try:
+        user = User.objects.get(pk=request.user.id)
+    except User.DoesNotExist:
+        user = None
+    allowed = False
+    if user is not None:
+        if request.user.id == generic.userId or user.is_superuser:
+            logger.warning("User is super user: "+str(user.is_superuser))
+            allowed = True
+   
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id})
+        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed})
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id})
+        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed})
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id})
+        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed})
 
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."

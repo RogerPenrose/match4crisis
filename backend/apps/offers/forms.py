@@ -1,5 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
+import logging
+from .models import GenericOffer
+
 def validate_plz(value):
     try:
         number = int(value)
@@ -27,23 +30,15 @@ STAYLENGTH= "Maximum length of stay (Days)"
 INHABITANTS="Maximum number of inhabitants"
 DIGITAL="Digital Offer"
 ACTIVE="Active Offer"
-class GenericForm(forms.Form):
-    #Generic Fields
-    OFFER_CHOICES = [
-    ('AC', 'Accomodation'),\
-    ('TL', 'Translation'),\
-    ('TR', 'Transportation')\
-    ]
-    offerType = forms.ChoiceField(label=OFFERTYPE, choices = OFFER_CHOICES,widget=forms.Select(attrs={"onChange":'refresh()'}))
-    offerDescription = forms.CharField(label=OFFERDESCRIPTION, widget=forms.Textarea)
-    country = forms.CharField(label=COUNTRY )
-    postCode = forms.CharField(label=POSTCODE,max_length=5, validators=[validate_plz])
-    streetName = forms.CharField(label=STREETNAME, max_length=200, required=False)
-    streetNumber = forms.CharField(label=HOUSENUMBER, max_length=4, required=False)
-    cost = forms.DecimalField(label=PRICE, max_digits=5, decimal_places=2)
-    isDigital = forms.BooleanField(label=DIGITAL,initial=False, required=False)
-    active = forms.BooleanField(label=ACTIVE,initial=False, required=False)
-    
+
+logger = logging.getLogger("django")
+class GenericForm(forms.ModelForm):
+    class Meta:
+        model = GenericOffer
+        fields = ["offerType", "offerDescription", "country", "postCode", "image", "streetName", "streetNumber", "cost", "isDigital", "active"]
+
+   
+   
 class TransportationForm(forms.Form):
     # Transportation Fields
     CAR_CHOICES = [
