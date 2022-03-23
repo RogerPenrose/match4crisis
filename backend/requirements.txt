@@ -14,8 +14,8 @@ matplotlib==3.2.1
 mpld3==0.3
 numpy==1.18.2
 pandas==1.0.3
+Pillow==8.4.0
 pre-commit==2.2.0
 requests==2.23.0
 sendgrid==6.2.0
 whitenoise==5.0.1
-Pillow
