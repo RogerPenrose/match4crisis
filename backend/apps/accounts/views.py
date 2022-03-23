@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
+from apps.iofferhelp.forms import HelperCreationForm
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
@@ -26,7 +27,6 @@ from apps.iamorganisation.models import Organisation
 #from apps.iamorganisation.views import ApprovalOrganisationTable
 
 from .decorator import organisationRequired, helperRequired
-from .forms import CustomAuthenticationForm
 from .models import User
 
 logger = logging.getLogger(__name__)
@@ -38,44 +38,31 @@ def staff_profile(request):
     return render(request, "staff_profile.html", {})
 
 
-"""def helper_signup(request):
+def helper_signup(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
         logger.info("Helper Signup request", extra={"request": request})
-        form = HelperFormAndMail(request.POST)
+        form = HelperCreationForm(request.POST)
 
         # check whether it's valid:
         if form.is_valid():
-            user, helper = register_helper_in_db(request, mail=form.cleaned_data["email"])
-            send_password_set_email(
+            form.save()
+            #user, helper = register_helper_in_db(request, form.cleaned_data)
+            """send_password_set_email(
                 email=form.cleaned_data["email"],
                 host=request.META["HTTP_HOST"],
                 subject_template="registration/password_reset_email_subject.txt",
-            )
+            )"""
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
     else:
-        form = HelperFormAndMail()
+        form = HelperCreationForm()
 
     return render(request, "helper_signup.html", {"form": form})
 
 
-@transaction.atomic
-def register_helper_in_db(request, mail):
-    # TODO: send mail with link to pwd # noqa: T003
-    pwd = User.objects.make_random_password()
-    username = mail  # generate_random_username()
-    user = User.objects.create(username=username, isHelper=True, email=username)
-    user.set_password(pwd)
-    user.save()
-    helper = Helper.objects.create(user=user)
-    helper = HelperForm(request.POST, instance=helper)
-    helper.save()
-    # send_password(username, pwd, helper.cleaned_data['name_first'])
-    return user, helper
-"""
 
 def organisation_signup(request):
     if request.method == "POST":
@@ -112,7 +99,7 @@ def organisation_signup(request):
 def register_organisation_in_db(request, m, phoneNumber):
 
     pwd = User.objects.make_random_password()
-    user = User.objects.create(username=m, isOrganisation=True, email=m)
+    user = User.objects.create(email=m, isOrganisation=True)
     user.set_password(pwd)
     user.phoneNumber = phoneNumber
     print("Saving User")
@@ -298,7 +285,7 @@ def validate_email(request):
 
 def resend_validation_email(request, email):
     if request.user.is_anonymous:
-        if not User.objects.get(username=email).validated_email:
+        if not User.objects.get(email=email).validated_email:
             send_password_set_email(
                 email=email,
                 host=request.META["HTTP_HOST"],
@@ -328,18 +315,16 @@ class UserCountView(APIView):
 
 
 class CustomLoginView(LoginView):
-    authentication_form = CustomAuthenticationForm
-
     def post(self, request, *args, **kwargs):
-        logger.info("Login Attempt (%s)", request.POST["username"])
+        logger.info("Login Attempt (%s)", request.POST["email"])
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        logger.info("Login succesful (%s)", form.cleaned_data["username"])
+        logger.info("Login successful (%s)", form.cleaned_data["email"])
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        logger.warning("Login failure (%s)", getattr(form.data, "username", ""))
+        logger.warning("Login failure (%s)", getattr(form.data, "email", ""))
         return super().form_invalid(form)
 
 
@@ -498,7 +483,7 @@ def view_newsletter(request, uuid):
         "frozen_by": nl.frozen_by,
         "sent_by": nl.sent_by,
         "send_date": nl.send_date,
-        "approvers": ", ".join([a.user.username for a in nl.letterapprovedby_set.all()]),
+        "approvers": ", ".join([a.user.email for a in nl.letterapprovedby_set.all()]),
     }
 
     return render(request, "newsletter_edit.html", context)

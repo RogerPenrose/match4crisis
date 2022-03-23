@@ -17,7 +17,7 @@ def generate_random_helper(countrycode="DE", plz="14482", i=0, validated_email=F
         )
     )
 
-    u = User.objects.create(username=m, email=m, isHelper=True, validated_email=validated_email)
+    u = User.objects.create(email=m, isHelper=True, validated_email=validated_email)
     u.set_password(pwd)
     s = Helper.objects.create(
         user=u,
@@ -36,7 +36,7 @@ def generate_random_organisation(
 ):
     m = str(i) + "organisation@email.de"
     pwd = User.objects.make_random_password()
-    u = User.objects.create(username=m, email=m, isOrganisation=True, validated_email=validated_email)
+    u = User.objects.create(email=m, isOrganisation=True, validated_email=validated_email)
     u.set_password(pwd)
     s = Organisation.objects.create(
         user=u, countrycode=countrycode, plz=plz, ansprechpartner="XY", sonstige_infos="yeaah",
@@ -49,7 +49,7 @@ def generate_random_organisation(
 def generate_staff_user(i=0):
     m = str(i) + "staff@email.de"
     pwd = User.objects.make_random_password()
-    u = User.objects.create_superuser(username=m, email=m)
+    u = User.objects.create_superuser(email=m)
     u.set_password(pwd)
     u.save()
     return m, pwd
@@ -109,10 +109,10 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": helper_email, "password": helper_password,},
+            {"email": helper_email, "password": helper_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == helper_email
+        assert auth.get_user(self.client).email == helper_email
 
         assert Helper.objects.get(user__email=helper_email).user.validated_email is False
         response = self.client.post(
@@ -145,10 +145,10 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": helper_email, "password": helper_password,},
+            {"email": helper_email, "password": helper_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == helper_email
+        assert auth.get_user(self.client).email == helper_email
 
         # Test view list of studens without being logged in as helper. Should redirect!
         response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)
@@ -174,7 +174,7 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": helper_email, "password": helper_password,},
+            {"email": helper_email, "password": helper_password,},
             follow=True,
         )
         assert auth.get_user(self.client).is_anonymous
@@ -209,10 +209,10 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": organisation_email, "password": organisation_password,},
+            {"email": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == organisation_email
+        assert auth.get_user(self.client).email == organisation_email
 
         assert Organisation.objects.get(user__email=organisation_email).user.validated_email is False
         response = self.client.post(
@@ -247,10 +247,10 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": organisation_email, "password": organisation_password,},
+            {"email": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == organisation_email
+        assert auth.get_user(self.client).email == organisation_email
 
         # Test view list of helpers with being logged in as organisation. Should work!
         response = self.client.get("/iamorganisation/helpers/DE/14482/0", follow=True)
@@ -286,7 +286,7 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": organisation_email, "password": organisation_password,},
+            {"email": organisation_email, "password": organisation_password,},
             follow=True,
         )
         assert auth.get_user(self.client).is_anonymous
@@ -304,10 +304,10 @@ class UrlEndpointTestCase(TestCase):
         organisation_email, organisation_password, uuid = generate_random_organisation(i=9999)
         response = self.client.post(
             "/accounts/login/",
-            {"username": organisation_email, "password": organisation_password,},
+            {"email": organisation_email, "password": organisation_password,},
             follow=True,
         )
-        assert auth.get_user(self.client).username == organisation_email
+        assert auth.get_user(self.client).email == organisation_email
         assert response.status_code == 200
         assert "login_redirect" in response.redirect_chain[0][0]
 
@@ -318,7 +318,7 @@ class UrlEndpointTestCase(TestCase):
 
         response = self.client.post(
             "/accounts/login/",
-            {"username": helper_email, "password": helper_password,},
+            {"email": helper_email, "password": helper_password,},
             follow=True,
         )
         response = self.client.get("/iofferhelp/view_helper/" + str(helper_uuid), follow=True)
@@ -327,7 +327,7 @@ class UrlEndpointTestCase(TestCase):
 
         # TOOD: test which emails can be seen here!
         response = self.client.post(
-            "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
+            "/accounts/login/", {"email": staff_email, "password": staff_password,}, follow=True,
         )
         response = self.client.get("/iofferhelp/view_helper/" + str(helper_uuid))
         assert response.status_code == 200
@@ -335,7 +335,7 @@ class UrlEndpointTestCase(TestCase):
         # TOOD: test which emails can be seen here!
         response = self.client.post(
             "/accounts/login/",
-            {"username": organisation_email, "password": organisation_password,},
+            {"email": organisation_email, "password": organisation_password,},
             follow=True,
         )
         response = self.client.get("/iofferhelp/view_helper/" + str(helper_uuid))
@@ -352,9 +352,9 @@ class UrlEndpointTestCase(TestCase):
         # TODO: why does this not redirect to /accounts/password_reset/done # noqa: T003
 
         response = self.client.post(
-            "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
+            "/accounts/login/", {"email": staff_email, "password": staff_password,}, follow=True,
         )
-        assert auth.get_user(self.client).username == staff_email
+        assert auth.get_user(self.client).email == staff_email
 
         response = self.client.post(
             "/accounts/password_change",
@@ -383,9 +383,9 @@ class UrlEndpointTestCase(TestCase):
         assert auth.get_user(self.client).is_anonymous
 
         response = self.client.post(
-            "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
+            "/accounts/login/", {"email": staff_email, "password": staff_password,}, follow=True,
         )
-        assert auth.get_user(self.client).username == staff_email
+        assert auth.get_user(self.client).email == staff_email
 
         # Test view list of studens witbeing logged in as staff user
         # Current behavior: Should redirect!
@@ -398,7 +398,7 @@ class UrlEndpointTestCase(TestCase):
         assert self.client.get("/accounts/delete_me", {}).status_code == 200
 
         response = self.client.post(
-            "/accounts/login/", {"username": staff_email, "password": staff_password,}, follow=True,
+            "/accounts/login/", {"email": staff_email, "password": staff_password,}, follow=True,
         )
         assert auth.get_user(self.client).is_anonymous
 

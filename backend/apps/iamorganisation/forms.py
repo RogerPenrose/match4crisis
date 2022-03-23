@@ -10,8 +10,6 @@ from apps.accounts.models import User
 from apps.iamorganisation.models import Organisation
 from apps.accounts.forms import PhoneNumberField
 
-# TODO Auf neuen Usecase anpassen
-
 class OrganisationFormO(ModelForm):
     phoneNumber = PhoneNumberField(label=_("Telefonnummer"))
 

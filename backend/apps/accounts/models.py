@@ -5,11 +5,46 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
+from django.contrib.auth.base_user import BaseUserManager
 
 
 from .email_utils import send_mass_mail_sendgrid
 
 logger = logging.getLogger("django")
+
+# source: https://tech.serhatteker.com/post/2020-01/email-as-username-django/
+class CustomUserManager(BaseUserManager):
+    """
+    Custom user model manager where email is the unique identifiers
+    for authentication instead of usernames.
+    """
+    def create_user(self, email, password, **extra_fields):
+        """
+        Create and save a User with the given email and password.
+        """
+        if not email:
+            raise ValueError(_('The Email must be set'))
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save()
+        return user
+
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Create and save a SuperUser with the given email and password.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_active', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError(_('Superuser must have is_staff=True.'))
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError(_('Superuser must have is_superuser=True.'))
+        return self.create_user(email, password, **extra_fields)
+
+
 
 
 class Languages(models.Model):
@@ -22,8 +57,21 @@ class Languages(models.Model):
 class User(AbstractUser):
     """ A custom User Model serving as a basis for all accounts."""
 
-    # Note: At the moment there is a username field that is required upon account creation.
-    # In M4H this was always set to the E-Mail address
+    # Note: M4H simply used the email address as username, which lead to duplicate entries for every user
+    # To avoid this and for simplicity (so we don't have to pass the email address twice every time we create a user)
+    # our User model has no username and instead uses the email address as the main form of authentication
+
+    username = None
+    first_name = None
+    last_name = None
+    email = models.EmailField(_('email address'), unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    objects = CustomUserManager()
+
+    fullName = models.CharField(max_length=100)
 
     validatedEmail = models.BooleanField(default=False)
     emailValidationDate = models.DateTimeField(blank=True, null=True)
@@ -38,7 +86,6 @@ class User(AbstractUser):
     isRefugee = models.BooleanField(default=False)
     isHelper = models.BooleanField(default=False)
     isOrganisation = models.BooleanField(default=False)
-    REQUIRED_FIELDS = ["email"]
 
 class LanguageKnowledge(models.Model):
     """ The intermediary model that is used for the m:n-relation between User and Languages.\n
