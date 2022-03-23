@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-<form action="/offers/create" method="post">
+<form action="/offers/create_offer" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table id="mainTable">
         <tbody>

@@ -3,20 +3,52 @@
 mapViewPage = {
     options: {
         mapViewContainerId: '',
-        mapboxToken: ''
+        accomodationOfferURL : '',
+        transportationOfferURL : '',
+        translationOfferURL : '',
+        supporterListURL  : '',
+        mapboxToken: '',
+        isStudent: true,
+        isHospital: true,
+        createPopupTextTransportation  :  (countrycode,city, plz, count, url) => '',
+        createPopupTextTranslation :  (countrycode,city, plz, count, url) => '',
+        createPopupTextAccomodation :  (countrycode,city, plz, count, url) => '',
+        createAccomodationCountText: (count) => '',
+        createTransportationCountText: (count) => '',
+        createTranslationCountText: (count) => '',
+        createDigitalCountText: (count) => '',
+        facilityIcon: new L.Icon.Default(),
+
     },
 
     mapObject: null,
     
-    createIcon: function createIcon(count, CSSclass) {
+    createAccomodationIcon: function createAccomodationIcon(count) {
         return L.divIcon({
-            className: `leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive ${ CSSclass }`,
+            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive accomodationMarker',
             html: `<div><span>${count}</span></div>`,
             iconSize: [40, 40],
             popupAnchor: [-10,-10],
         })
     },
-    
+
+    createTransportationIcon: function createTransportationIcon(count) {
+        return L.divIcon({
+            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive transportationMarker',
+            html: `<div><span>${count}</span></div>`,
+            iconSize: [40, 40],
+        })
+    },
+
+    createTranslationIcon: function createTranslatiobnIcon(count) {
+        return L.divIcon({
+            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive translationMarker',
+            html: `<div><span>${count}</span></div>`,
+            iconSize: [40, 40],
+        })
+    },
+
+
     cssClassedIconCreateFunction: function cssClassedIconCreateFunction(cssClass) {
         return (function (cluster) {
             var childCount = cluster.getChildCount();
@@ -83,6 +115,65 @@ mapViewPage = {
     },
 
     loadMapMarkers : async function loadMapMarkers() {
+        let [ accomodations, transportations, translations ] = await Promise.all([$.get(this.options.accomodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
+        // ACCOMODATIONS:
+        var accomodationClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('accomodationMarker'),
+        });
+        let accomodationMarkers = L.featureGroup.subGroup(accomodationClusterMarkerGroup, this.createMapMarkers(accomodations,(lat,lon,countrycode,city,plz,count) => {
+            return L.marker([lon,lat],{ 
+                icon:  this.createAccomodationIcon(count),
+                itemCount: count,
+           }).bindPopup(this.options.createPopupTextAccomodation(countrycode,city, plz, count, this.options.accomodationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+        }))
+        // TRANSPORTATIONS:
+
+        var transportationClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('transportationMarker'),
+        });
+        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,countrycode,city,plz,count) => {
+            return L.marker([lon,lat],{
+                 icon:  this.createTransportationIcon(count),
+                 itemCount: count,
+            }).bindPopup(this.options.createPopupTextTransportation(countrycode,city, plz, count, this.options.transportationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+        }))
+
+        // TRANSLATIONS:
+       
+        var translationClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('translationMarker'),
+        });
+        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,countrycode,city,plz,count) => {
+            return L.marker([lon,lat],{
+                 icon:  this.createTranslationIcon(count),
+                 itemCount: count,
+            }).bindPopup(this.options.createPopupTextTranslation(countrycode,city, plz, count, this.options.translationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+        }))
+        
+        translationClusterMarkerGroup.addTo(this.mapObject)
+        translationMarkers.addTo(this.mapObject)
+        transportationClusterMarkerGroup.addTo(this.mapObject)
+        transportationMarkers.addTo(this.mapObject)
+        accomodationClusterMarkerGroup.addTo(this.mapObject)
+        accomodationMarkers.addTo(this.mapObject)
+        
+        const countItems = (o) => {
+            var count = 0
+            for (countryCode in o) {
+                for (zipCode in o[countryCode]) {
+                    count += o[countryCode][zipCode].count
+                }
+            }
+            return count
+        }
+
+        var overlays = {}
+        overlays[this.options.createAccomodationCountText(countItems(accomodations))] = accomodationMarkers
+        overlays[this.options.createTransportationCountText(countItems(transportations))] = transportationMarkers
+        overlays[this.options.createTranslationCountText(countItems(translations))] = transportationMarkers
+
+        L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
+
     },
 
     createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
