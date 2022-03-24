@@ -4,8 +4,8 @@ import logging
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer
-from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm
+from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass
+from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
@@ -41,15 +41,12 @@ def updateGenericModel( form, offer_id=0, userId=None):
             g.offerDescription=form.get("offerDescription")
             g.isDigital=form.get("isDigital")
             g.active=form.get("active")
-            g.image=form.get("image")
             g.country=form.get("country")
             g.postCode=form.get("postCode")
             g.streetName=form.get("streetName")
             g.streetNumber=form.get("streetNumber")
             g.cost=form.get("cost")
             g.save()
-            logger.warning("HAVE IMAGE IN FORM: "+str(form.get("image")))
-            logger.warning("IMAGE IN UPDATE:"+str(g.image))
             return g
         else:
             logger.warning("Not allowed to update")
@@ -129,15 +126,19 @@ def create(request):
         return render(request, 'offers/create.html', {"genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
 
 def update(request, offer_id):
-    form = GenericForm(request.POST, request.FILES)
-    if request.FILES != None:
-        logger.warning("Have file, trying to set.. "+str(request.FILES))
-        form.image = request.FILES
-        logger.warning("Set file: "+str(form.image))
+    form = GenericForm(request.POST)
+       # form.image = request.FILES
+       # logger.warning("Set file: "+str(form.image))
     if form.is_valid():
         logger.warning("FORM IS VALID")
         currentForm = form.cleaned_data
         g = updateGenericModel(currentForm, offer_id, request.user.id)
+        
+        if request.FILES != None:
+            logger.warning("Have file, trying to set.. "+str(request.FILES))
+            logger.warning("Trying: "+str(type(offer_id))+" Value: "+str(offer_id))
+            image = ImageClass(image=request.FILES['image'], offerId = g)
+            image.save()
         if g is not None:
             if currentForm.get("offerType") == "AC":
                 acForm = AccomodationForm(request.POST)
@@ -180,6 +181,16 @@ def detail(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     genericForm = GenericForm(instance = generic)
     try:
+        imageQuery = ImageClass.objects.filter(offerId=offer_id)
+    except ImageClass.DoesNotExist:
+        imageQuery = []
+    images = []
+    for image in imageQuery:
+        imageForm = ImageForm(instance = image)
+        logger.warning("Found Image: "+str(vars(imageForm)))
+        images.append(imageForm)
+    logger.warning("Have "+str(len(images))+"Images ")
+    try:
         user = User.objects.get(pk=request.user.id)
     except User.DoesNotExist:
         user = None
@@ -192,15 +203,15 @@ def detail(request, offer_id):
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed})
+        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed})
+        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed})
+        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
 
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."

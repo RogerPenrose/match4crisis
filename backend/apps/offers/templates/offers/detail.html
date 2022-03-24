@@ -10,17 +10,20 @@
 <form action="/offers/{{id}}/update" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 <table> 
+    {% for image in images%}
+    <tr><td> Image : </td><td><img src="{{ MEDIA_URL }}{{image.image.value}}"></td></tr>
+    {% endfor %}
+    <tr>{{ imageForm }}</tr>
     {% for field in generic.visible_fields %}
     <tr>
        {% if edit_allowed %}
-            <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}
-                {% if field.name == "image" %}<img src="{{ MEDIA_URL }}{{ field.value }}">{%endif%}</td>  
+            <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}</td>
+                
        {%else   %}
         <td>{{field.label_tag }}</td>
-            {% if field.name != "image" %}<td id="{{field.name}}">{{field.value}}</td> 
-            {% else %}<td><img src="{{ MEDIA_URL }}{{ field.value }}">{%endif%}</td> 
+            <td id="{{field.name}}">{{field.value}}</td> 
+            
         {% endif %}
-       
     </tr>
 
     {% endfor %}
