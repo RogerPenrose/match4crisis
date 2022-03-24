@@ -11,9 +11,12 @@
     {% csrf_token %}
 <table> 
     {% for image in images%}
-    <tr><td> Image : </td><td><img src="{{ MEDIA_URL }}{{image.image.value}}"></td></tr>
+    <tr>
+        <td> Image : </td><td><img src="{{image.url}}"></td>
+        {% if edit_allowed %}<td><input type="button" value="delete" onclick="window.location.href = '/offers/{{id}}/delete_image/{{image.id}}';"></td>{% endif %}
+    </tr>
     {% endfor %}
-    <tr>{{ imageForm }}</tr>
+    {% if edit_allowed %}<tr>{{ imageForm }}</tr>{%endif%}
     {% for field in generic.visible_fields %}
     <tr>
        {% if edit_allowed %}

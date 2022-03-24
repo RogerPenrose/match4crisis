@@ -37,10 +37,11 @@ class GenericForm(forms.ModelForm):
         model = GenericOffer
         fields = ["offerType", "offerDescription", "country", "postCode",  "streetName", "streetNumber", "cost", "isDigital", "active"]
 
-class ImageForm(forms.ModelForm):
-    class Meta:
-        model = ImageClass
-        fields = ["image"]
+class ImageForm(forms.Form):
+    
+    image = forms.ImageField()
+    image.url = forms.CharField(required=False)
+    image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 
    
       

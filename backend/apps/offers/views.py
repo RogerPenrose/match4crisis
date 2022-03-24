@@ -174,8 +174,24 @@ def update(request, offer_id):
     else:
         logger.warning("TEST")
         return HttpResponse(str(form.errors))
-
-        
+def user_is_allowed(request, target_id):
+    try:
+        user = User.objects.get(pk=request.user.id)
+    except User.DoesNotExist:
+        user = None
+    allowed = False
+    if user is not None:
+        if request.user.id == target_id or user.is_superuser:
+            logger.warning("User is super user: "+str(user.is_superuser))
+            allowed = True
+    return allowed
+def delete_image(request, offer_id, image_id):
+    generic = get_object_or_404(GenericOffer, pk=offer_id)
+    if user_is_allowed(request, generic.userId):
+        ImageClass.objects.filter(image_id=image_id).delete()
+        return detail(request, offer_id)
+    else :
+        return HttpResponse("Wrong User")
 def detail(request, offer_id):
 
     generic = get_object_or_404(GenericOffer, pk=offer_id)
@@ -186,19 +202,13 @@ def detail(request, offer_id):
         imageQuery = []
     images = []
     for image in imageQuery:
-        imageForm = ImageForm(instance = image)
-        logger.warning("Found Image: "+str(vars(imageForm)))
+        imageForm = ImageForm()
+        imageForm.image = image.image
+        imageForm.url = image.image.url
+        imageForm.id = image.image_id
+        logger.warning("Found Image: "+str(imageForm.image.url))
         images.append(imageForm)
-    logger.warning("Have "+str(len(images))+"Images ")
-    try:
-        user = User.objects.get(pk=request.user.id)
-    except User.DoesNotExist:
-        user = None
-    allowed = False
-    if user is not None:
-        if request.user.id == generic.userId or user.is_superuser:
-            logger.warning("User is super user: "+str(user.is_superuser))
-            allowed = True
+    allowed = user_is_allowed(request, generic.userId)
    
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
