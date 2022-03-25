@@ -24,13 +24,20 @@ class OrganisationFormO(ModelForm):
         ]
 
         labels = {
-            "postalCode": _("Postleitzahl"),
-            "country": _("Land"),
-            "organisationName": _("Offizieller Name Ihrer Organisation"),
-            "contactPerson": _("Name der Kontaktperson"),
-            "appearsInMap": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
+            "postalCode": '',
+            "country": '',
+            "organisationName": '',
+            "contactPerson": '',
+            "appearsInMap": '',
+            
         }
-
+        widgets = {
+            'postalCode': forms.TextInput(attrs={'placeholder': _("Postleitzahl")}),
+            'country': forms.TextInput(attrs={'placeholder': _("Land")}),
+            'organisationName': forms.TextInput(attrs={'placeholder': _("Offizieller Name Ihrer Organisation")}),
+            'contactPerson': forms.TextInput(attrs={'placeholder': _("Name der Kontaktperson")}),
+            'appearsInMap': forms.TextInput(attrs={'placeholder': _("Auf der Karte sichtbar und kontaktierbar für Helfende sein")}),
+        }
     def __init__(self, *args, **kwargs):
         super(OrganisationFormO, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -39,15 +46,15 @@ class OrganisationFormO(ModelForm):
         self.helper.form_method = "post"
         self.helper.form_action = "submit_survey"
 
+
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
             Row(Column("user.phoneNumber"), Column("email")), #TODO Phone number not showing yet
             Row(Column("postalCode"), Column("country")),
-            HTML('<hr style="margin-top: 20px; margin-bottom:30px;">'),
             HTML(
                 '<div class="registration_disclaimer">{}</div>'.format(
                     _(
-                        'Wir benötigen die Information, die Sie uns zur Verfügung stellen, um Helfende und Hilfesuchende miteinander zu vernetzen. Informationen dazu, welche personenbezogenen Daten bei dem Besuch und der Nutzung der Angebote auf unserer Seite erhoben und verarbeitet werden finden Sie in unseren Datenschutzbestimmungen (Link: <a target="_blank" href="/dataprotection/">https://match4crisis.de/dataprotection/</a>).'
+                        'Hiermit bestätige ich die <a target="_blank" href="/dataprotection/">Datenschutzbedingungen</a>.'
                     )
                 )
             ),
@@ -118,6 +125,7 @@ class OrganisationFormInfoSignUp(OrganisationFormO):
     email = forms.EmailField(
         validators=[check_unique_email], label=_("Offizielle E-Mail-Adresse der Kontaktperson"),
     )
+   
 
 
 class OrganisationFormInfoCreate(OrganisationFormO):
