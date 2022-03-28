@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer
+from .models import GenericOffer, ImageClass
 
 def validate_plz(value):
     try:
@@ -35,9 +35,16 @@ logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
         model = GenericOffer
-        fields = ["offerType", "offerDescription", "country", "postCode", "image", "streetName", "streetNumber", "cost", "isDigital", "active"]
+        fields = ["offerType", "offerDescription", "country", "postCode",  "streetName", "streetNumber", "cost", "isDigital", "active"]
+
+class ImageForm(forms.Form):
+    
+    image = forms.ImageField()
+    image.url = forms.CharField(required=False)
+    image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 
    
+      
    
 class TransportationForm(forms.Form):
     # Transportation Fields
