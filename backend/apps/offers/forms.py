@@ -34,8 +34,20 @@ ACTIVE="Active Offer"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
+        attrs = { "class": "form-control"}
+        field_classes = { "test" : "test"}
         model = GenericOffer
+
         fields = ["offerType", "offerDescription", "country", "postCode",  "streetName", "streetNumber", "cost", "isDigital", "active"]
+        widgets = {
+        'offerType':  forms.Select(attrs={'class': 'form-control'}),
+        'offerDescription': forms.Textarea(attrs={'class': 'form-control'}),
+        'country': forms.TextInput(attrs={'class': 'form-control'}),
+        'postCode': forms.TextInput(attrs={'class': 'form-control'}),
+        'streetName': forms.TextInput(attrs={'class': 'form-control'}),
+        'streetNumber': forms.TextInput(attrs={'class': 'form-control'}),
+        'cost': forms.TextInput(attrs={'class': 'form-control'})
+        }
 
 class ImageForm(forms.Form):
     
@@ -54,18 +66,18 @@ class TransportationForm(forms.Form):
     ('TRA', 'Transporter'),\
     ('BUS', 'Bus')\
     ]
-    typeOfCar = forms.ChoiceField(label=CARTYPE,  choices=CAR_CHOICES ) # Use this to track between "Bus", "Car", "Transporter" ?
-    numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT )
-    postCodeEnd = forms.CharField(label=POSTCODE_END, max_length=5, validators=[validate_plz])
-    streetNameEnd = forms.CharField(label=STREETNAME_END, max_length=200, required=False)
-    streetNumberEnd = forms.CharField(label=STREETNUMBER_END, max_length=4, required=False)
+    typeOfCar = forms.ChoiceField(label=CARTYPE,  choices=CAR_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}) ) # Use this to track between "Bus", "Car", "Transporter" ?
+    numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
+    postCodeEnd = forms.CharField(label=POSTCODE_END, max_length=5, validators=[validate_plz], widget=forms.TextInput(attrs={'class': 'form-control'}))
+    streetNameEnd = forms.CharField(label=STREETNAME_END, max_length=200, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    streetNumberEnd = forms.CharField(label=STREETNUMBER_END, max_length=4, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 class TranslationForm(forms.Form):
 # Translation Fields
-    firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50)
-    secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50)
+    firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class AccomodationForm(forms.Form):
     # Accomodation Fields
-    stayLength = forms.IntegerField(label=STAYLENGTH,localize=False, min_value=0)
-    numberOfInhabitants = forms.IntegerField(label=INHABITANTS, localize=False, min_value=1)
+    stayLength = forms.IntegerField(label=STAYLENGTH,localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    numberOfInhabitants = forms.IntegerField(label=INHABITANTS, localize=False, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
     petsAllowed = forms.BooleanField(label=PETS_ALLOWED,initial=False, required=False)
