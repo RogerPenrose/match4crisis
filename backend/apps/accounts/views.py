@@ -138,6 +138,9 @@ def profile_redirect(request):
     elif user.isOrganisation:
         return HttpResponseRedirect("profile_organisation")
 
+    elif user.isRefugee:
+        return HttpResponseRedirect("profile_refugee")
+
     elif user.is_staff:
         return HttpResponseRedirect("profile_staff")
 
