@@ -115,7 +115,6 @@ def mergeImages(offers):
     resultOffers = []
     for entry in  offers: 
         images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
-        logger.warning("Found: "+str(len(images)))
         newEntry =  {
             "image" : None,
             "offer" : entry
