@@ -13,6 +13,7 @@ from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
 from apps.iofferhelp.forms import HelperCreationForm
 from apps.ineedhelp.forms import RefugeeCreationForm
+from apps.accounts.forms import CustomAuthenticationForm
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
@@ -330,15 +331,20 @@ class UserCountView(APIView):
 
 
 class CustomLoginView(LoginView):
+    authentication_form = CustomAuthenticationForm
+
     def post(self, request, *args, **kwargs):
+        print("Login Attempt", request.POST["email"])
         logger.info("Login Attempt (%s)", request.POST["email"])
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
+        print("Login successful", form.cleaned_data["email"])
         logger.info("Login successful (%s)", form.cleaned_data["email"])
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        print("Login failure", getattr(form.data, "email", ""))
         logger.warning("Login failure (%s)", getattr(form.data, "email", ""))
         return super().form_invalid(form)
 

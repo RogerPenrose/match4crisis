@@ -109,6 +109,8 @@ USE_I18N = True
 
 AUTH_USER_MODEL = "accounts.User"
 
+AUTHENTICATION_BACKENDS = ['apps.accounts.backends.EmailBackend']
+
 USE_L10N = True
 
 USE_TZ = True
