@@ -230,15 +230,15 @@ def detail(request, offer_id):
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return render(request, 'offers/detail.html', {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return render(request, 'offers/detail.html', {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return render(request, 'offers/detail.html', {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
 
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."

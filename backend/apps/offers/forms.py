@@ -35,7 +35,6 @@ logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
         attrs = { "class": "form-control"}
-        field_classes = { "test" : "test"}
         model = GenericOffer
 
         fields = ["offerType", "offerDescription", "country", "postCode",  "streetName", "streetNumber", "cost", "isDigital", "active"]
