@@ -111,10 +111,28 @@ def by_postCode(request, postCode):
                'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
     
     return render(request, 'offers/index.html', context)
+def mergeImages(offers):
+    resultOffers = []
+    for entry in  offers: 
+        images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
+        logger.warning("Found: "+str(len(images)))
+        newEntry =  {
+            "image" : None,
+            "offer" : entry
+        }
+        if len(images) > 0:
+            newEntry["image"] = images[0].image
+        resultOffers.append(newEntry)
+    return resultOffers
 def index(request):
-    context = {'AccomodationOffers': AccomodationOffer.objects.all(), \
-               'TransportationOffers': TransportationOffer.objects.all(),\
-               'TranslationOffers': TranslationOffer.objects.all()}
+    accomodationOffers = mergeImages(AccomodationOffer.objects.all())
+    transportationOffers = mergeImages(TransportationOffer.objects.all())
+    translationOffers = mergeImages(TranslationOffer.objects.all())
+
+
+    context = {'AccomodationOffers': accomodationOffers, \
+               'TransportationOffers': transportationOffers,\
+               'TranslationOffers': translationOffers}
     
     return render(request, 'offers/index.html', context)
 @login_required
