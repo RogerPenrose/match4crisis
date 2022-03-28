@@ -53,7 +53,7 @@ class GenericForm(forms.ModelForm):
 
 class ImageForm(forms.Form):
     
-    image = forms.ImageField()
+    image = forms.ImageField( widget=forms.FileInput(attrs={'class': 'form-control'}))
     image.url = forms.CharField(required=False)
     image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 
