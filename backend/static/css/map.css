@@ -214,20 +214,20 @@ div.leaflet-control-layers-overlays {
 .transportationMarker.marker-cluster-small,
 .transportationMarker.marker-cluster-medium,
 .transportationMarker.marker-cluster-large {
-  background-image: url(/static/img/map/translation.svg);
+  background-image: url(/static/img/map/transport.svg);
 }
 
 .transportationMarker.marker-cluster-single div,
 .transportationMarker.marker-cluster-small div,
 .transportationMarker.marker-cluster-medium div,
 .transportationMarker.marker-cluster-large div {
-  background-image: url(/static/img/map/translation.svg);
+  background-image: url(/static/img/map/transport.svg);
 }
 
 .accomodationMarker.marker-cluster-small,
 .accomodationMarker.marker-cluster-medium,
 .accomodationMarker.marker-cluster-large {
-  background-image:url(/static/img/map/translation.svg);
+  background-image:url(/static/img/map/housing.svg);
 }
 
 .accomodationMarker.marker-cluster-single div,
@@ -240,14 +240,14 @@ div.leaflet-control-layers-overlays {
 .translationMarker.marker-cluster-small,
 .translationMarker.marker-cluster-medium,
 .translationMarker.marker-cluster-large {
-  background-image: url(/static/img/map/transport.svg);
+  background-image: url(/static/img/map/translation.svg);
 }
 
 .translationMarker.marker-cluster-single div,
 .translationMarker.marker-cluster-small div,
 .translationMarker.marker-cluster-medium div,
 .translationMarker.marker-cluster-large div {
-  background-image: url(/static/img/map/transport.svg);
+  background-image: url(/static/img/map/translation.svg);
 }
 
 .marker-cluster-single div,
@@ -275,4 +275,6 @@ div.leaflet-control-layers-overlays {
 
 div.leaflet-control-layers-overlays label {
   margin: 0;
+  float: left; 
+  margin-right: 20px;
 }
