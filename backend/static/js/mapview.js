@@ -40,7 +40,7 @@ mapViewPage = {
         })
     },
 
-    createTranslationIcon: function createTranslatiobnIcon(count) {
+    createTranslationIcon: function createTranslationIcon(count) {
         return L.divIcon({
             className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive translationMarker',
             html: `<div><span>${count}</span></div>`,
@@ -80,7 +80,7 @@ mapViewPage = {
     
         let tileLayerURL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}@2x?access_token=' + this.options.mapboxToken
         let tileLayerOptions = {
-            attribution: ' <a href="https://www.mapbox.com/about/maps/">© Mapbox</a> | <a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a> | Icons by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">flaticon.com</a>',
+            attribution: ' <a href="https://www.mapbox.com/about/maps/">© Mapbox</a> | <a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>',
             maxZoom: 18,
             id: 'mapbox/streets-v11',
             tileSize: 512,

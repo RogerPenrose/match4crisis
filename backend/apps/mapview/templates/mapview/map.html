@@ -8,8 +8,7 @@
 {% endblock %}
 
 {% block header %}
-<!--<div>Icons made by <a href="https://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div><div>Icons made by <a href="https://www.flaticon.com/authors/bombasticon-studio" title="Bombasticon Studio">Bombasticon Studio</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
--->
+
 <link rel="stylesheet" href="{% static 'js/leaflet-1.6.0/leaflet.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.Default.css' %}" />
@@ -20,6 +19,16 @@
 <script src="{% static 'js/leaflet.markercluster-1.4.1/leaflet.markercluster.js' %}" ></script>
 <script src="{% static 'js/Leaflet.FeatureGroup.SubGroup-1.0.2/leaflet.featuregroup.subgroup.js' %}" ></script>
 
+<style>.footer { margin-top:0px !important; }
+p.listview { margin-top: 25px;
+    position: absolute;
+    bottom: 20px;
+    z-index: 999;
+    text-align: center;
+    width: 100%;}
+
+    div.content { position: relative; }
+</style>
 <script type="text/javascript">
 
   pageOptions = {
@@ -31,9 +40,9 @@
     createPopupTextTranslation  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Logistikangebote. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
     createPopupTextTransportation  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Übersetzungen. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
     createPopupTextAccomodation :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Unterbringungen. \n<a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
-    createAccomodationCountText: (count) => `<img src="{% static 'img/map/accomodation-marker.svg' %}"> ${count} {% trans "Unterbringungs-Angebote" %}`,
-    createTransportationCountText: (count) => `<img src="{% static 'img/map/transportation-marker.svg' %}"> ${count} {% trans "Logistik-Angebote" %}`,
-    createTranslationCountText: (count) => `<img src="{% static 'img/map/translation-marker.svg' %}"> ${count} {% trans "Übersetzungs-Angebote" %}`,
+    createAccomodationCountText: (count) => `<img src="{% static 'img/map/housing.svg' %}"> ${count} {% trans "Unterbringungs-Angebote" %}`,
+    createTransportationCountText: (count) => `<img src="{% static 'img/map/transport.svg' %}"> ${count} {% trans "Logistik-Angebote" %}`,
+    createTranslationCountText: (count) => `<img src="{% static 'img/map/translation.svg' %}"> ${count} {% trans "Übersetzungs-Angebote" %}`,
     createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}"> ${count} {% trans "Digitale Angebote" %}`,
 
     facilityIcon: L.icon({
@@ -62,7 +71,12 @@
   </div>
 </nav>
 {% endif %}
-
+<p class="listview">
+  <a href="#" class="btn btn-yellow" role="button" aria-pressed="true"
+  > <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16" style="margin-right: 10px; margin-top:-2px;">
+    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+  </svg> Show 43 results as list
+</a></p>
 
 <div id="mapContainer" style="z-index:1;">
 	 <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>

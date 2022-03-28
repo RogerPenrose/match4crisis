@@ -130,7 +130,7 @@ body {
   z-index: 99999;
   padding: 10px 15px;
   font-weight: 700;
-  border-radius: 5px;
+  border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.9);
 }
 
@@ -196,43 +196,58 @@ div.leaflet-control-layers-overlays {
   vertical-align: middle;
 }
 
+.marker-cluster-single div,
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div,
+.marker-cluster-single,
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-size: contain;
+  background-position: center center;
+  background-color: transparent;
+  background-repeat: no-repeat;
+}
+
+.marker-cluster, .marker-cluster div { border-radius: 0px !important; }
 .transportationMarker.marker-cluster-small,
 .transportationMarker.marker-cluster-medium,
 .transportationMarker.marker-cluster-large {
-  background-color: rgba(140, 255, 102, 0.4);
+  background-image: url(/static/img/map/translation.svg);
 }
 
 .transportationMarker.marker-cluster-single div,
 .transportationMarker.marker-cluster-small div,
 .transportationMarker.marker-cluster-medium div,
 .transportationMarker.marker-cluster-large div {
-  background-color: rgb(140, 255, 102);
+  background-image: url(/static/img/map/translation.svg);
 }
 
 .accomodationMarker.marker-cluster-small,
 .accomodationMarker.marker-cluster-medium,
 .accomodationMarker.marker-cluster-large {
-  background-color: rgba(0, 9, 67, 0.4);
+  background-image:url(/static/img/map/translation.svg);
 }
 
 .accomodationMarker.marker-cluster-single div,
 .accomodationMarker.marker-cluster-small div,
 .accomodationMarker.marker-cluster-medium div,
 .accomodationMarker.marker-cluster-large div {
-  background-color: rgba(0, 9, 67, 1);
+  background-image:url(/static/img/map/housing.svg);
 }
 
 .translationMarker.marker-cluster-small,
 .translationMarker.marker-cluster-medium,
 .translationMarker.marker-cluster-large {
-  background-color: rgba(255, 51, 153, 0.4);
+  background-image: url(/static/img/map/transport.svg);
 }
 
 .translationMarker.marker-cluster-single div,
 .translationMarker.marker-cluster-small div,
 .translationMarker.marker-cluster-medium div,
 .translationMarker.marker-cluster-large div {
-  background-color: rgb(255, 51, 153);
+  background-image: url(/static/img/map/transport.svg);
 }
 
 .marker-cluster-single div,

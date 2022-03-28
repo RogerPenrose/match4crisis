@@ -206,6 +206,22 @@ h2.title {
   background-color: #1eb159;
 }
 
+.btn-yellow {
+  background: linear-gradient(98deg, #F5CA1B 5.87%, #F5980F 100%);
+  font-size: 1rem;
+  color: #fff;
+  padding: .7rem 1.5rem;
+  border-radius: 15px;
+  font-weight: bold;
+  border: 0px !important;
+}
+
+.btn-yellow:hover {
+  color: #fff;
+  background: linear-gradient(98deg, #F5CA1B 5.87%, #F5980F 100%);
+}
+
+
 .form-row>.col, .form-row>[class*=col-] { margin-bottom: 10px;}
 
 .registration_disclaimer { margin: 25px 0px;}
