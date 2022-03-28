@@ -9,6 +9,9 @@
 p.map { margin: 20px 0;}
 .map iframe { border-radius: 25px;}
 
+@media only screen and (max-width: 767px) {
+.contact { text-align: center; }
+}
 </style>
 
 {% endblock %}
@@ -36,17 +39,17 @@ p.map { margin: 20px 0;}
 
        
 
-    <div class="row align-self-center align-items-center">
- <div class="col-12 text-center" style="text-align:center;" >
-    <h2 class="title">Type of Offer</h2></div>
-    <div class="col-sm-12 col-md-6 col-lg-4 title-image" style="text-decoration: underline; margin-top:15px;" >
+    <div class="row align-self-center">
+
+    <div class="col-sm-12 col-lg-4 title-image" style="text-decoration: underline; margin-top:15px;" >
         <p>  {% if entry.image.url|length > 0 %}
            <img src="{{ entry.image.url }}">
             {% else %}
             <img src="{% static 'img/offers/no-acc-img.jpg' %}">
             {%endif%}</p></div>
 
-            <div class="col-sm-12 col-md-6 col-lg-8 description">
+            <div class="col-sm-12 col-lg-8 description">
+              <h2 class="title">Type of Offer</h2>
                 <p>Description Text comes here. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Egestas nisl, sed elementum viverra. Tortor enim arcu ut pellentesque. Non, </p>
                 <hr>
                 <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
@@ -70,7 +73,7 @@ p.map { margin: 20px 0;}
               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d310846.4201238783!2d13.144555050047117!3d52.50651327389272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin%2C%20Germany!5e0!3m2!1sen!2sat!4v1648469369362!5m2!1sen!2sat" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </p>
 <hr>
-              <p style="text-align:center; margin-top: 25px;">
+              <p style="margin-top: 25px;" class="contact">
               <a href="#" class="btn btn-green" role="button" aria-pressed="true"
               >Register and get in contact
               <svg
