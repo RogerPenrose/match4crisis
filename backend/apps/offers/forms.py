@@ -46,7 +46,9 @@ class GenericForm(forms.ModelForm):
         'postCode': forms.TextInput(attrs={'class': 'form-control'}),
         'streetName': forms.TextInput(attrs={'class': 'form-control'}),
         'streetNumber': forms.TextInput(attrs={'class': 'form-control'}),
-        'cost': forms.TextInput(attrs={'class': 'form-control'})
+        'cost': forms.TextInput(attrs={'class': 'form-control'}),
+        'isDigital': forms.CheckboxInput(attrs={'class': 'form-control'}),
+        'active': forms.CheckboxInput(attrs={'class': 'form-control'})
         }
 
 class ImageForm(forms.Form):
@@ -80,4 +82,4 @@ class AccomodationForm(forms.Form):
     # Accomodation Fields
     stayLength = forms.IntegerField(label=STAYLENGTH,localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
     numberOfInhabitants = forms.IntegerField(label=INHABITANTS, localize=False, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    petsAllowed = forms.BooleanField(label=PETS_ALLOWED,initial=False, required=False)
+    petsAllowed = forms.BooleanField(label=PETS_ALLOWED,initial=False, required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control'}) )
