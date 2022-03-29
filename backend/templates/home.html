@@ -118,7 +118,7 @@ Home
           <h2 class="text-white font-weight-light">{% blocktrans %}Wir sind eine{% endblocktrans %}<br>
             <b>{% blocktrans %}Institution{% endblocktrans %}</b></h2>
           <p class="text-white home-box-description">{% blocktrans %}Wir haben Bedarf an Unterstützung.{% endblocktrans %}</p>
-          {% if user.is_authenticated and user.is_organisation %}
+          {% if user.is_authenticated and user.isOrganisation %}
           {% url 'list_by_plz' user.organisation.countrycode user.organisation.plz 10 as filter_helper_url %} <a href="{{ filter_helper_url }}"> {% else %} <a href="/accounts/signup_organisation"> {% endif %}
           <button type="button" class="btn text-white btn-lg pink">{% blocktrans %}Jetzt Hilfe suchen{% endblocktrans %}
           <svg class="bi bi-search" style="margin-left:3px;" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

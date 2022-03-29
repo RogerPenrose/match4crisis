@@ -8,10 +8,11 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
 from apps.iamorganisation.models import Organisation
-
-# TODO Auf neuen Usecase anpassen
+from apps.accounts.forms import PhoneNumberField
 
 class OrganisationFormO(ModelForm):
+    phoneNumber = PhoneNumberField(label=_("Telefonnummer"))
+
     class Meta:
         model = Organisation
         exclude = [
@@ -29,6 +30,8 @@ class OrganisationFormO(ModelForm):
             "organisationName": _("Offizieller Name Ihrer Organisation"),
             "contactPerson": _("Name der Kontaktperson"),
             "appearsInMap": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
+            "clubNumber": _("Vereinsnummer"),
+            "streetNameAndNumber": _("Straße und Hausnummer"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -41,8 +44,9 @@ class OrganisationFormO(ModelForm):
 
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
-            Row(Column("user.phoneNumber"), Column("email")), #TODO Phone number not showing yet
-            Row(Column("postalCode"), Column("country")),
+            Row(Column("phoneNumber"), Column("email")),
+            Row(Column("clubNumber"), Column("country")),
+            Row(Column("postalCode"), Column("streetNameAndNumber")),
             HTML('<hr style="margin-top: 20px; margin-bottom:30px;">'),
             HTML(
                 '<div class="registration_disclaimer">{}</div>'.format(
