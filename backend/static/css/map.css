@@ -250,6 +250,8 @@ div.leaflet-control-layers-overlays {
   background-image: url(/static/img/map/translation.svg);
 }
 
+.genericMarker { background-color: #F5980F; border-radius: 30px !important;}
+
 .marker-cluster-single div,
 .marker-cluster-small div,
 .marker-cluster-medium div,
