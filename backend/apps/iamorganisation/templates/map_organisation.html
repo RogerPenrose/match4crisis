@@ -66,7 +66,7 @@ $(window).on("resize", function () {
 		var searchHeight = $('.search-map').innerHeight();
 		var footerHeight = $('.footer').innerHeight();
 
-        var newHeight = height - navHeight - {% if user.is_authenticated and user.is_organisation %} searchHeight -{% endif %} footerHeight;
+        var newHeight = height - navHeight - {% if user.is_authenticated and user.isOrganisation %} searchHeight -{% endif %} footerHeight;
 
 		$("#mapid").height(newHeight);mymap.invalidateSize();
 
@@ -96,7 +96,7 @@ $(window).on("resize", function () {
 
 
 {% block content %}
-  {% if user.is_authenticated and user.is_organisation %}
+  {% if user.is_authenticated and user.isOrganisation %}
 
 <nav class="navbar navbar-expand-sm navbar-dark bg-light search-map">
   <div class="container">

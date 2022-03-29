@@ -8,10 +8,11 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
 from apps.iamorganisation.models import Organisation
-
-# TODO Auf neuen Usecase anpassen
+from apps.accounts.forms import PhoneNumberField
 
 class OrganisationFormO(ModelForm):
+    phoneNumber = PhoneNumberField(label=_("Telefonnummer"))
+
     class Meta:
         model = Organisation
         exclude = [
@@ -29,15 +30,20 @@ class OrganisationFormO(ModelForm):
             "organisationName": '',
             "contactPerson": '',
             "appearsInMap": '',
-            
+            "clubNumber": '',
+            "streetNameAndNumber": '',            
         }
+        
         widgets = {
             'postalCode': forms.TextInput(attrs={'placeholder': _("Postleitzahl")}),
             'country': forms.TextInput(attrs={'placeholder': _("Land")}),
             'organisationName': forms.TextInput(attrs={'placeholder': _("Offizieller Name Ihrer Organisation")}),
             'contactPerson': forms.TextInput(attrs={'placeholder': _("Name der Kontaktperson")}),
             'appearsInMap': forms.TextInput(attrs={'placeholder': _("Auf der Karte sichtbar und kontaktierbar für Helfende sein")}),
+            'clubNumber': forms.TextInput(attrs={'placeholder': _("Vereinsnummer")}),
+            'streetNameAndNumber": forms.TextInput(attrs={'placeholder': _("Straße und Hausnummer")}),
         }
+        
     def __init__(self, *args, **kwargs):
         super(OrganisationFormO, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -49,8 +55,9 @@ class OrganisationFormO(ModelForm):
 
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
-            Row(Column("user.phoneNumber"), Column("email")), #TODO Phone number not showing yet
-            Row(Column("postalCode"), Column("country")),
+            Row(Column("phoneNumber"), Column("email")),
+            Row(Column("clubNumber"), Column("country")),
+            Row(Column("postalCode"), Column("streetNameAndNumber")),
             HTML(
                 '<div class="registration_disclaimer">{}</div>'.format(
                     _(

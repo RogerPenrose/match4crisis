@@ -95,7 +95,6 @@ class Command(BaseCommand):
             m = new_mail(i + n_users)
 
             u = User.objects.create(
-                username=m,
                 email=m,
                 isHelper=True,
                 validatedEmail=True,
@@ -114,7 +113,6 @@ class Command(BaseCommand):
         for i in range(n):
             m = new_mail(i + n_users)
             u = User.objects.create(
-                username=m,
                 email=m,
                 isOrganisation=True,
                 validatedEmail=True,
@@ -137,7 +135,6 @@ class Command(BaseCommand):
         for i in range(n):
             m = new_mail(i + n_users)
             u = User.objects.create(
-                username=m,
                 email=m,
                 isRefugee=True,
                 validatedEmail=True,

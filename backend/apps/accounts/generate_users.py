@@ -30,7 +30,7 @@ def populate_db(request):
         for i in range(numRefugees):
             m = mail(i)
             pwd = User.objects.make_random_password()
-            u = User.objects.create(username=m, email=m, password=pwd)
+            u = User.objects.create(email=m, password=pwd)
             _ = Refugee.objects.create(
                 user=u
             )
@@ -39,7 +39,7 @@ def populate_db(request):
             m = mail(i + numRefugees)
 
             pwd = User.objects.make_random_password()
-            u = User.objects.create(username=m, email=m, password=pwd)
+            u = User.objects.create(email=m, password=pwd)
             _ = Helper.objects.create(
                 user=u,
             )
@@ -47,7 +47,7 @@ def populate_db(request):
         for i in range(numOrganisations):
             m = mail(i + numRefugees + numHelpers)
             pwd = User.objects.make_random_password()
-            u = User.objects.create(username=m, email=m, password=pwd)
+            u = User.objects.create(email=m, password=pwd)
             _ = Organisation.objects.create(
                 user=u, organisationName=f"Organisation {i}", contactPerson="XY"
             )
