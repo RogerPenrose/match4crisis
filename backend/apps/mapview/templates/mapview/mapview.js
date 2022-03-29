@@ -6,23 +6,34 @@ mapViewPage = {
         accomodationOfferURL : '',
         transportationOfferURL : '',
         translationOfferURL : '',
+        genericOfferURL : '',
         supporterListURL  : '',
         mapboxToken: '',
         isStudent: true,
         isHospital: true,
         createPopupTextTransportation  :  (countrycode,city, plz, count, url) => '',
+        createPopupTextGeneric  :  (countrycode,city, plz, count, url) => '',
         createPopupTextTranslation :  (countrycode,city, plz, count, url) => '',
         createPopupTextAccomodation :  (countrycode,city, plz, count, url) => '',
         createAccomodationCountText: (count) => '',
         createTransportationCountText: (count) => '',
         createTranslationCountText: (count) => '',
         createDigitalCountText: (count) => '',
+        createGenericCountText: (count) => '',
         facilityIcon: new L.Icon.Default(),
 
     },
 
     mapObject: null,
-    
+       
+    createGenericIcon: function createGenericIcon(count) {
+        return L.divIcon({
+            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive genericMarker',
+            html: `<div><span>${count}</span></div>`,
+            iconSize: [40, 40],
+            popupAnchor: [-10,-10],
+        })
+    },
     createAccomodationIcon: function createAccomodationIcon(count) {
         return L.divIcon({
             className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive accomodationMarker',
@@ -113,10 +124,10 @@ mapViewPage = {
     registerEventHandlers : function registerEventHandlers(document, window) {
         $(window).on("resize", (event) => { this.onResizeWindow() }).trigger("resize")
     },
-
+// @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
-        let [ accomodations, transportations, translations ] = await Promise.all([$.get(this.options.accomodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
-        // ACCOMODATIONS:
+        let [ accomodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.accomodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
+          // ACCOMODATIONS:
         var accomodationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('accomodationMarker'),
         });
@@ -150,13 +161,20 @@ mapViewPage = {
             }).bindPopup(this.options.createPopupTextTranslation(countrycode,city, plz, count, this.options.translationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
         
-        translationClusterMarkerGroup.addTo(this.mapObject)
-        translationMarkers.addTo(this.mapObject)
-        transportationClusterMarkerGroup.addTo(this.mapObject)
-        transportationMarkers.addTo(this.mapObject)
-        accomodationClusterMarkerGroup.addTo(this.mapObject)
-        accomodationMarkers.addTo(this.mapObject)
+        // GENERIC:
+        var genericClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('genericMarker'),
+        });
+        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,countrycode,city,plz,count) => {
+            return L.marker([lon,lat],{ 
+                icon:  this.createGenericIcon(count),
+                itemCount: count,
+           }).bindPopup(this.options.createPopupTextGeneric(countrycode,city, plz, count, this.options.genericOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+        }))
+
         
+        var overlays = {}
+
         const countItems = (o) => {
             var count = 0
             for (countryCode in o) {
@@ -167,10 +185,28 @@ mapViewPage = {
             return count
         }
 
-        var overlays = {}
-        overlays[this.options.createAccomodationCountText(countItems(accomodations))] = accomodationMarkers
+        {%if translation  %}
+        translationClusterMarkerGroup.addTo(this.mapObject)
+        translationMarkers.addTo(this.mapObject)
+        overlays[this.options.createTranslationCountText(countItems(translations))] = translationMarkers
+        {% endif %}
+        {%if transportation  %}
+        transportationClusterMarkerGroup.addTo(this.mapObject)
+        transportationMarkers.addTo(this.mapObject)
         overlays[this.options.createTransportationCountText(countItems(transportations))] = transportationMarkers
-        overlays[this.options.createTranslationCountText(countItems(translations))] = transportationMarkers
+        {% endif %}
+        {%if accomodation  %}
+        accomodationClusterMarkerGroup.addTo(this.mapObject)
+        accomodationMarkers.addTo(this.mapObject)
+        overlays[this.options.createAccomodationCountText(countItems(accomodations))] = accomodationMarkers
+        {% endif %}
+        {%if generic  %}
+        genericClusterMarkerGroup.addTo(this.mapObject)
+        genericMarkers.addTo(this.mapObject)
+        overlays[this.options.createGenericCountText(countItems(generic))] = genericMarkers
+        {% endif %}
+        
+
 
         L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
 

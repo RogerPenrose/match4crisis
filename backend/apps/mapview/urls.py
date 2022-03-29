@@ -7,6 +7,8 @@ urlpatterns = [
     path("genericOffers", views.genericOffersJSON, name="genericOffersJSON"),
     path("accomodationOffers", views.accomodationOffersJSON, name="accomodationOffersJSON"),
     path("translationOffers", views.translationOffersJSON, name="translationOffersJSON"),
-    path("transportationOffers", views.transportationOffersJSON, name="transportationOffersJSON")
+    path("transportationOffers", views.transportationOffersJSON, name="transportationOffersJSON"),
+    path("mapview/", views.mapviewjs, name="mapview/")
 
 ]
+ 
