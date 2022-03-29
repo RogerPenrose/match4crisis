@@ -15,6 +15,7 @@ def validate_plz(value):
             _('%(value)s is not a valid postcode'),
             params={'value': value},
         )
+
 class GenericOffer(models.Model):
 
     OFFER_CHOICES = [
@@ -37,6 +38,8 @@ class GenericOffer(models.Model):
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published')
+    paused = models.BooleanField(default=False)
+    incomplete = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()
         super().save(*args, **kwargs)
@@ -79,3 +82,22 @@ class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     firstLanguage = models.CharField(max_length=50)
     secondLanguage = models.CharField(max_length=50)
+
+# TODO when adding new offer types this needs to be updated
+OFFER_MODELS = {
+    'AC' : AccomodationOffer,
+    'TL' : TranslationOffer,
+    'TR' : TransportationOffer,
+}
+
+def getSpecificOffers(genericOffers: list):
+    """
+    Takes a list of generic offers and returns a list of the matching specific offers.
+    """    
+    specificOffers = []
+
+    for offer in genericOffers:       
+        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer.pk)
+        specificOffers.append(specOff)
+
+    return specificOffers

@@ -572,26 +572,30 @@ big_city_plzs = [
 
 
 
-def populate_db(request):
+def populate_db(request, userId=1):
     if settings.DEBUG:
         n_offers = 200
         plzs = np.random.choice(big_city_plzs, size=n_offers)
         counter = 0
         for i in range(n_offers):
-            user = User.objects.get(pk=1) 
-            #First create a generic Offer for each case (since we have to set offertype... crude but who cares for debug code...)
+            user = User.objects.get(pk=userId) 
+            
+            g = GenericOffer(
+                userId=user, \
+                created_at=datetime.now(), \
+                offerDescription="Automatically generated", \
+                isDigital=False,  \
+                active=True,  \
+                country="DE", \
+                postCode=plzs[i], \
+                cost=0.00, \
+                paused= (np.random.random() > 0.7), \
+                incomplete= (np.random.random() > 0.7),
+            )
+            
             if counter == 0: # Accomodation:
 
-                g = GenericOffer(userId=user, \
-                        offerType="AC",  \
-                        created_at=datetime.now(), \
-                        offerDescription="Automatically generated", \
-                        isDigital=False,  \
-                        active=True,  \
-                        country="DE", \
-                        postCode=plzs[i], \
-                        cost=0.00
-                        )
+                g.offerType = "AC"
                 g.save()
                 a = AccomodationOffer(genericOffer=g, \
                     numberOfInhabitants=np.random.randint(1, 15), \
@@ -600,16 +604,7 @@ def populate_db(request):
                 a.save()
             if counter == 1: #Translation
 
-                g = GenericOffer(userId=user, \
-                        offerType="TL",  \
-                        created_at=datetime.now(), \
-                        offerDescription="Automatically generated", \
-                        isDigital=False,  \
-                        active=True,  \
-                        country="DE", \
-                        postCode=plzs[i], \
-                        cost=0.00
-                        )
+                g.offerType = "TL"
                 g.save()
 
                 t = TranslationOffer(genericOffer=g, \
@@ -618,16 +613,7 @@ def populate_db(request):
                 t.save()
             if counter == 3: #
 
-                g = GenericOffer(userId=user, \
-                        offerType="TR",  \
-                        created_at=datetime.now(), \
-                        offerDescription="Automatically generated", \
-                        isDigital=False,  \
-                        active=True,  \
-                        country="DE", \
-                        postCode=plzs[i], \
-                        cost=0.00
-                        )
+                g.offerType = "TR"
                 g.save()
 
                 t = TransportationOffer(genericOffer=g, \
