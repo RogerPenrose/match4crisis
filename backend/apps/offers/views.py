@@ -128,7 +128,12 @@ def scrapePostCodeJson(city):
                     plzs = mappings.get(entry)
                     return plzs
             
-
+def getCityFromPostCode(postCode):
+    current_location = dirname(abspath(__file__))
+    with open(join(current_location,"files/plzs_to_cities.json"), "r") as read_file:
+        mappings = json.load(read_file)
+        return mappings.get(postCode)
+    
 def by_city(request, city):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
@@ -269,10 +274,11 @@ def getOfferDetails(request, offer_id):
         imageForm.id = image.image_id
         images.append(imageForm)
     allowed = user_is_allowed(request, generic.userId)
+    city = getCityFromPostCode(generic.postCode)
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
-        return {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "city": city, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
