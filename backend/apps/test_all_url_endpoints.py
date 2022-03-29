@@ -136,7 +136,7 @@ class UrlEndpointTestCase(TestCase):
 
         assert self.client.get("/mapview/", {}).status_code == 200
 
-        response = self.client.get("/accounts/profile_redirect", follow=True)
+        response = self.client.get("/accounts/login_redurect", follow=True)
         assert "profile_helper" in response.redirect_chain[0][0]
         assert self.client.get("/accounts/profile_helper", {}).status_code == 200
 
@@ -237,7 +237,7 @@ class UrlEndpointTestCase(TestCase):
         assert self.client.get("/mapview/", {}).status_code == 200
         # TODO: Test Detailansicht for a organisation!  # noqa: T003
 
-        response = self.client.get("/accounts/profile_redirect", follow=True)
+        response = self.client.get("/accounts/login_redurect", follow=True)
         assert response.status_code == 200
         assert "profile_organisation" in response.redirect_chain[0][0]
         assert self.client.get("/accounts/profile_organisation", {}).status_code == 200
@@ -372,7 +372,7 @@ class UrlEndpointTestCase(TestCase):
         assert self.client.get("/mapview/", {}).status_code == 200
         # TODO: Test Detailansicht for a organisation! # noqa: T003
 
-        response = self.client.get("/accounts/profile_redirect", follow=True)
+        response = self.client.get("/accounts/login_redurect", follow=True)
         assert response.status_code == 200
         assert "profile_staff" in response.redirect_chain[0][0]
 

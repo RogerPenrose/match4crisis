@@ -1,6 +1,11 @@
 from django.shortcuts import render
 
-# Create your views here.
+from apps.accounts.views import DashboardView
 
 def thx(request):
     return render(request, "thanks.html")
+
+class HelperDashboardView(DashboardView):
+    template_name = "helper_dashboard.html"
+
+    

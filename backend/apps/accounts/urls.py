@@ -67,7 +67,6 @@ urlpatterns = [
     ),
     path("", include("django.contrib.auth.urls")),
     path("validate_email", views.validate_email, name="validate_email"),
-    path("profile_redirect", views.profile_redirect, name="profile_redirect"),
     path("login_redirect", views.login_redirect, name="login_redirect"),
     path("delete_me_ask", views.delete_me_ask, name="delete_me_ask"),
     path("delete_me", views.delete_me, name="delete_me"),

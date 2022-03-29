@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.gzip import gzip_page
+from apps.accounts.views import DashboardView
 import django_tables2 as tables
 
 from apps.accounts.decorator import organisationRequired
@@ -110,3 +111,7 @@ def change_posting(request):
 
 def thx(request):
     return render(request, "thanks_organisation.html")
+
+
+class OrganisationDashboardView(DashboardView):
+    template_name = "organisation_dashboard.html"

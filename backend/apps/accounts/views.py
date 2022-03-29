@@ -11,6 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
+from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm
 from apps.ineedhelp.forms import RefugeeCreationForm
 from apps.accounts.forms import CustomAuthenticationForm
@@ -127,35 +128,14 @@ def register_organisation_in_db(request, formData):
 
 
 @login_required
-def profile_redirect(request):
-    user = request.user
-
-    if user.isHelper:
-        return HttpResponseRedirect("profile_helper")
-
-    elif user.isOrganisation:
-        return HttpResponseRedirect("profile_organisation")
-
-    elif user.isRefugee:
-        return HttpResponseRedirect("profile_refugee")
-
-    elif user.is_staff:
-        return HttpResponseRedirect("profile_staff")
-
-    else:
-        # TODO: throw 404  # noqa: T003
-        logger.warning(
-            "User is unknown type, profile redirect not possible", extra={"request": request},
-        )
-        HttpResponse("Something wrong in database")
-
-
-@login_required
 def login_redirect(request):
     user = request.user
 
     if user.isHelper:
-        return HttpResponseRedirect("/accounts/profile_helper")
+        return HttpResponseRedirect("/iofferhelp/helper_dashboard")
+
+    elif user.isRefugee:
+        return HttpResponseRedirect("/ineedhelp/refugee_dashboard")
 
     elif user.isOrganisation:
         return HttpResponseRedirect("/iamorganisation/organisation_dashboard")
@@ -383,6 +363,9 @@ def change_activation(request):
         )
     return HttpResponseRedirect("profile_helper")
 
+
+class DashboardView(TemplateView):
+    pass
 
 """def switch_newsletter(nl, user, request, post=None, get=None):
     nl_state = nl.sending_state()
