@@ -8,6 +8,40 @@ Dashboard - Helfende
 {% endblocktrans %}
 {% endblock %}
 
+
 {% block content%}
-Dashboard für Helfende
+    <h3>Incomplete Offers</h3>
+    {% if incompleteOffers %}
+
+    {% for entry in incompleteOffers%}
+        {{ entry.image }}
+
+        {{ entry.offer }}
+    {% endfor %}
+
+    {% endif %}
+    <br/>
+    <h3>Running Offers</h3>
+
+    {% if runningOffers %}
+
+    {% for entry in runningOffers%}
+        {{ entry.image }}
+
+        {{ entry.offer }}
+    {% endfor %}
+
+    {% endif %}
+    <br/>
+    <h3>Paused Offers</h3>
+
+    {% if pausedOffers %}
+
+    {% for entry in pausedOffers%}
+        {{ entry.image }}
+
+        {{ entry.offer }}
+    {% endfor %}
+
+    {% endif %}
 {% endblock %}
