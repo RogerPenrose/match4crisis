@@ -104,7 +104,24 @@ def updateTranslationModel(g, form, offer_id=0):
         t.secondLanguage=form.get("secondLanguage")
         t.save()
         return t
-
+@login_required
+def contact(request, offer_id):
+    details = getOfferDetails(request,offer_id)
+    return render(request, 'offers/contact.html', details)
+def search(request):
+    return render(request, 'offers/search.html')
+def by_city(request, city):
+    # Ideally: Associate Postcode with city here...
+    #Dummy data:
+    totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
+    context = {
+        'local' : {'AccomodationOffers': 25, 'TransportationOffers': 50, 'TranslationOffers': 75},
+        'total' : {'AccomodationOffers': totalAccomodations, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations},
+    }
+    logger.warning(str(context))
+    return render(request, 'offers/list.html', context)
 def by_postCode(request, postCode):
     context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
@@ -209,8 +226,7 @@ def delete_image(request, offer_id, image_id):
         return detail(request, offer_id)
     else :
         return HttpResponse("Wrong User")
-def detail(request, offer_id):
-
+def getOfferDetails(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     genericForm = GenericForm(instance = generic)
     try:
@@ -223,23 +239,24 @@ def detail(request, offer_id):
         imageForm.image = image.image
         imageForm.url = image.image.url
         imageForm.id = image.image_id
-        logger.warning("Found Image: "+str(imageForm.image.url))
         images.append(imageForm)
     allowed = user_is_allowed(request, generic.userId)
-   
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
 
+def detail(request, offer_id):
+    context = getOfferDetails(request, offer_id)
+    return render(request, 'offers/detail.html', context)
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."
     return HttpResponse(response % offer_id)
