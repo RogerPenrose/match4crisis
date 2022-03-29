@@ -79,7 +79,7 @@ p.map { margin: 20px 0;}
 <hr>
               <p style="margin-top: 25px;" class="contact">
               <a href="#" class="btn btn-green" role="button" aria-pressed="true"
-              >Register and get in contact
+              >{% if  user.is_authenticated != True %} Register and get in contact {% else %} Get in contact {%endif %}   
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
