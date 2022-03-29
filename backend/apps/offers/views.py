@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404,render
 import logging
+from os.path import dirname, abspath, join
+import json
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
@@ -110,14 +112,40 @@ def contact(request, offer_id):
     return render(request, 'offers/contact.html', details)
 def search(request):
     return render(request, 'offers/search.html')
+def scrapePostCodeJson(city):
+
+    current_location = dirname(abspath(__file__))
+    with open(join(current_location,"files/cities_to_plz.json"), "r") as read_file:
+        mappings = json.load(read_file)
+        plzs = mappings.get(city.capitalize())
+        if plzs is not None:
+            return plzs
+        else:
+            logger.error("NO PLZS FOUND FOR CITY "+city+" Trying for a partial match...")
+            for entry in mappings:
+                if city.lower() in entry.lower():
+                    logger.error("Found a match: "+entry)
+                    plzs = mappings.get(entry)
+                    return plzs
+            
+
 def by_city(request, city):
     # Ideally: Associate Postcode with city here...
+    #Get list of all PostCodes within the City: 
+    postCodes = scrapePostCodeJson(city)
     #Dummy data:
+    accomodations= 0
+    translations = 0 
+    transportations = 0
+    for postCode in postCodes:
+        accomodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
+        translations += GenericOffer.objects.filter(offerType="TL", postCode=postCode).count()
+        transportations += GenericOffer.objects.filter(offerType="TR", postCode=postCode).count()
     totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
     context = {
-        'local' : {'AccomodationOffers': 25, 'TransportationOffers': 50, 'TranslationOffers': 75},
+        'local' : {'AccomodationOffers': accomodations, 'TransportationOffers': transportations, 'TranslationOffers': translations},
         'total' : {'AccomodationOffers': totalAccomodations, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations},
     }
     logger.warning(str(context))
