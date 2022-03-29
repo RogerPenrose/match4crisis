@@ -5,24 +5,41 @@ from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import password_validation
+
 
 from apps.accounts.models import User
 from apps.iamorganisation.models import Organisation
 from apps.accounts.forms import PhoneNumberField
 
 class OrganisationFormO(ModelForm):
-    phoneNumber = PhoneNumberField(label=_("Telefonnummer"))
+    phoneNumber = PhoneNumberField(label='',widget=forms.TextInput(attrs={'placeholder': _("Telefonnummer")}))
+    error_messages = {
+        "password_mismatch": _("The two password fields didn’t match."),
+    }
+    password1 = forms.CharField(
+        label="",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": _("Passwort")}),
+        strip=False,
+    )
+    password2 = forms.CharField(
+        label="",
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", "placeholder": _("Passwort bestätigen")}),
+        strip=False,
+    )
 
     class Meta:
         model = Organisation
-        exclude = [
-            "uuid",
-            "user",
-            "generalInfo",
-            "appearsInMap",
-            "approvalDate",
-            "approvedBy",
-        ]
+
+        fields=(
+            "postalCode",
+            "country",
+            "organisationName",
+            "contactPerson",
+            "appearsInMap", # do we need this?
+            "clubNumber",
+            "streetNameAndNumber",           
+        )
 
         labels = {
             "postalCode": '',
@@ -58,6 +75,7 @@ class OrganisationFormO(ModelForm):
             Row(Column("phoneNumber"), Column("email")),
             Row(Column("clubNumber"), Column("country")),
             Row(Column("postalCode"), Column("streetNameAndNumber")),
+            Row(Column("password1"), Column("password2")),
             HTML(
                 '<div class="registration_disclaimer">{}</div>'.format(
                     _(
@@ -66,6 +84,27 @@ class OrganisationFormO(ModelForm):
                 )
             ),
         )
+    
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise ValidationError(
+                self.error_messages["password_mismatch"],
+                code="password_mismatch",
+            )
+        return password2
+
+    def _post_clean(self):
+        super()._post_clean()
+        # Validate the password after self.instance is updated with form data
+        # by super().
+        password = self.cleaned_data.get("password2")
+        if password:
+            try:
+                password_validation.validate_password(password, self.instance)
+            except ValidationError as error:
+                self.add_error("password2", error)
 
 
 class OrganisationForm(OrganisationFormO):
@@ -130,7 +169,7 @@ def check_unique_email(value):
 
 class OrganisationFormInfoSignUp(OrganisationFormO):
     email = forms.EmailField(
-        validators=[check_unique_email], label=_("Offizielle E-Mail-Adresse der Kontaktperson"), widget=forms.EmailInput(attrs={'placeholder':"Offizielle E-Mail-Adresse der Kontaktperson"}) 
+        validators=[check_unique_email], label='', widget=forms.EmailInput(attrs={'placeholder':_("Offizielle E-Mail-Adresse der Kontaktperson")}) 
     )
    
 
