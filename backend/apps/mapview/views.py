@@ -1,5 +1,6 @@
 from functools import lru_cache
 import time
+from django.shortcuts import get_object_or_404,render
 import logging
 
 from django.conf import settings
@@ -11,17 +12,25 @@ from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOf
 from apps.mapview.utils import get_plz_data, plzs
 
 
+logger = logging.getLogger("django")
 
+def mapviewjs(request):
+    logger.warning("Request : "+str(request.GET))
+    context = { "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
+    logger.warning("Result: "+str(context))
+    return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
-    locations_and_number = prepare_offers(ttl_hash=get_ttl_hash())
+    locations_and_number = prepare_offers(ttl_hash=get_ttl_hash()) # @todo: not sure if this caching still does anything with how we fetch our stuff.. 
     template = loader.get_template("mapview/map.html")
     context = {
         "locations": [],
         "mapbox_token": settings.MAPBOX_TOKEN,
+         "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
     }
+    logger.warning("Context: "+str(context))
     return HttpResponse(template.render(context, request))
 
 

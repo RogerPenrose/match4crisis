@@ -48,6 +48,9 @@ class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
+    
+    def save(self, *args, **kwargs):
+        logger.warning("SAVING IMAGE !? ")
 class AccomodationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfInhabitants = models.IntegerField()

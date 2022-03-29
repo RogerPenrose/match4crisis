@@ -1,5 +1,7 @@
 from django.shortcuts import get_object_or_404,render
 import logging
+from os.path import dirname, abspath, join
+import json
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
@@ -104,17 +106,82 @@ def updateTranslationModel(g, form, offer_id=0):
         t.secondLanguage=form.get("secondLanguage")
         t.save()
         return t
+@login_required
+def contact(request, offer_id):
+    details = getOfferDetails(request,offer_id)
+    return render(request, 'offers/contact.html', details)
+def search(request):
+    return render(request, 'offers/search.html')
+def scrapePostCodeJson(city):
 
+    current_location = dirname(abspath(__file__))
+    with open(join(current_location,"files/cities_to_plz.json"), "r") as read_file:
+        mappings = json.load(read_file)
+        plzs = mappings.get(city.capitalize())
+        if plzs is not None:
+            return plzs
+        else:
+            logger.error("NO PLZS FOUND FOR CITY "+city+" Trying for a partial match...")
+            for entry in mappings:
+                if city.lower() in entry.lower():
+                    logger.error("Found a match: "+entry)
+                    plzs = mappings.get(entry)
+                    return plzs
+            
+def getCityFromPostCode(postCode):
+    current_location = dirname(abspath(__file__))
+    with open(join(current_location,"files/plzs_to_cities.json"), "r") as read_file:
+        mappings = json.load(read_file)
+        return mappings.get(postCode)
+    
+def by_city(request, city):
+    # Ideally: Associate Postcode with city here...
+    #Get list of all PostCodes within the City: 
+    postCodes = scrapePostCodeJson(city)
+    #Dummy data:
+    accomodations= 0
+    translations = 0 
+    transportations = 0
+    for postCode in postCodes:
+        accomodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
+        translations += GenericOffer.objects.filter(offerType="TL", postCode=postCode).count()
+        transportations += GenericOffer.objects.filter(offerType="TR", postCode=postCode).count()
+    totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
+    context = {
+        'local' : {'AccomodationOffers': accomodations, 'TransportationOffers': transportations, 'TranslationOffers': translations},
+        'total' : {'AccomodationOffers': totalAccomodations, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations},
+    }
+    logger.warning(str(context))
+    return render(request, 'offers/list.html', context)
 def by_postCode(request, postCode):
     context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
                'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
     
     return render(request, 'offers/index.html', context)
+def mergeImages(offers):
+    resultOffers = []
+    for entry in  offers: 
+        images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
+        newEntry =  {
+            "image" : None,
+            "offer" : entry
+        }
+        if len(images) > 0:
+            newEntry["image"] = images[0].image
+        resultOffers.append(newEntry)
+    return resultOffers
 def index(request):
-    context = {'AccomodationOffers': AccomodationOffer.objects.all(), \
-               'TransportationOffers': TransportationOffer.objects.all(),\
-               'TranslationOffers': TranslationOffer.objects.all()}
+    accomodationOffers = mergeImages(AccomodationOffer.objects.all())
+    transportationOffers = mergeImages(TransportationOffer.objects.all())
+    translationOffers = mergeImages(TranslationOffer.objects.all())
+
+
+    context = {'AccomodationOffers': accomodationOffers, \
+               'TransportationOffers': transportationOffers,\
+               'TranslationOffers': translationOffers}
     
     return render(request, 'offers/index.html', context)
 @login_required
@@ -192,8 +259,7 @@ def delete_image(request, offer_id, image_id):
         return detail(request, offer_id)
     else :
         return HttpResponse("Wrong User")
-def detail(request, offer_id):
-
+def getOfferDetails(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     genericForm = GenericForm(instance = generic)
     try:
@@ -206,23 +272,25 @@ def detail(request, offer_id):
         imageForm.image = image.image
         imageForm.url = image.image.url
         imageForm.id = image.image_id
-        logger.warning("Found Image: "+str(imageForm.image.url))
         images.append(imageForm)
     allowed = user_is_allowed(request, generic.userId)
-   
+    city = getCityFromPostCode(generic.postCode)
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "city": city, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
-        return render(request, 'offers/detail.html', {'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()})
+        return {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
 
+def detail(request, offer_id):
+    context = getOfferDetails(request, offer_id)
+    return render(request, 'offers/detail.html', context)
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."
     return HttpResponse(response % offer_id)

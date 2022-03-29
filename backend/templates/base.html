@@ -5,7 +5,7 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
 <script src="{% static 'js/jquery-3.4.1.min.js' %}"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
         crossorigin="anonymous"></script>
@@ -43,7 +43,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-md fixed-top navbar-light bg-white">
+<nav class="navbar navbar-expand-md fixed-top navbar-dark bg-yellow">
   <div class="container"> <a class="navbar-brand" href="/"><img src="{% static 'img/match4crisis-logo.svg' %}" width="199px"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
@@ -75,7 +75,7 @@
         {% endif %}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-toggle="dropdown">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke="#000943" fill="none" viewBox="0 0 420 420">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke="#fff" fill="none" viewBox="0 0 420 420">
               <path stroke-width="26" d="M209,15a195,195 0 1,0 2,0z"/>
               <path stroke-width="18" d="m210,15v390m195-195H15M59,90a260,260 0 0,0 302,0 m0,240 a260,260 0 0,0-302,0M195,20a250,250 0 0,0 0,382 m30,0 a250,250 0 0,0 0-382"/>
             </svg>
@@ -126,14 +126,9 @@
                                                                                                     height="25"
                                                                                                     src="{% static 'img/youtube.svg' %}"
                                                                                                     alt="Youtube"> </a>
-      <a style="text-decoration: none; display: inline; margin-left:8px;"
-         href="https://github.com/RogerPenrose/match4crisis" target="_blank"> <img width="25"
-                                                                                                    style="margin-bottom:0px; border:none; display:inline;"
-                                                                                                    height="25"
-                                                                                                    src="{% static 'img/GitHub-Mark-Light-32px.png' %}"
-                                                                                                    alt="Youtube"> </a>
+    
     </p>
-    <p>{% blocktrans %}Ein Projekt im Rahmen des <a href="https://wirvsvirushackathon.org/" target="_blank">#WirVsVirus Hackathons</a>.{% endblocktrans %}
+    <p>
       <a href="/impressum">{% blocktrans %}Impressum{% endblocktrans %}</a>,
       <a href="/dataprotection">{% blocktrans %}Datenschutz{% endblocktrans %}</a> {% blocktrans %}und{% endblocktrans %}
       <a href="/terms-of-use">{% blocktrans %}Nutzungsbedingungen{% endblocktrans %}</a>.
