@@ -213,7 +213,7 @@ def update(request, offer_id):
                     currentForm = acForm.cleaned_data
                     a = updateAccomodationModel(g, currentForm, offer_id)
                     logger.warning("Done...")
-                    return index(request)
+                    return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(acForm.errors))
@@ -223,7 +223,7 @@ def update(request, offer_id):
                     currentForm = trForm.cleaned_data
                     t = updateTransportationModel(g, currentForm, offer_id)
                     
-                    return index(request)
+                    return detail(request, offer_id)
                 else:
                     return HttpResponse(str(trForm.errors))
             if currentForm.get("offerType") == "TL":
@@ -231,7 +231,7 @@ def update(request, offer_id):
                 if tlForm.is_valid():
                     currentForm = tlForm.cleaned_data
                     t = updateTranslationModel(g, currentForm,offer_id)
-                    return index(request)
+                    return detail(request, offer_id)
                 else:
                     return HttpResponse(str(tlForm.errors))
         else:
@@ -256,7 +256,7 @@ def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     if user_is_allowed(request, generic.userId):
         ImageClass.objects.filter(image_id=image_id).delete()
-        return detail(request, offer_id)
+        return detail(request, offer_id, edit_active=True)
     else :
         return HttpResponse("Wrong User")
 def getOfferDetails(request, offer_id):
@@ -288,8 +288,10 @@ def getOfferDetails(request, offer_id):
         detailForm = TransportationOffer(model_to_dict(detail))
         return {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
 
-def detail(request, offer_id):
+def detail(request, offer_id, edit_active = False):
     context = getOfferDetails(request, offer_id)
+    if edit_active:
+        context["edit_active"] = edit_active
     return render(request, 'offers/detail.html', context)
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."

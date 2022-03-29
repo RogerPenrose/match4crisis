@@ -86,7 +86,7 @@ def organisation_signup(request):
         form_info = OrganisationFormInfoSignUp(request.POST)
 
         if form_info.is_valid():
-            user, organisation = register_organisation_in_db(request, form_info.cleaned_data["email"], form_info.cleaned_data["phoneNumber"])
+            user, organisation = register_organisation_in_db(request, form_info.cleaned_data)
             send_password_set_email(
                 email=form_info.cleaned_data["email"],
                 host=request.META["HTTP_HOST"],
@@ -103,21 +103,19 @@ def organisation_signup(request):
             # return HttpResponseRedirect('/iamorganisation/helpers/%s/%s/%s'%(countrycode,plz,distance))
 
     else:
-        form_info = OrganisationFormInfoSignUp(
-            initial={"sonstige_infos": "Liebe Studis,\n\nwir suchen euch weil ...\n\nBeste Grüße! "}
-        )
+        form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
     form_info.helper.form_tag = False
     return render(request, "organisation_signup.html", {"form_info": form_info})
 
 
 @transaction.atomic
-def register_organisation_in_db(request, m, phoneNumber):
+def register_organisation_in_db(request, formData):
 
-    pwd = User.objects.make_random_password()
-    user = User.objects.create(email=m, isOrganisation=True)
+    pwd = formData["password1"]
+    user = User.objects.create(email=formData["email"], isOrganisation=True)
     user.set_password(pwd)
-    user.phoneNumber = phoneNumber
+    user.phoneNumber = formData["phoneNumber"]
     print("Saving User")
     user.save()
 
