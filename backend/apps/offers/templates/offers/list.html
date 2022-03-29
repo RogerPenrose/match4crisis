@@ -1,1 +1,25 @@
-DUMMY FILE FOR SHOWING ALL LOCAL OFFERS ? 
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{% blocktrans %}Listenansicht Angebote{% endblocktrans %}{% endblock %}
+
+{% block header %}
+<style>
+  div.description { padding: 10px; position: relative; }
+  div.description:after { content:url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>"); position: absolute; top: 45%; right: 15px;}
+</style>
+{% endblock %}
+
+{% block content %}
+Lokal :  <br>
+{% for key,value in local.items %}
+ {{ key }} : {{value }} <br>
+{% endfor %}
+ <hr>
+ Total:<br>
+ {% for key,value in local.items %}
+ {{ key }} : {{value }} <br>
+ {% endfor %}
+{% endblock %}
