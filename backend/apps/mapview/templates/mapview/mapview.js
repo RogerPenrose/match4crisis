@@ -20,6 +20,7 @@ mapViewPage = {
         createTranslationCountText: (count) => '',
         createDigitalCountText: (count) => '',
         createGenericCountText: (count) => '',
+        startPosition: '',
         facilityIcon: new L.Icon.Default(),
 
     },
@@ -83,10 +84,11 @@ mapViewPage = {
     },
 
 
-    initializeMap: function initializeMap() {
+    initializeMap:  function initializeMap() {
+       
         let mapOptions = {
-            center: [51.13, 10.018],
-            zoom: 6
+            center: this.options.startPosition,
+            zoom: this.options.zoom
         }
     
         let tileLayerURL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}@2x?access_token=' + this.options.mapboxToken

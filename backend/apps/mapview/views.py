@@ -2,6 +2,8 @@ from functools import lru_cache
 import time
 from django.shortcuts import get_object_or_404,render
 import logging
+import json
+from os.path import dirname, abspath, join
 
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
@@ -13,25 +15,44 @@ from apps.mapview.utils import get_plz_data, plzs
 
 
 logger = logging.getLogger("django")
-
+def getCenterOfCity(city):
+    current_location = dirname(abspath(__file__))
+    with open(join(current_location,"files/cities_to_center.json"), "r") as read_file:
+        mappings = json.load(read_file)
+        center = mappings.get(city.capitalize())
+        if center is not None:
+            return center
+        else:
+            logger.error("NO CENTER FOUND FOR CITY "+city+" Trying for a partial match...")
+            for entry in mappings:
+                if city.lower() in entry.lower():
+                    logger.error("Found a match: "+entry)
+                    center = mappings.get(entry)
+                    return center
 def mapviewjs(request):
-    logger.warning("Request : "+str(request.GET))
     context = { "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
-    logger.warning("Result: "+str(context))
+    logger.warning("rendering mapview JS ? "+str(request.GET))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
     locations_and_number = prepare_offers(ttl_hash=get_ttl_hash()) # @todo: not sure if this caching still does anything with how we fetch our stuff.. 
-    template = loader.get_template("mapview/map.html")
+    startPosition =  [51.13, 10.018]
+    zoom = 6
+    if request.GET.get("city"):
+        startPosition = getCenterOfCity(request.GET.get("city"))
+        zoom = 10
+        logger.warning("Received: "+str(startPosition))
     context = {
         "locations": [],
         "mapbox_token": settings.MAPBOX_TOKEN,
+        "startPosition":  startPosition,
+        "zoom": zoom,
          "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
     }
     logger.warning("Context: "+str(context))
-    return HttpResponse(template.render(context, request))
+    return render(request, "mapview/map.html", context )
 
 
 @lru_cache(maxsize=1)

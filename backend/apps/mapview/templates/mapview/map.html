@@ -37,13 +37,15 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
     .btn { color: #fff !important; background-color: #fa5103; border-radius: 10px; font-size: 14px;}
 </style>
 <script type="text/javascript">
-
+  console.log("In html: {{startPosition}}")
   pageOptions = {
     mapViewContainerId: 'mapContainer',
     accomodationOfferURL     : "{% url 'accomodationOffersJSON' %}",
     transportationOfferURL     : "{% url 'transportationOffersJSON' %}",
     translationOfferURL     : "{% url 'translationOffersJSON' %}",
     genericOfferURL     : "{% url 'genericOffersJSON' %}",
+    startPosition: {{ startPosition }},
+    zoom: {{ zoom }},
     mapboxToken       : "{{ mapbox_token }}",
     createPopupTextTranslation  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Logistikangebote. \n<br><a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
     createPopupTextGeneric  :  (countrycode,city, plz, count, url) => `{% blocktrans %}In ${city}, (PLZ ${plz}) gibt es ${count} Angebote. \n<br><a href="/offers/by_postCode/${plz}" target="_blank">Detailansicht</a>{% endblocktrans %}`,
@@ -63,7 +65,6 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
     createTranslationCountText: (count) => `<img src="{% static 'img/map/translation.svg' %}"> ${count} {% trans "Übersetzungs-Angebote" %}`,
     createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}"> ${count} {% trans "Digitale Angebote" %}`,
     createGenericCountText: (count) => `<img src="{% static 'img/map/generic-marker.svg' %}"> ${count} {% trans "Angebote" %}`,
-
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],
