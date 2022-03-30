@@ -41,7 +41,7 @@ def staff_profile(request):
     return render(request, "staff_profile.html", {})
 
 
-def refugee_signup(request):
+def signup_refugee(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -57,11 +57,11 @@ def refugee_signup(request):
     else:
         form = RefugeeCreationForm()
 
-    return render(request, "refugee_signup.html", {"form": form})
+    return render(request, "signup_refugee.html", {"form": form})
 
 
 
-def helper_signup(request):
+def signup_helper(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -70,18 +70,25 @@ def helper_signup(request):
 
         # check whether it's valid:
         if form.is_valid():
-            form.save()
+            user, helper = form.save()
+            # If the user got here through the /iofferhelp/choose_help page, get the chosen help data from the request session
+            if('chosenHelp' in request.session):
+                chosenHelp = request.session['chosenHelp']
+                print(chosenHelp)
+            else:
+                print("no help data")
+
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = HelperCreationForm()
 
-    return render(request, "helper_signup.html", {"form": form})
+    return render(request, "signup_helper.html", {"form": form})
 
 
 
-def organisation_signup(request):
+def signup_organisation(request):
     if request.method == "POST":
         logger.info("Organisation registration request", extra={"request": request})
         form_info = OrganisationFormInfoSignUp(request.POST)
@@ -107,7 +114,7 @@ def organisation_signup(request):
         form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
     form_info.helper.form_tag = False
-    return render(request, "organisation_signup.html", {"form_info": form_info})
+    return render(request, "signup_organisation.html", {"form_info": form_info})
 
 
 @transaction.atomic

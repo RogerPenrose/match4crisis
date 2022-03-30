@@ -39,8 +39,8 @@
 
                     {% endif %}
                 {% else %}
-                {% url 'helper_signup' as helper_signup_url %}
-                <p>{% blocktrans with firmenname=organisation.firmenname %}Bitte <a target="_blank" href="{{helper_signup_url}}">Registriere dich als Helfende_r</a> um die Kontaktdaten von {{firmenname}} zu sehen.{% endblocktrans %}</p>
+                {% url 'signup_helper' as signup_helper_url %}
+                <p>{% blocktrans with firmenname=organisation.firmenname %}Bitte <a target="_blank" href="{{signup_helper_url}}">Registriere dich als Helfende_r</a> um die Kontaktdaten von {{firmenname}} zu sehen.{% endblocktrans %}</p>
 
 
                 {% endif %}
