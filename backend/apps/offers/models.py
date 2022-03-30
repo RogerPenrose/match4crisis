@@ -38,7 +38,6 @@ class GenericOffer(models.Model):
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published')
-    paused = models.BooleanField(default=False)
     incomplete = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()

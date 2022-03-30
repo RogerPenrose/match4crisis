@@ -14,9 +14,9 @@ class HelperDashboardView(DashboardView):
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
 
         userOffers = GenericOffer.objects.filter(userId=request.user.id)
-        pausedOffers = mergeImages(getSpecificOffers(userOffers.filter(paused=True, incomplete=False)))
+        pausedOffers = mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
         incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
-        runningOffers = mergeImages(getSpecificOffers(userOffers.filter(paused=False, incomplete=False)))
+        runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
 
 
         context = {

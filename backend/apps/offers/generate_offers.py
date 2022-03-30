@@ -589,7 +589,7 @@ def populate_db(request, userId=1):
                 country="DE", \
                 postCode=plzs[i], \
                 cost=0.00, \
-                paused= (np.random.random() > 0.7), \
+                active= (np.random.random() < 0.7), \
                 incomplete= (np.random.random() > 0.7),
             )
             
