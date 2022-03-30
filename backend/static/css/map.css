@@ -91,9 +91,7 @@ label[for=id_braucht_bezahlung]::before {
     white-space: pre;
     text-align:center;
 }*/
-body {
-  background-color: #cfdce3;
-}
+
 
 .leaflet-container a {
   color: #fa5103;
