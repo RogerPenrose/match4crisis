@@ -10,7 +10,7 @@ from django.contrib.auth import password_validation
 
 from apps.accounts.models import User
 from apps.iamorganisation.models import Organisation
-from apps.accounts.forms import PhoneNumberField
+from apps.accounts.forms import PhoneNumberField, SpecialPreferencesForm
 
 class OrganisationFormO(ModelForm):
     phoneNumber = PhoneNumberField(label='',widget=forms.TextInput(attrs={'placeholder': _("Telefonnummer")}))
@@ -107,17 +107,6 @@ class OrganisationFormO(ModelForm):
                 self.add_error("password2", error)
 
 
-class OrganisationForm(OrganisationFormO):
-    def __init__(self, *args, **kwargs):
-        super(OrganisationForm, self).__init__(*args, **kwargs)
-        self.helper.add_input(
-            Submit(
-                "submit",
-                "Jetzt registrieren",
-                onclick="this.form.submit(); this.disabled=true; this.value='Sending…';",
-            )
-        )
-
 class OrganisationFormExtra(OrganisationFormO):
     def __init__(self, *args, **kwargs):
         super(OrganisationFormExtra, self).__init__(*args, **kwargs)
@@ -126,17 +115,22 @@ class OrganisationFormExtra(OrganisationFormO):
         self.helper.add_input(Submit("submit", _("Schicke Mails + Erstelle Anzeige")))
 
 
-class OrganisationFormEditProfile(OrganisationFormO):
+class OrganisationPreferencesForm(SpecialPreferencesForm):
     class Meta:
         model = Organisation
-        exclude = [
-            "uuid",
-            "user",
-            "approvalDate",
-            "approvedBy",
-        ]
+        fields=(
+            "postalCode",
+            "country",
+            "organisationName",
+            "contactPerson",
+            "appearsInMap", # do we need this?
+            "clubNumber",
+            "streetNameAndNumber",     
+            "generalInfo",      
+        )
 
         labels = {
+            "streetNameAndNumber": _("Straße und Hausnummer"),
             "postalCode": _("Postleitzahl"),
             "country": _("Land"),
             "generalInfo": _(
@@ -145,20 +139,12 @@ class OrganisationFormEditProfile(OrganisationFormO):
             "organisationName": _("Offizieller Name Ihrer Institution"),
             "contactPerson": _("Name der Kontaktperson"),
             "appearsInMap": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
+            "clubNumber": _("Vereinsnummer")
         }
 
     def __init__(self, *args, **kwargs):
-        super(OrganisationFormEditProfile, self).__init__(*args, **kwargs)
-        self.fields["generalInfo"].required = False
-        # self.fields['appears_in_map'].required = False
-        self.helper.add_input(
-            Submit("submit", _("Daten aktualisieren"), css_class="btn blue text-white btn-md",)
-        )
-        self.helper.layout = Layout(
-            Row(Column("organisationName"), Column("contactPerson")),  # Row(Column('appears_in_map')),
-            Row(Column("phoneNumber")), # TODO phone number not showing yet ( -> is stored in user)
-            Row(Column("postalCode"), Column("country")),
-        )
+        super(OrganisationPreferencesForm, self).__init__(*args, **kwargs)
+        self.helper.form_id = "id-organisationPreferencesForm"
 
 
 def check_unique_email(value):

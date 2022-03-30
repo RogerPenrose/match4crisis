@@ -7,6 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core import validators
 from django.utils.text import capfirst
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 
 from .models import User
 
@@ -62,6 +64,40 @@ class OrganisationEmailForm(forms.ModelForm):
         user.save()
         return user
 
+
+class CommonPreferencesForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = (
+            "fullName",
+            "spokenLanguages", # TODO By default a manytomany model field will be displayed as a MultipleChoiceField. Instead one should be able to search&add langs
+            "phoneNumber",
+            "sharePhoneNumber",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(CommonPreferencesForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-commonPreferencesForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "preferences"
+
+        if 'instance' in kwargs:
+            if kwargs['instance'].isOrganisation:
+                del self.fields["fullName"]
+                
+class SpecialPreferencesForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(SpecialPreferencesForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-specialPreferencesForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "preferences"
+
+        self.helper.add_input(Submit("submit", _("Speichern")))
+    
 
 UserModel = get_user_model()
 

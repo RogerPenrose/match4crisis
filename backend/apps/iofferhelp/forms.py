@@ -6,7 +6,7 @@ from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
-from apps.accounts.forms import CustomUserCreationForm
+from apps.accounts.forms import CustomUserCreationForm, SpecialPreferencesForm
 from apps.offers.models import GenericOffer
 from .models import Helper
 
@@ -50,3 +50,17 @@ class ChooseHelpForm(forms.Form):
             self.fields[abbr] = forms.BooleanField(required=False, label=offerType) # TODO change/remove the label
 
         self.helper.add_input(Submit("submit", _("Zur Registrierung")))
+
+
+class HelperPreferencesForm(SpecialPreferencesForm):
+    class Meta:
+        model = Helper
+        fields=(   
+        )
+
+        labels = {
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(HelperPreferencesForm, self).__init__(*args, **kwargs)
+        self.helper.form_id = "id-helperPreferencesForm"

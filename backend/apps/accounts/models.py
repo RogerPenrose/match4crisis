@@ -53,6 +53,9 @@ class Languages(models.Model):
     englishName = models.CharField(max_length=128)
     nativeName = models.CharField(max_length=128)
 
+    def __str__(self) -> str:
+        return "%s (%s)" % (self.englishName, self.nativeName)
+
 
 class User(AbstractUser):
     """ A custom User Model serving as a basis for all accounts."""
@@ -76,10 +79,10 @@ class User(AbstractUser):
     validatedEmail = models.BooleanField(default=False)
     emailValidationDate = models.DateTimeField(blank=True, null=True)
     # m:n to the Languages Table using LanguageKnowledge as intermediary
-    spokenLanguages = models.ManyToManyField(Languages, through='LanguageKnowledge')
+    spokenLanguages = models.ManyToManyField(Languages, through='LanguageKnowledge', blank=True)
     # Regex for Phone Numbers in E164 format
     phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
-    phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True)
+    phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True, blank=True)
     # Should the phone number be visible to contacts
     sharePhoneNumber = models.BooleanField(default=False)
 

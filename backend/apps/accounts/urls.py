@@ -73,8 +73,9 @@ urlpatterns = [
     path("signup_refugee", views.signup_refugee, name="signup_refugee"),
     path("signup_helper", views.signup_helper, name="signup_helper"),
     path("signup_organisation", views.signup_organisation, name="signup_organisation"),
+    path("preferences", views.preferences, name="preferences"),
     #path("profile_helper", views.edit_helper_profile, name="edit_helper_profile"),
-    path("profile_organisation", views.edit_organisation_profile, name="edit_organisation_profile"),
+    #path("profile_organisation", views.edit_organisation_profile, name="edit_organisation_profile"),
     #path("approve_organisations", views.approve_organisations, name="approve_organisations"),
     # path(
     #     "change_organisation_approval/<str:uuid>/",

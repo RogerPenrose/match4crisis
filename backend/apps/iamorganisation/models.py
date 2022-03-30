@@ -16,7 +16,7 @@ class Organisation(models.Model):
     postalCode = models.CharField(max_length=15)
     streetNameAndNumber = models.CharField(max_length=50)
     
-    generalInfo = models.TextField(max_length=10000, default="")
+    generalInfo = models.TextField(max_length=10000, default="", blank=True)
 
     isApproved = models.BooleanField(default=False)
     approvalDate = models.DateTimeField(null=True)
