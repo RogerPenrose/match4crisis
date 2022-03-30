@@ -198,14 +198,14 @@ Home {% endblock %} {% block header %}
   <div class="container home-box">
     <div class="row align-self-center">
       <div class="col-md-6">
-        <a href="/accounts/signup_helper">
+        <a href="/iofferhelp/choose_help">
           <div class="box-left">
             <h4 class="text-white">
-              {% blocktrans %}I need help{% endblocktrans %}
+              {% blocktrans %}I offer help{% endblocktrans %}
             </h4>
             <p class="text-white home-box-description">
-              {% blocktrans %}Choose if you want to connect with people that can
-              provide help{% endblocktrans %}
+              {% blocktrans %}Choose if you want to connect with people who need
+              help{% endblocktrans %}
             </p>
           </div>
         </a>
@@ -219,7 +219,7 @@ Home {% endblock %} {% block header %}
         <a href="{{ filter_helper_url }}"> {% else %} <a href="/accounts/signup_organisation"> {% endif %}
        
           <div class="box-right">
-            <h4 class="text-white">{% blocktrans %}I want to help{% endblocktrans %}</h4>
+            <h4 class="text-white">{% blocktrans %}We are an Organisation{% endblocktrans %}</h4>
             <p class="text-white home-box-description">{% blocktrans %}Choose if you want to connect with people that can provide help{% endblocktrans %}</p>
           </div>
          </a>

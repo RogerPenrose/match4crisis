@@ -27,6 +27,7 @@ from apps.iamorganisation.forms import (
     OrganisationFormInfoSignUp,
 )
 from apps.iamorganisation.models import Organisation
+from apps.offers.models import GenericOffer, OFFER_MODELS
 #from apps.iamorganisation.views import ApprovalOrganisationTable
 
 from .decorator import organisationRequired, helperRequired
@@ -73,10 +74,14 @@ def signup_helper(request):
             user, helper = form.save()
             # If the user got here through the /iofferhelp/choose_help page, get the chosen help data from the request session
             if('chosenHelp' in request.session):
-                chosenHelp = request.session['chosenHelp']
-                print(chosenHelp)
-            else:
-                print("no help data")
+                chosenHelp = request.session['chosenHelp'].items()
+                for offerType, chosen in chosenHelp:
+                    if chosen:
+                        # Create a new incomplete offer of this type
+                        genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
+                        genericOffer.save()
+                        specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer)
+                        specOffer.save()
 
             return HttpResponseRedirect("/iofferhelp/thanks")
 

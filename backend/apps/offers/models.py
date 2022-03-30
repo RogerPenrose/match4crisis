@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from apps.accounts.models import User
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
 
 from apps.iofferhelp.models import Helper
 def validate_plz(value):
@@ -37,7 +38,7 @@ class GenericOffer(models.Model):
     offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
-    created_at = models.DateTimeField('date published')
+    created_at = models.DateTimeField('date published', default=timezone.now())
     incomplete = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
         self.updated_at = datetime.now()
@@ -53,11 +54,11 @@ class ImageClass(models.Model):
     
 class AccomodationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    numberOfInhabitants = models.IntegerField()
+    numberOfInhabitants = models.IntegerField(default=2)
     petsAllowed = models.BooleanField(default=False)
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
-    stayLength = models.IntegerField(blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
+    stayLength = models.IntegerField(default=14, blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
 
 
 class TransportationOffer(models.Model):
@@ -76,7 +77,7 @@ class TransportationOffer(models.Model):
     ('BUS', 'Bus')
     ]
     typeOfCar = models.CharField(max_length=3, choices=CAR_CHOICES, default="CAR") # Use this to track between "Bus", "Car", "Transporter" ?
-    numberOfPassengers = models.IntegerField()
+    numberOfPassengers = models.IntegerField(default=2)
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     firstLanguage = models.CharField(max_length=50)
