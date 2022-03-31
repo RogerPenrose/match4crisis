@@ -235,7 +235,6 @@ def update(request, offer_id):
                     t = updateTranslationModel(g, currentForm,offer_id)
                     
                     offer_id = t.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     return HttpResponse(str(tlForm.errors))
@@ -256,10 +255,12 @@ def user_is_allowed(request, target_id):
         if request.user.id == target_id or user.is_superuser:
             logger.warning("User is super user: "+str(user.is_superuser))
             allowed = True
+        else: 
+            logger.warning("User is not authenticated ? "+str(request.user.id)+" VS "+str(target_id))
     return allowed
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
-    if user_is_allowed(request, generic.userId):
+    if user_is_allowed(request, generic.userId.id):
         ImageClass.objects.filter(image_id=image_id).delete()
         return detail(request, offer_id, edit_active=True)
     else :
@@ -278,7 +279,7 @@ def getOfferDetails(request, offer_id):
         imageForm.url = image.image.url
         imageForm.id = image.image_id
         images.append(imageForm)
-    allowed = user_is_allowed(request, generic.userId)
+    allowed = user_is_allowed(request, generic.userId.id)
     city = getCityFromPostCode(generic.postCode)
 
     if generic.offerType == "AC":
