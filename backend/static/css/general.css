@@ -205,6 +205,19 @@ h2.title {
   color: #fff;
   background-color: #1eb159;
 }
+.btn-red {
+  background-color: #ff3300;
+  font-size: 1rem;
+  color: #fff;
+  padding: 1rem 2.5rem;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+.btn-red:hover {
+  color: #fff;
+  background-color: #cc2900;
+}
 
 .btn-yellow {
   background: linear-gradient(98deg, #F5CA1B 5.87%, #F5980F 100%);
