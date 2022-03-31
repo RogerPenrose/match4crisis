@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404,render
+from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
 import json
@@ -129,7 +129,6 @@ def getCityFromPostCode(postCode):
     with open(join(current_location,"files/plzs_to_cities.json"), "r") as read_file:
         mappings = json.load(read_file)
         return mappings.get(postCode)
-    
 def by_city(request, city):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
@@ -151,6 +150,119 @@ def by_city(request, city):
     }
     logger.warning(str(context))
     return render(request, 'offers/list.html', context)
+def by_type(request, offer_type):
+    if offer_type== "accomodation":
+        context = {"ResultCount": AccomodationOffer.objects.all().count(),
+            'Title': "Accommmodations",
+            'AccomodationOffers': mergeImages(AccomodationOffer.objects.all())}
+    if offer_type== "transportation":
+        context = {
+            "ResultCount": TransportationOffer.objects.all().count(),'Title': "Transportations", 'TransportationOffers': mergeImages(TransportationOffer.objects.all())}
+    if offer_type== "translation":
+        context = {
+            "ResultCount": TranslationOffer.objects.all().count(),'Title': "Translations",'TranslationOffers': mergeImages(TranslationOffer.objects.all())}
+    return render(request, 'offers/index.html', context)
+def create_by_filter(request):
+    resultVal = {}
+    if   request.POST.get("transportation") == "True":
+        filters = []
+        for key in request.POST:
+
+            if "transportation" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    if "numberOfPassengers" in key:
+                        filters.append("TnumberOfPassengers__gte="+request.POST.get(key))
+                    if "costMax" in key:
+                        filters.append("genericOffer__cost__lte="+request.POST.get(key))
+                    if "targetPlz" in key:
+                        filters.append("postCodeEnd="+request.POST.get(key))
+                    if "startPlz" in key:
+                        filters.append("genericOffer__postCode="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        teststring = "numberOfInhabitants__gte=25"
+        resultVal["TransportationOffers"] =  eval("mergeImages(TransportationOffer.objects.filter("+filterstring+"))")
+    if  request.POST.get("accomodation") == "True":
+        filters =[]
+        for key in request.POST:
+            
+            if "accomodation" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    if "numberOfInhabitants" in key:
+                        filters.append("numberOfInhabitants__gte="+request.POST.get(key))
+                    if "petsAllowed" in key:
+                        filters.append("petsAllowed=True")
+                    if "costMax" in key:
+                        filters.append("genericOffer__cost__lte="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        teststring = "numberOfInhabitants__gte=25"
+        resultVal["AccomodationOffers"] =  eval("mergeImages(AccomodationOffer.objects.filter("+filterstring+"))")
+    if  request.POST.get("translation") == "True":
+        filters = []
+        for key in request.POST:
+
+            if "translation" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    if "costMax" in key:
+                        filters.append("genericOffer__cost__lte="+request.POST.get(key))
+                    if "language1" in key:
+                        filters.append("firstLanguage="+request.POST.get(key))
+                    if "language2" in key:
+                        filters.append("secondLanguage="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        teststring = "numberOfInhabitants__gte=25"
+        resultVal["TranslationOffers"] =  eval("mergeImages(TranslationOffer.objects.filter("+filterstring+"))")
+        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True":
+            resultVal["Title"] = "All Offers"
+        else: 
+            title = ""
+            if request.POST.get("accomodation") == "True":
+                title += "Accomodation,"
+            if request.POST.get("translation") == "True":
+                title += "Translation,"
+            if request.POST.get("transportation") == "True":
+                title += "Transportation,"
+            title = title[:-1]
+            resultVal["Title"] = title
+        resultVal["resultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])
+
+    return resultVal
+def handle_filter(request):
+    logger.warning("Received: "+str(request.POST))
+    if request.POST.get("show_list") == "True":
+        context = create_by_filter(request)
+        return render(request, 'offers/index.html', context)
+    else :
+        query = ""
+        if request.POST.get("city"):
+            query +="city="+request.POST.get("city")+"&"
+        if request.POST.get("accomodation"):
+            query +="accomodation=True&"
+        else :
+            query += "accomodation=False&"
+        if request.POST.get("transportation") == "True":
+            query +="transportation=True&"
+        else :
+            query += "transportation=False"
+        if request.POST.get("translation") == "True":
+            query +="translation=True&"
+        else :
+            query += "translation=False"
+        
+        logger.warning("PATH BEFORE:" +str(request.path))
+        request.path = '/mapview/'
+        logger.warning("PATH AFTER: "+str(request.path))
+        return redirect("/mapview/?"+query)
+        
+def list_by_city(request, city):
+    postCodes = scrapePostCodeJson(city)
+    #Dummy data:
+    context = {"ResultCount": GenericOffer.objects.filter(postCode__in=postCodes).count(), 
+    'Title': "All Offers",'city': city,
+    'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__postCode__in=postCodes)),
+     'AccomodationOffers': mergeImages(AccomodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode__in=postCodes))}
+    return render(request, 'offers/index.html', context)
+    
 def by_postCode(request, postCode):
     context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
@@ -175,7 +287,10 @@ def index(request):
     translationOffers = mergeImages(TranslationOffer.objects.all())
 
 
-    context = {'AccomodationOffers': accomodationOffers, \
+    context = {
+        "ResultCount": GenericOffer.objects.all().count(), 
+    'Title': "All Offers",
+        'AccomodationOffers': accomodationOffers, \
                'TransportationOffers': transportationOffers,\
                'TranslationOffers': translationOffers}
     

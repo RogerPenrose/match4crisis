@@ -6,8 +6,11 @@ from . import views
 urlpatterns = [
     # ex: /polls/
     path('list', views.index, name='index'),
+    path('handle_filter', views.handle_filter, name="filter"),
+    path('by_type/<str:offer_type>', views.by_type, name='by_type'),
     path('search', views.search, name='search'),
     path('by_city/<str:city>', views.by_city, name='by_city'),
+    path('list_by_city/<str:city>', views.list_by_city, name='by_city'),
     path('create', views.create, name='create'),
     # ex: /polls/5/
     path('<int:offer_id>/', views.detail, name='detail'),
