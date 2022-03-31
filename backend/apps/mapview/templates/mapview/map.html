@@ -35,6 +35,14 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
     div.content { position: relative; }
     .leaflet-popup-content { padding-bottom: 10px; min-width: 180px;}
     .btn { color: #fff !important; background-color: #fa5103; border-radius: 10px; font-size: 14px;}
+
+#mapcontainer{
+  margin-top: 80px;
+}
+#map{
+  width: 100%;
+  height: 70vh;
+}
 </style>
 <script type="text/javascript">
   console.log("In html: {{startPosition}}")
@@ -93,7 +101,18 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
 </nav>
 {% endif %}
 
-<div id="mapContainer" style="z-index:1;">
+<div id="mapcontainer" style="z-index:1;">
+  <input id="location" type="text" placeholder="Enter a location" />
+  <div id="map"></div>
+  <p class="listview">
+    <a href="#" class="btn btn-yellow" role="button" aria-pressed="true"
+    > <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16" style="margin-right: 10px; margin-top:-2px;">
+      <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+    </svg> Show 43 results as list
+  </a></p>
+</div>
+
+<!--div id="mapContainer" style="z-index:1;">
 	 <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
    <p class="listview">
     <a href="#" class="btn btn-yellow" role="button" aria-pressed="true"
@@ -101,7 +120,7 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
       <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
     </svg> Show 43 results as list
   </a></p>
-</div>
+</div-->
 
 <script type="text/javascript">
   var gototable = function() {

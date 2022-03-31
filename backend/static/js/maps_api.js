@@ -1,8 +1,16 @@
-function initAutocomplete() {
+function initMapsAutocomplete(){
     const input = document.getElementById("location");
 
     if (input !== null) {
-        autocomplete = new google.maps.places.Autocomplete(input, {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        const loc = urlParams.get('location')
+        if (loc) {
+            input.setAttribute("value", loc)
+        }
+
+        const autocomplete = new google.maps.places.Autocomplete(input, {
             type:"geocode"
         });
         autocomplete.setComponentRestrictions({
@@ -11,7 +19,23 @@ function initAutocomplete() {
         });   
           
         autocomplete.addListener("place_changed", () => {
+            try {
+                const lat = document.getElementsByName("lat")[0];
+                const lng = document.getElementsByName("lng")[0];
+                const place = autocomplete.getPlace();
+                lat.value = place.geometry.location.lat();
+                lng.value = place.geometry.location.lng();
+            } catch {
+                // either we on mapview_page or place not found or no geometry
+            }
             input.focus();
         });
+
+        return autocomplete;
     }
+}
+
+function init_google_maps() {
+    if (typeof initMap === "function") initMap() // we are at mapview
+    else initMapsAutocomplete();
 }

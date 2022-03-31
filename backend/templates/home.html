@@ -155,6 +155,8 @@ Home {% endblock %} {% block header %}
                 class="input-form"
                 placeholder="{% blocktrans %}Search for help in city or country{% endblocktrans %}"
               />
+              <input type="hidden" name="lat">
+              <input type="hidden" name="lng">
               <svg
                 class="bi bi-search"
                 style="

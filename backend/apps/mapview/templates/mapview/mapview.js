@@ -1,4 +1,108 @@
+function initMap(){
+    const input = document.getElementById("location");
 
+    const autocomplete = initMapsAutocomplete()
+
+    autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+
+        if (!place.geometry || !place.geometry.location) {
+            // User entered the name of a Place that was not suggested and
+            // pressed the Enter key, or the Place Details request failed.
+            return;
+        }
+
+        // If the place has a geometry, then present it on a map.
+        if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+        } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17);
+        }
+
+        setGetParameter([
+            ["location", input.value], 
+            ["lat", place.geometry.location.lat()], 
+            ["lng", place.geometry.location.lng()]
+        ])
+    });
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    loc = urlParams.get('location')
+    if (loc) {
+        input.setAttribute("value", loc)
+    }
+
+    lat = urlParams.get('lat')
+    lng = urlParams.get('lng')
+
+    viewport_set = false;
+    let map;
+    if (lat !== null && lng !== null){
+        lat = parseFloat(lat);
+        lng = parseFloat(lng);
+
+        if (!isNaN(lat) && !isNaN(lng)){
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: parseFloat(lat), lng: parseFloat(lng)},
+                zoom: 17,
+                mapTypeControl: false,
+                fullscreenControl: false
+            });
+
+            viewport_set = true
+        }
+    }
+    
+    if (!viewport_set) {
+        map = new google.maps.Map(document.getElementById("map"), {
+            center: { lat: 50.8, lng:10 },
+            zoom: 6,
+            mapTypeControl: false,
+            fullscreenControl: false
+        });
+    }
+}
+
+function setGetParameter(params)
+{
+    var url = window.location.href;
+    var hash = location.hash;
+    url = url.replace(hash, '');
+
+    for (i = 0; i < params.length; i++){
+        if (url.indexOf(params[i][0] + "=") >= 0)
+        {
+            var prefix = url.substring(0, url.indexOf(params[i][0] + "=")); 
+            var suffix = url.substring(url.indexOf(params[i][0] + "="));
+            suffix = suffix.substring(suffix.indexOf("=") + 1);
+            suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
+            url = prefix + params[i][0] + "=" + params[i][1] + suffix;
+        }
+        else
+        {
+            if (url.indexOf("?") < 0)
+                url += "?" + params[i][0] + "=" + params[i][1];
+            else
+                url += "&" + params[i][0] + "=" + params[i][1];
+        }
+    }
+    
+
+    window.history.pushState("", "", url + hash);
+}
+
+
+
+
+
+
+
+
+
+/*
 
 mapViewPage = {
     options: {
@@ -235,4 +339,4 @@ document.addEventListener("DOMContentLoaded", function domReady() {
     mapViewPage.loadMapMarkers()
     mapViewPage.registerEventHandlers(document, window)
 
-})
+})*/
