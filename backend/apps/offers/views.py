@@ -183,7 +183,12 @@ def index(request):
 
 @login_required
 def delete_offer(request, offer_id):
-   return  
+    generic = get_object_or_404(GenericOffer, pk=offer_id)
+    if user_is_allowed(request, generic.userId.id):
+        generic.delete()
+        return index(request )
+    else :
+        return HttpResponse("Wrong User")
 @login_required
 def create(request):
     if request.method == 'POST':
