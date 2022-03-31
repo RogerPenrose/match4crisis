@@ -48,7 +48,7 @@ class GenericOffer(models.Model):
 
 
 class ImageClass(models.Model):
-    image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
+    image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
     

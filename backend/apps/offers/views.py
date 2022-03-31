@@ -12,7 +12,6 @@ from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
 
-
 logger = logging.getLogger("django")
 def updateGenericModel( form, offer_id=0, userId=None):
     user = User.objects.get(pk=userId) 
@@ -21,7 +20,6 @@ def updateGenericModel( form, offer_id=0, userId=None):
         g = GenericOffer(userId=user, \
                 offerType=form.get("offerType"),  \
                 created_at=datetime.now(), \
-                image=form.get("image"), \
                 offerDescription=form.get("offerDescription"), \
                 isDigital=form.get("isDigital"),  \
                 active=form.get("active"),  \
@@ -32,8 +30,6 @@ def updateGenericModel( form, offer_id=0, userId=None):
                 cost=form.get("cost"), \
                 )
         g.save()
-        logger.warning("HAVE IMAGE IN FORM: "+str(form.get("image")))
-        logger.warning("IMAGE IN CREATION:"+str(g.image))
         return g
     else:
         g = GenericOffer.objects.get(pk=offer_id)
@@ -184,13 +180,17 @@ def index(request):
                'TranslationOffers': translationOffers}
     
     return render(request, 'offers/index.html', context)
+
+@login_required
+def delete_offer(request, offer_id):
+   return  
 @login_required
 def create(request):
     if request.method == 'POST':
         return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
+        return render(request, 'offers/create.html', {"imageForm": ImageForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
 
 def update(request, offer_id):
     form = GenericForm(request.POST)
@@ -200,11 +200,10 @@ def update(request, offer_id):
         logger.warning("FORM IS VALID")
         currentForm = form.cleaned_data
         g = updateGenericModel(currentForm, offer_id, request.user.id)
-        
-        if request.FILES != None:
+        if request.FILES.get("image") != None:
             logger.warning("Have file, trying to set.. "+str(request.FILES))
             logger.warning("Trying: "+str(type(offer_id))+" Value: "+str(offer_id))
-            image = ImageClass(image=request.FILES['image'], offerId = g)
+            image = ImageClass(image=request.FILES.get('image'), offerId = g)
             image.save()
         if g is not None:
             if currentForm.get("offerType") == "AC":
@@ -212,7 +211,8 @@ def update(request, offer_id):
                 if acForm.is_valid():
                     currentForm = acForm.cleaned_data
                     a = updateAccomodationModel(g, currentForm, offer_id)
-                    logger.warning("Done...")
+                    offer_id = a.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
@@ -222,6 +222,8 @@ def update(request, offer_id):
                 if trForm.is_valid():
                     currentForm = trForm.cleaned_data
                     t = updateTransportationModel(g, currentForm, offer_id)
+                    offer_id = t.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
                     
                     return detail(request, offer_id)
                 else:
@@ -231,6 +233,9 @@ def update(request, offer_id):
                 if tlForm.is_valid():
                     currentForm = tlForm.cleaned_data
                     t = updateTranslationModel(g, currentForm,offer_id)
+                    
+                    offer_id = t.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     return HttpResponse(str(tlForm.errors))
@@ -275,6 +280,7 @@ def getOfferDetails(request, offer_id):
         images.append(imageForm)
     allowed = user_is_allowed(request, generic.userId)
     city = getCityFromPostCode(generic.postCode)
+
     if generic.offerType == "AC":
         detail = get_object_or_404(AccomodationOffer, pk=generic.id)
         detailForm = AccomodationForm(model_to_dict(detail))

@@ -16,6 +16,9 @@
                 <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}</td>   
             </tr>
             {% endfor %}
+            <tr>
+                {{ imageForm }}
+            </tr>
         </tbody>
         <tbody id="acTable">
             {% for field in accomodationForm.visible_fields %}
