@@ -135,8 +135,8 @@ p.map { margin: 20px 0;}
         edit_allowed = !edit_allowed
         console.log("Edit Allowed: "+edit_allowed)
         if (edit_allowed){
-          document.getElementById("editButton").style.display = "block" 
-          document.getElementById("endEditButton").style.display = "none" 
+          document.getElementById("editButton").style.display = "none" 
+          document.getElementById("endEditButton").style.display = "block" 
           var divs = document.getElementsByName("edit")
           for (var i = 0; i < divs.length; i++)
           {
@@ -149,8 +149,8 @@ p.map { margin: 20px 0;}
           }
         }
         else{
-          document.getElementById("editButton").style.display = "none" 
-          document.getElementById("endEditButton").style.display = "block" 
+          document.getElementById("editButton").style.display = "block" 
+          document.getElementById("endEditButton").style.display = "none" 
           var divs = document.getElementsByName("edit")
           for (var i = 0; i < divs.length; i++)
           {
