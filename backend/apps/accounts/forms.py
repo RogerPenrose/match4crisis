@@ -24,7 +24,16 @@ class CustomUserCreationForm(UserCreationForm):
             "fullName",
             "email",
         )
-        labels={"fullName": _("Vor- und Nachname(n)")}
+        labels={
+            "fullName": "",
+            "email": "",
+        }
+
+        widgets = {
+            "fullName": forms.TextInput(attrs={"placeholder": _("Vor- und Nachname(n) *")}),
+            "email": forms.TextInput(attrs={"placeholder": _("E-Mail *")}),
+        }
+
         field_classes = {"email": forms.EmailField}
 
 class OrganisationSignUpForm(UserCreationForm):

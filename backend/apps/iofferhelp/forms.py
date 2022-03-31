@@ -49,7 +49,7 @@ class ChooseHelpForm(forms.Form):
         for abbr, offerType in GenericOffer.OFFER_CHOICES:
             self.fields[abbr] = forms.BooleanField(required=False, label=offerType) # TODO change/remove the label
 
-        self.helper.add_input(Submit("submit", _("Zur Registrierung")))
+        self.helper.add_input(Submit("submit", _("Weiter")))
 
 
 class HelperPreferencesForm(SpecialPreferencesForm):
