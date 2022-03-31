@@ -37,6 +37,7 @@
 <meta name="twitter:image" content="https://match4crisis.de{% static 'img/facebook-share.jpg' %}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+
 <title>{% block title %} {% endblock %} | match4crisis </title>
 {% block header %}
     {% endblock %}
@@ -135,5 +136,12 @@
     </p>
   </div>
 </footer>
+
+<script src="{% static 'js/maps_api.js' %}"></script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&callback=initAutocomplete&libraries=places&v=weekly"
+  async
+></script>
+
 </body>
 </html>
