@@ -69,13 +69,13 @@
 
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
  <div class="col-12 text-center" style="text-align:center;" >
-    <h2 class="title">Accommodations in Berlin</h2></div>
+    <h2 class="title">{{Title }} in Berlin</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="#">Show {{ AccomodationOffers | length }} results on Map</a></p></div>
+        <p><a href="#">Show {{ ResultCount }} results on Map</a></p></div>
         </div>
         </div>
         <div class="container cards">
-            {% for entry in  AccomodationOffers %}
+    {% for entry in  AccomodationOffers %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -111,7 +111,7 @@
       
             
 
-            {% for entry in TranslationOffers %}
+{% for entry in TranslationOffers %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -143,7 +143,7 @@
             {% endfor %}
 
 
-            {% for entry in TransportationOffers %}
+      {% for entry in TransportationOffers %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -159,11 +159,12 @@
 <h3>{{ entry.offer.genericOffer.get_offerType_display }}</h3>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
   <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-</svg> From: </p>
+</svg> From:  {{entry.offer.genericOffer.streetName}} {{entry.offer.genericOffer.streetNumber}}{% if entry.offer.streetNameEnd.length > 0 %},{% endif%} {{entry.offer.genericOffer.postCode}}</p>
 
   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
     <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-  </svg> To: {{entry.offer.streetNameEnd}} {{entry.offer.streetNumberEnd}},{{entry.offer.postCodeEnd}}</p>
+  </svg> To: {{entry.offer.streetNameEnd}} {{entry.offer.streetNumberEnd}}{% if entry.offer.streetNameEnd.length > 0 %},{% endif%} {{entry.offer.postCodeEnd}}</p>
+
 
   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>

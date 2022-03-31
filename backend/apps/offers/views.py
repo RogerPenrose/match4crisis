@@ -151,6 +151,18 @@ def by_city(request, city):
     }
     logger.warning(str(context))
     return render(request, 'offers/list.html', context)
+def by_type(request, offer_type):
+    if offer_type== "accomodation":
+        context = {"ResultCount": AccomodationOffer.objects.all().count(),
+            'Title': "Accommmodations",
+            'AccomodationOffers': mergeImages(AccomodationOffer.objects.all())}
+    if offer_type== "transportation":
+        context = {
+            "ResultCount": TransportationOffer.objects.all().count(),'Title': "Transportations", 'TransportationOffers': mergeImages(TransportationOffer.objects.all())}
+    if offer_type== "translation":
+        context = {
+            "ResultCount": TranslationOffer.objects.all().count(),'Title': "Translations",'TranslationOffers': mergeImages(TranslationOffer.objects.all())}
+    return render(request, 'offers/index.html', context)
 def by_postCode(request, postCode):
     context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
