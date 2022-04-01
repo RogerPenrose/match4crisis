@@ -16,7 +16,7 @@ def validate_plz(value):
             _('%(value)s is not a valid postcode'),
             params={'value': value},
         )
-    
+
 class GenericOffer(models.Model):
 
 
@@ -27,7 +27,8 @@ class GenericOffer(models.Model):
     ('BU', 'Buerocratic'),
     ('MP', 'Manpower'),
     ('CL', 'Childcare Permanent'),
-    ('BA', 'Babysitting')
+    ('BA', 'Babysitting'),
+    ('WE', 'Medical Assistance')
     ]
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -65,8 +66,31 @@ class ChildcareOfferShortterm(models.Model):
         ('MA', "Male"),
     ]
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
-    numberOfChildren =  models.IntegerField(default=2)
+    numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)
+class JobOffer(models.Model):
+    JOB_CHOICES = [
+        ("Academic Support", "ACA"),
+        ("Administration", "ADM"),
+        ("Advancement", "ADV"),
+        ("Conference and Events","CON"),
+        ("Facility Operations", "FAC"),
+        ("Finance and Accounting", "FIN"),
+        ("General Administration", "GEN"),
+        ("Health Services", "HEA"),
+        ("Human Resources", "HUM"),
+        ("Information Technology", "INF"),
+        ("International Program and Services", "INT"),
+        ("Legal", "LEG"),
+        ("Library Administration", "LIB"),
+        ("Marketing, Communication and External Affairs", "MAR"),
+        ("Office and Admin Support", "OFF"),
+        ("Performing Arts and Museum Administration", "PER"),
+        ("Public Safety", "PUB"),
+        ("Research and Program Admin", "RES"),
+        ("Sports and Recreation", "SPO"),
+        ("Student Services", "STU"),
+        ("Handicraft profession", "HAN")]
 
 class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
@@ -89,15 +113,19 @@ class ManpowerOffer(models.Model):
 class AccomodationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
-    numberOfChildren = models.IntegerField(default=2)
-    numberOfPets = models.IntegerField(default=2)
+    numberOfChildren = models.IntegerField(default=0, blank=True)
+    numberOfPets = models.IntegerField(default=0, blank=True)
     typeOfResidence = models.CharField(ACCOMODATIONCHOICES,max_length=2, default="SO" )
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     stayLength = models.IntegerField(default=14, blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
     def __str__(self):
         return self.typeOfResidence
-
+class WelfareOffer(models.Model):
+    WELFARE_CHOICES = [("ELD", "Elderly Care"),("DIS", "Care for handicapped People"), ("PSY", "Psychological Aid")]
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    
+    helpType = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="CAR") # Use this to track between "Bus", "Car", "Transporter" ?
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
@@ -126,7 +154,10 @@ OFFER_MODELS = {
     'AC' : AccomodationOffer,
     'TL' : TranslationOffer,
     'TR' : TransportationOffer,
-    'BU' : BuerocraticOffer
+    'BU' : BuerocraticOffer,
+    'BA' : ChildcareOfferShortterm,
+    'CL' : ChildcareOfferLongterm,
+    'WE' : WelfareOffer
 }
 
 def getSpecificOffers(genericOffers: list):

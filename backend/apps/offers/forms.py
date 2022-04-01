@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer
 
 def validate_plz(value):
     try:
@@ -38,6 +38,7 @@ HELPTYPE_MP="Type of Manpower"
 GENDER="Gender"
 REGULAR_CHILDCARE="Regular Childcare"
 AMOUNT_OF_CHILDREN="How many Children"
+HELPTYPE_WE="Type of Medical Assistance"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -61,7 +62,7 @@ class ChildcareFormLongterm(forms.Form):
 class ChildcareFormShortterm(forms.Form):
     gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
     isRegular = forms.BooleanField(label=REGULAR_CHILDCARE, widget=forms.CheckboxInput( attrs={'class': 'form-control'}))
-    numberOfChildren = forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
+    numberOfChildrenToCare = forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
 
 class ImageForm(forms.Form):
     
@@ -72,6 +73,8 @@ class ImageForm(forms.Form):
    
 class ManpowerForm(forms.Form):
     helpType= forms.CharField(label=HELPTYPE_MP, max_length=2, widget=forms.Select(choices=ManpowerOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
+class WelfareForm(forms.Form):
+    helpType= forms.CharField(label=HELPTYPE_WE, max_length=2, widget=forms.Select(choices=WelfareOffer.WELFARE_CHOICES, attrs={'class': 'form-control'}))
       
 class BuerocraticForm(forms.Form):
     helpType= forms.CharField(label=HELPTYPE, max_length=2, widget=forms.Select(choices=BuerocraticOffer.HELP_CHOICES, attrs={'class': 'form-control'}))

@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -573,6 +573,7 @@ residenceChoices = ['SO','RO', 'HO', 'LE']
 HELP_CHOICES_MP= ['ON',  'OS']
 GENDER_CHOICES = ['FE', 'MA', 'NO']
 HELP_CHOICES= ['AM', 'LE', 'OT']
+WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
 def populate_db(n):
     if settings.DEBUG:
         n_offers = n
@@ -637,15 +638,20 @@ def populate_db(n):
             if counter == 5: # Transportation
                 print("CHILDCARE !!!!!")
 
-                g.offerType = "BA"
+                g.offerType = "CL"
                 g.save()
                 b = ChildcareOfferLongterm(genericOffer=g, gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
                 b.save()
             if counter == 6: # Transportation
                 print("CHILDCARE !!!!!")
-                g.offerType = "CL"
+                g.offerType = "BA"
                 g.save()
                 b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildren=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                b.save()
+            if counter == 7: # Transportation
+                g.offerType = "WE"
+                g.save()
+                b = WelfareOffer(genericOffer=g, helpType=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
                 b.save()
                 counter = -1
             counter = counter + 1
