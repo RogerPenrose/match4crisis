@@ -574,10 +574,9 @@ HELP_CHOICES_MP= ['ON',  'OS']
 GENDER_CHOICES = ['FE', 'MA', 'NO']
 HELP_CHOICES= ['AM', 'LE', 'OT']
 WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
-def populate_db(n):
+def populate_db(n, userId = 1):
     if settings.DEBUG:
         n_offers = n
-        userId = 1
         plzs = np.random.choice(big_city_plzs, size=n_offers)
         counter = 0
         for i in range(n_offers):
@@ -646,7 +645,7 @@ def populate_db(n):
                 print("CHILDCARE !!!!!")
                 g.offerType = "BA"
                 g.save()
-                b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildren=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildrenToCare=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
                 b.save()
             if counter == 7: # Transportation
                 g.offerType = "WE"

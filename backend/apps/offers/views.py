@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
@@ -5,9 +6,18 @@ import json
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
+<<<<<<< HEAD
 from django.http import HttpResponse
 from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer
 from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm
+=======
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+
+from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer
+from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm
+
+from apps.ineedhelp.models import Refugee
+>>>>>>> 03722e456bfad71e701dbb8ae0558e0a8a3fb348
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
@@ -730,7 +740,27 @@ def detail(request, offer_id, edit_active = False):
     context = getOfferDetails(request, offer_id)
     if edit_active:
         context["edit_active"] = edit_active
+    if request.user.is_authenticated and request.user.isRefugee:
+        offer = GenericOffer.objects.get(pk=offer_id)
+        context["favourited"] = offer.favouritedBy.filter(user=request.user)
     return render(request, 'offers/detail.html', context)
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."
     return HttpResponse(response % offer_id)
+
+def vote(request, offer_id):
+    return HttpResponse("You're voting on question %s." % offer_id)
+
+def ajax_toggle_favourite(request):
+    if not request.is_ajax() or not request.method=='POST':
+        return HttpResponseNotAllowed(['POST'])
+    else:
+        try:
+            offer = GenericOffer.objects.get(pk=request.POST["offerId"])
+            refugee = Refugee.objects.get(user=request.user)
+            favourited = refugee.toggleFavourite(offer)
+
+            return JsonResponse({"success":True, "favourited":favourited})
+            
+        except (Exception):
+            return JsonResponse({"success":False})
