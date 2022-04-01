@@ -19,13 +19,14 @@ def validate_plz(value):
 
 class GenericOffer(models.Model):
 
+
     OFFER_CHOICES = [
     ('AC', 'Accomodation'),
     ('TL', 'Translation'),
     ('TR', 'Transportation'),
-    ('AP', 'Accompaniment')
+    ('AP', 'Accompaniment'),
+    ('LE', 'Legal')
     ]
-
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
     postCode = models.CharField(max_length=5, validators=[validate_plz])
@@ -46,7 +47,9 @@ class GenericOffer(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.offerType
-
+class LegalOffer(models.Model):
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    
 class AccompanimentOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 class ImageClass(models.Model):

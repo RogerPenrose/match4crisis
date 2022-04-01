@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, AccompanimentOffer
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, AccompanimentOffer, LegalOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -570,11 +570,12 @@ big_city_plzs = [
 ]
 
 
-residenceChoices = ['SO','RO', 'HO'] 
+residenceChoices = ['SO','RO', 'HO', 'LE'] 
 
 def populate_db(request, userId=1):
     if settings.DEBUG:
         n_offers = 500
+
         plzs = np.random.choice(big_city_plzs, size=n_offers)
         counter = 0
         for i in range(n_offers):
@@ -627,6 +628,13 @@ def populate_db(request, userId=1):
                     typeOfCar = "LKW", \
                     numberOfPassengers=np.random.randint(0, 10))
                 t.save()
+            if counter == 4: # Legal
+
+                g.offerType = "LE"
+                g.save()
+
+                l = LegalOffer(genericOffer=g)
+                l.save()
                 counter = -1
             counter = counter + 1
         return HttpResponse("Done. %s entries." % GenericOffer.objects.all().count())
