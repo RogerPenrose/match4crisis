@@ -4,8 +4,78 @@
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+
+ label.custom-control-label { position: relative;
+  display: inline-block;
+ margin-right: .5rem;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  transition: all 0.3s linear;
+margin-bottom: 0px;
+box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    border-radius: 25px;
+    width: 100%;
+    padding: 10px 10px 10px 70px;
+    font-weight: 600;
+}
+
+.custom-checkbox .custom-control-label::before {
+content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 42px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+  transition: all 0.25s linear; 
+  box-shadow: 0 0 0px 2px #e6e6e6;
+}
+
+.custom-control-label::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+  transform: translate3d(2px, 2px, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-control-label:active .custom-control-label::after {
+  width: 28px;
+  transform: translate3d(2px, 2px, 0);
+}
+
+.custom-control input { display: none; }
+
+.custom-control-input:checked~.custom-control-label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+
+.custom-control-input:checked~.custom-control-label::after { transform: translate3d(22px, 2px, 0); }
+
+.custom-control { padding-left: 0px; }
+
+
+.custom-control-label::before { border: 0px;}
+
+
+</style>
 {% endblock %}
 {% block content %}
+<div style="height:40px"></div>
+<div class="container">
+    <div class="row" style=" margin-bottom:55px;">
+               <div class="col-lg-10 col-sm-12 col-12">
+
+                <h2 class="title">Where do you want to help?</h2>
+                <p style="margin-bottom: 35px;">You can choose multiple categories</p>
+
 <form action="/offers/create" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table id="mainTable">
@@ -43,6 +113,7 @@
     </table>
     <input type="submit" value="Submit" >
 </form>
+</div></div></div>
 <script>
     var typeSelection = "AC"
     var tlTable = document.getElementById("tlTable")

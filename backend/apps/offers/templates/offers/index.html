@@ -115,7 +115,11 @@
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
+<<<<<<< HEAD
         <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}&accomodation={%if AccomodationOffers|length > 0 %}True{% else%}False{%endif%}&transportation={%if TransportationOffers|length > 0 %}True{% else%}False{%endif%}&translation={%if TranslationOffers|length > 0 %}True{% else%}False{%endif%} ">Show {{ ResultCount }} results on Map</a></p></div>
+=======
+        <p><a href="/mapview/?generic=True">Show {{ ResultCount }} results on Map</a></p></div>
+>>>>>>> 99f42a316cc3e247301256aa13443317ad7f50c0
         </div>
         </div>
         <div class="container cards">

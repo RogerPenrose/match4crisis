@@ -80,6 +80,7 @@ TEMPLATES = [
 ]
 
 LOGIN_REDIRECT_URL = "/accounts/login_redirect"
+LOGOUT_REDIRECT_URL = "/"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 

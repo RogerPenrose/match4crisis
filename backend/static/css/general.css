@@ -530,13 +530,16 @@ Helper Form
 }
 textarea.form-control, input.form-control {
   font-weight: 300;
-  height: calc(1.5em + 1rem + 5px);
   line-height: 1.5;
   color: #495057;
   background-color: #fff;
   border: 0px;
   border-radius: 1rem;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
+}
+
+input.form-control {
+  height: calc(1.5em + 1rem + 5px);
 }
 
 .invalid-feedback {
