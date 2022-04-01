@@ -6,7 +6,7 @@ import json
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass
+from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, AccompanimentOffer
 from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
@@ -54,15 +54,20 @@ def updateAccomodationModel(g, form, offer_id=0):
     if offer_id == 0:
         a = AccomodationOffer(genericOffer=g, \
             numberOfInhabitants=form.get("numberOfInhabitants"), \
-            petsAllowed=form.get("petsAllowed"), \
+            numberOfAdults=form.get("numberOfAdults"), \
+            numberOfChildren=form.get("numberOfChildren"), \
+            typeOfResidence=form.get("typeOfResidence"), \
+            numberOfPets=form.get("numberOfPets"), \
             stayLength= form.get("stayLength") )
         a.save()
         return a
     else:
         a = AccomodationOffer.objects.get(pk=offer_id)
         a.genericOffer=g
-        a.numberOfInhabitants=form.get("numberOfInhabitants")
-        a.petsAllowed=form.get("petsAllowed")
+        a.numberOfAdults=form.get("numberOfAdults")
+        a.numberOfChildren=form.get("numberOfChildren")
+        a.typeOfResidence=form.get("typeOfResidence")
+        a.numberOfPets=form.get("numberOfPets")
         a.stayLength= form.get("stayLength")
         a.save()
         return a
@@ -141,11 +146,13 @@ def by_city(request, city):
         accomodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
         translations += GenericOffer.objects.filter(offerType="TL", postCode=postCode).count()
         transportations += GenericOffer.objects.filter(offerType="TR", postCode=postCode).count()
+        accompaniments += GenericOffer.objects.filter(offerType="AP", postCode=postCode).count()
     totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
+    totalAccompaniments = GenericOffer.objects.filter(offerType="AP").count()
     context = {
-        'local' : {'AccomodationOffers': accomodations, 'TransportationOffers': transportations, 'TranslationOffers': translations},
+        'local' : {'AccomodationOffers': accomodations, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'AccompanimentOffers': accompaniments},
         'total' : {'AccomodationOffers': totalAccomodations, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations},
     }
     logger.warning(str(context))
@@ -161,57 +168,53 @@ def by_type(request, offer_type):
     if offer_type== "translation":
         context = {
             "ResultCount": TranslationOffer.objects.all().count(),'Title': "Translations",'TranslationOffers': mergeImages(TranslationOffer.objects.all())}
+    
+    if offer_type== "accompaniment":
+        context = {"ResultCount": AccompanimentOffers.objects.all().count(),
+            'Title': "Accompaniments",
+            'AccompanimentOffers': mergeImages(AccompanimentOffers.objects.all())}
     return render(request, 'offers/index.html', context)
 def create_by_filter(request):
-    resultVal = {}
+    #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
+    resultVal = {"TransportationOffers":[], "TranslationOffers":[], "AccomodationOffers": [], "AccompanimentOffer":[]}
     if   request.POST.get("transportation") == "True":
         filters = []
         for key in request.POST:
 
-            if "transportation" in key:
+            if "transportation_" in key:
                 if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    if "numberOfPassengers" in key:
-                        filters.append("TnumberOfPassengers__gte="+request.POST.get(key))
-                    if "costMax" in key:
-                        filters.append("genericOffer__cost__lte="+request.POST.get(key))
-                    if "targetPlz" in key:
-                        filters.append("postCodeEnd="+request.POST.get(key))
-                    if "startPlz" in key:
-                        filters.append("genericOffer__postCode="+request.POST.get(key))
+                    filters.append(key.replace("transportation_","")+"="+request.POST.get(key))
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        teststring = "numberOfInhabitants__gte=25"
         resultVal["TransportationOffers"] =  eval("mergeImages(TransportationOffer.objects.filter("+filterstring+"))")
     if  request.POST.get("accomodation") == "True":
         filters =[]
         for key in request.POST:
             
-            if "accomodation" in key:
+            if "accomodation_" in key:
                 if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    if "numberOfInhabitants" in key:
-                        filters.append("numberOfInhabitants__gte="+request.POST.get(key))
-                    if "petsAllowed" in key:
-                        filters.append("petsAllowed=True")
-                    if "costMax" in key:
-                        filters.append("genericOffer__cost__lte="+request.POST.get(key))
+                    filters.append(key.replace("accomodation_","")+"="+request.POST.get(key))
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        teststring = "numberOfInhabitants__gte=25"
         resultVal["AccomodationOffers"] =  eval("mergeImages(AccomodationOffer.objects.filter("+filterstring+"))")
     if  request.POST.get("translation") == "True":
         filters = []
         for key in request.POST:
 
-            if "translation" in key:
+            if "translation_" in key:
                 if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    if "costMax" in key:
-                        filters.append("genericOffer__cost__lte="+request.POST.get(key))
-                    if "language1" in key:
-                        filters.append("firstLanguage="+request.POST.get(key))
-                    if "language2" in key:
-                        filters.append("secondLanguage="+request.POST.get(key))
+                    filters.append(key.replace("translation_","")+"="+request.POST.get(key))
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        teststring = "numberOfInhabitants__gte=25"
         resultVal["TranslationOffers"] =  eval("mergeImages(TranslationOffer.objects.filter("+filterstring+"))")
-        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True":
+    
+    if  request.POST.get("accompaniment") == "True":
+        filters = []
+        for key in request.POST:
+
+            if "accompaniment_" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    filters.append(key.replace("accompaniment_","")+"="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        resultVal["AccompanimentOffers"] =  eval("mergeImages(AccompanimentOffer.objects.filter("+filterstring+"))")
+        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and  request.POST.get("asccompaniment") == "True":
             resultVal["Title"] = "All Offers"
         else: 
             title = ""
@@ -220,10 +223,12 @@ def create_by_filter(request):
             if request.POST.get("translation") == "True":
                 title += "Translation,"
             if request.POST.get("transportation") == "True":
+                title += "Transportation,"               
+            if request.POST.get("accompaniment") == "True":
                 title += "Transportation,"
             title = title[:-1]
             resultVal["Title"] = title
-        resultVal["resultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])
+        resultVal["resultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["AccompanimentOffers"])
 
     return resultVal
 def handle_filter(request):
@@ -247,10 +252,10 @@ def handle_filter(request):
             query +="translation=True&"
         else :
             query += "translation=False"
-        
-        logger.warning("PATH BEFORE:" +str(request.path))
-        request.path = '/mapview/'
-        logger.warning("PATH AFTER: "+str(request.path))
+        if request.POST.get("accompaniment") == "True":
+            query +="accompaniment=True&"
+        else :
+            query += "accompaniment=False"
         return redirect("/mapview/?"+query)
         
 def list_by_city(request, city):
@@ -260,12 +265,14 @@ def list_by_city(request, city):
     'Title': "All Offers",'city': city,
     'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__postCode__in=postCodes)),
      'AccomodationOffers': mergeImages(AccomodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'AccompanimentOffers': mergeImages(AccompanimentOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode__in=postCodes))}
     return render(request, 'offers/index.html', context)
     
 def by_postCode(request, postCode):
     context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
+                'AccompanimentOffers': AccompanimentOffer.objects.filter(genericOffer__postCode=postCode), \
                'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
     
     return render(request, 'offers/index.html', context)
@@ -283,6 +290,7 @@ def mergeImages(offers):
     return resultOffers
 def index(request):
     accomodationOffers = mergeImages(AccomodationOffer.objects.all())
+    accompanimentOffers = mergeImages(AccompanimentOffer.objects.all())
     transportationOffers = mergeImages(TransportationOffer.objects.all())
     translationOffers = mergeImages(TranslationOffer.objects.all())
 
@@ -292,7 +300,8 @@ def index(request):
     'Title': "All Offers",
         'AccomodationOffers': accomodationOffers, \
                'TransportationOffers': transportationOffers,\
-               'TranslationOffers': translationOffers}
+               'TranslationOffers': translationOffers,\
+               'AccompanimentOffers': accompanimentOffers}
     
     return render(request, 'offers/index.html', context)
 
@@ -326,7 +335,12 @@ def update(request, offer_id):
             image = ImageClass(image=request.FILES.get('image'), offerId = g)
             image.save()
         if g is not None:
-            if currentForm.get("offerType") == "AC":
+            if currentForm.get("offerType") == "AP": # Special case since we have no particular fields in this type.
+                offer_id = genericOffer.id
+                a = AccompanientOffer(genericOffer=g)
+                a.save()
+                return detail(request, offer_id)
+            elif currentForm.get("offerType") == "AC":
                 acForm = AccomodationForm(request.POST)
                 if acForm.is_valid():
                     currentForm = acForm.cleaned_data
@@ -414,6 +428,8 @@ def getOfferDetails(request, offer_id):
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
         return {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+    if generic.offerTyp == "AP":
+        return {'offerType': "Transportation", 'generic': genericForm, 'detail': None, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False):
     context = getOfferDetails(request, offer_id)

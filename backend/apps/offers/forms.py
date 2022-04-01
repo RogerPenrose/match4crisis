@@ -27,10 +27,12 @@ CARTYPE="Type of car"
 FIRSTLANGUAGE="Translating from"
 SECONDLANGUAGE="Translating to"
 STAYLENGTH= "Maximum length of stay (Days)"
-INHABITANTS="Maximum number of inhabitants"
+INHABITANTS_ADULTS="Maximum number of Adults"
+INHABITANTS_CHILDREN="Maximum number of Children"
+INHABITANTS_PETS="Maximum number of Pets"
 DIGITAL="Digital Offer"
 ACTIVE="Active Offer"
-
+RESIDENCE="Type of residence"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -76,9 +78,18 @@ class TranslationForm(forms.Form):
 # Translation Fields
     firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
     secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
+      
 
 class AccomodationForm(forms.Form):
     # Accomodation Fields
+
+    ACCOMODATIONCHOICES = {
+        ('SO', 'Sofa / Bed'),
+        ('RO', 'Private Room'),
+        ('HO', 'Whole Flat / House')
+    }
     stayLength = forms.IntegerField(label=STAYLENGTH,localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    numberOfInhabitants = forms.IntegerField(label=INHABITANTS, localize=False, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    petsAllowed = forms.BooleanField(label=PETS_ALLOWED,initial=False, required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control'}) )
+    numberOfAdults = forms.IntegerField(label=INHABITANTS_ADULTS, localize=False, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
+    numberOfChildren = forms.IntegerField(label=INHABITANTS_CHILDREN, localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
+    numberOfPets = forms.IntegerField(label=INHABITANTS_PETS, localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
+    typeOfResidence = forms.CharField(label=RESIDENCE, max_length=2, widget=forms.Select(choices=ACCOMODATIONCHOICES, attrs={'class': 'form-control'}))

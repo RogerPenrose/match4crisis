@@ -22,7 +22,8 @@ class GenericOffer(models.Model):
     OFFER_CHOICES = [
     ('AC', 'Accomodation'),
     ('TL', 'Translation'),
-    ('TR', 'Transportation')
+    ('TR', 'Transportation'),
+    ('AP', 'Accompaniment')
     ]
 
 
@@ -46,16 +47,23 @@ class GenericOffer(models.Model):
     def __str__(self):
         return self.offerType
 
-
+class AccompanimentOffer(models.Model):
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
-    
+ACCOMODATIONCHOICES = {
+    ('SO', 'Sofa / Bed'),
+    ('RO', 'Private Room'),
+    ('HO', 'Whole Flat / House')
+}
 class AccomodationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    numberOfInhabitants = models.IntegerField(default=2)
-    petsAllowed = models.BooleanField(default=False)
+    numberOfAdults = models.IntegerField(default=2)
+    numberOfChildren = models.IntegerField(default=2)
+    numberOfPets = models.IntegerField(default=2)
+    typeOfResidence = models.CharField(ACCOMODATIONCHOICES,max_length=2, default="SO" )
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     stayLength = models.IntegerField(default=14, blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6

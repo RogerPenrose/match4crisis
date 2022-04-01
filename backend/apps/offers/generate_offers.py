@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, AccompanimentOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -570,11 +570,11 @@ big_city_plzs = [
 ]
 
 
-
+residenceChoices = ['SO','RO', 'HO'] 
 
 def populate_db(request, userId=1):
     if settings.DEBUG:
-        n_offers = 200
+        n_offers = 500
         plzs = np.random.choice(big_city_plzs, size=n_offers)
         counter = 0
         for i in range(n_offers):
@@ -585,7 +585,6 @@ def populate_db(request, userId=1):
                 created_at=datetime.now(), \
                 offerDescription="Automatically generated", \
                 isDigital=False,  \
-                active=True,  \
                 country="DE", \
                 postCode=plzs[i], \
                 cost=0.00, \
@@ -598,9 +597,11 @@ def populate_db(request, userId=1):
                 g.offerType = "AC"
                 g.save()
                 a = AccomodationOffer(genericOffer=g, \
-                    numberOfInhabitants=np.random.randint(1, 15), \
-                    petsAllowed=False, \
-                    stayLength= np.random.randint(1, 365) )
+                    numberOfAdults=np.random.randint(1, 15), \
+                    numberOfChildren=np.random.randint(1, 3), \
+                    numberOfPets=np.random.randint(0, 2), \
+                    stayLength= np.random.randint(1, 365) , \
+                    typeOfResidence= residenceChoices[np.random.randint(0,len(residenceChoices)-1)] )     
                 a.save()
             if counter == 1: #Translation
 
@@ -611,7 +612,12 @@ def populate_db(request, userId=1):
                             firstLanguage="German", \
                             secondLanguage="English")
                 t.save()
-            if counter == 3: #
+            if counter == 2: # Accompaniment
+                g.offerType = "AP"
+                g.save()
+                a = AccompanimentOffer(genericOffer=g)
+                a.save()
+            if counter == 3: # Transportation
 
                 g.offerType = "TR"
                 g.save()
