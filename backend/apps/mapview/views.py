@@ -40,18 +40,18 @@ def index(request):
     locations_and_number = prepare_offers(ttl_hash=get_ttl_hash()) # @todo: not sure if this caching still does anything with how we fetch our stuff.. 
     startPosition =  [51.13, 10.018]
     zoom = 6
+    logger.warning("Received Request in Mapview: "+str(request.GET))
     if request.GET.get("city"):
         startPosition = getCenterOfCity(request.GET.get("city"))
         zoom = 10
         logger.warning("Received: "+str(startPosition))
     context = {
-        "locations": [],
-        "mapbox_token": settings.MAPBOX_TOKEN,
-        "startPosition":  startPosition,
-        "zoom": zoom,
-         "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
+    "locations": [],
+    "mapbox_token": settings.MAPBOX_TOKEN,
+    "startPosition":  startPosition,
+    "zoom": zoom,
+        "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
     }
-    logger.warning("Context: "+str(context))
     return render(request, "mapview/map.html", context )
 
 
@@ -66,21 +66,23 @@ def prepare_offers(ttl_hash=None):
         cc = offer.country
         plz = offer.postCode
         key = cc + "_" + plz
-
-        if key in locations_and_number:
-            locations_and_number[cc + "_" + plz]["count"] += 1
-        else:
-            lat, lon, ort = plzs[cc][plz]
-            locations_and_number[key] = {
-                "countrycode": cc,
-                "plz": plz,
-                "count": 1,
-                "lat": lat,
-                "lon": lon,
-                "ort": ort,
-                "i": i,
-            }
-            i += 1
+        try:
+            if key in locations_and_number:
+                locations_and_number[cc + "_" + plz]["count"] += 1
+            else:
+                lat, lon, ort = plzs[cc][plz]
+                locations_and_number[key] = {
+                    "countrycode": cc,
+                    "plz": plz,
+                    "count": 1,
+                    "lat": lat,
+                    "lon": lon,
+                    "ort": ort,
+                    "i": i,
+                }
+                i += 1
+        except Exception:
+            continue
     return locations_and_number
 
 def accomodationOffersJSON(request):
