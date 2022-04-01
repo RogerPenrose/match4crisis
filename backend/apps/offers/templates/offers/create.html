@@ -5,7 +5,6 @@
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock %}
-
 {% block content %}
 <form action="/offers/create" method="post" enctype="multipart/form-data">
     {% csrf_token %}
@@ -42,13 +41,14 @@
             {% endfor %}
         </tbody>
     </table>
-    <input type="submit" value="Submit">
+    <input type="submit" value="Submit" >
 </form>
 <script>
     var typeSelection = "AC"
     var tlTable = document.getElementById("tlTable")
     var trTable = document.getElementById("trTable")
     var acTable = document.getElementById("acTable")
+    document.getElementById("id_offerType").onchange =function(){ refresh()}
     refresh()
     markEntries()
     function markEntries(){
@@ -82,7 +82,7 @@
         }
     }
     function refresh(){
-        typeSelection = document.getElementsByName("offerType")[0].value
+        typeSelection = document.getElementById("id_offerType").value
         if (typeSelection == "AC"){
             // Show only Accomodation Table
 
@@ -103,6 +103,12 @@
         else if (typeSelection == "TL"){
             // Show only Translation Table
             toggleRequiredTag(tlTable, true)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+        }
+        else {
+            
+            toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
             toggleRequiredTag(trTable, false)
         }
