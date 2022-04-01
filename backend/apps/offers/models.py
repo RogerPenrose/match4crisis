@@ -16,7 +16,7 @@ def validate_plz(value):
             _('%(value)s is not a valid postcode'),
             params={'value': value},
         )
-
+    
 class GenericOffer(models.Model):
 
 
@@ -25,7 +25,9 @@ class GenericOffer(models.Model):
     ('TL', 'Translation'),
     ('TR', 'Transportation'),
     ('BU', 'Buerocratic'),
-    ('MP', 'Manpower')
+    ('MP', 'Manpower'),
+    ('CL', 'Childcare Permanent'),
+    ('BA', 'Babysitting')
     ]
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -47,6 +49,25 @@ class GenericOffer(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.offerType
+class ChildcareOfferLongterm(models.Model):
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    GENDER_CHOICES = [
+        ('NO', "Don't want to disclose"),
+        ('FE', "Female"),
+        ('MA', "Male"),
+    ]
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
+class ChildcareOfferShortterm(models.Model):
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    GENDER_CHOICES = [
+        ('NO', "Don't want to disclose"),
+        ('FE', "Female"),
+        ('MA', "Male"),
+    ]
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
+    numberOfChildren =  models.IntegerField(default=2)
+    isRegular = models.BooleanField(default=False)
+
 class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

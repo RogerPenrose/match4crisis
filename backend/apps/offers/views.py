@@ -6,8 +6,8 @@ import json
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer
-from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm
+from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm
+from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
@@ -49,6 +49,36 @@ def updateGenericModel( form, offer_id=0, userId=None):
         else:
             logger.warning("Not allowed to update")
             return None
+
+def updateChildcareShortTermModel(g, form, offer_id=0):
+    if offer_id == 0:
+        a = ChildcareOfferShortterm(genericOffer=g, \
+            numberOfChildren=form.get("numberOfChildren"), \
+            gender=form.get("gender"), \
+            isRegular=form.get("isRegular"))
+        a.save()
+        return a
+    else:
+        a = ChildcareOfferShortterm.objects.get(pk=offer_id)
+        a.genericOffer=g
+        a.numberOfChildren=form.get("numberOfChildren")
+        a.gender=form.get("gender")
+        a.isRegular=form.get("isRegular")
+        a.save()
+        return a
+    
+def updateChildcareLongTermModel(g, form, offer_id=0):
+    if offer_id == 0:
+        a = ChildcareOfferLongterm(genericOffer=g, \
+            gender=form.get("gender"))
+        a.save()
+        return a
+    else:
+        a = ChildcareOfferLongterm.objects.get(pk=offer_id)
+        a.genericOffer=g
+        a.gender=form.get("gender")
+        a.save()
+        return a
 
 def updateAccomodationModel(g, form, offer_id=0):
     if offer_id == 0:
@@ -169,19 +199,23 @@ def by_city(request, city):
     translations = 0 
     transportations = 0
     buerocratic = 0
+    childcareShortterm = 0
     for postCode in postCodes:
         accomodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
         translations += GenericOffer.objects.filter(offerType="TL", postCode=postCode).count()
         transportations += GenericOffer.objects.filter(offerType="TR", postCode=postCode).count()
         accompaniments += GenericOffer.objects.filter(offerType="AP", postCode=postCode).count()
         buerocratic += GenericOffer.objects.filter(offerType="BU", postCode=postCode).count()
+        childcareShortterm += GenericOffer.objects.filter(offerType="BA", postCode=postCode).count()
     totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
     totalBuerocratic = GenericOffer.objects.filter(offerType="BU").count()
+    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA").count()
+    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
     context = {
-        'local' : {'AccomodationOffers': accomodations, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic},
-        'total' : {'AccomodationOffers': totalAccomodations, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic},
+        'local' : {'AccomodationOffers': accomodations, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
+        'total' : {'AccomodationOffers': totalAccomodations, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
     logger.warning(str(context))
     return render(request, 'offers/list.html', context)
@@ -196,7 +230,12 @@ def by_type(request, offer_type):
     if offer_type== "translation":
         context = {
             "ResultCount": TranslationOffer.objects.all().count(),'Title': "Translations",'TranslationOffers': mergeImages(TranslationOffer.objects.all())}
-    
+    if offer_type== "childcarelongterm":
+        context = {
+            "ResultCount": ChildcareOfferLongterm.objects.all().count(),'Title': "Translations",'ChildcareOfferLongterms': mergeImages(ChildcareOfferLongterm.objects.all())}
+    if offer_type== "childcareshortterm":
+        context = {
+            "ResultCount": ChildcareOfferShortterm.objects.all().count(),'Title': "Translations",'ChildcareOfferShortterms': mergeImages(ChildcareOfferShortterm.objects.all())}
     if offer_type== "buerocratic":
         context = {"ResultCount": BuerocraticOffer.objects.all().count(),
             'Title': "Buerocratic",
@@ -204,7 +243,7 @@ def by_type(request, offer_type):
     return render(request, 'offers/index.html', context)
 def create_by_filter(request):
     #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
-    resultVal = {"TransportationOffers":[], "TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[]}
+    resultVal = {"TransportationOffers":[], "TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[]}
     if   request.POST.get("transportation") == "True":
         filters = []
         for key in request.POST:
@@ -255,12 +294,32 @@ def create_by_filter(request):
         filters = []
         for key in request.POST:
 
-            if "legal_" in key:
+            if "manpower_" in key:
                 if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
                     filters.append(key.replace("legal_","")+"="+request.POST.get(key))
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
         resultVal["ManpowerOffers"] =  eval("mergeImages(ManpowerOffer.objects.filter("+filterstring+"))")
-        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("manpower"):
+    if  request.POST.get("childcarelongterm") == "True":
+        filters = []
+        for key in request.POST:
+
+            if "childcarelongterm_" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    filters.append(key.replace("childcarelongterm_","")+"="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        logger.warning("Longterm: "+filterstring+str(request.POST))
+        resultVal["ChildcareOffersLongterm"] =  eval("mergeImages(ChildcareOfferLongterm.objects.filter("+filterstring+"))")
+    if  request.POST.get("childcareshortterm") == "True":
+        filters = []
+        for key in request.POST:
+
+            if "childcareshortterm_" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    filters.append(key.replace("childcareshortterm_","")+"="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        resultVal["ChildcareOffersShortterm"] =  eval("mergeImages(ChildcareOfferShortterm.objects.filter("+filterstring+"))")
+    
+        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("manpower")and request.POST.get("childcareshortterm") and request.POST.get("childcarelongterm")  :
             resultVal["Title"] = "All Offers"
         else: 
             title = ""
@@ -273,13 +332,17 @@ def create_by_filter(request):
             if request.POST.get("buerocratic") == "True":
                 title += "Buerocratic,"               
             if request.POST.get("manpower") == "True":
-                title += "Manpower,"
+                title += "Manpower,"           
+            if request.POST.get("childcarelongterm") == "True":
+                title += "Childcare (Longterm),"
+            if request.POST.get("childcareshortterm") == "True":
+                title += "Childcare / Babysitting,"
             title = title[:-1]
             resultVal["Title"] = title
-        resultVal["ResultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])
+        resultVal["ResultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])
+
     return resultVal
 def handle_filter(request):
-    logger.warning("Received: "+str(request.POST))
     if request.POST.get("show_list") == "True":
         context = create_by_filter(request)
         return render(request, 'offers/index.html', context)
@@ -306,7 +369,15 @@ def handle_filter(request):
         if request.POST.get("manpower") == "True":
             query +="manpower=True&"
         else :
-            query += "manpower=False"
+            query += "childcareshortterm=False"
+        if request.POST.get("manpower") == "True":
+            query +="childcareshortterm=True&"
+        else :
+            query += "childcarelongterm=False"
+        if request.POST.get("manpower") == "True":
+            query +="childcarelongterm=True&"
+        else :
+            query += "childcarelongterm=False"
         return redirect("/mapview/?"+query)
         
 def list_by_city(request, city):
@@ -318,6 +389,8 @@ def list_by_city(request, city):
      'AccomodationOffers': mergeImages(AccomodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode__in=postCodes))}
     return render(request, 'offers/index.html', context)
     
@@ -326,6 +399,8 @@ def by_postCode(request, postCode):
                'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
                'ManpowerOffers': ManpowerOffer.objects.filter(genericOffer__postCode=postCode),\
                 'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode=postCode)), 
+     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode=postCode)), 
+     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode=postCode)), 
                'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
     
     return render(request, 'offers/index.html', context)
@@ -347,6 +422,9 @@ def index(request):
     transportationOffers = mergeImages(TransportationOffer.objects.all())
     translationOffers = mergeImages(TranslationOffer.objects.all())
     manpowerOffers = mergeImages(ManpowerOffer.objects.all())
+    ChildcareOffersLongterm = mergeImages(ChildcareOfferLongterm.objects.all())
+    ChildcareOffersShortterm = mergeImages(ChildcareOfferShortterm.objects.all())
+    manpowerOffers = mergeImages(ManpowerOffer.objects.all())
 
 
     context = {
@@ -356,6 +434,8 @@ def index(request):
                'TransportationOffers': transportationOffers,\
                'TranslationOffers': translationOffers,\
                'ManpowerOffers': manpowerOffers,\
+               'ChildcareOffersLongterm': ChildcareOffersLongterm,\
+               'ChildcareOffersShortterm': ChildcareOffersShortterm,\
                'BuerocraticOffers': buerocraticOffers}
     
     return render(request, 'offers/index.html', context)
@@ -374,7 +454,7 @@ def create(request):
         return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"imageForm": ImageForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm()})
+        return render(request, 'offers/create.html', {"imageForm": ImageForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm()})
 
 def update(request, offer_id):
     form = GenericForm(request.POST)
@@ -395,6 +475,28 @@ def update(request, offer_id):
                 if buForm.is_valid():
                     currentForm = buForm.cleaned_data
                     a = updateManpowerForm(g, currentForm, offer_id)
+                    offer_id = a.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
+                    return detail(request, offer_id)
+                else:
+                    logger.warning("Object empty")
+                    return HttpResponse(str(acForm.errors))
+            if currentForm.get("offerType") == "BA": # Special case since we have no particular fields in this type.
+                baForm = ChildcareFormShortterm(request.POST)
+                if baForm.is_valid():
+                    currentForm = baForm.cleaned_data
+                    a = updateChildcareShortTermModel(g, currentForm, offer_id)
+                    offer_id = a.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
+                    return detail(request, offer_id)
+                else:
+                    logger.warning("Object empty")
+                    return HttpResponse(str(acForm.errors))
+            if currentForm.get("offerType") == "CL": # Special case since we have no particular fields in this type.
+                clForm = ChildcareFormLongterm(request.POST)
+                if clForm.is_valid():
+                    currentForm = clForm.cleaned_data
+                    a = updateChildcareLongTermModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
@@ -504,6 +606,14 @@ def getOfferDetails(request, offer_id):
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerOffer(model_to_dict(detail))
         return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+    if generic.offerType == "BA":
+        detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
+        detailForm = ChildcareOfferShortterm(model_to_dict(detail))
+        return {'offerType': "Babysitting", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+    if generic.offerType == "CL":
+        detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
+        detailForm = ChildcareOfferLongterm(model_to_dict(detail))
+        return {'offerType': "Childcare Longterm", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
         detailForm = BuerocraticOffer(model_to_dict(detail))

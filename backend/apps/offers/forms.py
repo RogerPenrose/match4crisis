@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm
 
 def validate_plz(value):
     try:
@@ -35,6 +35,9 @@ ACTIVE="Active Offer"
 RESIDENCE="Type of residence"
 HELPTYPE="Type of Buerocratic Aid"
 HELPTYPE_MP="Type of Manpower"
+GENDER="Gender"
+REGULAR_CHILDCARE="Regular Childcare"
+AMOUNT_OF_CHILDREN="How many Children"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -53,6 +56,12 @@ class GenericForm(forms.ModelForm):
         'isDigital': forms.CheckboxInput(attrs={'class': 'form-control'}),
         'active': forms.CheckboxInput(attrs={'class': 'form-control'})
         }
+class ChildcareFormLongterm(forms.Form):
+    gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
+class ChildcareFormShortterm(forms.Form):
+    gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
+    isRegular = forms.BooleanField(label=REGULAR_CHILDCARE, widget=forms.CheckboxInput( attrs={'class': 'form-control'}))
+    numberOfChildren = forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
 
 class ImageForm(forms.Form):
     

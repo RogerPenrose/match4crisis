@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -569,15 +569,14 @@ big_city_plzs = [
     "81929",
 ]
 
-
 residenceChoices = ['SO','RO', 'HO', 'LE'] 
 HELP_CHOICES_MP= ['ON',  'OS']
-
+GENDER_CHOICES = ['FE', 'MA', 'NO']
 HELP_CHOICES= ['AM', 'LE', 'OT']
-def populate_db(request, userId=1):
+def populate_db(n):
     if settings.DEBUG:
-        n_offers = 500
-
+        n_offers = n
+        userId = 1
         plzs = np.random.choice(big_city_plzs, size=n_offers)
         counter = 0
         for i in range(n_offers):
@@ -624,7 +623,6 @@ def populate_db(request, userId=1):
 
                 g.offerType = "TR"
                 g.save()
-
                 t = TransportationOffer(genericOffer=g, \
                     postCodeEnd=plzs[np.random.randint(0, n_offers)], \
                     typeOfCar = "LKW", \
@@ -636,7 +634,21 @@ def populate_db(request, userId=1):
                 g.save()
                 b = ManpowerOffer(genericOffer=g, helpType=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
                 b.save()
+            if counter == 5: # Transportation
+                print("CHILDCARE !!!!!")
+
+                g.offerType = "BA"
+                g.save()
+                b = ChildcareOfferLongterm(genericOffer=g, gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                b.save()
+            if counter == 6: # Transportation
+                print("CHILDCARE !!!!!")
+                g.offerType = "CL"
+                g.save()
+                b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildren=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                b.save()
                 counter = -1
             counter = counter + 1
+        
         return HttpResponse("Done. %s entries." % GenericOffer.objects.all().count())
     return HttpResponse("Access forbidden: Not in debug mode.")

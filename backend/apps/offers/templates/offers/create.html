@@ -124,6 +124,20 @@ content: "";
             </tr>
             {% endfor %}
         </tbody>
+        <tbody id="clTable">
+            {% for field in childcarelongtermForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tbody id="baTable">
+            {% for field in childcareshorttermForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <input type="submit" value="Submit" >
 </form>
@@ -135,6 +149,8 @@ content: "";
     var acTable = document.getElementById("acTable")
     var buTable = document.getElementById("buTable")
     var mpTable = document.getElementById("mpTable")
+    var baTable = document.getElementById("baTable")
+    var clTable = document.getElementById("clTable")
     document.getElementById("id_offerType").onchange =function(){ refresh()}
     refresh()
     markEntries()
@@ -178,6 +194,8 @@ content: "";
             toggleRequiredTag(trTable, false)
             toggleRequiredTag(buTable, false)
             toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
             // Mark all invisible fields as "nonrequired":
            
         }
@@ -189,6 +207,8 @@ content: "";
             toggleRequiredTag(trTable, true)
             toggleRequiredTag(buTable, false)
             toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
             
         }
         else if (typeSelection == "TL"){
@@ -198,6 +218,8 @@ content: "";
             toggleRequiredTag(trTable, false)
             toggleRequiredTag(buTable, false)
             toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
         }
         else if (typeSelection == "BU"){
             console.log("BU Table ? ")
@@ -207,6 +229,8 @@ content: "";
             toggleRequiredTag(trTable, false)
             toggleRequiredTag(buTable, true)
             toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
         }
         else if (typeSelection == "MP"){
             console.log("BU Table ? ")
@@ -216,6 +240,28 @@ content: "";
             toggleRequiredTag(trTable, false)
             toggleRequiredTag(buTable, false)
             toggleRequiredTag(mpTable, true)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
+        }
+        else if (typeSelection == "BA"){
+            
+            toggleRequiredTag(tlTable, false)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, true)
+        }
+        else if (typeSelection == "CL"){
+            
+            toggleRequiredTag(tlTable, false)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, true)
+            toggleRequiredTag(baTable, false)
         }
 }
 </script>

@@ -76,7 +76,7 @@
             <div style="display:{%if AccomodationOffers|length > 0 %} block {% else %} none {%endif%}">
             <p ><input type="checkbox" value="True" name="accomodation" id="accomodation_hidden"{%if AccomodationOffers|length > 0 %} checked {%endif%}></input><label for="accomodation_hidden">{%blocktrans %}Show Accomodation Offers{% endblocktrans %}</label></p>
           <p><label for="accomodation_numberOfAdults__gte">{%blocktrans %}How Many Adults{% endblocktrans %}</label><input type="number"name="accomodation_numberOfAdults__gte" id="accomodation_numberOfAdults__gte" min="1"></input></p> 
-          <p><label for="accomodation_numberOfChildren__gte">{%blocktrans %}How many Pets{% endblocktrans %}</label><input type="number" name="accomodation_numberOfChildren__gte"id="accomodation_numberOfChildren__gte"></input></p> 
+          <p><label for="accomodation_numberOfChildren__gte">{%blocktrans %}How many Children{% endblocktrans %}</label><input type="number" name="accomodation_numberOfChildren__gte"id="accomodation_numberOfChildren__gte"></input></p> 
           <p><label for="accomodation_numberOfPets__gte">{%blocktrans %}How many Pets{% endblocktrans %}</label><input type="number" name="accomodation_numberOfPets__gte"id="accomodation_numberOfPets__gte"></input></p> 
           <p><label for="accomodation_typeOfResidence">{%blocktrans %}Type of residence{% endblocktrans %}</label><select  name="accomodation_typeOfResidence"id="accomodation_typeOfResidence"><option value="">All</option><option value='"SO"'>Sofa / Bed</option><option value='"RO"'>Private Room</option><option value='"HO"'>Whole Flat / House</option></select></p> 
           
@@ -107,7 +107,19 @@
               <p><label for="manpower_helptype">{%blocktrans %}Type of Help{% endblocktrans %}</label><select  name="buerocratic_helpType"id="manpower_helpType"><option value="">All</option><option value='"ON"'>Online</option><option value='"OS"'>On-site / In Person</option><option value='"OT"'>Other</option></select></p> 
               
               <hr>
-                </div>
+                </div><div style="display:{%if ChildcareOffersLongterm|length > 0 %} block {% else %} none {%endif%}">
+                  <p ><input type="checkbox" value="True" name="childcarelongterm" id="childcarelongterm_hidden"{%if ChildcareOffersLongterm|length > 0 %} checked {%endif%}></input><label for="childcarelongterm_hidden">{%blocktrans %}Show Longterm Childcare Offers{% endblocktrans %}</label></p>
+                  <p><label for="childcarelongterm_gender">{%blocktrans %}Preferred Gender{% endblocktrans %}</label><select  name="childcarelongterm_gender"id="childcarelongterm_gender"><option value="">All</option><option value='"MA"'>Male</option><option value='"FE"'>Female</option></select></p> 
+                  
+                  <hr>
+                  </div><div style="display:{%if ChildcareOffersShortterm|length > 0 %} block {% else %} none {%endif%}">
+                    <p ><input type="checkbox" value="True" name="childcareshortterm" id="childcareshortterm_hidden"{%if ChildcareOffersShortterm|length > 0 %} checked {%endif%}></input><label for="childcareshortterm_hidden">{%blocktrans %}Show Shortterm Childcare Offers{% endblocktrans %}</label></p>
+                    <p><label for="childcareshortterm_gender">{%blocktrans %}Preferred Gender{% endblocktrans %}</label><select  name="childcareshortterm_gender"id="childcareshortterm_gender"><option value="">All</option><option value='"MA"'>Male</option><option value='"FE"'>Female</option></select></p> 
+                    <p><label for="childcareshortterm_numberOfChildren__gte">{%blocktrans %}How many Children{% endblocktrans %}</label><input type="number" name="childcareshortterm_numberOfChildren__gte"id="childcareshortterm_numberOfChildren__gte"></input></p> 
+                    <p><label for="childcareshortterm_isRegular">{%blocktrans %}Regular Occurence{% endblocktrans %}</label><input type="checkbox" name="childcareshortterm_isRegular"id="childcareshortterm_isRegular"></input></p> 
+          
+                    <hr>
+                      </div>
               </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary"  data-dismiss="modal" onclick="search()">Close</button>
@@ -312,13 +324,70 @@
   <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
   <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
 </svg> Description: {{entry.offer.genericOffer.offerDescription}} </p>
-
-
-
 </div>
+          </div>
 
+      </div>   
+      </a>  
+      {% endfor %}
+              
+      {% for entry in ChildcareOffersLongterm %}
+      <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
+      <div class="col-12 col-lg-6 offer-card"> 
 
+          <div class="row align-self-center align-items-center">
+          <div class="col-5 col-sm-4">
+            {% if entry.image.url|length > 0 %}
+            <div class="background-photo" style="background-image: url({{ entry.image.url }})"></div>
+            {% else %}
+              <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
+            {%endif%}
+            </div>
+          <div class="description col-7 col-sm-8">
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} </h3>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+</svg> Location:  {{entry.offer.genericOffer.streetName}} {{entry.offer.genericOffer.streetNumber}}{% if entry.offer.streetNameEnd.length > 0 %},{% endif%} {{entry.offer.genericOffer.postCode}}</p>
+<p>Gender: {{ entry.offer.get_gender_display }}</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-text" viewBox="0 0 16 16">
+  <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+  <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+</svg> Description: {{entry.offer.genericOffer.offerDescription}} </p>
+</div>
+          </div>
 
+      </div>   
+      </a>  
+      {% endfor %}          
+      {% for entry in ChildcareOffersShortterm %}
+      <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
+      <div class="col-12 col-lg-6 offer-card"> 
+
+          <div class="row align-self-center align-items-center">
+          <div class="col-5 col-sm-4">
+            {% if entry.image.url|length > 0 %}
+            <div class="background-photo" style="background-image: url({{ entry.image.url }})"></div>
+            {% else %}
+              <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
+            {%endif%}
+            </div>
+          <div class="description col-7 col-sm-8">
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} </h3>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+</svg> Location:  {{entry.offer.genericOffer.streetName}} {{entry.offer.genericOffer.streetNumber}}{% if entry.offer.streetNameEnd.length > 0 %},{% endif%} {{entry.offer.genericOffer.postCode}}</p>
+<p>Gender: {{ entry.offer.get_gender_display }}</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+  <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+</svg> Number of Children {{ entry.offer.numberOfChildren }}</p>
+{% if entry.offer.isRegular == "True" %}<p> Regular Occurence </p> {%endif%}
+<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-text" viewBox="0 0 16 16">
+  <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+  <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+</svg> Description: {{entry.offer.genericOffer.offerDescription}} </p>
+</div>
           </div>
 
       </div>   
