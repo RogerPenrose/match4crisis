@@ -6,8 +6,8 @@ import json
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer
-from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm
+from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer
+from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
@@ -101,6 +101,20 @@ def updateAccomodationModel(g, form, offer_id=0):
         a.save()
         return a
 
+def updateJobForm(g, form, offer_id=0):
+    if offer_id == 0:
+        t = JobForm(genericOffer=g, \
+            jobType=form.get("jobType"))
+        t.save()
+        return t
+    else:
+        t = JobForm.objects.get(pk=offer_id)
+        t.genericOffer=g
+        t.jobType=form.get("jobType")
+        t.requirements=form.get("requirements")
+        t.jobTitle=form.get("jobTitle")
+        t.save()
+        return t
 def updateWelfareForm(g, form, offer_id=0):
     if offer_id == 0:
         t = WelfareForm(genericOffer=g, \
@@ -221,6 +235,7 @@ def by_city(request, city):
         buerocratic += GenericOffer.objects.filter(offerType="BU", postCode=postCode).count()
         childcareShortterm += GenericOffer.objects.filter(offerType="BA", postCode=postCode).count()
         welfare += GenericOffer.objects.filter(offerType="WE", postCode=postCode).count()
+        jobs += GenericOffer.objects.filter(offerType="JO", postCode=postCode).count()
     totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
@@ -228,9 +243,10 @@ def by_city(request, city):
     totalWelfare = GenericOffer.objects.filter(offerType="WE").count()
     totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA").count()
     totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
+    totalJobs = GenericOffer.objects.filter(offerType="JO").count()
     context = {
-        'local' : {'AccomodationOffers': accomodations, 'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
-        'total' : {'AccomodationOffers': totalAccomodations, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
+        'local' : {'AccomodationOffers': accomodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
+        'total' : {'AccomodationOffers': totalAccomodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
     logger.warning(str(context))
     return render(request, 'offers/list.html', context)
@@ -254,6 +270,9 @@ def by_type(request, offer_type):
     if offer_type== "welfare":
         context = {
             "ResultCount": WelfareOffer.objects.all().count(),'Title': "Medical Assistance",'WelfareOffers': mergeImages(WelfareOffer.objects.all())}
+    if offer_type== "jobs":
+        context = {
+            "ResultCount": JobOffer.objects.all().count(),'Title': "Jobs",'JobOffers': mergeImages(JobOffer.objects.all())}
     if offer_type== "buerocratic":
         context = {"ResultCount": BuerocraticOffer.objects.all().count(),
             'Title': "Buerocratic",
@@ -261,7 +280,7 @@ def by_type(request, offer_type):
     return render(request, 'offers/index.html', context)
 def create_by_filter(request):
     #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
-    resultVal = {"TransportationOffers":[], "TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[]}
+    resultVal = {"TransportationOffers":[], "TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
     if   request.POST.get("transportation") == "True":
         filters = []
         for key in request.POST:
@@ -314,9 +333,18 @@ def create_by_filter(request):
 
             if "manpower_" in key:
                 if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("legal_","")+"="+request.POST.get(key))
+                    filters.append(key.replace("manpower_","")+"="+request.POST.get(key))
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
         resultVal["ManpowerOffers"] =  eval("mergeImages(ManpowerOffer.objects.filter("+filterstring+"))")
+    if  request.POST.get("job") == "True":
+        filters = []
+        for key in request.POST:
+
+            if "job_" in key:
+                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
+                    filters.append(key.replace("job_","")+"="+request.POST.get(key))
+        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+        resultVal["JobOffers"] =  eval("mergeImages(JobOffer.objects.filter("+filterstring+"))")
     if  request.POST.get("childcarelongterm") == "True":
         filters = []
         for key in request.POST:
@@ -347,7 +375,7 @@ def create_by_filter(request):
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
         resultVal["WelfareOffers"] =  eval("mergeImages(WelfareOffer.objects.filter("+filterstring+"))")
     
-        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("manpower") and request.POST.get("childcareshortterm") == "True" and request.POST.get("childcarelongterm") == "True"  and request.POST.get("welfare") == "True"  :
+        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("jobs") == "True"and request.POST.get("manpower") and request.POST.get("childcareshortterm") == "True" and request.POST.get("childcarelongterm") == "True"  and request.POST.get("welfare") == "True"  :
             resultVal["Title"] = "All Offers"
         else: 
             title = ""
@@ -367,9 +395,11 @@ def create_by_filter(request):
                 title += "Childcare / Babysitting,"
             if request.POST.get("childcareshortterm") == "True":
                 title += "Medical Assistance,"
+            if request.POST.get("jobs") == "True":
+                title += "Jobs,"
             title = title[:-1]
             resultVal["Title"] = title
-        resultVal["ResultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
+        resultVal["ResultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["JobOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
     return resultVal
 
 
@@ -409,6 +439,10 @@ def handle_filter(request):
             query +="childcarelongterm=True&"
         else :
             query += "childcarelongterm=False"
+        if request.POST.get("job") == "True":
+            query +="job=True&"
+        else :
+            query += "job=False"
         if request.POST.get("welfare") == "True":
             query +="welfare=True&"
         else :
@@ -427,6 +461,7 @@ def list_by_city(request, city):
      'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode__in=postCodes))}
     return render(request, 'offers/index.html', context)
     
@@ -437,6 +472,7 @@ def by_postCode(request, postCode):
                 'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode=postCode)), 
      'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode=postCode)), 
      'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode=postCode)), 
+     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__postCode=postCode)), 
      'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode=postCode)), 
                'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
     
@@ -462,6 +498,7 @@ def index(request):
     ChildcareOffersLongterm = mergeImages(ChildcareOfferLongterm.objects.all())
     ChildcareOffersShortterm = mergeImages(ChildcareOfferShortterm.objects.all())
     WelfareOffers = mergeImages(WelfareOffer.objects.all())
+    JobOffers = mergeImages(JobOffer.objects.all())
     manpowerOffers = mergeImages(ManpowerOffer.objects.all())
 
 
@@ -475,6 +512,7 @@ def index(request):
                'ChildcareOffersLongterm': ChildcareOffersLongterm,\
                'ChildcareOffersShortterm': ChildcareOffersShortterm,\
                'WelfareOffers': WelfareOffers,\
+               'JobOffers': JobOffers,\
                'BuerocraticOffers': buerocraticOffers}
     
     return render(request, 'offers/index.html', context)
@@ -493,7 +531,7 @@ def create(request):
         return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"imageForm": ImageForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm()})
+        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm()})
 
 def update(request, offer_id):
     form = GenericForm(request.POST)
@@ -525,6 +563,17 @@ def update(request, offer_id):
                 if weForm.is_valid():
                     currentForm = weForm.cleaned_data
                     a = updateWelfareForm(g, currentForm, offer_id)
+                    offer_id = a.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
+                    return detail(request, offer_id)
+                else:
+                    logger.warning("Object empty")
+                    return HttpResponse(str(acForm.errors))
+            if currentForm.get("offerType") == "JO": # Special case since we have no particular fields in this type.
+                joForm = JobForm(request.POST)
+                if joForm.is_valid():
+                    currentForm = joForm.cleaned_data
+                    a = updateJobForm(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
@@ -668,6 +717,10 @@ def getOfferDetails(request, offer_id):
         detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
         detailForm = ChildcareOfferLongterm(model_to_dict(detail))
         return {'offerType': "Childcare Longterm", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+    if generic.offerType == "JO":
+        detail = get_object_or_404(JobOffer, pk=generic.id)
+        detailForm = JobOffer(model_to_dict(detail))
+        return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
         detailForm = BuerocraticOffer(model_to_dict(detail))

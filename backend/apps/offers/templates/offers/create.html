@@ -138,6 +138,20 @@ content: "";
             </tr>
             {% endfor %}
         </tbody>
+        <tbody id="weTable">
+            {% for field in welfareForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tbody id="joTable">
+            {% for field in jobForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <input type="submit" value="Submit" >
 </form>
@@ -151,6 +165,8 @@ content: "";
     var mpTable = document.getElementById("mpTable")
     var baTable = document.getElementById("baTable")
     var clTable = document.getElementById("clTable")
+    var weTable = document.getElementById("weTable")
+    var joTable = document.getElementById("joTable")
     document.getElementById("id_offerType").onchange =function(){ refresh()}
     refresh()
     markEntries()
@@ -196,6 +212,8 @@ content: "";
             toggleRequiredTag(mpTable, false)
             toggleRequiredTag(clTable, false)
             toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
             // Mark all invisible fields as "nonrequired":
            
         }
@@ -209,6 +227,8 @@ content: "";
             toggleRequiredTag(mpTable, false)
             toggleRequiredTag(clTable, false)
             toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
             
         }
         else if (typeSelection == "TL"){
@@ -220,6 +240,8 @@ content: "";
             toggleRequiredTag(mpTable, false)
             toggleRequiredTag(clTable, false)
             toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
         }
         else if (typeSelection == "BU"){
             console.log("BU Table ? ")
@@ -231,6 +253,8 @@ content: "";
             toggleRequiredTag(mpTable, false)
             toggleRequiredTag(clTable, false)
             toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
         }
         else if (typeSelection == "MP"){
             console.log("BU Table ? ")
@@ -242,6 +266,8 @@ content: "";
             toggleRequiredTag(mpTable, true)
             toggleRequiredTag(clTable, false)
             toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
         }
         else if (typeSelection == "BA"){
             
@@ -252,6 +278,8 @@ content: "";
             toggleRequiredTag(mpTable, false)
             toggleRequiredTag(clTable, false)
             toggleRequiredTag(baTable, true)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
         }
         else if (typeSelection == "CL"){
             
@@ -262,6 +290,32 @@ content: "";
             toggleRequiredTag(mpTable, false)
             toggleRequiredTag(clTable, true)
             toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
+        }
+        else if (typeSelection == "WE"){
+            
+            toggleRequiredTag(tlTable, false)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, true)
+            toggleRequiredTag(joTable, false)
+        }
+        else if (typeSelection == "JO"){
+            
+            toggleRequiredTag(tlTable, false)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, true)
         }
 }
 </script>

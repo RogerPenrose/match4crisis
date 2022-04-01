@@ -28,7 +28,8 @@ class GenericOffer(models.Model):
     ('MP', 'Manpower'),
     ('CL', 'Childcare Permanent'),
     ('BA', 'Babysitting'),
-    ('WE', 'Medical Assistance')
+    ('WE', 'Medical Assistance'),
+    ('JO', 'Job')
     ]
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -70,27 +71,31 @@ class ChildcareOfferShortterm(models.Model):
     isRegular = models.BooleanField(default=False)
 class JobOffer(models.Model):
     JOB_CHOICES = [
-        ("Academic Support", "ACA"),
-        ("Administration", "ADM"),
-        ("Advancement", "ADV"),
-        ("Conference and Events","CON"),
-        ("Facility Operations", "FAC"),
-        ("Finance and Accounting", "FIN"),
-        ("General Administration", "GEN"),
-        ("Health Services", "HEA"),
-        ("Human Resources", "HUM"),
-        ("Information Technology", "INF"),
-        ("International Program and Services", "INT"),
-        ("Legal", "LEG"),
-        ("Library Administration", "LIB"),
-        ("Marketing, Communication and External Affairs", "MAR"),
-        ("Office and Admin Support", "OFF"),
-        ("Performing Arts and Museum Administration", "PER"),
-        ("Public Safety", "PUB"),
-        ("Research and Program Admin", "RES"),
-        ("Sports and Recreation", "SPO"),
-        ("Student Services", "STU"),
-        ("Handicraft profession", "HAN")]
+        ( "ACA","Academic Support"),
+        ( "ADM","Administration"),
+        ("ADV","Advancement"),
+        ("CON","Conference and Events"),
+        ("FAC","Facility Operations"),
+        ("FIN","Finance and Accounting"),
+        ("GEN","General Administration"),
+        ("HEA","Health Services"),
+        ( "HUM","Human Resources"),
+        ("INF","Information Technology"),
+        ("INT","International Program and Services"),
+        ("LEG","Legal"),
+        ("LIB","Library Administration"),
+        ("MAR","Marketing, Communication and External Affairs"),
+        ("OFF","Office and Admin Support"),
+        ("PER","Performing Arts and Museum Administration"),
+        ("PUB","Public Safety"),
+        ("RES","Research and Program Admin"),
+        ( "SPO","Sports and Recreation"),
+        ( "STU","Student Services"),
+        ("HAN","Handicraft profession")]
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
+    jobTitle = models.CharField(max_length=128, blank=True)
+    requirements = models.TextField(blank=True)
 
 class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
