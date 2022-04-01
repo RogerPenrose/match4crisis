@@ -78,7 +78,7 @@
           <p><label for="accomodation_numberOfAdults__gte">{%blocktrans %}How Many Adults{% endblocktrans %}</label><input type="number"name="accomodation_numberOfAdults__gte" id="accomodation_numberOfAdults__gte" min="1"></input></p> 
           <p><label for="accomodation_numberOfChildren__gte">{%blocktrans %}How many Pets{% endblocktrans %}</label><input type="number" name="accomodation_numberOfChildren__gte"id="accomodation_numberOfChildren__gte"></input></p> 
           <p><label for="accomodation_numberOfPets__gte">{%blocktrans %}How many Pets{% endblocktrans %}</label><input type="number" name="accomodation_numberOfPets__gte"id="accomodation_numberOfPets__gte"></input></p> 
-          <p><label for="accomodation_typeOfResidence">{%blocktrans %}Type of residence{% endblocktrans %}</label><select  name="accomodation_typeOfResidence"id="accomodation_typeOfResidence"><option value="SO">Sofa / Bed</option><option value="RO">Private Room</option><option value="HO">Whole Flat / House</option></select></p> 
+          <p><label for="accomodation_typeOfResidence">{%blocktrans %}Type of residence{% endblocktrans %}</label><select  name="accomodation_typeOfResidence"id="accomodation_typeOfResidence"><option value="">All</option><option value='"SO"'>Sofa / Bed</option><option value='"RO"'>Private Room</option><option value='"HO"'>Whole Flat / House</option></select></p> 
           
           <p><label for="accomodation_genericOffer__cost__lte">{%blocktrans %}Maximum Cost{% endblocktrans %}</label><input type="number" id="accomodation_genericOffer__cost__lte" name="accomodation_genericOffer__cost__lte"  min="0" step="0.01"></input></p>
             <hr></div>
@@ -97,13 +97,17 @@
             <p><label for="translation_firstLanguage">{%blocktrans %}Translate from{% endblocktrans %}</label><input type="text" name="translation_firstLanguage" id="translation_firstLanguage"></input></p>
             <p><label for="translation_secondLanguage">{%blocktrans %}Translate To{% endblocktrans %}</label><input type="text"name="translation_secondLanguage" id="translation_secondLanguage"></input></p>
             <hr>
-          </div><div style="display:{%if AccompanimentOffers|length > 0 %} block {% else %} none {%endif%}">
-          <p ><input type="checkbox" value="True" name="accompaniment" id="accompaniment_hidden"{%if AccompanimentOffers|length > 0 %} checked {%endif%}></input><label for="accompaniment_hidden">{%blocktrans %}Show Accompaniment Offers{% endblocktrans %}</label></p>
+          </div><div style="display:{%if BuerocraticOffers|length > 0 %} block {% else %} none {%endif%}">
+          <p ><input type="checkbox" value="True" name="buerocratic" id="buerocratic_hidden"{%if BuerocraticOffers|length > 0 %} checked {%endif%}></input><label for="buerocratic_hidden">{%blocktrans %}Show Buerocratic Aidoffers{% endblocktrans %}</label></p>
+          <p><label for="buerocratic_helpType">{%blocktrans %}Type of Help{% endblocktrans %}</label><select  name="buerocratic_helpType"id="buerocratic_helpType"><option value="">All</option><option value='"AM"'>Accompaniment</option><option value='"LE"'>Legal</option><option value='"OT"'>Other</option></select></p> 
+          
           <hr>
-            </div><div style="display:{%if LegalOffers|length > 0 %} block {% else %} none {%endif%}">
-            <p ><input type="checkbox" value="True" name="legal" id="legal_hidden"{%if LegalOffers|length > 0 %} checked {%endif%}></input><label for="legal_hidden">{%blocktrans %}Show Legal Offers{% endblocktrans %}</label></p>
-            <hr>
-              </div>
+            </div><div style="display:{%if ManpowerOffers|length > 0 %} block {% else %} none {%endif%}">
+              <p ><input type="checkbox" value="True" name="manpower" id="manpower_hidden"{%if BuerocraticOffers|length > 0 %} checked {%endif%}></input><label for="manpower_hidden">{%blocktrans %}Show Manpower Offers{% endblocktrans %}</label></p>
+              <p><label for="manpower_helptype">{%blocktrans %}Type of Help{% endblocktrans %}</label><select  name="buerocratic_helpType"id="manpower_helpType"><option value="">All</option><option value='"ON"'>Online</option><option value='"OS"'>On-site / In Person</option><option value='"OT"'>Other</option></select></p> 
+              
+              <hr>
+                </div>
               </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary"  data-dismiss="modal" onclick="search()">Close</button>
@@ -121,7 +125,7 @@
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}&accomodation={%if AccomodationOffers|length > 0 %}True{% else%}False{%endif%}&transportation={%if TransportationOffers|length > 0 %}True{% else%}False{%endif%}&translation={%if TranslationOffers|length > 0 %}True{% else%}False{%endif%}&accompaniment={%if AccompanimentOffers|length > 0 %}True{% else%}False{%endif%} ">Show {{ resultCount }} results on Map</a></p></div>
+        <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}&accomodation={%if AccomodationOffers|length > 0 %}True{% else%}False{%endif%}&transportation={%if TransportationOffers|length > 0 %}True{% else%}False{%endif%}&translation={%if TranslationOffers|length > 0 %}True{% else%}False{%endif%}&accompaniment={%if AccompanimentOffers|length > 0 %}True{% else%}False{%endif%} ">Show {{ ResultCount }} results on Map</a></p></div>
         </div>
         </div>
         <div class="container cards">
@@ -246,8 +250,9 @@
             {% endfor %}
 
 
-            
-      {% for entry in AccompanimentOffers %}
+
+              
+      {% for entry in BuerocraticOffers %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -260,7 +265,7 @@
             {%endif%}
             </div>
           <div class="description col-7 col-sm-8">
-<h3>{{ entry.offer.genericOffer.get_offerType_display }}</h3>
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{ entry.offer.get_helpType_display }}</h3>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
   <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
   <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -282,9 +287,9 @@
       </div>   
       </a>  
       {% endfor %}
-
+      
               
-      {% for entry in LegalOffers %}
+      {% for entry in ManpowerOffers %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -297,7 +302,7 @@
             {%endif%}
             </div>
           <div class="description col-7 col-sm-8">
-<h3>{{ entry.offer.genericOffer.get_offerType_display }}</h3>
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{ entry.offer.get_helpType_display }}</h3>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
   <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
   <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>

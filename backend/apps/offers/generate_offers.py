@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, AccompanimentOffer, LegalOffer
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -571,7 +571,9 @@ big_city_plzs = [
 
 
 residenceChoices = ['SO','RO', 'HO', 'LE'] 
+HELP_CHOICES_MP= ['ON',  'OS']
 
+HELP_CHOICES= ['AM', 'LE', 'OT']
 def populate_db(request, userId=1):
     if settings.DEBUG:
         n_offers = 500
@@ -614,10 +616,10 @@ def populate_db(request, userId=1):
                             secondLanguage="English")
                 t.save()
             if counter == 2: # Accompaniment
-                g.offerType = "AP"
+                g.offerType = "BU"
                 g.save()
-                a = AccompanimentOffer(genericOffer=g)
-                a.save()
+                b = BuerocraticOffer(genericOffer=g, helpType=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
+                b.save()
             if counter == 3: # Transportation
 
                 g.offerType = "TR"
@@ -628,13 +630,12 @@ def populate_db(request, userId=1):
                     typeOfCar = "LKW", \
                     numberOfPassengers=np.random.randint(0, 10))
                 t.save()
-            if counter == 4: # Legal
+            if counter == 4: # Transportation
 
-                g.offerType = "LE"
+                g.offerType = "MP"
                 g.save()
-
-                l = LegalOffer(genericOffer=g)
-                l.save()
+                b = ManpowerOffer(genericOffer=g, helpType=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
+                b.save()
                 counter = -1
             counter = counter + 1
         return HttpResponse("Done. %s entries." % GenericOffer.objects.all().count())

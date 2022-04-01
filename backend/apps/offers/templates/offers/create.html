@@ -110,6 +110,20 @@ content: "";
             </tr>
             {% endfor %}
         </tbody>
+        <tbody id="buTable">
+            {% for field in buerocraticForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tbody id="mpTable">
+            {% for field in manpowerForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <input type="submit" value="Submit" >
 </form>
@@ -119,6 +133,8 @@ content: "";
     var tlTable = document.getElementById("tlTable")
     var trTable = document.getElementById("trTable")
     var acTable = document.getElementById("acTable")
+    var buTable = document.getElementById("buTable")
+    var mpTable = document.getElementById("mpTable")
     document.getElementById("id_offerType").onchange =function(){ refresh()}
     refresh()
     markEntries()
@@ -160,6 +176,8 @@ content: "";
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, true)
             toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
             // Mark all invisible fields as "nonrequired":
            
         }
@@ -169,6 +187,8 @@ content: "";
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
             toggleRequiredTag(trTable, true)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
             
         }
         else if (typeSelection == "TL"){
@@ -176,12 +196,26 @@ content: "";
             toggleRequiredTag(tlTable, true)
             toggleRequiredTag(acTable, false)
             toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
         }
-        else {
+        else if (typeSelection == "BU"){
+            console.log("BU Table ? ")
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
             toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, true)
+            toggleRequiredTag(mpTable, false)
+        }
+        else if (typeSelection == "MP"){
+            console.log("BU Table ? ")
+            
+            toggleRequiredTag(tlTable, false)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, true)
         }
 }
 </script>

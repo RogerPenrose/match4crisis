@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer, ImageClass
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer
 
 def validate_plz(value):
     try:
@@ -33,6 +33,8 @@ INHABITANTS_PETS="Maximum number of Pets"
 DIGITAL="Digital Offer"
 ACTIVE="Active Offer"
 RESIDENCE="Type of residence"
+HELPTYPE="Type of Buerocratic Aid"
+HELPTYPE_MP="Type of Manpower"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -59,8 +61,11 @@ class ImageForm(forms.Form):
     image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 
    
+class ManpowerForm(forms.Form):
+    helpType= forms.CharField(label=HELPTYPE_MP, max_length=2, widget=forms.Select(choices=ManpowerOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
       
-   
+class BuerocraticForm(forms.Form):
+    helpType= forms.CharField(label=HELPTYPE, max_length=2, widget=forms.Select(choices=BuerocraticOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
 class TransportationForm(forms.Form):
     # Transportation Fields
     CAR_CHOICES = [

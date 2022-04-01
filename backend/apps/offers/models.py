@@ -24,8 +24,8 @@ class GenericOffer(models.Model):
     ('AC', 'Accomodation'),
     ('TL', 'Translation'),
     ('TR', 'Transportation'),
-    ('AP', 'Accompaniment'),
-    ('LE', 'Legal')
+    ('BU', 'Buerocratic'),
+    ('MP', 'Manpower')
     ]
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -47,11 +47,10 @@ class GenericOffer(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.offerType
-class LegalOffer(models.Model):
+class BuerocraticOffer(models.Model):
+    HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    
-class AccompanimentOffer(models.Model):
-    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
@@ -61,6 +60,11 @@ ACCOMODATIONCHOICES = {
     ('RO', 'Private Room'),
     ('HO', 'Whole Flat / House')
 }
+class ManpowerOffer(models.Model):
+    HELP_CHOICES= [('ON', 'Online'), ('OS', 'On-site')]
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
+
 class AccomodationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
@@ -70,6 +74,8 @@ class AccomodationOffer(models.Model):
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     stayLength = models.IntegerField(default=14, blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
+    def __str__(self):
+        return self.typeOfResidence
 
 
 class TransportationOffer(models.Model):
@@ -99,6 +105,7 @@ OFFER_MODELS = {
     'AC' : AccomodationOffer,
     'TL' : TranslationOffer,
     'TR' : TransportationOffer,
+    'BU' : BuerocraticOffer
 }
 
 def getSpecificOffers(genericOffers: list):
