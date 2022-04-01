@@ -166,7 +166,7 @@ content: "";
     function toggleRequiredTag(subtable, state){
             console.log(subtable.id+" to "+state)
         if (state == false ){
-            subtable.style.visibility = "collapse"
+            subtable.style.display = "none"
             var entries = subtable.querySelectorAll("[required]")
             for (var i = 0; i < entries.length; i ++){
                 var entry = entries[i]
@@ -175,7 +175,7 @@ content: "";
             }
         }
         else {
-            subtable.style.visibility = "visible"
+            subtable.style.display = "block"
             var entries = subtable.querySelectorAll("[wasRequired]")
             for (var i = 0; i < entries.length; i ++){
                 var entry = entries[i]
