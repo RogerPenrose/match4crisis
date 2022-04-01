@@ -157,7 +157,8 @@ OFFER_MODELS = {
     'BU' : BuerocraticOffer,
     'BA' : ChildcareOfferShortterm,
     'CL' : ChildcareOfferLongterm,
-    'WE' : WelfareOffer
+    'WE' : WelfareOffer,
+    'MP' : ManpowerOffer
 }
 
 def getSpecificOffers(genericOffers: list):
