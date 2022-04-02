@@ -150,14 +150,7 @@ class TransportationOffer(models.Model):
     streetNameEnd = models.CharField(max_length=200)
     streetNumberEnd = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
  
-
-    CAR_CHOICES = [
-    ('LKW', 'Large Truck'),
-    ('CAR', 'Car'),
-    ('TRA', 'Transporter'),
-    ('BUS', 'Bus')
-    ]
-    typeOfCar = models.CharField(max_length=3, choices=CAR_CHOICES, default="CAR") # Use this to track between "Bus", "Car", "Transporter" ?
+    date=models.DateField(default=datetime.now())
     numberOfPassengers = models.IntegerField(default=2)
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

@@ -179,7 +179,7 @@ def updateTransportationModel(g, form, offer_id=0):
             postCodeEnd=form.get("postCodeEnd"), \
             streetNameEnd=form.get("streetNameEnd"),\
             streetNumberEnd = form.get("streetNumberEnd"),\
-            typeOfCar = form.get("typeOfCar"), \
+            date = form.get("date"), \
             numberOfPassengers=form.get("numberOfPassengers"))
         t.save()
         return t
@@ -189,7 +189,7 @@ def updateTransportationModel(g, form, offer_id=0):
         t.postCodeEnd=form.get("postCodeEnd")
         t.streetNameEnd=form.get("streetNameEnd")
         t.streetNumberEnd = form.get("streetNumberEnd")
-        t.typeOfCar = form.get("typeOfCar")
+        t.date = form.get("date")
         t.numberOfPassengers=form.get("numberOfPassengers")
         t.save()
         return t

@@ -43,7 +43,12 @@ JOBREQS = "Requirements"
 JOBTITLE= "Jobtitle"
 HELPTYPE_WE="Type of Medical Assistance"
 BANKACCOUNT="Bank Data"
+STARTDATE= "Starting"
+ENDDATE = "Ending"
 DONNATION_TITLE="Title"
+DEPARTUREDATE="Date"
+NUMBERADULTS="How many Adults"
+NUMBERPETS = "How many Pets"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -92,14 +97,7 @@ class WelfareForm(forms.Form):
 class BuerocraticForm(forms.Form):
     helpType= forms.CharField(label=HELPTYPE, max_length=2, widget=forms.Select(choices=BuerocraticOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
 class TransportationForm(forms.Form):
-    # Transportation Fields
-    CAR_CHOICES = [
-    ('LKW', 'Large Truck'),\
-    ('CAR', 'Car'),\
-    ('TRA', 'Transporter'),\
-    ('BUS', 'Bus')\
-    ]
-    typeOfCar = forms.ChoiceField(label=CARTYPE,  choices=CAR_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}) ) # Use this to track between "Bus", "Car", "Transporter" ?
+    date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(attrs={'class':'form-control'}))
     numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
     postCodeEnd = forms.CharField(label=POSTCODE_END, max_length=5, validators=[validate_plz], widget=forms.TextInput(attrs={'class': 'form-control'}))
     streetNameEnd = forms.CharField(label=STREETNAME_END, max_length=200, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -111,17 +109,12 @@ class TranslationForm(forms.Form):
       
 STARTDATE="Available from "
 ENDDATE="Available until "
-class AccomodationForm(forms.ModelForm):
-    class Meta:
-        attrs = { "class": "form-control"}
-        model = AccomodationOffer
-
-        fields = ["startDateAccomodation", "endDateAccomodation", "numberOfAdults", "numberOfChildren",  "numberOfPets", "typeOfResidence"]
-        widgets = {
-        'startDateAccomodation':  forms.DateInput(attrs={'class': 'form-control'}),
-        'endDateAccomodation': forms.DateInput(attrs={'class': 'form-control'}),
-        'numberOfAdults': forms.NumberInput(attrs={'class': 'form-control'}),
-        'numberOfChildren': forms.NumberInput(attrs={'class': 'form-control'}),
-        'numberOfPets': forms.NumberInput(attrs={'class': 'form-control'}),
-        'typeOfResidence': forms.Select(attrs={'class': 'form-control'})
-        }
+class AccomodationForm(forms.Form):
+   
+    startDateAccomodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(attrs={'class':'form-control'}))
+    endDateAccomodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(attrs={'class':'form-control'}))
+    numberOfAdults= forms.IntegerField(label=NUMBERADULTS,  widget=forms.NumberInput(attrs={'class':'form-control'}))
+    numberOfChildren= forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class':'form-control'}))
+    numberOfPets= forms.IntegerField(label=NUMBERPETS, widget=forms.NumberInput(attrs={'class':'form-control'}))
+    typeOfResidence =  forms.CharField(max_length=2, label=RESIDENCE,widget=forms.Select(choices=AccomodationOffer.ACCOMODATIONCHOICES, attrs={'class':'form-control'}))
+   
