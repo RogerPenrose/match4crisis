@@ -29,7 +29,8 @@ class GenericOffer(models.Model):
     ('CL', 'Childcare Permanent'),
     ('BA', 'Babysitting'),
     ('WE', 'Medical Assistance'),
-    ('JO', 'Job')
+    ('JO', 'Job'),
+    ('DO', 'Donnation')
     ]
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -96,6 +97,10 @@ class JobOffer(models.Model):
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
     requirements = models.TextField(blank=True)
+class DonnationOffer(models.Model):
+    account= models.CharField(max_length=350)
+    donnationTitle = models.CharField(max_length=128, blank=True)
+    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
@@ -130,7 +135,7 @@ class WelfareOffer(models.Model):
     WELFARE_CHOICES = [("ELD", "Elderly Care"),("DIS", "Care for handicapped People"), ("PSY", "Psychological Aid")]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    helpType = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="CAR") # Use this to track between "Bus", "Car", "Transporter" ?
+    helpType = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

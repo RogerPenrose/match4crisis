@@ -6,18 +6,9 @@ import json
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
-<<<<<<< HEAD
 from django.http import HttpResponse
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer
-from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm
-=======
-from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
-
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer
-from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm
-
-from apps.ineedhelp.models import Refugee
->>>>>>> 03722e456bfad71e701dbb8ae0558e0a8a3fb348
+from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonnationOffer
+from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonnationForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 
@@ -135,6 +126,21 @@ def updateWelfareForm(g, form, offer_id=0):
         t = WelfareForm.objects.get(pk=offer_id)
         t.genericOffer=g
         t.helpType=form.get("helpType")
+        t.save()
+        return t
+
+def updateDonnationForm(g, form, offer_id=0):
+    if offer_id == 0:
+        t = DonnationForm(genericOffer=g, \
+            donnationTitle=form.get("donnationTitle"),\
+            account=form.get("account"))
+        t.save()
+        return t
+    else:
+        t = DonnationForm.objects.get(pk=offer_id)
+        t.genericOffer=g
+        t.donnationTitle=form.get("donnationTitle")
+        t.account=form.get("account")
         t.save()
         return t
 
@@ -290,7 +296,7 @@ def by_type(request, offer_type):
     return render(request, 'offers/index.html', context)
 def create_by_filter(request):
     #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
-    resultVal = {"TransportationOffers":[], "TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
+    resultVal = {"TransportationOffers":[], "DonnationOffers":[],"TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
     if   request.POST.get("transportation") == "True":
         filters = []
         for key in request.POST:
@@ -384,32 +390,35 @@ def create_by_filter(request):
                     filters.append(key.replace("welfare_","")+"="+request.POST.get(key))
         filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
         resultVal["WelfareOffers"] =  eval("mergeImages(WelfareOffer.objects.filter("+filterstring+"))")
-    
-        if request.POST.get("translation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("jobs") == "True"and request.POST.get("manpower") and request.POST.get("childcareshortterm") == "True" and request.POST.get("childcarelongterm") == "True"  and request.POST.get("welfare") == "True"  :
-            resultVal["Title"] = "All Offers"
-        else: 
-            title = ""
-            if request.POST.get("accomodation") == "True":
-                title += "Accomodation,"
-            if request.POST.get("translation") == "True":
-                title += "Translation,"
-            if request.POST.get("transportation") == "True":
-                title += "Transportation,"               
-            if request.POST.get("buerocratic") == "True":
-                title += "Buerocratic,"               
-            if request.POST.get("manpower") == "True":
-                title += "Manpower,"           
-            if request.POST.get("childcarelongterm") == "True":
-                title += "Childcare (Longterm),"
-            if request.POST.get("childcareshortterm") == "True":
-                title += "Childcare / Babysitting,"
-            if request.POST.get("childcareshortterm") == "True":
-                title += "Medical Assistance,"
-            if request.POST.get("jobs") == "True":
-                title += "Jobs,"
-            title = title[:-1]
-            resultVal["Title"] = title
-        resultVal["ResultCount"] = len(resultVal["TranslationOffers"])+len(resultVal["JobOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
+    if request.POST.get("donnation") == "True":
+        resultVal["DonnationOffers"] = mergeImages(DonnationOffer.objects.all())
+    if request.POST.get("translation") == "True" and request.POST.get("donnation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("jobs") == "True"and request.POST.get("manpower") and request.POST.get("childcareshortterm") == "True" and request.POST.get("childcarelongterm") == "True"  and request.POST.get("welfare") == "True"  :
+        resultVal["Title"] = "All Offers"
+    else: 
+        title = ""
+        if request.POST.get("accomodation") == "True":
+            title += "Accomodation,"
+        if request.POST.get("translation") == "True":
+            title += "Translation,"
+        if request.POST.get("transportation") == "True":
+            title += "Transportation,"               
+        if request.POST.get("buerocratic") == "True":
+            title += "Buerocratic,"               
+        if request.POST.get("manpower") == "True":
+            title += "Manpower,"           
+        if request.POST.get("childcarelongterm") == "True":
+            title += "Childcare (Longterm),"
+        if request.POST.get("childcareshortterm") == "True":
+            title += "Childcare / Babysitting,"
+        if request.POST.get("welfare") == "True":
+            title += "Medical Assistance,"
+        if request.POST.get("jobs") == "True":
+            title += "Jobs,"
+        if request.POST.get("donnation") == "True":
+            title += "Donnations,"
+        title = title[:-1]
+        resultVal["Title"] = title
+    resultVal["ResultCount"] = len(resultVal["DonnationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["JobOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
     return resultVal
 
 
@@ -440,12 +449,12 @@ def handle_filter(request):
         if request.POST.get("manpower") == "True":
             query +="manpower=True&"
         else :
-            query += "childcareshortterm=False"
-        if request.POST.get("manpower") == "True":
+            query += "manpower=False"
+        if request.POST.get("childcareshortterm") == "True":
             query +="childcareshortterm=True&"
         else :
             query += "childcarelongterm=False"
-        if request.POST.get("manpower") == "True":
+        if request.POST.get("childcarelongterm") == "True":
             query +="childcarelongterm=True&"
         else :
             query += "childcarelongterm=False"
@@ -457,6 +466,10 @@ def handle_filter(request):
             query +="welfare=True&"
         else :
             query += "welfare=False"
+        if request.POST.get("donnation") == "True":
+            query +="donnation=True&"
+        else :
+            query += "donnation=False"
         return redirect("/mapview/?"+query)
         
 def list_by_city(request, city):
@@ -468,6 +481,7 @@ def list_by_city(request, city):
      'AccomodationOffers': mergeImages(AccomodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'DonnationOffers': mergeImages(DonnationOffers.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
@@ -476,15 +490,16 @@ def list_by_city(request, city):
     return render(request, 'offers/index.html', context)
     
 def by_postCode(request, postCode):
-    context = {'AccomodationOffers': AccomodationOffer.objects.filter(genericOffer__postCode=postCode), \
-               'TransportationOffers': TransportationOffer.objects.filter(genericOffer__postCode=postCode),\
-               'ManpowerOffers': ManpowerOffer.objects.filter(genericOffer__postCode=postCode),\
+    context = {'AccomodationOffers': mergeImage(AccomodationOffer.objects.filter(genericOffer__postCode=postCode)), \
+               'TransportationOffers': mergeImage(TransportationOffer.objects.filter(genericOffer__postCode=postCode)),\
+               'ManpowerOffers': mergeImage(ManpowerOffer.objects.filter(genericOffer__postCode=postCode)),\
+               'DonnationOffers': mergeImage(DonnationOffers.objects.filter(genericOffer__postCode=postCode)),\
                 'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode=postCode)), 
      'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode=postCode)), 
      'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode=postCode)), 
      'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__postCode=postCode)), 
      'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode=postCode)), 
-               'TranslationOffers': TranslationOffer.objects.filter(genericOffer__postCode=postCode)}
+               'TranslationOffers': mergeImage(TranslationOffer.objects.filter(genericOffer__postCode=postCode))}
     
     return render(request, 'offers/index.html', context)
 def mergeImages(offers):
@@ -499,17 +514,19 @@ def mergeImages(offers):
             newEntry["image"] = images[0].image
         resultOffers.append(newEntry)
     return resultOffers
+N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
 def index(request):
-    accomodationOffers = mergeImages(AccomodationOffer.objects.all())
-    buerocraticOffers = mergeImages(BuerocraticOffer.objects.all())
-    transportationOffers = mergeImages(TransportationOffer.objects.all())
-    translationOffers = mergeImages(TranslationOffer.objects.all())
-    manpowerOffers = mergeImages(ManpowerOffer.objects.all())
-    ChildcareOffersLongterm = mergeImages(ChildcareOfferLongterm.objects.all())
-    ChildcareOffersShortterm = mergeImages(ChildcareOfferShortterm.objects.all())
-    WelfareOffers = mergeImages(WelfareOffer.objects.all())
-    JobOffers = mergeImages(JobOffer.objects.all())
-    manpowerOffers = mergeImages(ManpowerOffer.objects.all())
+    accomodationOffers = mergeImages(AccomodationOffer.objects.all()[:N_ENTRIES])
+    buerocraticOffers = mergeImages(BuerocraticOffer.objects.all()[:N_ENTRIES])
+    transportationOffers = mergeImages(TransportationOffer.objects.all()[:N_ENTRIES])
+    translationOffers = mergeImages(TranslationOffer.objects.all()[:N_ENTRIES])
+    manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
+    donnationOffers = mergeImages(DonnationOffer.objects.all()[:N_ENTRIES])
+    ChildcareOffersLongterm = mergeImages(ChildcareOfferLongterm.objects.all()[:N_ENTRIES])
+    ChildcareOffersShortterm = mergeImages(ChildcareOfferShortterm.objects.all()[:N_ENTRIES])
+    WelfareOffers = mergeImages(WelfareOffer.objects.all()[:N_ENTRIES])
+    JobOffers = mergeImages(JobOffer.objects.all()[:N_ENTRIES])
+    manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
 
 
     context = {
@@ -519,6 +536,7 @@ def index(request):
                'TransportationOffers': transportationOffers,\
                'TranslationOffers': translationOffers,\
                'ManpowerOffers': manpowerOffers,\
+               'DonnationOffers': donnationOffers,\
                'ChildcareOffersLongterm': ChildcareOffersLongterm,\
                'ChildcareOffersShortterm': ChildcareOffersShortterm,\
                'WelfareOffers': WelfareOffers,\
@@ -541,7 +559,7 @@ def create(request):
         return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm()})
+        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm(), 'donnationForm': DonnationForm()})
 
 def update(request, offer_id):
     form = GenericForm(request.POST)
@@ -562,6 +580,17 @@ def update(request, offer_id):
                 if buForm.is_valid():
                     currentForm = buForm.cleaned_data
                     a = updateManpowerForm(g, currentForm, offer_id)
+                    offer_id = a.genericOffer.id
+                    logger.warning("Offer ID: "+str(offer_id))
+                    return detail(request, offer_id)
+                else:
+                    logger.warning("Object empty")
+                    return HttpResponse(str(acForm.errors))
+            if currentForm.get("offerType") == "DO": # Special case since we have no particular fields in this type.
+                buForm = DonnationForm(request.POST)
+                if buForm.is_valid():
+                    currentForm = buForm.cleaned_data
+                    a = updateDonnationForm(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
@@ -706,7 +735,7 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))
-        return {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Medical Assistance", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
@@ -718,7 +747,11 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerOffer(model_to_dict(detail))
-        return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': "Manpower", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+    if generic.offerType == "DO":
+        detail = get_object_or_404(DonnationOffer, pk=generic.id)
+        detailForm = DonnationOffer(model_to_dict(detail))
+        return {'offerType': "Donnations", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
         detailForm = ChildcareOfferShortterm(model_to_dict(detail))

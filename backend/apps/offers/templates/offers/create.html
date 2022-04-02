@@ -152,6 +152,13 @@ content: "";
             </tr>
             {% endfor %}
         </tbody>
+        <tbody id="doTable">
+            {% for field in donnationForm.visible_fields %}
+            <tr>    
+                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
     <input type="submit" value="Submit" >
 </form>
@@ -167,6 +174,7 @@ content: "";
     var clTable = document.getElementById("clTable")
     var weTable = document.getElementById("weTable")
     var joTable = document.getElementById("joTable")
+    var doTable = document.getElementById("doTable")
     document.getElementById("id_offerType").onchange =function(){ refresh()}
     refresh()
     markEntries()
@@ -214,6 +222,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
             // Mark all invisible fields as "nonrequired":
            
         }
@@ -229,6 +238,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
             
         }
         else if (typeSelection == "TL"){
@@ -242,6 +252,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "BU"){
             console.log("BU Table ? ")
@@ -255,6 +266,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "MP"){
             console.log("BU Table ? ")
@@ -268,6 +280,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "BA"){
             
@@ -280,6 +293,7 @@ content: "";
             toggleRequiredTag(baTable, true)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "CL"){
             
@@ -292,6 +306,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "WE"){
             
@@ -304,6 +319,7 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, true)
             toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "JO"){
             
@@ -316,6 +332,20 @@ content: "";
             toggleRequiredTag(baTable, false)
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, true)
+            toggleRequiredTag(doTable, false)
+        }
+        else if (typeSelection == "DO"){
+            
+            toggleRequiredTag(tlTable, false)
+            toggleRequiredTag(acTable, false)
+            toggleRequiredTag(trTable, false)
+            toggleRequiredTag(buTable, false)
+            toggleRequiredTag(mpTable, false)
+            toggleRequiredTag(clTable, false)
+            toggleRequiredTag(baTable, false)
+            toggleRequiredTag(weTable, false)
+            toggleRequiredTag(joTable, false)
+            toggleRequiredTag(doTable, true)
         }
 }
 </script>

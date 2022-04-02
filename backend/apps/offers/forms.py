@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonnationOffer
 
 def validate_plz(value):
     try:
@@ -42,6 +42,8 @@ JOBTYPE="Type of Job"
 JOBREQS = "Requirements"
 JOBTITLE= "Jobtitle"
 HELPTYPE_WE="Type of Medical Assistance"
+BANKACCOUNT="Bank Data"
+DONNATION_TITLE="Title"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -60,6 +62,10 @@ class GenericForm(forms.ModelForm):
         'isDigital': forms.CheckboxInput(attrs={'class': 'form-control'}),
         'active': forms.CheckboxInput(attrs={'class': 'form-control'})
         }
+class DonnationForm(forms.Form):
+    account= forms.CharField(label=BANKACCOUNT, max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))  
+    donnationTitle= forms.CharField(label=DONNATION_TITLE,widget=forms.TextInput(attrs={'class': 'form-control'}))  
+
 class ChildcareFormLongterm(forms.Form):
     gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
 class ChildcareFormShortterm(forms.Form):

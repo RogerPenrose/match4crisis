@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonnationOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -568,7 +568,7 @@ big_city_plzs = [
     "81927",
     "81929",
 ]
-
+JOB_CHOICES = ["ACA","ADM","ADV","CON","FAC","FIN","GEN","HEA", "HUM","INF","INT","LEG","LIB","MAR","OFF","PER","PUB","RES", "SPO", "STU","HAN"]
 residenceChoices = ['SO','RO', 'HO', 'LE'] 
 HELP_CHOICES_MP= ['ON',  'OS']
 GENDER_CHOICES = ['FE', 'MA', 'NO']
@@ -635,14 +635,11 @@ def populate_db(n, userId = 1):
                 b = ManpowerOffer(genericOffer=g, helpType=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
                 b.save()
             if counter == 5: # Transportation
-                print("CHILDCARE !!!!!")
-
                 g.offerType = "CL"
                 g.save()
                 b = ChildcareOfferLongterm(genericOffer=g, gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
                 b.save()
             if counter == 6: # Transportation
-                print("CHILDCARE !!!!!")
                 g.offerType = "BA"
                 g.save()
                 b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildrenToCare=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
@@ -651,6 +648,16 @@ def populate_db(n, userId = 1):
                 g.offerType = "WE"
                 g.save()
                 b = WelfareOffer(genericOffer=g, helpType=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
+                b.save()
+            if counter == 8: # Transportation
+                g.offerType = "JO"
+                g.save()
+                b = JobOffer(genericOffer=g, jobTitle="Master of awesome.", requirements="10 Year Job experience.", jobType=JOB_CHOICES[np.random.randint(0,len(JOB_CHOICES)-1)])
+                b.save()
+            if counter == 9: # Transportation
+                g.offerType = "DO"
+                g.save()
+                b = DonnationOffer(genericOffer=g, donnationTitle="Human Fund", account="Deutsche Bank DE 12 3456 7891 07893.")
                 b.save()
                 counter = -1
             counter = counter + 1
