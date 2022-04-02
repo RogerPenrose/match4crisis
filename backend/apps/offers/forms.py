@@ -109,7 +109,8 @@ class TranslationForm(forms.Form):
     firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
     secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
       
-
+STARTDATE="Available from "
+ENDDATE="Available until "
 class AccomodationForm(forms.Form):
     # Accomodation Fields
 
@@ -118,7 +119,8 @@ class AccomodationForm(forms.Form):
         ('RO', 'Private Room'),
         ('HO', 'Whole Flat / House')
     }
-    stayLength = forms.IntegerField(label=STAYLENGTH,localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    startDateAccomodation = forms.DateField(label=STARTDATE,localize=False, widget=forms.DateInput(attrs={'class': 'form-control'}))
+    endDateAccomodation = forms.DateField(label=ENDDATE,localize=False, widget=forms.DateInput(attrs={'class': 'form-control'}))
     numberOfAdults = forms.IntegerField(label=INHABITANTS_ADULTS, localize=False, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
     numberOfChildren = forms.IntegerField(label=INHABITANTS_CHILDREN, localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
     numberOfPets = forms.IntegerField(label=INHABITANTS_PETS, localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}) )

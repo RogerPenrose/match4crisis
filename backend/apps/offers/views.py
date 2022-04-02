@@ -88,7 +88,8 @@ def updateAccomodationModel(g, form, offer_id=0):
             numberOfChildren=form.get("numberOfChildren"), \
             typeOfResidence=form.get("typeOfResidence"), \
             numberOfPets=form.get("numberOfPets"), \
-            stayLength= form.get("stayLength") )
+            startDateAccomodation= form.get("startDateAccomodation") ,\
+            endDateAccomodation= form.get("endDateAccomodation"))
         a.save()
         return a
     else:
@@ -99,6 +100,8 @@ def updateAccomodationModel(g, form, offer_id=0):
         a.typeOfResidence=form.get("typeOfResidence")
         a.numberOfPets=form.get("numberOfPets")
         a.stayLength= form.get("stayLength")
+        a.startDateAccomodation= form.get("startDateAccomodation") 
+        a.endDateAccomodation= form.get("endDateAccomodation")
         a.save()
         return a
 

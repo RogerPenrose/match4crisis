@@ -128,7 +128,8 @@ class AccomodationOffer(models.Model):
     typeOfResidence = models.CharField(ACCOMODATIONCHOICES,max_length=2, default="SO" )
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
-    stayLength = models.IntegerField(default=14, blank=True) # Check : https://docs.djangoproject.com/en/4.0/ref/models/fields/#:~:text=of%20decimal%20fields.-,DurationField,-%C2%B6
+    startDateAccomodation = models.DateField(default=datetime.now())
+    endDateAccomodation = models.DateField(blank =True)
     def __str__(self):
         return self.typeOfResidence
 class WelfareOffer(models.Model):
