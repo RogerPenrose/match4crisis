@@ -110,28 +110,32 @@ class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
-ACCOMODATIONCHOICES = {
-    ('SO', 'Sofa / Bed'),
-    ('RO', 'Private Room'),
-    ('HO', 'Whole Flat / House')
-}
 class ManpowerOffer(models.Model):
     HELP_CHOICES= [('ON', 'Online'), ('OS', 'On-site')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
 
 class AccomodationOffer(models.Model):
+
+    ACCOMODATIONCHOICES = {
+        ('SO', 'Sofa / Bed'),
+        ('RO', 'Private Room'),
+        ('HO', 'Whole Flat / House')
+    }
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
     numberOfChildren = models.IntegerField(default=0, blank=True)
     numberOfPets = models.IntegerField(default=0, blank=True)
-    typeOfResidence = models.CharField(ACCOMODATIONCHOICES,max_length=2, default="SO" )
+    typeOfResidence = models.CharField(ACCOMODATIONCHOICES,max_length=2, choices=ACCOMODATIONCHOICES, default="SO" )
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     startDateAccomodation = models.DateField(default=datetime.now())
     endDateAccomodation = models.DateField(blank =True)
     def __str__(self):
         return self.typeOfResidence
+
+    def flavor_verbose(self):
+        return dict(AccomodationOffer.ACCOMODATIONCHOICES)[self.typeOfResidence]
 class WelfareOffer(models.Model):
     WELFARE_CHOICES = [("ELD", "Elderly Care"),("DIS", "Care for handicapped People"), ("PSY", "Psychological Aid")]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

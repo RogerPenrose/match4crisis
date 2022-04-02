@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonnationOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonnationOffer, AccomodationOffer
 
 def validate_plz(value):
     try:
@@ -111,17 +111,17 @@ class TranslationForm(forms.Form):
       
 STARTDATE="Available from "
 ENDDATE="Available until "
-class AccomodationForm(forms.Form):
-    # Accomodation Fields
+class AccomodationForm(forms.ModelForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = AccomodationOffer
 
-    ACCOMODATIONCHOICES = {
-        ('SO', 'Sofa / Bed'),
-        ('RO', 'Private Room'),
-        ('HO', 'Whole Flat / House')
-    }
-    startDateAccomodation = forms.DateField(label=STARTDATE,localize=False, widget=forms.DateInput(attrs={'class': 'form-control'}))
-    endDateAccomodation = forms.DateField(label=ENDDATE,localize=False, widget=forms.DateInput(attrs={'class': 'form-control'}))
-    numberOfAdults = forms.IntegerField(label=INHABITANTS_ADULTS, localize=False, min_value=1, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    numberOfChildren = forms.IntegerField(label=INHABITANTS_CHILDREN, localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    numberOfPets = forms.IntegerField(label=INHABITANTS_PETS, localize=False, min_value=0, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    typeOfResidence = forms.CharField(label=RESIDENCE, max_length=2, widget=forms.Select(choices=ACCOMODATIONCHOICES, attrs={'class': 'form-control'}))
+        fields = ["startDateAccomodation", "endDateAccomodation", "numberOfAdults", "numberOfChildren",  "numberOfPets", "typeOfResidence"]
+        widgets = {
+        'startDateAccomodation':  forms.DateInput(attrs={'class': 'form-control'}),
+        'endDateAccomodation': forms.DateInput(attrs={'class': 'form-control'}),
+        'numberOfAdults': forms.NumberInput(attrs={'class': 'form-control'}),
+        'numberOfChildren': forms.NumberInput(attrs={'class': 'form-control'}),
+        'numberOfPets': forms.NumberInput(attrs={'class': 'form-control'}),
+        'typeOfResidence': forms.Select(attrs={'class': 'form-control'})
+        }
