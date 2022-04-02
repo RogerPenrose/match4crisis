@@ -16,4 +16,6 @@ def display_value(boundField):
     """
     data = boundField.data
     field = boundField.field
-    return hasattr(field, 'choices') and dict(field.choices).get(data,'') or data
+    widget = field.widget
+    logger.warning("DATA: "+str(data) + "FIELD "+ str(field.widget.__dict__))
+    return hasattr(widget, 'choices') and dict(widget.choices).get(data,'') or data

@@ -749,27 +749,27 @@ def getOfferDetails(request, offer_id):
         return {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
-        detailForm = ManpowerOffer(model_to_dict(detail))
+        detailForm = ManpowerForm(model_to_dict(detail))
         return {'offerType': "Manpower", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "DO":
         detail = get_object_or_404(DonnationOffer, pk=generic.id)
-        detailForm = DonnationOffer(model_to_dict(detail))
+        detailForm = DonnationForm(model_to_dict(detail))
         return {'offerType': "Donnations", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
-        detailForm = ChildcareOfferShortterm(model_to_dict(detail))
+        detailForm = ChildcareFormShortterm(model_to_dict(detail))
         return {'offerType': "Babysitting", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "CL":
         detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
-        detailForm = ChildcareOfferLongterm(model_to_dict(detail))
+        detailForm = ChildcareFormLongterm(model_to_dict(detail))
         return {'offerType': "Childcare Longterm", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "JO":
         detail = get_object_or_404(JobOffer, pk=generic.id)
-        detailForm = JobOffer(model_to_dict(detail))
-        return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        detailForm = JobForm(model_to_dict(detail))
+        return {'offerType': "Job", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
-        detailForm = BuerocraticOffer(model_to_dict(detail))
+        detailForm = BuerocraticForm(model_to_dict(detail))
         return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False):
