@@ -97,7 +97,7 @@ class WelfareForm(forms.Form):
 class BuerocraticForm(forms.Form):
     helpType= forms.CharField(label=HELPTYPE, max_length=2, widget=forms.Select(choices=BuerocraticOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
 class TransportationForm(forms.Form):
-    date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(attrs={'class':'form-control'}))
+    date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
     numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
     postCodeEnd = forms.CharField(label=POSTCODE_END, max_length=5, validators=[validate_plz], widget=forms.TextInput(attrs={'class': 'form-control'}))
     streetNameEnd = forms.CharField(label=STREETNAME_END, max_length=200, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -107,12 +107,10 @@ class TranslationForm(forms.Form):
     firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
     secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
       
-STARTDATE="Available from "
-ENDDATE="Available until "
 class AccomodationForm(forms.Form):
    
-    startDateAccomodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(attrs={'class':'form-control'}))
-    endDateAccomodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(attrs={'class':'form-control'}))
+    startDateAccomodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
+    endDateAccomodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
     numberOfAdults= forms.IntegerField(label=NUMBERADULTS,  widget=forms.NumberInput(attrs={'class':'form-control'}))
     numberOfChildren= forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class':'form-control'}))
     numberOfPets= forms.IntegerField(label=NUMBERPETS, widget=forms.NumberInput(attrs={'class':'form-control'}))
