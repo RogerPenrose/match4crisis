@@ -8,7 +8,222 @@ Dashboard - Hilfesuchende
 {% endblocktrans %}
 {% endblock %}
 
+{% block header %}
+<style>
+    @media only screen and (min-width: 768px) {
+      .dashboard-title {
+        padding: 130px 0px 80px 0px;
+      }
+  
+      .navbar { background: transparent !important;     -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
+      -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
+      box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
+      body { margin-top: 0px !important;}
+  
+      .dashboard-title h2 {
+        font-size: 20px;
+        color: #fff !important;
+        font-weight: 300;
+      }
+      .hide-desktop { display: none;}
+      .dashboard-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
+      .btn-yellow-2 { background-color: #FAC903; margin-left: 10px; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+      .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
+      .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+    }
+  
+    @media only screen and (min-width: 992px) {
+      .dashboard-title {
+        padding: 150px 0px 100px 0px;
+      }
+    }
+  
+    @media only screen and (min-width: 1200px) {
+      .dashboard-title {
+        padding: 180px 0px 100px 0px;
+      }
+    }
+  
+    @media only screen and (max-width: 767px) {
+        .buttons { margin-left:0px; margin-right:0px;}
+      .navbar-collapse { background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
+  .navbar { padding: 0px !important; }
+  .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
+  .navbar-toggler { padding: 20px calc(20px);}
+  .navbar-collapse { padding: 0px 20px 20px 20px;}
+      .navbar {
+        position: absolute;
+      }
+  
+      .dashboard-title {
+        background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%);
+        padding: 100px 0px 10px 0px;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
+      }
+      .bg-yellow {
+        background: transparent !important;
+      }
+      .dashboard-title h1 {
+        font-size: 7vw;
+        color: #fff !important;
+      }
+  
+      .dashboard-title h2 {
+        font-size: 4vw;
+        color: #fff !important;
+        font-weight: 300;
+      }
+  
+      .home-box > div > div > a > div {
+        padding: 60px 10px 15px 30px;
+      }
+  
+      .home-box-description {
+        margin-bottom: 15px;
+      }
+  
+      .navbar {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+      }
+  
+      .hide-home {
+        display: none;
+      }
+  
+      .ml-auto {
+        margin-left: 0 !important;
+        margin-right: auto;
+      }
+    }
+  
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .navbar > .container {
+        width: 100%;
+        max-width: 720px !important;
+        padding-left: 15px;
+        padding-right: 0px;
+      }
+    
+    }
+  
+    @media only screen and (min-width: 768px) {
+.buttons { margin-left:10px;}
+        div.left { margin-left: -10px; margin-right: 10px;}
+    }
+
+    #searchsubmit {
+      display: none;
+    }
+  
+  
+    .buttons > div { background-color: #F59E1B; border-radius: 30px; color: #fff; padding:15px; margin-bottom: 15px;} 
+    .buttons h3 { color: #fff; font-size: 18px;}
+    .buttons p { margin-bottom: 0px;}
+    .buttons a, .buttons a:hover { color: #fff;}
+  </style>
+{% endblock %}
+
 {% block content%}
-<h2>Dashboard für Hilfesuchende</h2>
-<a href = "{% url 'favourite_offers' %}">Gespeicherte Angebote</a>
+<div class="dashboard-title">
+    <div class="container">
+      <div class="row align-self-center align-items-center">
+        <div class="col-md-8 col-xl-5">
+          <h1 class="text-white">
+            {% blocktrans %}Glad you are here, Anastasia!{% endblocktrans %}
+          </h1>
+          <h2 class="font-weight-regular">
+            {% blocktrans %}Don't wait any longer, start looking for help right now.{% endblocktrans %}
+          </h2>
+          <br />
+          <form action="/mapview/">
+            <div style="position: relative; margin-bottom: 35px;">
+              <input
+                type="text"
+                id="location"
+                name="location"
+                class="input-form"
+                placeholder="{% blocktrans %}Search for help in city or country{% endblocktrans %}"
+              />
+              <svg
+                class="bi bi-search"
+                style="
+                  margin-left: 3px;
+                  position: absolute;
+                  top: 10px;
+                  left: 10px;
+                "
+                width="14px"
+                height="14px"
+                viewBox="0 0 18 14"
+                fill="#495057"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+                  clip-rule="evenodd"
+                />
+                <path
+                  fill-rule="evenodd"
+                  d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </div>
+            <input id="searchsubmit" type="submit" value="Submit" />
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="margin-top: 35px;">
+<h2 style="margin-bottom: 35px;">User Dashboard</h2>
+    <div class="buttons row">
+        
+        <div class="col-12 col-md-6 col-xl-6 left">
+            <a href="#">
+        <div class="row align-self-center align-items-center">
+            <div class="col-3" style="padding-right: 0px;"><img src="{% static 'img/users/recent.svg' %}" width="100%" height="auto" style="max-height:80px; padding:10px;"></div>  <div class="col-9"><h3>Recently viewed</h3><p>Check your recently viewed listings.</p></div>
+            </div>
+        </a>
+        </div>
+    
+
+        <div class="col-12 col-md-6 col-xl-6">
+
+            <a href="#">
+            <div class="row align-self-center align-items-center">
+                <div class="col-3" style="padding-right: 0px;"><img src="{% static 'img/users/contacted.svg' %}" width="100%" height="auto" style="max-height:80px;"></div>  <div class="col-9"><h3>Recently contaced</h3><p>Check who you contacted for help.</p></div>
+                </div>
+            </a>
+            </div>
+
+            <div class="col-12 col-md-6 col-xl-6 left">
+                <a href="{% url 'favourite_offers' %}">
+            <div class="row align-self-center align-items-center">
+                <div class="col-3" style="padding-right: 0px;">Icon</div>  <div class="col-9"><h3>Favorites</h3><p>Your favorite listings in one place.</p></div>
+                </div>
+            </a>
+            </div>
+        
+    
+            <div class="col-12 col-md-6 col-xl-6">
+    
+                <a href="#">
+                <div class="row align-self-center align-items-center">
+                    <div class="col-3" style="padding-right: 0px;">Icon</div>  <div class="col-9"><h3>Profile Settings</h3><p>Change your profile settings.</p></div>
+                    </div>
+                </a>
+                </div>      
+
+        </div>
+
+        </div>
+  </div>
 {% endblock %}
