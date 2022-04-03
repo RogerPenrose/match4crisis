@@ -11,7 +11,10 @@ from .models import GenericOffer, AccomodationOffer, TranslationOffer, Transport
 from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonnationForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
-
+OFFERTYPES = ["accomodation", "transportation", "manpower", "buerocratic", "childcareshortterm", "childcarelongterm", "job","welfare", "donnation"]
+OFFERTITLES = { "accomodation": "Accommodation", "transportation": "Transportation", "manpower": "Manpower", 
+"buerocratic" : "Buerocratic Aide", "childcareshortterm" : "Childcare / Babysitting", "childcarelongterm" : "Childcare (Longterm)", 
+"job" : "Job","welfare" : "Medical Assistance", "donnation": "Donnations"}        
 
 logger = logging.getLogger("django")
 def updateGenericModel( form, offer_id=0, userId=None):
@@ -399,26 +402,9 @@ def create_by_filter(request):
         resultVal["Title"] = "All Offers"
     else: 
         title = ""
-        if request.POST.get("accomodation") == "True":
-            title += "Accomodation,"
-        if request.POST.get("translation") == "True":
-            title += "Translation,"
-        if request.POST.get("transportation") == "True":
-            title += "Transportation,"               
-        if request.POST.get("buerocratic") == "True":
-            title += "Buerocratic,"               
-        if request.POST.get("manpower") == "True":
-            title += "Manpower,"           
-        if request.POST.get("childcarelongterm") == "True":
-            title += "Childcare (Longterm),"
-        if request.POST.get("childcareshortterm") == "True":
-            title += "Childcare / Babysitting,"
-        if request.POST.get("welfare") == "True":
-            title += "Medical Assistance,"
-        if request.POST.get("jobs") == "True":
-            title += "Jobs,"
-        if request.POST.get("donnation") == "True":
-            title += "Donnations,"
+        for entry in OFFERTYPES:
+            if request.POST.get(entry) == "True":
+                title += OFFERTITLES[entry]+","
         title = title[:-1]
         resultVal["Title"] = title
     resultVal["ResultCount"] = len(resultVal["DonnationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["JobOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
@@ -430,9 +416,8 @@ def handle_filter(request):
         context = create_by_filter(request)
         return render(request, 'offers/index.html', context)
     else :
-        entries = ["accomodation", "transportation", "manpower", "buerocratic", "childcareshortterm", "childcarelongterm", "job","welfare", "donnation"]
         query = ""
-        for entry in entries:
+        for entry in OFFERTYPES:
             if request.POST.get(entry) == "True":
                 query +=entry+"=True&"
             else:
