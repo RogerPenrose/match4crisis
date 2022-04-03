@@ -17,7 +17,6 @@ p.map { margin: 20px 0;}
 <script>
   $(document).ready(function() {
     $('.star-link').on('click', function(e) {
-      console.log('{{ id }}');
       e.preventDefault();
 
       var self = $(this);
@@ -33,9 +32,10 @@ p.map { margin: 20px 0;}
         dataType : 'json',
         success : function(json) {
             if(json.success === true){
-              console.log("yup");
+              console.log(json.favourited ? "favourited" : "unfavourited");
+              $('.bi-star').attr("fill", json.favourited ? "yellow" : "currentColor")
             }else{
-              console.log("nup");
+              console.log("Didn't work");
             }
         }
     });

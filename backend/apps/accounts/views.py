@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -376,7 +377,7 @@ def change_activation(request):
         )
     return HttpResponseRedirect("profile_helper")
 
-
+@method_decorator(login_required, name='dispatch')
 class DashboardView(TemplateView):
     pass
 
