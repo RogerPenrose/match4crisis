@@ -44,6 +44,20 @@
     });
 
 </script>
+<style>
+
+    .btn {     background-color: #32bd69;
+        font-size: 1rem;
+        color: #fff;
+        padding: .8rem 2.5rem;
+        border-radius: 15px;
+        border: 0px;
+        font-weight: bold;
+    margin-top: 20px; }
+    
+    .btn:hover { background-color: #1eb159; }
+    
+    </style>
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock %}
 
@@ -65,15 +79,8 @@
         <a  href="/accounts/login_redirect">Login</a>.
     <hr><br>
 	{% endif %}
-
-
-    <h1 class="font-weight-light match4hc-title">  {% blocktrans %}Registrierung für Flüchtlinge{% endblocktrans %}  </h1>
-	<h2 class="font-weight-light match4hc-title">{% blocktrans %}Wir verbinden Helfende und Hilfesuchenden zu einem match4crisis!{% endblocktrans %}</h2>
-
-
-
-    <p>{% blocktrans %}Dieses Projekt hat zum Ziel, euch in eurer Umgebung mit Krankenhäusern, Hausärzten und Gesundheitsämtern in Verbindung zu bringen, sollten diese nach Unterstützung suchen. Hierfür bitten wir dich, die folgenden Daten anzugeben, damit wir dich mit den entsprechenden Gesuchen verbinden können.{% endblocktrans %} </p>
-
+    <h2 class="title">  {% blocktrans %}Registration{% endblocktrans %}  </h2>
+	<p>{% blocktrans %}Create an account to look for help.{% endblocktrans %}</p>
 </div>
 
 
