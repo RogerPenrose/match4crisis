@@ -14,17 +14,22 @@ function initMap(){
 
         // If the place has a geometry, then present it on a map.
         if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
+            map.fitBounds(place.geometry.viewport);
+            setGetParameter([
+                ["location", input.value], 
+                ["lat", place.geometry.location.lat()], 
+                ["lng", place.geometry.location.lng()], 
+                ["bb", JSON.stringify(place.geometry.viewport)]
+            ])
         } else {
-        map.setCenter(place.geometry.location);
-        map.setZoom(17);
-        }
-
-        setGetParameter([
-            ["location", input.value], 
-            ["lat", place.geometry.location.lat()], 
-            ["lng", place.geometry.location.lng()]
-        ])
+            map.setCenter(place.geometry.location);
+            map.setZoom(15);
+            setGetParameter([
+                ["location", input.value], 
+                ["lat", place.geometry.location.lat()], 
+                ["lng", place.geometry.location.lng()]
+            ])
+        }        
     });
 
     const queryString = window.location.search;
@@ -47,15 +52,14 @@ function initMap(){
         if (!isNaN(lat) && !isNaN(lng)){
             map = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: parseFloat(lat), lng: parseFloat(lng)},
-                zoom: 17,
+                zoom: 16,
                 mapTypeControl: false,
-                fullscreenControl: false
+                fullscreenControl: false,
             });
 
             viewport_set = true
         }
     }
-    
     if (!viewport_set) {
         map = new google.maps.Map(document.getElementById("map"), {
             center: { lat: 50.8, lng:10 },
@@ -64,6 +68,40 @@ function initMap(){
             fullscreenControl: false
         });
     }
+
+    if (urlParams.get("bb")){
+        try{
+            map.fitBounds(JSON.parse(urlParams.get("bb")));
+        } catch {}
+    }
+
+    map.setOptions({
+        styles: [
+            {
+              featureType: "poi",
+              elementType: "labels.text",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            },
+            {
+              featureType: "poi.business",
+              stylers: [
+                {
+                  visibility: "off"
+                }
+              ]
+            }
+          ]
+    });
+
+    map.addListener("bounds_chang", () => {
+        setGetParameter([
+            ["bb", JSON.stringify(map.getBounds())]
+        ])
+    })
 }
 
 function setGetParameter(params)

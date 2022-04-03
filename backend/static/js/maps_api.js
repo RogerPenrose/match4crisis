@@ -22,9 +22,13 @@ function initMapsAutocomplete(){
             try {
                 const lat = document.getElementsByName("lat")[0];
                 const lng = document.getElementsByName("lng")[0];
+                const bb = document.getElementsByName("bb")[0];
                 const place = autocomplete.getPlace();
                 lat.value = place.geometry.location.lat();
                 lng.value = place.geometry.location.lng();
+                if (place.geometry.viewport){
+                    bb.value = JSON.stringify(place.geometry.viewport)
+                }
             } catch {
                 // either we on mapview_page or place not found or no geometry
             }

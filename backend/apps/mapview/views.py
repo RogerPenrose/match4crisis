@@ -29,11 +29,13 @@ def getCenterOfCity(city):
                     logger.error("Found a match: "+entry)
                     center = mappings.get(entry)
                     return center
+
 def mapviewjs(request):
     context = { "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
     logger.warning("rendering mapview JS ? "+str(request.GET))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
+
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
@@ -53,6 +55,7 @@ def index(request):
     }
     logger.warning("Context: "+str(context))
     return render(request, "mapview/map.html", context )
+logger = logging.getLogger("django")
 
 
 @lru_cache(maxsize=1)
@@ -60,6 +63,7 @@ def prepare_offers(ttl_hash=None):
     # Source: https://stackoverflow.com/questions/31771286/python-in-memory-cache-with-time-to-live
     del ttl_hash  # to emphasize we don't use it and to shut pylint up
     offers = GenericOffer.objects.filter(active=True, isDigital= False)
+
     locations_and_number = {}
     i = 0
     for offer in offers:
@@ -90,8 +94,10 @@ def accomodationOffersJSON(request):
     
 def transportationOffersJSON(request):
     offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="TR")
+    logger.warning(type(offers[0]))
     facilities = group_by_zip_code(offers)
     return JsonResponse(facilities)
+logger = logging.getLogger("django")
 
 def translationOffersJSON(request):
     offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="TL")
@@ -107,6 +113,7 @@ def genericOffersJSON(request):
 
 
 def group_by_zip_code(entities):
+
     countrycode_plz_details = {}
 
     for entity in entities:
