@@ -6,21 +6,23 @@
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
 
- label.custom-control-label { position: relative;
+input[type=checkbox]~label { position: relative;
   display: inline-block;
  margin-right: .5rem;
   border-radius: 23px;
   vertical-align: text-bottom;
   transition: all 0.3s linear;
 margin-bottom: 0px;
-box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
-    border-radius: 25px;
+border-radius: 1rem;
+    box-shadow: 0px 0px 5px rgb(0 0 0 / 8%);
     width: 100%;
     padding: 10px 10px 10px 70px;
     font-weight: 600;
+    margin-bottom: 15px;
 }
+.form-control { border-radius: 1rem; }
 
-.custom-checkbox .custom-control-label::before {
+input[type=checkbox]~label::before {
 content: "";
   position: absolute;
   left: 10px;
@@ -34,7 +36,7 @@ content: "";
   box-shadow: 0 0 0px 2px #e6e6e6;
 }
 
-.custom-control-label::after {
+input[type=checkbox]~label::after {
   content: "";
   position: absolute;
   left: 10px;
@@ -48,30 +50,39 @@ content: "";
   transition: all 0.2s ease-in-out;
 }
 
-.custom-control-label:active .custom-control-label::after {
-  width: 28px;
-  transform: translate3d(2px, 2px, 0);
-}
 
-.custom-control input { display: none; }
+input[type=checkbox] { display: none; }
 
-.custom-control-input:checked~.custom-control-label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+input[type=checkbox]:checked~label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
 
-.custom-control-input:checked~.custom-control-label::after { transform: translate3d(22px, 2px, 0); }
+input[type=checkbox]:checked~label::after  { transform: translate3d(22px, 2px, 0); }
 
 .custom-control { padding-left: 0px; }
 
+.btn {     background-color: #32bd69;
+    font-size: 1rem;
+    color: #fff;
+    padding: .8rem 2.5rem;
+    border-radius: 15px;
+    border: 0px;
+    font-weight: bold;
+margin-top: 20px; }
 
-.custom-control-label::before { border: 0px;}
+.btn:hover { background-color: #1eb159; color: #fff; }
+#isDigital label::before { border: 0px;}
+table { width: 100%}
 
+label { margin-bottom: 5px; font-weight: 600;}
+.form-control { margin-bottom: 15px;}
 
+input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 </style>
 {% endblock %}
 {% block content %}
 <div style="height:40px"></div>
 <div class="container">
     <div class="row" style=" margin-bottom:55px;">
-               <div class="col-lg-10 col-sm-12 col-12">
+               <div class="col-12 col-lg-6" style="margin: 0 auto">
 
                 <h2 class="title">Where do you want to help?</h2>
                 <p style="margin-bottom: 35px;">You can choose multiple categories</p>
@@ -82,85 +93,89 @@ content: "";
         <tbody>
             {% for field in genericForm.visible_fields %}
             <tr>
-                <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}</td>   
+<td id="{{ field.name }}" style="    display: flex;
+flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>   
             </tr>
             {% endfor %}
+
+            {% for field in imageForm.visible_fields %}
             <tr>
-                {{ imageForm }}
+            <td>{{ field.label_tag }} {{ field }}</td> 
             </tr>
+            {% endfor %}
         </tbody>
         <tbody id="acTable">
             {% for field in accomodationForm.visible_fields %}
             <tr>        
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td id="{{ field.name }}">{{ field.label_tag }} {{ field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody  id="trTable">
             {% for field in transportationForm.visible_fields %}
             <tr>  
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="tlTable">
             {% for field in translationForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="buTable">
             {% for field in buerocraticForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="mpTable">
             {% for field in manpowerForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="clTable">
             {% for field in childcarelongtermForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="baTable">
             {% for field in childcareshorttermForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="weTable">
             {% for field in welfareForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="joTable">
             {% for field in jobForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="doTable">
             {% for field in donnationForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <input type="submit" value="Submit" >
+    <input type="submit" value="Submit" class="btn">
 </form>
 </div></div></div>
 <script>
@@ -199,7 +214,7 @@ content: "";
             }
         }
         else {
-            subtable.style.display = "block"
+            subtable.style.display = "table-row-group"
             var entries = subtable.querySelectorAll("[wasRequired]")
             for (var i = 0; i < entries.length; i ++){
                 var entry = entries[i]
