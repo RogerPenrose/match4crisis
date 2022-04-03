@@ -430,49 +430,15 @@ def handle_filter(request):
         context = create_by_filter(request)
         return render(request, 'offers/index.html', context)
     else :
+        entries = ["accomodation", "transportation", "manpower", "buerocratic", "childcareshortterm", "childcarelongterm", "job","welfare", "donnation"]
         query = ""
+        for entry in entries:
+            if request.POST.get(entry) == "True":
+                query +=entry+"=True&"
+            else:
+                query += entry+"=False&"
         if request.POST.get("city"):
             query +="city="+request.POST.get("city")+"&"
-        if request.POST.get("accomodation"):
-            query +="accomodation=True&"
-        else :
-            query += "accomodation=False&"
-        if request.POST.get("transportation") == "True":
-            query +="transportation=True&"
-        else :
-            query += "transportation=False"
-        if request.POST.get("translation") == "True":
-            query +="translation=True&"
-        else :
-            query += "translation=False"
-        if request.POST.get("buerocratic") == "True":
-            query +="buerocratic=True&"
-        else :
-            query += "buerocratic=False"
-        if request.POST.get("manpower") == "True":
-            query +="manpower=True&"
-        else :
-            query += "manpower=False"
-        if request.POST.get("childcareshortterm") == "True":
-            query +="childcareshortterm=True&"
-        else :
-            query += "childcarelongterm=False"
-        if request.POST.get("childcarelongterm") == "True":
-            query +="childcarelongterm=True&"
-        else :
-            query += "childcarelongterm=False"
-        if request.POST.get("job") == "True":
-            query +="job=True&"
-        else :
-            query += "job=False"
-        if request.POST.get("welfare") == "True":
-            query +="welfare=True&"
-        else :
-            query += "welfare=False"
-        if request.POST.get("donnation") == "True":
-            query +="donnation=True&"
-        else :
-            query += "donnation=False"
         return redirect("/mapview/?"+query)
         
 def list_by_city(request, city):
