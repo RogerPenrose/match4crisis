@@ -76,8 +76,8 @@ class GenericForm(forms.ModelForm):
         'streetName': forms.TextInput(attrs={'class': 'form-control'}),
         'streetNumber': forms.TextInput(attrs={'class': 'form-control'}),
         'cost': forms.TextInput(attrs={'class': 'form-control'}),
-        'isDigital': forms.CheckboxInput(attrs={'class': 'form-control'}),
-        'active': forms.CheckboxInput(attrs={'class': 'form-control'})
+        'isDigital': forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
+        'active': forms.CheckboxInput(attrs={'class': 'custom-control-input'})
         }
 class DonnationForm(forms.Form):
     account= forms.CharField(label=BANKACCOUNT, max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))  
@@ -87,7 +87,7 @@ class ChildcareFormLongterm(forms.Form):
     gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
 class ChildcareFormShortterm(forms.Form):
     gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
-    isRegular = forms.BooleanField(label=REGULAR_CHILDCARE, widget=forms.CheckboxInput( attrs={'class': 'form-control'}))
+    isRegular = forms.BooleanField(label=REGULAR_CHILDCARE, widget=forms.CheckboxInput( attrs={'class': 'custom-control-input'}))
     numberOfChildrenToCare = forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
 
 class ImageForm(forms.Form):
