@@ -162,7 +162,7 @@ def login_redirect(request):
         logger.warning(
             "User is unknown type, login redirect not possible", extra={"request": request},
         )
-        HttpResponse("Something wrong in database")
+        return HttpResponse("Something wrong in database")
 
 """
 @login_required
