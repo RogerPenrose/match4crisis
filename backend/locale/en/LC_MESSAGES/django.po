@@ -1108,7 +1108,7 @@ msgid "Labor"
 msgstr "Laboratory"
 
 msgid "Ich brauche eine Unterkunft"
-msgstr "I need accomodation"
+msgstr "I need accommodation"
 
 msgid ""
 "Apotheke <em>(melde Dich auch bei <a href=\"http://apothekenhelfen.bphd.de/"
@@ -1356,7 +1356,7 @@ msgid "Sonst. Qualifikationen"
 msgstr "Other Qualifications"
 
 msgid "Braucht Unterkunft"
-msgstr "Needs accomodation"
+msgstr "Needs accommodation"
 
 msgid "Verfügbarkeit"
 msgstr "Availability"

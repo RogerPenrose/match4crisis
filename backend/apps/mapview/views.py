@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
 
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer
+from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer
 from apps.mapview.utils import get_plz_data, plzs
 
 
@@ -30,7 +30,7 @@ def getCenterOfCity(city):
                     center = mappings.get(entry)
                     return center
 def mapviewjs(request):
-    context = { "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
+    context = { "accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
     logger.warning("rendering mapview JS ? "+str(request.GET))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
@@ -50,7 +50,7 @@ def index(request):
     "mapbox_token": settings.MAPBOX_TOKEN,
     "startPosition":  startPosition,
     "zoom": zoom,
-        "accomodation" :request.GET.get("accomodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
+        "accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
     }
     return render(request, "mapview/map.html", context )
 
@@ -85,7 +85,7 @@ def prepare_offers(ttl_hash=None):
             continue
     return locations_and_number
 
-def accomodationOffersJSON(request):
+def accommodationOffersJSON(request):
     offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="AC")
     facilities = group_by_zip_code(offers)
     return JsonResponse(facilities)

@@ -105,7 +105,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             {% endfor %}
         </tbody>
         <tbody id="acTable">
-            {% for field in accomodationForm.visible_fields %}
+            {% for field in accommodationForm.visible_fields %}
             <tr>        
                 <td id="{{ field.name }}">{{ field.label_tag }} {{ field }}</td>   
             </tr>
@@ -168,7 +168,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             {% endfor %}
         </tbody>
         <tbody id="doTable">
-            {% for field in donnationForm.visible_fields %}
+            {% for field in donationForm.visible_fields %}
             <tr>    
                 <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
@@ -226,7 +226,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
     function refresh(){
         typeSelection = document.getElementById("id_offerType").value
         if (typeSelection == "AC"){
-            // Show only Accomodation Table
+            // Show only Accommodation Table
 
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, true)

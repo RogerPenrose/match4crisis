@@ -7,10 +7,11 @@ muss in urls.py auskommentiert werden
 
 from django.conf import settings
 from django.http import HttpResponse
-from datetime import datetime
+from django.utils import timezone
+from datetime import datetime, timedelta
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonnationOffer
+from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonationOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -594,15 +595,16 @@ def populate_db(n, userId = 1):
                 incomplete= (np.random.random() > 0.7),
             )
             
-            if counter == 0: # Accomodation:
+            if counter == 0: # Accommodation:
 
                 g.offerType = "AC"
                 g.save()
-                a = AccomodationOffer(genericOffer=g, \
+                stayLength= np.random.randint(1, 365)
+                a = AccommodationOffer(genericOffer=g, \
                     numberOfAdults=np.random.randint(1, 15), \
                     numberOfChildren=np.random.randint(1, 3), \
                     numberOfPets=np.random.randint(0, 2), \
-                    stayLength= np.random.randint(1, 365) , \
+                    endDateAccommodation=timezone.now() + timedelta(days=stayLength) , \
                     typeOfResidence= residenceChoices[np.random.randint(0,len(residenceChoices)-1)] )     
                 a.save()
             if counter == 1: #Translation
@@ -625,7 +627,6 @@ def populate_db(n, userId = 1):
                 g.save()
                 t = TransportationOffer(genericOffer=g, \
                     postCodeEnd=plzs[np.random.randint(0, n_offers)], \
-                    typeOfCar = "LKW", \
                     numberOfPassengers=np.random.randint(0, 10))
                 t.save()
             if counter == 4: # Transportation
@@ -657,7 +658,7 @@ def populate_db(n, userId = 1):
             if counter == 9: # Transportation
                 g.offerType = "DO"
                 g.save()
-                b = DonnationOffer(genericOffer=g, donnationTitle="Human Fund", account="Deutsche Bank DE 12 3456 7891 07893.")
+                b = DonationOffer(genericOffer=g, donationTitle="Human Fund", account="Deutsche Bank DE 12 3456 7891 07893.")
                 b.save()
                 counter = -1
             counter = counter + 1
