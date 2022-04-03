@@ -164,7 +164,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             {% blocktrans %}Don't wait any longer, start helping right now.{% endblocktrans %}
           </h2>
           <br />
-          <a href="#" class="btn" role="button" aria-pressed="true"
+          <a href="/offers/create" class="btn" role="button" aria-pressed="true"
           > Create new help listing <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
@@ -406,46 +406,3 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 {% endblock %}
-
-
-
-
-
-
-
-
-    <h3>Incomplete Offers</h3>
-    {% if incompleteOffers %}
-
-    {% for entry in incompleteOffers%}
-        {{ entry.image }}
-
-        {{ entry.offer }}
-    {% endfor %}
-
-    {% endif %}
-    <br/>
-    <h3>Running Offers</h3>
-
-    {% if runningOffers %}
-
-    {% for entry in runningOffers%}
-        {{ entry.image }}
-
-        {{ entry.offer }}
-    {% endfor %}
-
-    {% endif %}
-    <br/>
-    <h3>Paused Offers</h3>
-
-    {% if pausedOffers %}
-
-    {% for entry in pausedOffers%}
-        {{ entry.image }}
-
-        {{ entry.offer }}
-    {% endfor %}
-
-    {% endif %}
-
