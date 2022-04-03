@@ -35,11 +35,28 @@ function initMapsAutocomplete(){
             input.focus();
         });
 
+        try {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+        
+            loc = urlParams.get('location')
+            if (loc) {
+                input.setAttribute("value", loc)
+            }
+
+            document.getElementsByName("lat")[0].setAttribute("value", urlParams.get('lat'));
+            document.getElementsByName("lng")[0].setAttribute("value", urlParams.get('lng'));
+            document.getElementsByName("bb")[0].setAttribute("value", urlParams.get('bb'));
+        } catch {
+            // either we on mapview_page or just not given
+        }
+
         return autocomplete;
     }
 }
 
 function init_google_maps() {
     if (typeof initMap === "function") initMap() // we are at mapview
+    else if (typeof initList === "function") initList() // we are at /offers
     else initMapsAutocomplete();
 }

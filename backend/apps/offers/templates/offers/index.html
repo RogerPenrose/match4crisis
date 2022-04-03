@@ -75,10 +75,13 @@ formBody = formBody.join("&");
       <input
         type="text"
         id="location"
-        name="city"
+        name="location"
         class="input-form-search"
         placeholder="{% blocktrans %}Berlin{% endblocktrans %}"
       />
+      <input type="hidden" name="lat">
+      <input type="hidden" name="lng">
+      <input type="hidden" name="bb">
       <svg
         class="bi bi-search"
         style="

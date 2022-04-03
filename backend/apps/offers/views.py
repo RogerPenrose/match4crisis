@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
 import json
+import urllib.parse
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
@@ -346,8 +347,10 @@ def handle_filter(request):
                 query +=entry+"=True&"
             else:
                 query += entry+"=False&"
-        if request.POST.get("city"):
-            query +="city="+request.POST.get("city")+"&"
+        for arg in ["location", "lat", "lon", "bb"]:
+            if request.POST.get(arg):
+                query += f"{arg}={urllib.parse.quote_plus(request.POST.get(arg))}&"
+
         return redirect("/mapview/?"+query)
         
 def list_by_city(request, city):
