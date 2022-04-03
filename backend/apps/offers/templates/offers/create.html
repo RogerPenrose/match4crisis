@@ -61,10 +61,23 @@ content: "";
 
 .custom-control { padding-left: 0px; }
 
+.btn {     background-color: #32bd69;
+    font-size: 1rem;
+    color: #fff;
+    padding: .8rem 2.5rem;
+    border-radius: 15px;
+    border: 0px;
+    font-weight: bold;
+margin-top: 20px; }
 
+.btn:hover { background-color: #1eb159; color: #fff; }
 .custom-control-label::before { border: 0px;}
+table { width: 100%}
 
+label { margin-bottom: 5px; font-weight: 600;}
+.form-control { margin-bottom: 10px;}
 
+input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 </style>
 {% endblock %}
 {% block content %}
@@ -82,85 +95,85 @@ content: "";
         <tbody>
             {% for field in genericForm.visible_fields %}
             <tr>
-                <td >{{ field.label_tag }}</td> <td id="{{ field.name }}">{{field }}</td>   
+<td id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
             <tr>
-                {{ imageForm }}
+            <td>  {{ imageForm }} </td> 
             </tr>
         </tbody>
         <tbody id="acTable">
             {% for field in accomodationForm.visible_fields %}
             <tr>        
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{ field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody  id="trTable">
             {% for field in transportationForm.visible_fields %}
             <tr>  
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="tlTable">
             {% for field in translationForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="buTable">
             {% for field in buerocraticForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="mpTable">
             {% for field in manpowerForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="clTable">
             {% for field in childcarelongtermForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="baTable">
             {% for field in childcareshorttermForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="weTable">
             {% for field in welfareForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="joTable">
             {% for field in jobForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
         <tbody id="doTable">
             {% for field in donnationForm.visible_fields %}
             <tr>    
-                <td>{{ field.label_tag }}</td> <td>{{field }}</td>   
+                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <input type="submit" value="Submit" >
+    <input type="submit" value="Submit" class="btn">
 </form>
 </div></div></div>
 <script>
@@ -199,7 +212,7 @@ content: "";
             }
         }
         else {
-            subtable.style.display = "block"
+            subtable.style.display = "table-row-group"
             var entries = subtable.querySelectorAll("[wasRequired]")
             for (var i = 0; i < entries.length; i ++){
                 var entry = entries[i]

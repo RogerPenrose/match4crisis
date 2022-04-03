@@ -49,6 +49,7 @@ DONNATION_TITLE="Title"
 DEPARTUREDATE="Date"
 NUMBERADULTS="How many Adults"
 NUMBERPETS = "How many Pets"
+IMAGE = "Upload Image"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -56,6 +57,17 @@ class GenericForm(forms.ModelForm):
         model = GenericOffer
 
         fields = ["offerType", "offerDescription", "country", "postCode",  "streetName", "streetNumber", "cost", "isDigital", "active"]
+        labels={
+            "offerType": OFFERTYPE,
+            "offerDescription": OFFERDESCRIPTION, 
+            "country": COUNTRY, 
+            "postCode": POSTCODE,  
+            "streetName": STREETNAME, 
+            "streetNumber": HOUSENUMBER, 
+            "cost": PRICE, 
+            "isDigital": DIGITAL, 
+            "active": ACTIVE,
+        }
         widgets = {
         'offerType':  forms.Select(attrs={'class': 'form-control'}),
         'offerDescription': forms.Textarea(attrs={'class': 'form-control'}),
@@ -80,7 +92,7 @@ class ChildcareFormShortterm(forms.Form):
 
 class ImageForm(forms.Form):
     
-    image = forms.ImageField( widget=forms.FileInput(attrs={'class': 'form-control'}), required=False)
+    image = forms.ImageField(label=IMAGE, widget=forms.FileInput(attrs={'class': 'form-control'}), required=False)
     image.url = forms.CharField(required=False)
     image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 

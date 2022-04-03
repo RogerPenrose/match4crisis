@@ -539,7 +539,7 @@ textarea.form-control, input.form-control {
 }
 
 input.form-control {
-  height: calc(1.5em + 1rem + 5px);
+  height: calc(1.5em + 1rem);
 }
 
 .invalid-feedback {
