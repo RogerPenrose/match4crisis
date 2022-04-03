@@ -6,13 +6,15 @@ import json
 # Create your views here.
 from apps.accounts.models import User
 from django.forms.models import model_to_dict
-from django.http import HttpResponse
-from .models import GenericOffer, AccomodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonnationOffer
-from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonnationForm
+from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+
+from apps.ineedhelp.models import Refugee
+from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
+from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
-OFFERTYPESOBJ = { "accomodation": { "title": "Accommodation", "requestName": "accomodation", "modelName" : "AccomodationOffer", "offersName": "AccomodationOffers"}, 
+OFFERTYPESOBJ = { "accommodation": { "title": "Accommodation", "requestName": "accommodation", "modelName" : "AccommodationOffer", "offersName": "AccommodationOffers"}, 
                 "transportation": { "title": "Transportation", "requestName": "transportation", "modelName": "TransportationOffer", "offersName": "TransportationOffers"},
                 "manpower": { "title": "Manpower", "requestName": "manpower", "modelName": "ManpowerOffer", "offersName": "ManpowerOffers"},
                 "buerocratic": { "title" :  "Buerocratic Aide", "requestName": "buerocratic", "modelName": "BuerocraticOffer", "offersName": "BuerocraticOffers"}, 
@@ -20,7 +22,7 @@ OFFERTYPESOBJ = { "accomodation": { "title": "Accommodation", "requestName": "ac
                 "childcarelongterm" : { "title" : "Childcare (Longterm)", "requestName": "childcarelongterm", "modelName": "ChildcareOfferLongterm", "offersName": "ChildcareOffersLongterm"}, 
                 "job" : { "title" : "Job", "requestName": "job", "modelName": "JobOffer", "offersName": "JobOffers"}, 
                 "welfare" : { "title" : "Medical Assistance", "requestName": "welfare", "modelName": "WelfareOffer", "offersName": "WelfareOffers"},
-                "donnation" : { "title" : "Donnations", "requestName": "donnation", "modelName": "DonnationOffer", "offersName": "DonnationOffers"}}
+                "donation" : { "title" : "Donations", "requestName": "donation", "modelName": "DonationOffer", "offersName": "DonationOffers"}}
 logger = logging.getLogger("django")
 def updateGenericModel( form, offer_id=0, userId=None):
     user = User.objects.get(pk=userId) 
@@ -89,80 +91,79 @@ def updateChildcareLongTermModel(g, form, offer_id=0):
         a.save()
         return a
 
-def updateAccomodationModel(g, form, offer_id=0):
+def updateAccommodationModel(g, form, offer_id=0):
     if offer_id == 0:
-        a = AccomodationOffer(genericOffer=g, \
+        a = AccommodationOffer(genericOffer=g, \
             numberOfAdults=form.get("numberOfAdults"), \
             numberOfChildren=form.get("numberOfChildren"), \
             typeOfResidence=form.get("typeOfResidence"), \
             numberOfPets=form.get("numberOfPets"), \
-            startDateAccomodation= form.get("startDateAccomodation") ,\
-            endDateAccomodation= form.get("endDateAccomodation"))
+            startDateAccommodation= form.get("startDateAccommodation") ,\
+            endDateAccommodation= form.get("endDateAccommodation"))
         a.save()
         return a
     else:
-        a = AccomodationOffer.objects.get(pk=offer_id)
+        a = AccommodationOffer.objects.get(pk=offer_id)
         a.genericOffer=g
         a.numberOfAdults=form.get("numberOfAdults")
         a.numberOfChildren=form.get("numberOfChildren")
         a.typeOfResidence=form.get("typeOfResidence")
         a.numberOfPets=form.get("numberOfPets")
-        a.stayLength= form.get("stayLength")
-        a.startDateAccomodation= form.get("startDateAccomodation") 
-        a.endDateAccomodation= form.get("endDateAccomodation")
+        a.startDateAccommodation= form.get("startDateAccommodation") 
+        a.endDateAccommodation= form.get("endDateAccommodation")
         a.save()
         return a
 
-def updateJobForm(g, form, offer_id=0):
+def updateJobModel(g, form, offer_id=0):
     if offer_id == 0:
-        t = JobForm(genericOffer=g, \
+        t = JobOffer(genericOffer=g, \
             jobType=form.get("jobType"))
         t.save()
         return t
     else:
-        t = JobForm.objects.get(pk=offer_id)
+        t = JobOffer.objects.get(pk=offer_id)
         t.genericOffer=g
         t.jobType=form.get("jobType")
         t.requirements=form.get("requirements")
         t.jobTitle=form.get("jobTitle")
         t.save()
         return t
-def updateWelfareForm(g, form, offer_id=0):
+def updateWelfareModel(g, form, offer_id=0):
     if offer_id == 0:
-        t = WelfareForm(genericOffer=g, \
+        t = WelfareOffer(genericOffer=g, \
             helpType=form.get("helpType"))
         t.save()
         return t
     else:
-        t = WelfareForm.objects.get(pk=offer_id)
+        t = WelfareOffer.objects.get(pk=offer_id)
         t.genericOffer=g
         t.helpType=form.get("helpType")
         t.save()
         return t
 
-def updateDonnationForm(g, form, offer_id=0):
+def updateDonationModel(g, form, offer_id=0):
     if offer_id == 0:
-        t = DonnationForm(genericOffer=g, \
-            donnationTitle=form.get("donnationTitle"),\
+        t = DonationOffer(genericOffer=g, \
+            donationTitle=form.get("donationTitle"),\
             account=form.get("account"))
         t.save()
         return t
     else:
-        t = DonnationForm.objects.get(pk=offer_id)
+        t = DonationOffer.objects.get(pk=offer_id)
         t.genericOffer=g
-        t.donnationTitle=form.get("donnationTitle")
+        t.donationTitle=form.get("donationTitle")
         t.account=form.get("account")
         t.save()
         return t
 
-def updateManpowerForm(g, form, offer_id=0):
+def updateManpowerModel(g, form, offer_id=0):
     if offer_id == 0:
-        t = ManpowerForm(genericOffer=g, \
+        t = ManpowerOffer(genericOffer=g, \
             helpType=form.get("helpType"))
         t.save()
         return t
     else:
-        t = ManpowerForm.objects.get(pk=offer_id)
+        t = ManpowerOffer.objects.get(pk=offer_id)
         t.genericOffer=g
         t.helpType=form.get("helpType")
         t.save()
@@ -175,7 +176,7 @@ def updateBuerocraticModel(g, form, offer_id=0):
         t.save()
         return t
     else:
-        t = TransportationOffer.objects.get(pk=offer_id)
+        t = BuerocraticOffer.objects.get(pk=offer_id)
         t.genericOffer=g
         t.helpType=form.get("helpType")
         t.save()
@@ -248,14 +249,14 @@ def by_city(request, city):
     #Get list of all PostCodes within the City: 
     postCodes = scrapePostCodeJson(city)
     #Dummy data:
-    accomodations= 0
+    accommodations= 0
     translations = 0 
     transportations = 0
     buerocratic = 0
     welfare = 0
     childcareShortterm = 0
     for postCode in postCodes:
-        accomodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
+        accommodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
         translations += GenericOffer.objects.filter(offerType="TL", postCode=postCode).count()
         transportations += GenericOffer.objects.filter(offerType="TR", postCode=postCode).count()
         accompaniments += GenericOffer.objects.filter(offerType="AP", postCode=postCode).count()
@@ -263,7 +264,7 @@ def by_city(request, city):
         childcareShortterm += GenericOffer.objects.filter(offerType="BA", postCode=postCode).count()
         welfare += GenericOffer.objects.filter(offerType="WE", postCode=postCode).count()
         jobs += GenericOffer.objects.filter(offerType="JO", postCode=postCode).count()
-    totalAccomodations = GenericOffer.objects.filter(offerType="AC").count()
+    totalAccommodations = GenericOffer.objects.filter(offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
     totalBuerocratic = GenericOffer.objects.filter(offerType="BU").count()
@@ -272,8 +273,8 @@ def by_city(request, city):
     totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
     totalJobs = GenericOffer.objects.filter(offerType="JO").count()
     context = {
-        'local' : {'AccomodationOffers': accomodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
-        'total' : {'AccomodationOffers': totalAccomodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
+        'local' : {'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
+        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
     logger.warning(str(context))
     return render(request, 'offers/list.html', context)
@@ -284,7 +285,7 @@ def by_type(request, offer_type):
     return render(request, 'offers/index.html', context)
 def create_by_filter(request):
     #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
-    resultVal = {"TransportationOffers":[], "DonnationOffers":[],"TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
+    resultVal = {"TransportationOffers":[], "DonationOffers":[],"TranslationOffers":[], "AccommodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
     titleAll = True
     totalCount = 0
     pagination = False
@@ -356,10 +357,10 @@ def list_by_city(request, city):
     context = {"ResultCount": GenericOffer.objects.filter(postCode__in=postCodes).count(), 
     'Title': "All Offers",'city': city,
     'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__postCode__in=postCodes)),
-     'AccomodationOffers': mergeImages(AccomodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'DonnationOffers': mergeImages(DonnationOffers.objects.filter(genericOffer__postCode__in=postCodes)), 
+     'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode__in=postCodes)), 
      'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
@@ -368,16 +369,16 @@ def list_by_city(request, city):
     return render(request, 'offers/index.html', context)
     
 def by_postCode(request, postCode):
-    context = {'AccomodationOffers': mergeImage(AccomodationOffer.objects.filter(genericOffer__postCode=postCode)), \
-               'TransportationOffers': mergeImage(TransportationOffer.objects.filter(genericOffer__postCode=postCode)),\
-               'ManpowerOffers': mergeImage(ManpowerOffer.objects.filter(genericOffer__postCode=postCode)),\
-               'DonnationOffers': mergeImage(DonnationOffers.objects.filter(genericOffer__postCode=postCode)),\
+    context = {'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__postCode=postCode)), \
+               'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode=postCode)),\
+               'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__postCode=postCode)),\
+               'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__postCode=postCode)),\
                 'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode=postCode)), 
      'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode=postCode)), 
      'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode=postCode)), 
      'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__postCode=postCode)), 
      'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode=postCode)), 
-               'TranslationOffers': mergeImage(TranslationOffer.objects.filter(genericOffer__postCode=postCode))}
+               'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__postCode=postCode))}
     
     return render(request, 'offers/index.html', context)
 def mergeImages(offers):
@@ -394,12 +395,12 @@ def mergeImages(offers):
     return resultOffers
 N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
 def index(request):
-    accomodationOffers = mergeImages(AccomodationOffer.objects.all()[:N_ENTRIES])
+    accommodationOffers = mergeImages(AccommodationOffer.objects.all()[:N_ENTRIES])
     buerocraticOffers = mergeImages(BuerocraticOffer.objects.all()[:N_ENTRIES])
     transportationOffers = mergeImages(TransportationOffer.objects.all()[:N_ENTRIES])
     translationOffers = mergeImages(TranslationOffer.objects.all()[:N_ENTRIES])
     manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
-    donnationOffers = mergeImages(DonnationOffer.objects.all()[:N_ENTRIES])
+    donationOffers = mergeImages(DonationOffer.objects.all()[:N_ENTRIES])
     ChildcareOffersLongterm = mergeImages(ChildcareOfferLongterm.objects.all()[:N_ENTRIES])
     ChildcareOffersShortterm = mergeImages(ChildcareOfferShortterm.objects.all()[:N_ENTRIES])
     WelfareOffers = mergeImages(WelfareOffer.objects.all()[:N_ENTRIES])
@@ -420,11 +421,11 @@ def index(request):
         "page": 1,
         "ResultCount": GenericOffer.objects.all().count(), 
     'Title': "All Offers",
-        'AccomodationOffers': accomodationOffers, \
+        'AccommodationOffers': accommodationOffers, \
                'TransportationOffers': transportationOffers,\
                'TranslationOffers': translationOffers,\
                'ManpowerOffers': manpowerOffers,\
-               'DonnationOffers': donnationOffers,\
+               'DonationOffers': donationOffers,\
                'ChildcareOffersLongterm': ChildcareOffersLongterm,\
                'ChildcareOffersShortterm': ChildcareOffersShortterm,\
                'WelfareOffers': WelfareOffers,\
@@ -447,7 +448,7 @@ def create(request):
         return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accomodationForm":AccomodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm(), 'donnationForm': DonnationForm()})
+        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accommodationForm":AccommodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm(), 'donationForm': DonationForm()})
 
 def update(request, offer_id):
     form = GenericForm(request.POST)
@@ -467,46 +468,46 @@ def update(request, offer_id):
                 buForm = ManpowerForm(request.POST)
                 if buForm.is_valid():
                     currentForm = buForm.cleaned_data
-                    a = updateManpowerForm(g, currentForm, offer_id)
+                    a = updateManpowerModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(buForm.errors))
             if currentForm.get("offerType") == "DO": # Special case since we have no particular fields in this type.
-                buForm = DonnationForm(request.POST)
+                buForm = DonationForm(request.POST)
                 if buForm.is_valid():
                     currentForm = buForm.cleaned_data
-                    a = updateDonnationForm(g, currentForm, offer_id)
+                    a = updateDonationModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(buForm.errors))
             if currentForm.get("offerType") == "WE": # Special case since we have no particular fields in this type.
                 weForm = WelfareForm(request.POST)
                 if weForm.is_valid():
                     currentForm = weForm.cleaned_data
-                    a = updateWelfareForm(g, currentForm, offer_id)
+                    a = updateWelfareModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(weForm.errors))
             if currentForm.get("offerType") == "JO": # Special case since we have no particular fields in this type.
                 joForm = JobForm(request.POST)
                 if joForm.is_valid():
                     currentForm = joForm.cleaned_data
-                    a = updateJobForm(g, currentForm, offer_id)
+                    a = updateJobModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(joForm.errors))
             if currentForm.get("offerType") == "BA": # Special case since we have no particular fields in this type.
                 baForm = ChildcareFormShortterm(request.POST)
                 if baForm.is_valid():
@@ -517,7 +518,7 @@ def update(request, offer_id):
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(baForm.errors))
             if currentForm.get("offerType") == "CL": # Special case since we have no particular fields in this type.
                 clForm = ChildcareFormLongterm(request.POST)
                 if clForm.is_valid():
@@ -528,7 +529,7 @@ def update(request, offer_id):
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(clForm.errors))
             if currentForm.get("offerType") == "BU": # Special case since we have no particular fields in this type.
                 buForm = BuerocraticForm(request.POST)
                 if buForm.is_valid():
@@ -539,12 +540,12 @@ def update(request, offer_id):
                     return detail(request, offer_id)
                 else:
                     logger.warning("Object empty")
-                    return HttpResponse(str(acForm.errors))
+                    return HttpResponse(str(buForm.errors))
             elif currentForm.get("offerType") == "AC":
-                acForm = AccomodationForm(request.POST)
+                acForm = AccommodationForm(request.POST)
                 if acForm.is_valid():
                     currentForm = acForm.cleaned_data
-                    a = updateAccomodationModel(g, currentForm, offer_id)
+                    a = updateAccommodationModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
@@ -617,9 +618,9 @@ def getOfferDetails(request, offer_id):
     city = getCityFromPostCode(generic.postCode)
 
     if generic.offerType == "AC":
-        detail = get_object_or_404(AccomodationOffer, pk=generic.id)
-        detailForm = AccomodationForm(model_to_dict(detail))
-        return {'offerType': "Accomodation", 'generic': genericForm, 'detail': detailForm, "city": city, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        detail = get_object_or_404(AccommodationOffer, pk=generic.id)
+        detailForm = AccommodationForm(model_to_dict(detail))
+        return {'offerType': "Accommodation", 'generic': genericForm, 'detail': detailForm, "city": city, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))
@@ -637,9 +638,9 @@ def getOfferDetails(request, offer_id):
         detailForm = ManpowerForm(model_to_dict(detail))
         return {'offerType': "Manpower", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "DO":
-        detail = get_object_or_404(DonnationOffer, pk=generic.id)
-        detailForm = DonnationForm(model_to_dict(detail))
-        return {'offerType': "Donnations", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        detail = get_object_or_404(DonationOffer, pk=generic.id)
+        detailForm = DonationForm(model_to_dict(detail))
+        return {'offerType': "Donations", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
         detailForm = ChildcareFormShortterm(model_to_dict(detail))
@@ -682,6 +683,6 @@ def ajax_toggle_favourite(request):
             favourited = refugee.toggleFavourite(offer)
 
             return JsonResponse({"success":True, "favourited":favourited})
-            
+
         except (Exception):
             return JsonResponse({"success":False})

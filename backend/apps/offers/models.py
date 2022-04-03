@@ -21,7 +21,7 @@ class GenericOffer(models.Model):
 
 
     OFFER_CHOICES = [
-    ('AC', 'Accomodation'),
+    ('AC', 'Accommodation'),
     ('TL', 'Translation'),
     ('TR', 'Transportation'),
     ('BU', 'Buerocratic'),
@@ -30,7 +30,7 @@ class GenericOffer(models.Model):
     ('BA', 'Babysitting'),
     ('WE', 'Medical Assistance'),
     ('JO', 'Job'),
-    ('DO', 'Donnation')
+    ('DO', 'Donation')
     ]
 
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -97,9 +97,9 @@ class JobOffer(models.Model):
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
     requirements = models.TextField(blank=True)
-class DonnationOffer(models.Model):
+class DonationOffer(models.Model):
     account= models.CharField(max_length=350)
-    donnationTitle = models.CharField(max_length=128, blank=True)
+    donationTitle = models.CharField(max_length=128, blank=True)
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
@@ -115,9 +115,9 @@ class ManpowerOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
 
-class AccomodationOffer(models.Model):
+class AccommodationOffer(models.Model):
 
-    ACCOMODATIONCHOICES = {
+    ACCOMMODATIONCHOICES = {
         ('SO', 'Sofa / Bed'),
         ('RO', 'Private Room'),
         ('HO', 'Whole Flat / House')
@@ -126,16 +126,16 @@ class AccomodationOffer(models.Model):
     numberOfAdults = models.IntegerField(default=2)
     numberOfChildren = models.IntegerField(default=0, blank=True)
     numberOfPets = models.IntegerField(default=0, blank=True)
-    typeOfResidence = models.CharField(max_length=2, choices=ACCOMODATIONCHOICES, default="SO" )
+    typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
-    startDateAccomodation = models.DateField(default=datetime.now())
-    endDateAccomodation = models.DateField(blank =True)
+    startDateAccommodation = models.DateField(default=datetime.now())
+    endDateAccommodation = models.DateField(blank =True, null=True)
     def __str__(self):
         return self.typeOfResidence
 
     def flavor_verbose(self):
-        return dict(AccomodationOffer.ACCOMODATIONCHOICES)[self.typeOfResidence]
+        return dict(AccommodationOffer.ACCOMMODATIONCHOICES)[self.typeOfResidence]
 class WelfareOffer(models.Model):
     WELFARE_CHOICES = [("ELD", "Elderly Care"),("DIS", "Care for handicapped People"), ("PSY", "Psychological Aid")]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
@@ -159,14 +159,17 @@ class TranslationOffer(models.Model):
 
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
-    'AC' : AccomodationOffer,
+    'AC' : AccommodationOffer,
     'TL' : TranslationOffer,
     'TR' : TransportationOffer,
     'BU' : BuerocraticOffer,
     'BA' : ChildcareOfferShortterm,
     'CL' : ChildcareOfferLongterm,
     'WE' : WelfareOffer,
-    'MP' : ManpowerOffer
+    'MP' : ManpowerOffer,
+    'JO' : JobOffer,
+    'DO' : DonationOffer,
+
 }
 
 def getSpecificOffers(genericOffers: list):
@@ -176,7 +179,7 @@ def getSpecificOffers(genericOffers: list):
     specificOffers = []
 
     for offer in genericOffers:       
-        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer.pk)
+        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer)
         specificOffers.append(specOff)
 
     return specificOffers

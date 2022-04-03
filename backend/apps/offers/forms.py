@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonnationOffer, AccomodationOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 
 def validate_plz(value):
     try:
@@ -45,7 +45,7 @@ HELPTYPE_WE="Type of Medical Assistance"
 BANKACCOUNT="Bank Data"
 STARTDATE= "Starting"
 ENDDATE = "Ending"
-DONNATION_TITLE="Title"
+DONATION_TITLE="Title"
 DEPARTUREDATE="Date"
 NUMBERADULTS="How many Adults"
 NUMBERPETS = "How many Pets"
@@ -79,9 +79,9 @@ class GenericForm(forms.ModelForm):
         'isDigital': forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
         'active': forms.CheckboxInput(attrs={'class': 'custom-control-input'})
         }
-class DonnationForm(forms.Form):
+class DonationForm(forms.Form):
     account= forms.CharField(label=BANKACCOUNT, max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))  
-    donnationTitle= forms.CharField(label=DONNATION_TITLE,widget=forms.TextInput(attrs={'class': 'form-control'}))  
+    donationTitle= forms.CharField(label=DONATION_TITLE,widget=forms.TextInput(attrs={'class': 'form-control'}))  
 
 class ChildcareFormLongterm(forms.Form):
     gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
@@ -119,12 +119,12 @@ class TranslationForm(forms.Form):
     firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
     secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
       
-class AccomodationForm(forms.Form):
+class AccommodationForm(forms.Form):
    
-    startDateAccomodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
-    endDateAccomodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
+    startDateAccommodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
+    endDateAccommodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
     numberOfAdults= forms.IntegerField(label=NUMBERADULTS,  widget=forms.NumberInput(attrs={'class':'form-control'}))
     numberOfChildren= forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class':'form-control'}))
     numberOfPets= forms.IntegerField(label=NUMBERPETS, widget=forms.NumberInput(attrs={'class':'form-control'}))
-    typeOfResidence =  forms.CharField(max_length=2, label=RESIDENCE,widget=forms.Select(choices=AccomodationOffer.ACCOMODATIONCHOICES, attrs={'class':'form-control'}))
+    typeOfResidence =  forms.CharField(max_length=2, label=RESIDENCE,widget=forms.Select(choices=AccommodationOffer.ACCOMMODATIONCHOICES, attrs={'class':'form-control'}))
    

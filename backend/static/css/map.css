@@ -222,16 +222,16 @@ div.leaflet-control-layers-overlays {
   background-image: url(/static/img/map/transport.svg);
 }
 
-.accomodationMarker.marker-cluster-small,
-.accomodationMarker.marker-cluster-medium,
-.accomodationMarker.marker-cluster-large {
+.accommodationMarker.marker-cluster-small,
+.accommodationMarker.marker-cluster-medium,
+.accommodationMarker.marker-cluster-large {
   background-image:url(/static/img/map/housing.svg);
 }
 
-.accomodationMarker.marker-cluster-single div,
-.accomodationMarker.marker-cluster-small div,
-.accomodationMarker.marker-cluster-medium div,
-.accomodationMarker.marker-cluster-large div {
+.accommodationMarker.marker-cluster-single div,
+.accommodationMarker.marker-cluster-small div,
+.accommodationMarker.marker-cluster-medium div,
+.accommodationMarker.marker-cluster-large div {
   background-image:url(/static/img/map/housing.svg);
 }
 
@@ -258,17 +258,17 @@ div.leaflet-control-layers-overlays {
 }
 
 .transportationMarker.marker-cluster div,
-.accomodationMarker.marker-cluster div {
+.accommodationMarker.marker-cluster div {
   font-weight: bold;
 }
 
 .marker-cluster-single.transportationMarker,
-.marker-cluster-single.accomodationMarker,
+.marker-cluster-single.accommodationMarker,
 .marker-cluster-single.translationMarker {
   background-color: transparent;
 }
 
-.marker-cluster.accomodationMarker {
+.marker-cluster.accommodationMarker {
   margin-left: -30px !important;
   margin-top: -30px !important;
 }
