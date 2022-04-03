@@ -210,7 +210,17 @@ mapViewPage = {
         
 
 
-        L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
+        control = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
+        var htmlObject = control.getContainer();
+        // Get the desired parent node.
+        var a = document.getElementById('controlContainer');
+
+        // Finally append that node to the new parent, recursively searching out and re-parenting nodes.
+        function setParent(el, newParent)
+        {
+            newParent.appendChild(el);
+        }
+        setParent(htmlObject, a);
 
     },
 

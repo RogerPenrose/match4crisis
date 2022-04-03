@@ -278,47 +278,40 @@ def by_city(request, city):
     logger.warning(str(context))
     return render(request, 'offers/list.html', context)
 def by_type(request, offer_type):
-    if offer_type== "accomodation":
-        context = {"ResultCount": AccomodationOffer.objects.all().count(),
-            'Title': "Accommmodations",
-            'AccomodationOffers': mergeImages(AccomodationOffer.objects.all())}
-    if offer_type== "transportation":
-        context = {
-            "ResultCount": TransportationOffer.objects.all().count(),'Title': "Transportations", 'TransportationOffers': mergeImages(TransportationOffer.objects.all())}
-    if offer_type== "translation":
-        context = {
-            "ResultCount": TranslationOffer.objects.all().count(),'Title': "Translations",'TranslationOffers': mergeImages(TranslationOffer.objects.all())}
-    if offer_type== "childcarelongterm":
-        context = {
-            "ResultCount": ChildcareOfferLongterm.objects.all().count(),'Title': "Longterm Childcare",'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.all())}
-    if offer_type== "childcareshortterm":
-        context = {
-            "ResultCount": ChildcareOfferShortterm.objects.all().count(),'Title': "Babysitting",'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.all())}
-    if offer_type== "welfare":
-        context = {
-            "ResultCount": WelfareOffer.objects.all().count(),'Title': "Medical Assistance",'WelfareOffers': mergeImages(WelfareOffer.objects.all())}
-    if offer_type== "jobs":
-        context = {
-            "ResultCount": JobOffer.objects.all().count(),'Title': "Jobs",'JobOffers': mergeImages(JobOffer.objects.all())}
-    if offer_type== "buerocratic":
-        context = {"ResultCount": BuerocraticOffer.objects.all().count(),
-            'Title': "Buerocratic",
-            'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.all())}
+    context = { "ResultCount" : eval(OFFERTYPESOBJ[offer_type]["modelName"]+".objects.all().count()"),
+                "Title": OFFERTYPESOBJ[offer_type]["title"],
+                OFFERTYPESOBJ[offer_type]["offersName"]: eval("mergeImages("+OFFERTYPESOBJ[offer_type]["modelName"]+".objects.all())")}
     return render(request, 'offers/index.html', context)
 def create_by_filter(request):
     #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
     resultVal = {"TransportationOffers":[], "DonnationOffers":[],"TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
     titleAll = True
+    totalCount = 0
+    pagination = False
+    pageCount = 0
+    if request.POST.get("page") != None and len(request.POST.get("page"))> 0:
+        pageCount = int(request.POST.get("page"))
+    firstEntry = (pageCount+1)* N_ENTRIES
+    lastEntry = pageCount * N_ENTRIES
     for offertype in OFFERTYPESOBJ:
         entry = OFFERTYPESOBJ[offertype]
         if request.POST.get(entry["requestName"]) == "True":
+            logger.warning("Trying: "+entry["requestName"])
             filters = []
             for key in request.POST:
                 if entry["requestName"]+"_" in key:
                     if request.POST.get(key) != None  and len(request.POST.get(key)) > 0 :
                         filters.append(key.replace(entry["requestName"]+"_","")+"="+request.POST.get(key))
             filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-            resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+"))")
+            logger.warning("Trying to get: "+filterstring)
+            entryCount = eval(entry["modelName"]+".objects.filter("+filterstring+").count()")
+            totalCount += entryCount
+            if  entryCount < N_ENTRIES:
+                resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+"))")
+            else:
+                resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+")["+str(lastEntry)+":"+str(firstEntry)+"])")
+                logger.warning("PAGINATION ADDED")
+                pagination = True
         else:
             titleAll = False
     if  titleAll:
@@ -330,7 +323,15 @@ def create_by_filter(request):
                 title += OFFERTYPESOBJ[entry]["title"]+","
         title = title[:-1]
         resultVal["Title"] = title
-    resultVal["ResultCount"] = len(resultVal["DonnationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["JobOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
+    resultVal["ResultCount"] = totalCount
+    resultVal["page"] = str(int(pageCount)+1) # Off by one Error in frontend..
+    resultVal["maxPage"] = str(int(totalCount/N_ENTRIES))
+    resultFilter = {}
+    for key in dict(request.POST):
+        resultFilter[key] = dict(request.POST)[key][0]
+    resultVal["currentFilter"] = json.dumps(resultFilter)
+    logger.warning("Current Filter: "+str(resultVal["currentFilter"]))
+    resultVal["pagination"] = pagination
     return resultVal
 
 
@@ -404,9 +405,19 @@ def index(request):
     WelfareOffers = mergeImages(WelfareOffer.objects.all()[:N_ENTRIES])
     JobOffers = mergeImages(JobOffer.objects.all()[:N_ENTRIES])
     manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
-
-
+    pagination = False
+    maxPage = int(GenericOffer.objects.all().count()/N_ENTRIES)
+    currentElements = {}
+    for key in OFFERTYPESOBJ:
+        currentElements[key] = "True"
+    currentFilter = json.dumps(currentElements)
+    if maxPage > 1:
+        pagination = True
     context = {
+        "currentFilter" :json.dumps(currentElements),
+        "pagination": pagination,
+        "maxPage": maxPage,
+        "page": 1,
         "ResultCount": GenericOffer.objects.all().count(), 
     'Title': "All Offers",
         'AccomodationOffers': accomodationOffers, \

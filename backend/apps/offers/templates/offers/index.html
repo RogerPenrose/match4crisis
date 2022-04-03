@@ -14,6 +14,48 @@
 
 {% block content %}
 
+<script>
+  function search(){
+    document.getElementById("list_checkbox").checked = true
+    document.searchForm.submit()
+  }
+    {% if currentFilter %}
+  function search_with_current_filter(target){
+    var page = {{ page }}
+    var data = {{ currentFilter|safe}}
+    data.show_list = "True"
+    var csrfmiddlewaretoken = '{{ csrf_token }}'
+    if (target == "+1")
+      data.page = page
+    else data.page = page -2 
+    data.show_list = "True"
+    var xhr = new XMLHttpRequest();
+  xhr.open("POST", "handle_filter", true);
+  xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
+xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+var formBody = [];
+for (var property in data) {
+  var encodedKey = encodeURIComponent(property);
+  var encodedValue = encodeURIComponent(data[property]);
+  formBody.push(encodedKey + "=" + encodedValue);
+}
+formBody = formBody.join("&");
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        console.log('you should be redirected or render a new page: '+JSON.stringify(xhr.response))
+        document.open();
+    document.write(xhr.responseText);
+    document.close();
+
+    } else {
+        // Handle error
+    }
+}
+    console.log("sending: "+JSON.stringify(data))
+  xhr.send(formBody);
+  }
+  {% endif %}
+</script>
 <div class="container">
     <div style="height:40px"></div>
     <div class="row align-self-center align-items-center top-menu">
@@ -152,6 +194,9 @@
         <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}&accomodation={%if AccomodationOffers|length > 0 %}True{% else%}False{%endif%}&transportation={%if TransportationOffers|length > 0 %}True{% else%}False{%endif%}&translation={%if TranslationOffers|length > 0 %}True{% else%}False{%endif%}&accompaniment={%if AccompanimentOffers|length > 0 %}True{% else%}False{%endif%} ">Show {{ ResultCount }} results on Map</a></p></div>
         </div>
         </div>
+        {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} Page {{ page }} of {{ maxPage }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
+          </div>{% endif %}
+        </form>
         <div class="container cards">
     {% for entry in  AccomodationOffers %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
@@ -488,12 +533,6 @@
       </div>   
       </a>  
       {% endfor %}
-<script>
-  function search(){
-    document.getElementById("list_checkbox").checked = true
-    document.searchForm.submit()
-  }
-</script>
   </div>
 </div>
 {% endblock %}
