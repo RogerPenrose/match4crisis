@@ -200,7 +200,7 @@ Home {% endblock %} {% block header %}
             <input id="searchsubmit" type="submit" value="Submit" />
           </form>
 
-          <a href="" class="btn btn-orange hide-home" role="button" aria-pressed="true"
+          <a href="/accounts/signup_refugee" class="btn btn-orange hide-home" role="button" aria-pressed="true"
           >I need help
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -251,7 +251,7 @@ Home {% endblock %} {% block header %}
 This project is driven only by volunteers and is 100% open source. See our team
     </p>
 
-    <a href="" class="btn btn-orange hide-home" role="button" aria-pressed="true"
+    <a href="/accounts/signup_refugee" class="btn btn-orange hide-home" role="button" aria-pressed="true"
     >I need help
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -316,13 +316,12 @@ This project is driven only by volunteers and is 100% open source. See our team
 
 
       <div class="col-md-6">
-        {% if user.is_authenticated and user.is_organisation %}
-        {% url 'list_by_plz' user.organisation.countrycode user.organisation.plz 10 as filter_helper_url %} 
-        <a href="{{ filter_helper_url }}"> {% else %} <a href="/accounts/signup_organisation"> {% endif %}
+       
+        <a href="/accounts/signup_refugee">
        
           <div class="box-right">
-            <h4 class="text-white">{% blocktrans %}We are an Organisation{% endblocktrans %}</h4>
-            <p class="text-white home-box-description">{% blocktrans %}Choose if you want to connect with people that can provide help{% endblocktrans %}</p>
+            <h4 class="text-white">{% blocktrans %}I need help{% endblocktrans %}</h4>
+            <p class="text-white home-box-description">{% blocktrans %}Choose if you want to connect with people that can provide help.{% endblocktrans %}</p>
           </div>
          </a>
     </div>
