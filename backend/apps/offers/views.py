@@ -11,11 +11,16 @@ from .models import GenericOffer, AccomodationOffer, TranslationOffer, Transport
 from .forms import AccomodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonnationForm
 from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
-OFFERTYPES = ["accomodation", "transportation", "manpower", "buerocratic", "childcareshortterm", "childcarelongterm", "job","welfare", "donnation"]
-OFFERTITLES = { "accomodation": "Accommodation", "transportation": "Transportation", "manpower": "Manpower", 
-"buerocratic" : "Buerocratic Aide", "childcareshortterm" : "Childcare / Babysitting", "childcarelongterm" : "Childcare (Longterm)", 
-"job" : "Job","welfare" : "Medical Assistance", "donnation": "Donnations"}        
-
+# Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
+OFFERTYPESOBJ = { "accomodation": { "title": "Accommodation", "requestName": "accomodation", "modelName" : "AccomodationOffer", "offersName": "AccomodationOffers"}, 
+                "transportation": { "title": "Transportation", "requestName": "transportation", "modelName": "TransportationOffer", "offersName": "TransportationOffers"},
+                "manpower": { "title": "Manpower", "requestName": "manpower", "modelName": "ManpowerOffer", "offersName": "ManpowerOffers"},
+                "buerocratic": { "title" :  "Buerocratic Aide", "requestName": "buerocratic", "modelName": "BuerocraticOffer", "offersName": "BuerocraticOffers"}, 
+                "childcareshortterm" : { "title" : "Childcare / Babysitting", "requestName": "childcareshortterm", "modelName": "ChildcareOfferShortterm", "offersName": "ChildcareOffersShortterm"}, 
+                "childcarelongterm" : { "title" : "Childcare (Longterm)", "requestName": "childcarelongterm", "modelName": "ChildcareOfferLongterm", "offersName": "ChildcareOffersLongterm"}, 
+                "job" : { "title" : "Job", "requestName": "job", "modelName": "JobOffer", "offersName": "JobOffers"}, 
+                "welfare" : { "title" : "Medical Assistance", "requestName": "welfare", "modelName": "WelfareOffer", "offersName": "WelfareOffers"},
+                "donnation" : { "title" : "Donnations", "requestName": "donnation", "modelName": "DonnationOffer", "offersName": "DonnationOffers"}}
 logger = logging.getLogger("django")
 def updateGenericModel( form, offer_id=0, userId=None):
     user = User.objects.get(pk=userId) 
@@ -303,108 +308,26 @@ def by_type(request, offer_type):
 def create_by_filter(request):
     #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
     resultVal = {"TransportationOffers":[], "DonnationOffers":[],"TranslationOffers":[], "AccomodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
-    if   request.POST.get("transportation") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "transportation_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("transportation_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["TransportationOffers"] =  eval("mergeImages(TransportationOffer.objects.filter("+filterstring+"))")
-    if  request.POST.get("accomodation") == "True":
-        filters =[]
-        for key in request.POST:
-            
-            if "accomodation_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("accomodation_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["AccomodationOffers"] =  eval("mergeImages(AccomodationOffer.objects.filter("+filterstring+"))")
-    if  request.POST.get("translation") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "translation_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("translation_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["TranslationOffers"] =  eval("mergeImages(TranslationOffer.objects.filter("+filterstring+"))")
-    
-    if  request.POST.get("buerocratic") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "buerocratic_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("buerocratic_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["BuerocraticOffers"] =  eval("mergeImages(BuerocraticOffer.objects.filter("+filterstring+"))")
-    if  request.POST.get("legal") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "legal_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("legal_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["BuerocraticOffers"] =  eval("mergeImages(BuerocraticOffer.objects.filter("+filterstring+"))")
-    if  request.POST.get("manpower") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "manpower_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("manpower_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["ManpowerOffers"] =  eval("mergeImages(ManpowerOffer.objects.filter("+filterstring+"))")
-    if  request.POST.get("job") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "job_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("job_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["JobOffers"] =  eval("mergeImages(JobOffer.objects.filter("+filterstring+"))")
-    if  request.POST.get("childcarelongterm") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "childcarelongterm_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("childcarelongterm_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        logger.warning("Longterm: "+filterstring+str(request.POST))
-        resultVal["ChildcareOffersLongterm"] =  eval("mergeImages(ChildcareOfferLongterm.objects.filter("+filterstring+"))")
-    if  request.POST.get("childcareshortterm") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "childcareshortterm_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("childcareshortterm_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["ChildcareOffersShortterm"] =  eval("mergeImages(ChildcareOfferShortterm.objects.filter("+filterstring+"))")
-    
-    if  request.POST.get("welfare") == "True":
-        filters = []
-        for key in request.POST:
-
-            if "welfare_" in key:
-                if request.POST.get(key) != None and len(request.POST.get(key)) > 0 :
-                    filters.append(key.replace("welfare_","")+"="+request.POST.get(key))
-        filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-        resultVal["WelfareOffers"] =  eval("mergeImages(WelfareOffer.objects.filter("+filterstring+"))")
-    if request.POST.get("donnation") == "True":
-        resultVal["DonnationOffers"] = mergeImages(DonnationOffer.objects.all())
-    if request.POST.get("translation") == "True" and request.POST.get("donnation") == "True" and request.POST.get("accomodation") == "True" and  request.POST.get("transportation") == "True" and request.POST.get("buerocratic") == "True" and request.POST.get("jobs") == "True"and request.POST.get("manpower") and request.POST.get("childcareshortterm") == "True" and request.POST.get("childcarelongterm") == "True"  and request.POST.get("welfare") == "True"  :
+    titleAll = True
+    for offertype in OFFERTYPESOBJ:
+        entry = OFFERTYPESOBJ[offertype]
+        if request.POST.get(entry["requestName"]) == "True":
+            filters = []
+            for key in request.POST:
+                if entry["requestName"]+"_" in key:
+                    if request.POST.get(key) != None  and len(request.POST.get(key)) > 0 :
+                        filters.append(key.replace(entry["requestName"]+"_","")+"="+request.POST.get(key))
+            filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
+            resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+"))")
+        else:
+            titleAll = False
+    if  titleAll:
         resultVal["Title"] = "All Offers"
     else: 
         title = ""
-        for entry in OFFERTYPES:
+        for entry in OFFERTYPESOBJ:
             if request.POST.get(entry) == "True":
-                title += OFFERTITLES[entry]+","
+                title += OFFERTYPESOBJ[entry]["title"]+","
         title = title[:-1]
         resultVal["Title"] = title
     resultVal["ResultCount"] = len(resultVal["DonnationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["JobOffers"])+len(resultVal["AccomodationOffers"])+len(resultVal["TranslationOffers"])+len(resultVal["BuerocraticOffers"])+len(resultVal["ManpowerOffers"])+len(resultVal["ChildcareOffersShortterm"])+len(resultVal["ChildcareOffersLongterm"])+len(resultVal["WelfareOffers"])
@@ -417,7 +340,7 @@ def handle_filter(request):
         return render(request, 'offers/index.html', context)
     else :
         query = ""
-        for entry in OFFERTYPES:
+        for entry in OFFERTYPESOBJ:
             if request.POST.get(entry) == "True":
                 query +=entry+"=True&"
             else:
