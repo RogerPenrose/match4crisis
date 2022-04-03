@@ -10,11 +10,13 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.gzip import gzip_page
 from apps.accounts.views import DashboardView
 import django_tables2 as tables
+from django.utils.decorators import method_decorator
 
 from apps.accounts.decorator import organisationRequired
 from apps.iamorganisation.models import Organisation
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
+from apps.accounts.decorator import organisationRequired
 
 from .forms import PostingForm
 
@@ -112,6 +114,6 @@ def change_posting(request):
 def thx(request):
     return render(request, "thanks_organisation.html")
 
-
+@method_decorator(organisationRequired, name='dispatch')
 class OrganisationDashboardView(DashboardView):
     template_name = "organisation_dashboard.html"

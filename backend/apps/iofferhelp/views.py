@@ -1,14 +1,17 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 
 from apps.accounts.views import DashboardView
 from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
 from .forms import ChooseHelpForm
+from apps.accounts.decorator import helperRequired
 
 def thx(request):
     return render(request, "thanks.html")
 
+@method_decorator(helperRequired, name='dispatch')
 class HelperDashboardView(DashboardView):
     template_name = "helper_dashboard.html"
 
