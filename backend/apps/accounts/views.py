@@ -12,9 +12,9 @@ from django.shortcuts import render
 from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
-from apps.iofferhelp.forms import HelperCreationForm
-from apps.ineedhelp.forms import RefugeeCreationForm
-from apps.accounts.forms import CustomAuthenticationForm
+from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
+from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
+from apps.accounts.forms import CommonPreferencesForm, CustomAuthenticationForm
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
@@ -22,11 +22,13 @@ from apps.accounts.utils import send_password_set_email
 from apps.iofferhelp.models import Helper
 #from apps.iofferhelp.views import send_mails_for
 from apps.iamorganisation.forms import (
-    OrganisationFormEditProfile,
     OrganisationFormInfoCreate,
     OrganisationFormInfoSignUp,
+    OrganisationPreferencesForm,
 )
 from apps.iamorganisation.models import Organisation
+from apps.ineedhelp.models import Refugee
+from apps.offers.models import GenericOffer, OFFER_MODELS
 #from apps.iamorganisation.views import ApprovalOrganisationTable
 
 from .decorator import organisationRequired, helperRequired
@@ -41,7 +43,7 @@ def staff_profile(request):
     return render(request, "staff_profile.html", {})
 
 
-def refugee_signup(request):
+def signup_refugee(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -57,11 +59,11 @@ def refugee_signup(request):
     else:
         form = RefugeeCreationForm()
 
-    return render(request, "refugee_signup.html", {"form": form})
+    return render(request, "signup_refugee.html", {"form": form})
 
 
 
-def helper_signup(request):
+def signup_helper(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
@@ -70,18 +72,29 @@ def helper_signup(request):
 
         # check whether it's valid:
         if form.is_valid():
-            form.save()
+            user, helper = form.save()
+            # If the user got here through the /iofferhelp/choose_help page, get the chosen help data from the request session
+            if('chosenHelp' in request.session):
+                chosenHelp = request.session['chosenHelp'].items()
+                for offerType, chosen in chosenHelp:
+                    if chosen:
+                        # Create a new incomplete offer of this type
+                        genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
+                        genericOffer.save()
+                        specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer)
+                        specOffer.save()
+
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = HelperCreationForm()
 
-    return render(request, "helper_signup.html", {"form": form})
+    return render(request, "signup_helper.html", {"form": form})
 
 
 
-def organisation_signup(request):
+def signup_organisation(request):
     if request.method == "POST":
         logger.info("Organisation registration request", extra={"request": request})
         form_info = OrganisationFormInfoSignUp(request.POST)
@@ -107,7 +120,7 @@ def organisation_signup(request):
         form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
     form_info.helper.form_tag = False
-    return render(request, "organisation_signup.html", {"form_info": form_info})
+    return render(request, "signup_organisation.html", {"form_info": form_info})
 
 
 @transaction.atomic
@@ -174,7 +187,7 @@ def edit_helper_profile(request):
     )
 """
 
-@login_required
+"""@login_required
 @organisationRequired
 def edit_organisation_profile(request):
     organisation = request.user.organisation
@@ -198,7 +211,7 @@ def edit_organisation_profile(request):
     else:
         form = OrganisationFormEditProfile(instance=organisation, prefix="infos")
 
-    return render(request, "organisation_edit.html", {"form": form})
+    return render(request, "organisation_edit.html", {"form": form})"""
 
 """
 @login_required
@@ -367,162 +380,33 @@ def change_activation(request):
 class DashboardView(TemplateView):
     pass
 
-"""def switch_newsletter(nl, user, request, post=None, get=None):
-    nl_state = nl.sending_state()
-
-    if nl_state == NewsletterState.BEING_EDITED:
-        # an edit was made
-        if post is not None:
-            form = NewsletterEditForm(post, uuid=nl.uuid, instance=nl)
-
-            if form.is_valid():
-                form.save()
-                nl.edit_meta_data(user)
-                nl.save()
-                messages.add_message(request, messages.INFO, _("Bearbeitungen gespeichert."))
-                return switch_newsletter(nl, user, request, post=None, get=None)
-
-        elif get is not None:
-            # wants to freeze the form for review
-            if "freezeNewsletter" in get:
-                nl.freeze(user)
-                nl.save()
-                messages.add_message(
-                    request,
-                    messages.INFO,
-                    _(
-                        "Der Newsletter kann nun nicht mehr editiert werden. Andere Leute können ihn approven."
-                    ),
-                )
-                return switch_newsletter(nl, user, request, post=None, get=None)
-            else:
-                # the form is a virgin
-                form = NewsletterEditForm(uuid=nl.uuid, instance=nl)
-        else:
-            form = NewsletterEditForm(uuid=nl.uuid, instance=nl)
-
-    elif nl_state == NewsletterState.UNDER_APPROVAL:
-        if get is not None:
-            if "unFreezeNewsletter" in get:
-                nl.unfreeze()
-                nl.save()
-                messages.add_message(
-                    request, messages.INFO, _("Der Newsletter kann wieder bearbeitet werden."),
-                )
-                return switch_newsletter(nl, user, request, post=None, get=None)
-            elif "approveNewsletter" in get:
-                # TODO: check that author cannot approve # noqa: T003
-                nl.approve_from(user)
-                nl.save()
-                messages.add_message(
-                    request,
-                    messages.WARNING,
-                    format_lazy(
-                        _(
-                            "Noch ist deine Zustimmung UNGÜLTIG. Du musst den Validierungslink in der dir gesendeten Mail ({mail}) anklicken."
-                        ),
-                        mail=user.email,
-                    ),
-                )
-                approval = LetterApprovedBy.objects.get(newsletter=nl, user=request.user)
-                nl.send_approval_mail(approval, host=request.META["HTTP_HOST"])
-                switch_newsletter(nl, user, request, post=None, get=None)
-
-        form = NewsletterViewForm(instance=nl)
-
-    elif nl_state == NewsletterState.READY_TO_SEND:
-        if get is not None:
-            if "sendNewsletter" in get:
-                nl.send(user)
-                nl.save()
-                messages.add_message(request, messages.INFO, _("Der Newsletter wurde versendet."))
-                switch_newsletter(nl, user, request)
-            if "unFreezeNewsletter" in get:
-                nl.unfreeze()
-                nl.save()
-                messages.add_message(
-                    request, messages.INFO, _("Der Newsletter kann wieder bearbeitet werden."),
-                )
-                return switch_newsletter(nl, user, request, post=None, get=None)
-
-        form = NewsletterViewForm(instance=nl)
-
-    elif nl_state == NewsletterState.SENT:
-        form = NewsletterViewForm(instance=nl)
+@login_required
+def preferences(request):
+    user = request.user
+    if(user.isRefugee):
+        userTypeClass = Refugee
+        userTypeForm = RefugeePreferencesForm
+    elif(user.isOrganisation):
+        userTypeClass = Organisation
+        userTypeForm = OrganisationPreferencesForm
     else:
-        from django.http import Http404
+        userTypeClass = Helper
+        userTypeForm = HelperPreferencesForm
 
-        raise Http404
+    specificAccount = userTypeClass.objects.get(user=user)
+    if user.is_authenticated and user.is_active:
+        if request.method == "POST":
+            logger.info("Preferences edit request", extra={"request": request})
+            comPrefForm = CommonPreferencesForm(request.POST, instance=user)
+            specPrefForm = userTypeForm(request.POST, instance = specificAccount)
 
-    return form, nl
-
-
-@login_required
-@staff_member_required
-def view_newsletter(request, uuid):
-    # 404 if not there?
-    nl = Newsletter.objects.get(uuid=uuid)
-
-    if request.method == "GET" and "email" in request.GET:
-        email = request.GET.get("email")
-        nl.send_testmail_to(email)
-        messages.add_message(
-            request, messages.INFO, _("Eine Test Email wurde an %s versendet." % email)
-        )
-
-    post = request.POST if request.method == "POST" else None
-    get = request.GET if request.method == "GET" else None
-
-    form, nl = switch_newsletter(nl, request.user, request, post=post, get=get)
-
-    # special view if person was the freezer
-
-    context = {
-        "form": form,
-        "uuid": uuid,
-        "newsletter_state": nl.sending_state(),
-        "state_enum": NewsletterState,
-        "mail_form": TestMailForm(),
-        "already_approved_by_this_user": nl.has_been_approved_by(request.user),
-        "required_approvals": nl.required_approvals(),
-        "frozen_by": nl.frozen_by,
-        "sent_by": nl.sent_by,
-        "send_date": nl.send_date,
-        "approvers": ", ".join([a.user.email for a in nl.letterapprovedby_set.all()]),
-    }
-
-    return render(request, "newsletter_edit.html", context)
-
-
-@login_required
-@staff_member_required
-def new_newsletter(request):
-    newsletter = Newsletter.objects.create()
-    newsletter.letter_authored_by.add(request.user)
-    newsletter.save()
-    return HttpResponseRedirect("view_newsletter/" + str(newsletter.uuid))
-
-
-@login_required
-@staff_member_required
-def list_newsletter(request):
-    context = {"table": NewsletterTable(Newsletter.objects.all().order_by("-registration_date"))}
-    return render(request, "newsletter_list.html", context)
-
-
-@login_required
-@staff_member_required
-def did_see_newsletter(request, uuid, token):
-    nl = Newsletter.objects.get(uuid=uuid)
-    try:
-        approval = LetterApprovedBy.objects.get(newsletter=nl, user=request.user)
-        if approval.approval_code == int(token):
-            approval.did_see_email = True
-            approval.save()
-            messages.add_message(request, messages.INFO, _("Dein Approval ist nun gültig."))
+            if comPrefForm.is_valid() and specPrefForm.is_valid():
+                user = comPrefForm.save()
+                specificAccount = specPrefForm.save()
+                return HttpResponseRedirect("/accounts/preferences")
         else:
-            return HttpResponse("Wrong code")
-    except Exception:
-        return HttpResponse("Not registered")
-    return HttpResponseRedirect("/accounts/view_newsletter/" + str(uuid))
-"""
+            comPrefForm = CommonPreferencesForm(instance=user)
+            specPrefForm = userTypeForm(instance = specificAccount)
+        return render(request, "preferences.html", {"comPrefForm": comPrefForm, "specPrefForm": specPrefForm})
+    else:
+        return HttpResponse("User is anonymous or not active")

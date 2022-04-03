@@ -5,7 +5,7 @@ from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 
 from django.utils.translation import gettext_lazy as _
 
-from apps.accounts.forms import CustomUserCreationForm
+from apps.accounts.forms import CustomUserCreationForm, SpecialPreferencesForm
 from .models import Refugee
 
 class RefugeeCreationForm(CustomUserCreationForm):
@@ -33,3 +33,16 @@ class RefugeeCreationForm(CustomUserCreationForm):
         if(commit):
             refugee.save()
         return refugee
+
+class RefugeePreferencesForm(SpecialPreferencesForm):
+    class Meta:
+        model = Refugee
+        fields=(   
+        )
+
+        labels = {
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(RefugeePreferencesForm, self).__init__(*args, **kwargs)
+        self.helper.form_id = "id-refugeePreferencesForm"

@@ -1774,10 +1774,10 @@ msgstr "You have not yet validated your mail address, please do so!"
 
 #, python-format
 msgid ""
-"Bitte <a target=\"_blank\" href=\"%(helper_signup_url)s\">Registriere dich "
+"Bitte <a target=\"_blank\" href=\"%(signup_helper_url)s\">Registriere dich "
 "als Helfende_r</a> um die Kontaktdaten von %(firmenname)s zu sehen."
 msgstr ""
-"Please <a target=\"_blank\" href=\"%(helper_signup_url)s\">register as "
+"Please <a target=\"_blank\" href=\"%(signup_helper_url)s\">register as "
 "supporter</a> to see the contact information of %(firmenname)s."
 
 #, python-format

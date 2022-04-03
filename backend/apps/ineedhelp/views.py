@@ -1,6 +1,9 @@
 from django.shortcuts import render
 
 from apps.accounts.views import DashboardView
+from apps.ineedhelp.models import Refugee
+from apps.offers.models import getSpecificOffers
+from apps.offers.views import mergeImages
 
 # Create your views here.
 
@@ -9,3 +12,9 @@ def thx(request):
 
 class RefugeeDashboardView(DashboardView):
     template_name = "refugee_dashboard.html"
+
+def favouriteOffers(request):
+    refugee : Refugee = Refugee.objects.get(user=request.user)
+    offers = getSpecificOffers(refugee.favouriteOffers.all())
+    return render(request, "favourite_offers.html", {"offers" : mergeImages(offers)})
+        

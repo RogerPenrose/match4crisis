@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from datetime import datetime
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer
+from apps.offers.models import GenericOffer, AccomodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonnationOffer
 
 mail = lambda x: "%s@email.com" % x  # noqa: E731
 big_city_plzs = [
@@ -568,13 +568,15 @@ big_city_plzs = [
     "81927",
     "81929",
 ]
-
-
-
-
-def populate_db(request, userId=1):
+JOB_CHOICES = ["ACA","ADM","ADV","CON","FAC","FIN","GEN","HEA", "HUM","INF","INT","LEG","LIB","MAR","OFF","PER","PUB","RES", "SPO", "STU","HAN"]
+residenceChoices = ['SO','RO', 'HO', 'LE'] 
+HELP_CHOICES_MP= ['ON',  'OS']
+GENDER_CHOICES = ['FE', 'MA', 'NO']
+HELP_CHOICES= ['AM', 'LE', 'OT']
+WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
+def populate_db(n, userId = 1):
     if settings.DEBUG:
-        n_offers = 200
+        n_offers = n
         plzs = np.random.choice(big_city_plzs, size=n_offers)
         counter = 0
         for i in range(n_offers):
@@ -585,11 +587,10 @@ def populate_db(request, userId=1):
                 created_at=datetime.now(), \
                 offerDescription="Automatically generated", \
                 isDigital=False,  \
-                active=True,  \
                 country="DE", \
                 postCode=plzs[i], \
                 cost=0.00, \
-                paused= (np.random.random() > 0.7), \
+                active= (np.random.random() < 0.7), \
                 incomplete= (np.random.random() > 0.7),
             )
             
@@ -598,9 +599,11 @@ def populate_db(request, userId=1):
                 g.offerType = "AC"
                 g.save()
                 a = AccomodationOffer(genericOffer=g, \
-                    numberOfInhabitants=np.random.randint(1, 15), \
-                    petsAllowed=False, \
-                    stayLength= np.random.randint(1, 365) )
+                    numberOfAdults=np.random.randint(1, 15), \
+                    numberOfChildren=np.random.randint(1, 3), \
+                    numberOfPets=np.random.randint(0, 2), \
+                    stayLength= np.random.randint(1, 365) , \
+                    typeOfResidence= residenceChoices[np.random.randint(0,len(residenceChoices)-1)] )     
                 a.save()
             if counter == 1: #Translation
 
@@ -611,17 +614,53 @@ def populate_db(request, userId=1):
                             firstLanguage="German", \
                             secondLanguage="English")
                 t.save()
-            if counter == 3: #
+            if counter == 2: # Accompaniment
+                g.offerType = "BU"
+                g.save()
+                b = BuerocraticOffer(genericOffer=g, helpType=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
+                b.save()
+            if counter == 3: # Transportation
 
                 g.offerType = "TR"
                 g.save()
-
                 t = TransportationOffer(genericOffer=g, \
                     postCodeEnd=plzs[np.random.randint(0, n_offers)], \
                     typeOfCar = "LKW", \
                     numberOfPassengers=np.random.randint(0, 10))
                 t.save()
+            if counter == 4: # Transportation
+
+                g.offerType = "MP"
+                g.save()
+                b = ManpowerOffer(genericOffer=g, helpType=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
+                b.save()
+            if counter == 5: # Transportation
+                g.offerType = "CL"
+                g.save()
+                b = ChildcareOfferLongterm(genericOffer=g, gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                b.save()
+            if counter == 6: # Transportation
+                g.offerType = "BA"
+                g.save()
+                b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildrenToCare=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                b.save()
+            if counter == 7: # Transportation
+                g.offerType = "WE"
+                g.save()
+                b = WelfareOffer(genericOffer=g, helpType=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
+                b.save()
+            if counter == 8: # Transportation
+                g.offerType = "JO"
+                g.save()
+                b = JobOffer(genericOffer=g, jobTitle="Master of awesome.", requirements="10 Year Job experience.", jobType=JOB_CHOICES[np.random.randint(0,len(JOB_CHOICES)-1)])
+                b.save()
+            if counter == 9: # Transportation
+                g.offerType = "DO"
+                g.save()
+                b = DonnationOffer(genericOffer=g, donnationTitle="Human Fund", account="Deutsche Bank DE 12 3456 7891 07893.")
+                b.save()
                 counter = -1
             counter = counter + 1
+        
         return HttpResponse("Done. %s entries." % GenericOffer.objects.all().count())
     return HttpResponse("Access forbidden: Not in debug mode.")

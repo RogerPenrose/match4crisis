@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{% blocktrans %}Preferences{% endblocktrans %}
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row" style="margin-top:30px; margin-bottom:55px;">
+               <div class="col-lg-10 col-sm-12 col-12">
+
+               {% crispy comPrefForm comPrefForm.helper %}
+               {% crispy specPrefForm specPrefForm.helper %}
+
+        </div>
+   </div>
+</div>
+{% endblock %}
