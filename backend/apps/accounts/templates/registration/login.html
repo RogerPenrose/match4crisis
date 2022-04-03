@@ -66,6 +66,7 @@
     
     label { display: none;}
     input { margin-bottom: 15px;}
+.login-form { padding-top: 100px;}
 </style>
 <script type="text/javascript">
     window.addEventListener('load', function() {
@@ -75,7 +76,7 @@
             var navHeight = $('.navbar').outerHeight();
             var footerHeight = $('.footer').innerHeight();
 
-            var newHeight = height - footerHeight - 55;
+            var newHeight = height - footerHeight - 60;
 
             $(".login-form").height(newHeight);
 
@@ -85,9 +86,9 @@
 </script>
 {% endblock %} {% load crispy_forms_tags %} {% block content %}
 <div class="bg-container">
-    <div class="container login-form" style="padding-top:55px;">
+    <div class="container login-form" style="padding-top:60px; ">
 
-        <div class="col-lg-6 col-md-10 col-sm-12 col-12">
+        <div class="col-lg-6 col-md-10 col-sm-12 col-12" style="margin: 0 auto;">
             <div class="card login-card">
 
                 <h2 class="title" style="margin-bottom: 20px;">{% blocktrans %}Login{% endblocktrans %}</h2>
