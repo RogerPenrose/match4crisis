@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.offers",
     "apps.accounts",
     "apps.use_statistics",
+    "django_select2",
 ]
 
 MIDDLEWARE = [
