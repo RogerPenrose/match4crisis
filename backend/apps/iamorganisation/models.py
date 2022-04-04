@@ -33,3 +33,10 @@ class Organisation(models.Model):
 
     def __str__(self):
         return self.organisationName
+
+class HelpRequest(models.Model):
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=False, related_name="requests")
+    radius = models.IntegerField(default=5)
+    title = models.CharField(max_length=256, default="")
+    description = models.TextField(max_length=100000, default="")
+    recipientCount = models.IntegerField(default=0)

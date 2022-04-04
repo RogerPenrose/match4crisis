@@ -11,4 +11,6 @@ urlpatterns = [
     path("change_posting", views.change_posting, name="change_posting"),
     path("thanks_organisation", views.thx, name="thanks_organisation"),
     path("organisation_dashboard", views.OrganisationDashboardView.as_view(), name="organisation_dashboard"),
+    path("request_help", views.request_help, name="request_help"),
+    path("sent_requests", views.sent_requests, name="sent_requests"),
 ]
