@@ -663,8 +663,11 @@ def detail(request, offer_id, edit_active = False):
     if edit_active:
         context["edit_active"] = edit_active
     if request.user.is_authenticated and request.user.isRefugee:
+        # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
         offer = GenericOffer.objects.get(pk=offer_id)
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
+        refugee = Refugee.objects.get(user=request.user)
+        refugee.addRecentlyViewedOffer(offer)
     return render(request, 'offers/detail.html', context)
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."
