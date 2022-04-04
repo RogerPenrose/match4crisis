@@ -1,14 +1,15 @@
-from datetime import datetime
 import logging
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
@@ -161,7 +162,7 @@ def login_redirect(request):
         logger.warning(
             "User is unknown type, login redirect not possible", extra={"request": request},
         )
-        HttpResponse("Something wrong in database")
+        return HttpResponse("Something wrong in database")
 
 """
 @login_required
@@ -243,7 +244,7 @@ def change_organisation_approval(request, uuid):
 
     if not h.is_approved:
         h.is_approved = True
-        h.approval_date = datetime.now()
+        h.approval_date = timezone.now()
         h.approved_by = request.user
     else:
         h.is_approved = False
@@ -288,7 +289,7 @@ def delete_me_ask(request):
 def validate_email(request):
     if not request.user.validated_email:
         request.user.validated_email = True
-        request.user.email_validation_date = datetime.now()
+        request.user.email_validation_date = timezone.now()
         request.user.save()
     return HttpResponseRedirect("login_redirect")
 
@@ -376,7 +377,7 @@ def change_activation(request):
         )
     return HttpResponseRedirect("profile_helper")
 
-
+@method_decorator(login_required, name='dispatch')
 class DashboardView(TemplateView):
     pass
 

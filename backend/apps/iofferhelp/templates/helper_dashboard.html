@@ -4,44 +4,223 @@
 
 {% block title %}
 {% blocktrans %}
-Dashboard - Helfende
+Dashboard - Hilfesuchende
 {% endblocktrans %}
 {% endblock %}
 
+{% block header %}
+<style>
+    @media only screen and (min-width: 768px) {
+      .dashboard-title {
+        padding: 130px 0px 80px 0px;
+      }
+  
+      .navbar { background: transparent !important;     -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
+      -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
+      box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
+      body { margin-top: 0px !important;}
+  
+      .dashboard-title h2 {
+        font-size: 20px;
+        color: #fff !important;
+        font-weight: 300;
+      }
+      .hide-desktop { display: none;}
+      .dashboard-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
+      .btn-yellow-2 { background-color: #FAC903; margin-left: 10px; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+      .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
+      .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+    }
+  
+    @media only screen and (min-width: 992px) {
+      .dashboard-title {
+        padding: 150px 0px 100px 0px;
+      }
+    }
+  
+    @media only screen and (min-width: 1200px) {
+      .dashboard-title {
+        padding: 180px 0px 100px 0px;
+      }
+    }
+  
+    @media only screen and (max-width: 767px) {
+        .buttons { margin-left:0px; margin-right:0px;}
+      .navbar-collapse { background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
+  .navbar { padding: 0px !important; }
+  .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
+  .navbar-toggler { padding: 20px calc(20px);}
+  .navbar-collapse { padding: 0px 20px 20px 20px;}
+      .navbar {
+        position: absolute;
+      }
+  
+      .dashboard-title {
+        background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%);
+        padding: 100px 0px 10px 0px;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 15px;
+        box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
+      }
+      .bg-yellow {
+        background: transparent !important;
+      }
+      .dashboard-title h1 {
+        font-size: 7vw;
+        color: #fff !important;
+      }
+  
+      .dashboard-title h2 {
+        font-size: 4vw;
+        color: #fff !important;
+        font-weight: 300;
+      }
+  
+      .home-box > div > div > a > div {
+        padding: 60px 10px 15px 30px;
+      }
+  
+      .home-box-description {
+        margin-bottom: 15px;
+      }
+  
+      .navbar {
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+      }
+  
+      .hide-home {
+        display: none;
+      }
+  
+      .ml-auto {
+        margin-left: 0 !important;
+        margin-right: auto;
+      }
+    }
+  
+    @media only screen and (min-width: 768px) and (max-width: 991px) {
+      .navbar > .container {
+        width: 100%;
+        max-width: 720px !important;
+        padding-left: 15px;
+        padding-right: 0px;
+      }
+    
+    }
+  
+    @media only screen and (min-width: 768px) {
+.buttons { margin-left:10px;}
+        div.left { margin-left: -10px; margin-right: 10px;}
+    }
+
+    #searchsubmit {
+      display: none;
+    }
+  
+  
+    .buttons > div { background-color: #F59E1B; border-radius: 30px; color: #fff; padding:15px; margin-bottom: 15px;} 
+    .buttons h3 { color: #fff; font-size: 18px;}
+    .buttons p { margin-bottom: 0px;}
+    .buttons a, .buttons a:hover { color: #fff;}
+
+
+    .btn {     background-color: #fff;
+       font-size: 1rem;
+        padding: .8rem 2.5rem;
+        border-radius: 15px;
+        border: 0px;
+        font-weight: bold;
+        margin-bottom: 20px;
+}
+    
+    .btn:hover { background-color: #fff; }
+    div.description { padding: 10px; position: relative; }
+  .count { text-align: right; }
+.count p { display: inline; margin-bottom: 0px !important; padding:5px 10px; border-radius: 10px; background-color: #32BD69; text-align:center; color: #fff;  }
+div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-width: 100%; background-size: cover;}
+.missing p { background-color: #FA5103;}
+@media only screen and (max-width: 767px) { div.background-photo-search {padding-top: 80%;max-width: 100%;  }   }
+  
+  
+.buttons > div { background-color: #F59E1B; border-radius: 30px; color: #fff; padding:15px; margin-bottom: 15px;} 
+    .buttons h3 { color: #fff; font-size: 18px;}
+    .buttons p { margin-bottom: 0px;}
+    .buttons a, .buttons a:hover { color: #fff;}
+
+  </style>
+{% endblock %}
 
 {% block content%}
-    <h3>Incomplete Offers</h3>
-    {% if incompleteOffers %}
+<div class="dashboard-title">
+    <div class="container">
+      <div class="row align-self-center align-items-center">
+        <div class="col-md-8 col-xl-5">
+          <h1 class="text-white">
+            {% blocktrans %}Glad you are here, Heinrich!{% endblocktrans %}
+          </h1>
+          <h2 class="font-weight-regular">
+            {% blocktrans %}Don't wait any longer, start helping right now.{% endblocktrans %}
+          </h2>
+          <br />
+          <a href="/offers/create" class="btn" role="button" aria-pressed="true"
+          > Create new help listing <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+          </svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    {% for entry in incompleteOffers%}
-        {{ entry.image }}
+ 
+  
 
-        {{ entry.offer }}
-    {% endfor %}
+  <div class="container" style="margin-top: 35px;">
+    <h2 style="margin-bottom: 35px;">Helper Dashboard</h2>
+        <div class="buttons row">
+            
+            <div class="col-12 col-md-6 col-xl-6 left">
+                <a href="#">
+            <div class="row align-self-center align-items-center">
+                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/recent.png' %}" width="40px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>Running listings</h3><p>Your currently active help listings.</p></div>
+                </div>
+            </a>
+            </div>
+        
+    
+            <div class="col-12 col-md-6 col-xl-6">
+    
+                <a href="#">
+                <div class="row align-self-center align-items-center">
+                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/contacted.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>Paused listings</h3><p>Inactive listings that were paused.</p></div>
+                    </div>
+                </a>
+                </div>
+    
+                <div class="col-12 col-md-6 col-xl-6 left">
+                    <a href="{% url 'favourite_offers' %}">
+                <div class="row align-self-center align-items-center">
+                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/favorite.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>Incomplete listings</h3><p>Listings with missing information.</p></div>
+                    </div>
+                </a>
+                </div>
+            
+        
+                <div class="col-12 col-md-6 col-xl-6">
+        
+                    <a href="#">
+                    <div class="row align-self-center align-items-center">
+                        <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/settings.png' %}" width="55px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>Profile Settings</h3><p>Change your profile settings.</p></div>
+                        </div>
+                    </a>
+                    </div>      
+    
+            </div>
+    
+            </div>
+      </div>
 
-    {% endif %}
-    <br/>
-    <h3>Running Offers</h3>
 
-    {% if runningOffers %}
-
-    {% for entry in runningOffers%}
-        {{ entry.image }}
-
-        {{ entry.offer }}
-    {% endfor %}
-
-    {% endif %}
-    <br/>
-    <h3>Paused Offers</h3>
-
-    {% if pausedOffers %}
-
-    {% for entry in pausedOffers%}
-        {{ entry.image }}
-
-        {{ entry.offer }}
-    {% endfor %}
-
-    {% endif %}
 {% endblock %}

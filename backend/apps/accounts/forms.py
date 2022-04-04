@@ -136,11 +136,15 @@ class CustomAuthenticationForm(forms.Form):
     Used instead of django.contrib.auth.AuthenticationForm in order to allow email/password login rather than username/password.
     """
 
-    email = forms.EmailField()#label=_("E-Mail"), widget=forms.TextInput(attrs={"autofocus": True}))
+    email = forms.EmailField(
+    label=_("E-Mail"),
+    widget=forms.TextInput(attrs={"autofocus": True, "placeholder": _("E-Mail*")}),
+    )
+
     password = forms.CharField(
         label=_("Password"),
         strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "current-password"}),
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "placeholder": _("Password*")}),
     )
 
     error_messages = {

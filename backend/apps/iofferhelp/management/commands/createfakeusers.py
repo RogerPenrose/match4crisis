@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
+from django.utils import timezone
 from django.core.management.base import BaseCommand
 import numpy as np
 
@@ -98,7 +99,7 @@ class Command(BaseCommand):
                 email=m,
                 isHelper=True,
                 validatedEmail=True,
-                date_joined=datetime.now() - timedelta(days=np.random.randint(0, 30)),
+                date_joined=timezone.now() - timedelta(days=np.random.randint(0, 30)),
             )
             u.set_password(m)
             u.save()
@@ -116,7 +117,7 @@ class Command(BaseCommand):
                 email=m,
                 isOrganisation=True,
                 validatedEmail=True,
-                date_joined=datetime.now() - timedelta(days=np.random.randint(0, 30)),
+                date_joined=timezone.now() - timedelta(days=np.random.randint(0, 30)),
             )
             u.set_password(m)
             u.save()
@@ -138,7 +139,7 @@ class Command(BaseCommand):
                 email=m,
                 isRefugee=True,
                 validatedEmail=True,
-                date_joined=datetime.now() - timedelta(days=np.random.randint(0, 30)),
+                date_joined=timezone.now() - timedelta(days=np.random.randint(0, 30)),
             )
             u.set_password(m)
             u.save()

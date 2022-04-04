@@ -1,29 +1,32 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 
 from apps.accounts.views import DashboardView
 from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
 from .forms import ChooseHelpForm
+from apps.accounts.decorator import helperRequired
 
 def thx(request):
     return render(request, "thanks.html")
 
+@method_decorator(helperRequired, name='dispatch')
 class HelperDashboardView(DashboardView):
     template_name = "helper_dashboard.html"
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
 
-        userOffers = GenericOffer.objects.filter(userId=request.user.id)
-        pausedOffers = mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
-        incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
-        runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
+        pausedOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=False, incomplete=False).count()
+        incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
+        runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
 
 
         context = {
-            "pausedOffers": pausedOffers,
-            "incompleteOffers": incompleteOffers,
-            "runningOffers": runningOffers,
+            "pausedOffersCount": pausedOffersCount,
+            "incompleteOffersCount": incompleteOffersCount,
+            "runningOffersCount": runningOffersCount,
         }
 
         return self.render_to_response(context)
@@ -55,3 +58,26 @@ def choose_help(request):
 
     return render(request, "choose_help.html", {"form": form})
 
+@login_required
+@helperRequired
+def paused_offers(request):
+    userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    pausedOffers = mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
+    context = {"offers": pausedOffers}
+    return render(request, "paused_offers.html", context)
+
+@login_required
+@helperRequired
+def incomplete_offers(request):
+    userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
+    context = {"offers": incompleteOffers}
+    return render(request, "incomplete_offers.html", context)
+
+@login_required
+@helperRequired  
+def running_offers(request):
+    userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
+    context = {"offers": runningOffers}
+    return render(request, "running_offers.html", context)
