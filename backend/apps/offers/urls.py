@@ -15,6 +15,7 @@ urlpatterns = [
     # ex: /polls/5/
     path('<int:offer_id>/', views.detail, name='detail'),
     path('<int:offer_id>/contact', views.contact, name='contact'),
+    path('translation/<str:firstLanguage>_<str:secondLanguage>', views.getTranslationImage, name="image"),
     path('<int:offer_id>/delete_offer', views.delete_offer, name='delete'),
     path('<int:offer_id>/delete_image/<int:image_id>', views.delete_image, name='delete_image'),
     path('<int:offer_id>/update', views.update, name='update'),

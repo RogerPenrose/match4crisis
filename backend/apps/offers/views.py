@@ -3,12 +3,12 @@ from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
 import json
-
+import base64
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
-
+from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
 from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
@@ -223,6 +223,22 @@ def contact(request, offer_id):
     return render(request, 'offers/contact.html', details)
 def search(request):
     return render(request, 'offers/search.html')
+def getTranslationImage(request, firstLanguage, secondLanguage):
+    logger.warning("Received:"+firstLanguage+" "+secondLanguage)
+    # first load flag from file:
+    firstData = ""
+    secondData = ""
+    p1 = staticfiles_storage.path('img/flags/'+firstLanguage+'.svg')
+    with open(p1, "rb") as fileHandle:
+        raw = fileHandle.read()
+        firstData = base64.b64encode(raw)
+    p2 = staticfiles_storage.path('img/flags/'+secondLanguage+'.svg')
+    with open(p2, "rb") as fileHandle:
+        raw = fileHandle.read()
+        secondLanguage = base64.b64encode(raw)
+    context = {"firstLanguage" : firstData.decode("utf-8")
+, "secondLanguage" : secondLanguage.decode("utf-8")}
+    return render(request, 'offers/drawing.svg', context=context,content_type="image/svg+xml")
 def scrapePostCodeJson(city):
 
     current_location = dirname(abspath(__file__))
