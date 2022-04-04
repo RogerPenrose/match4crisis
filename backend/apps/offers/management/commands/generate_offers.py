@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.utils import timezone
 from datetime import timedelta
 import numpy as np
-from apps.accounts.models import User
+from apps.accounts.models import User, Languages
 from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonationOffer
 
 
@@ -623,10 +623,11 @@ class Command(BaseCommand):
 
                     g.offerType = "TL"
                     g.save()
-
+                    n = np.random.randint(0, Languages.objects.all().count())
+                    m = np.random.randint(0, Languages.objects.all().count())
                     t = TranslationOffer(genericOffer=g, \
-                                firstLanguage="German", \
-                                secondLanguage="English")
+                                firstLanguage=Languages.objects.all()[n], \
+                                secondLanguage=Languages.objects.all()[m])
                     t.save()
                 if counter == 2: # Accompaniment
                     g.offerType = "BU"
