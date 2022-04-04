@@ -1,4 +1,3 @@
-from datetime import datetime
 import logging
 
 from django.contrib import messages
@@ -10,6 +9,7 @@ from django.contrib.auth.views import LoginView
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
@@ -244,7 +244,7 @@ def change_organisation_approval(request, uuid):
 
     if not h.is_approved:
         h.is_approved = True
-        h.approval_date = datetime.now()
+        h.approval_date = timezone.now()
         h.approved_by = request.user
     else:
         h.is_approved = False
@@ -289,7 +289,7 @@ def delete_me_ask(request):
 def validate_email(request):
     if not request.user.validated_email:
         request.user.validated_email = True
-        request.user.email_validation_date = datetime.now()
+        request.user.email_validation_date = timezone.now()
         request.user.save()
     return HttpResponseRedirect("login_redirect")
 

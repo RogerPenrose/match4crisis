@@ -1,4 +1,3 @@
-from datetime import datetime
 import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -45,10 +44,10 @@ class GenericOffer(models.Model):
     offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
-    created_at = models.DateTimeField('date published', default=timezone.now())
+    created_at = models.DateTimeField('date published', default=timezone.now)
     incomplete = models.BooleanField(default=False)
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.now()
+        self.updated_at = timezone.now()
         super().save(*args, **kwargs)
     def __str__(self):
         return self.offerType
@@ -129,7 +128,7 @@ class AccommodationOffer(models.Model):
     typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
     streetName = models.CharField(max_length=200, blank=True)
     streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
-    startDateAccommodation = models.DateField(default=datetime.now())
+    startDateAccommodation = models.DateField(default=timezone.now)
     endDateAccommodation = models.DateField(blank =True, null=True)
     def __str__(self):
         return self.typeOfResidence
@@ -150,7 +149,7 @@ class TransportationOffer(models.Model):
     streetNameEnd = models.CharField(max_length=200)
     streetNumberEnd = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
  
-    date=models.DateField(default=datetime.now())
+    date=models.DateField(default=timezone.now)
     numberOfPassengers = models.IntegerField(default=2)
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

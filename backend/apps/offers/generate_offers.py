@@ -8,7 +8,7 @@ muss in urls.py auskommentiert werden
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
-from datetime import datetime, timedelta
+from datetime import timedelta
 import numpy as np
 from apps.accounts.models import User
 from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonationOffer
@@ -585,7 +585,7 @@ def populate_db(n, userId = 1):
             
             g = GenericOffer(
                 userId=user, \
-                created_at=datetime.now(), \
+                created_at=timezone.now(), \
                 offerDescription="Automatically generated", \
                 isDigital=False,  \
                 country="DE", \

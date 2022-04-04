@@ -3,15 +3,15 @@ from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
 import json
-# Create your views here.
+
 from apps.accounts.models import User
+from django.utils import timezone
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 
 from apps.ineedhelp.models import Refugee
 from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
 from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
-from datetime import datetime, timedelta
 from django.contrib.auth.decorators import login_required
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
 OFFERTYPESOBJ = { "accommodation": { "title": "Accommodation", "requestName": "accommodation", "modelName" : "AccommodationOffer", "offersName": "AccommodationOffers"}, 
@@ -30,7 +30,7 @@ def updateGenericModel( form, offer_id=0, userId=None):
         #create an Object..
         g = GenericOffer(userId=user, \
                 offerType=form.get("offerType"),  \
-                created_at=datetime.now(), \
+                created_at=timezone.now(), \
                 offerDescription=form.get("offerDescription"), \
                 isDigital=form.get("isDigital"),  \
                 active=form.get("active"),  \
@@ -46,7 +46,7 @@ def updateGenericModel( form, offer_id=0, userId=None):
         g = GenericOffer.objects.get(pk=offer_id)
         if g.userId.id == userId or user.is_superuser :# If the same user is there to edit OR the user is a superuser...
             g.offerType=form.get("offerType")
-            g.created_at=datetime.now()
+            g.created_at=timezone.now()
             g.offerDescription=form.get("offerDescription")
             g.isDigital=form.get("isDigital")
             g.active=form.get("active")
