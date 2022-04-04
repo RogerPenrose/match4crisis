@@ -206,8 +206,8 @@ def updateTransportationModel(g, form, offer_id=0):
 def updateTranslationModel(g, form, offer_id=0):
     if offer_id == 0:
         t = TranslationOffer(genericOffer=g, \
-                        firstLanguage=form.get("firstLanguage"), \
-                        secondLanguage=form.get("secondLanguage"))
+                        firstLanguage=form.get("firstLanguage").isoCode, \
+                        secondLanguage=form.get("secondLanguage").isoCode)
         t.save()
         return t
     else:

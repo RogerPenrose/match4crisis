@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 import logging
 from match4crisis.constants.countries import countries
 from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
+from apps.accounts.models import Languages
 
 def validate_plz(value):
     try:
@@ -117,8 +118,8 @@ class TransportationForm(forms.Form):
     streetNumberEnd = forms.CharField(label=STREETNUMBER_END, max_length=4, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 class TranslationForm(forms.Form):
 # Translation Fields
-    firstLanguage = forms.CharField(label=FIRSTLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    secondLanguage = forms.CharField(label=SECONDLANGUAGE, max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    firstLanguage =   forms.ModelChoiceField(queryset=Languages.objects.all())
+    secondLanguage =  forms.ModelChoiceField(queryset=Languages.objects.all())
       
 class AccommodationForm(forms.Form):
    
