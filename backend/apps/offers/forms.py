@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 import logging
+from match4crisis.constants.countries import countries
 from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 
 def validate_plz(value):
@@ -71,7 +72,7 @@ class GenericForm(forms.ModelForm):
         widgets = {
         'offerType':  forms.Select(attrs={'class': 'form-control'}),
         'offerDescription': forms.Textarea(attrs={'class': 'form-control'}),
-        'country': forms.TextInput(attrs={'class': 'form-control'}),
+        'country': forms.Select(choices=countries, attrs={'class': 'form-control'}),
         'postCode': forms.TextInput(attrs={'class': 'form-control'}),
         'streetName': forms.TextInput(attrs={'class': 'form-control'}),
         'streetNumber': forms.TextInput(attrs={'class': 'form-control'}),
