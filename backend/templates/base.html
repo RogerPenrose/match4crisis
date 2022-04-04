@@ -59,7 +59,6 @@
         {% endif %}
         {% if user.is_authenticated and user.isOrganisation %}
         {% url 'list_by_plz' user.organisation.countrycode user.organisation.plz 10 as filter_helper_url %}
-        <li class="nav-item  {% if "signup_organisation" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/iamorganisation/organisation_dashboard">{% blocktrans %}Helfer*innen finden{% endblocktrans %}</a> </li>
         {% endif %}
 
         <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview/?generic=True">{% blocktrans %}Karte{% endblocktrans %}</a> </li>

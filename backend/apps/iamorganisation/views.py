@@ -3,7 +3,7 @@ from functools import lru_cache
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
@@ -13,12 +13,12 @@ import django_tables2 as tables
 from django.utils.decorators import method_decorator
 
 from apps.accounts.decorator import organisationRequired
-from apps.iamorganisation.models import Organisation
+from apps.iamorganisation.models import HelpRequest, Organisation
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
 
-from .forms import PostingForm
+from .forms import PostingForm, RequestHelpForm
 
 
 #organisation_overview (mapview)
@@ -117,3 +117,37 @@ def thx(request):
 @method_decorator(organisationRequired, name='dispatch')
 class OrganisationDashboardView(DashboardView):
     template_name = "organisation_dashboard.html"
+
+@login_required
+@organisationRequired
+def request_help(request):
+    if request.method == "POST":
+        form = RequestHelpForm(request.POST)
+
+        if form.is_valid():
+            # TODO add logic for actually sending out emails
+            recipientCount = 42 # TODO how many helpers were contacted
+
+            requestHelpEntry = form.save(commit=False)
+            requestHelpEntry.organisation = Organisation.objects.get(user=request.user)
+            requestHelpEntry.recipientCount = recipientCount
+            requestHelpEntry.save()
+            context = {"recipientCount" : recipientCount} 
+            return render(request, "request_sent.html", context)
+
+    else:
+        form = RequestHelpForm()
+
+    context = {"form" : form}
+    return render(request, "request_help.html", context)
+
+
+
+@login_required
+@organisationRequired
+def sent_requests(request):
+    requests = HelpRequest.objects.filter(organisation=Organisation.objects.get(user=request.user))
+    context = {"helpRequests" : requests}
+    return render(request, "sent_requests.html", context)
+
+

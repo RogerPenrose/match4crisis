@@ -9,8 +9,9 @@ from django.contrib.auth import password_validation
 
 
 from apps.accounts.models import User
-from apps.iamorganisation.models import Organisation
 from apps.accounts.forms import PhoneNumberField, SpecialPreferencesForm
+from .models import HelpRequest, Organisation
+
 
 class OrganisationFormO(ModelForm):
     phoneNumber = PhoneNumberField(label='',widget=forms.TextInput(attrs={'placeholder': _("Telefonnummer")}))
@@ -190,3 +191,40 @@ class PostingForm(forms.ModelForm):
         self.helper.add_input(
             Submit("submit", _("Anzeige aktualisieren"), css_class="btn blue text-white btn-md",)
         )
+
+class RequestHelpForm(forms.ModelForm):
+    # TODO also allow digital offers?
+    RADIUS_CHOICES = [
+        ('', _('Radius')),
+        (5, "<5km"),
+        (10, "<10km"),
+        (20, "<20km"),
+        (50, "<50km"),
+    ]
+    class Meta:
+        model = HelpRequest
+        fields = (
+            'radius',
+            'title',
+            'description',
+        )
+        labels = {
+            'title' : '',
+            'description' : '',
+        }
+        widgets = {
+            'title' : forms.TextInput(attrs={"placeholder": _("Betreff")}),
+            'description' : forms.Textarea(attrs={"placeholder": _("Beschreibung")}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(RequestHelpForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-requestHelpForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "request_help"
+
+        self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='')
+
+        self.helper.add_input(Submit("submit", _("Senden")))

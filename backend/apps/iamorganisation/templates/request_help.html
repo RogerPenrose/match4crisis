@@ -3,19 +3,18 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}Preferences{% endblocktrans %}
+{% blocktrans %}Request Help{% endblocktrans %}
 {% endblock %}
 
 {% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container">
-    <div class="row" style="margin-top:30px; margin-bottom:55px;">
+    <div class="row" style="margin-top:200px; margin-bottom:55px;">
                <div class="col-lg-10 col-sm-12 col-12">
-
+                   <h2>Hilfe anfordern</h2>
                 {% csrf_token %}
-               {% crispy comPrefForm comPrefForm.helper %}
-               {% crispy specPrefForm specPrefForm.helper %}
+               {% crispy form form.helper %}
 
         </div>
    </div>
