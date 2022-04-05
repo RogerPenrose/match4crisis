@@ -227,6 +227,10 @@ def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
     secondData = ""
+    if firstLanguage == "not":
+        firstLanguage = "no-flag"
+    if secondLanguage == "not":
+        secondLanguage = "no-flag"
     p1 = staticfiles_storage.path('img/flags/'+firstLanguage+'.svg')
     with open(p1, "rb") as fileHandle:
         raw = fileHandle.read()
