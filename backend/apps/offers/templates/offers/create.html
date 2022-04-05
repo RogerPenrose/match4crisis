@@ -3,9 +3,10 @@
 {% load i18n %}
 
 {% block header %}
+{{ translationForm.media.js }}
+{{ translationForm.media.css }}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
-
 input[type=checkbox]~label { position: relative;
   display: inline-block;
  margin-right: .5rem;
@@ -76,6 +77,8 @@ label { margin-bottom: 5px; font-weight: 600;}
 .form-control { margin-bottom: 15px;}
 
 input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
+
+.select2 {width: 100% !important}
 </style>
 {% endblock %}
 {% block content %}
@@ -268,6 +271,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             toggleRequiredTag(weTable, false)
             toggleRequiredTag(joTable, false)
             toggleRequiredTag(doTable, false)
+
         }
         else if (typeSelection == "BU"){
             console.log("BU Table ? ")
