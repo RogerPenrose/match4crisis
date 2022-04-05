@@ -10,6 +10,8 @@ from django.utils.text import capfirst
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 
+from django_select2 import forms as s2forms
+
 from .models import User
 
 class PhoneNumberField(forms.CharField):
@@ -102,6 +104,10 @@ class CommonPreferencesForm(forms.ModelForm):
             "sharePhoneNumber",
         )
 
+        widgets = {
+            "spokenLanguages" : s2forms.Select2MultipleWidget()
+        }
+
     def __init__(self, *args, **kwargs):
         super(CommonPreferencesForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
@@ -109,6 +115,7 @@ class CommonPreferencesForm(forms.ModelForm):
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
         self.helper.form_action = "preferences"
+        self.helper.form_tag = False
 
         if 'instance' in kwargs:
             if kwargs['instance'].isOrganisation:
@@ -122,6 +129,7 @@ class SpecialPreferencesForm(forms.ModelForm):
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
         self.helper.form_action = "preferences"
+        self.helper.form_tag = False
 
         self.helper.add_input(Submit("submit", _("Speichern")))
     

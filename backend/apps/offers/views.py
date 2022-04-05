@@ -206,8 +206,8 @@ def updateTransportationModel(g, form, offer_id=0):
 def updateTranslationModel(g, form, offer_id=0):
     if offer_id == 0:
         t = TranslationOffer(genericOffer=g, \
-                        firstLanguage=form.get("firstLanguage").isoCode, \
-                        secondLanguage=form.get("secondLanguage").isoCode)
+                        firstLanguage=form.get("firstLanguage"), \
+                        secondLanguage=form.get("secondLanguage"))
         t.save()
         return t
     else:
@@ -224,10 +224,13 @@ def contact(request, offer_id):
 def search(request):
     return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
-    logger.warning("Received:"+firstLanguage+" "+secondLanguage)
     # first load flag from file:
     firstData = ""
     secondData = ""
+    if firstLanguage == "not":
+        firstLanguage = "no-flag"
+    if secondLanguage == "not":
+        secondLanguage = "no-flag"
     p1 = staticfiles_storage.path('img/flags/'+firstLanguage+'.svg')
     with open(p1, "rb") as fileHandle:
         raw = fileHandle.read()
@@ -310,20 +313,23 @@ def create_by_filter(request):
         pageCount = int(request.POST.get("page"))
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
+    paginationCount = 0
+    logger.warning("getting Page from: "+str(firstEntry)+" To "+str(lastEntry))
     for offertype in OFFERTYPESOBJ:
         entry = OFFERTYPESOBJ[offertype]
         if request.POST.get(entry["requestName"]) == "True":
-            logger.warning("Trying: "+entry["requestName"])
             filters = []
             for key in request.POST:
                 if entry["requestName"]+"_" in key:
                     if request.POST.get(key) != None  and len(request.POST.get(key)) > 0 :
                         filters.append(key.replace(entry["requestName"]+"_","")+"="+request.POST.get(key))
             filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-            logger.warning("Trying to get: "+filterstring)
             entryCount = eval(entry["modelName"]+".objects.filter("+filterstring+").count()")
+            logger.warning("Entrycount for "+entry["modelName"]+str(entryCount))
             totalCount += entryCount
-            if  entryCount < N_ENTRIES:
+            if entryCount > N_ENTRIES:
+                paginationCount += entryCount
+            if  entryCount <firstEntry:
                 resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+"))")
             else:
                 resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+")["+str(lastEntry)+":"+str(firstEntry)+"])")
@@ -342,7 +348,8 @@ def create_by_filter(request):
         resultVal["Title"] = title
     resultVal["ResultCount"] = totalCount
     resultVal["page"] = str(int(pageCount)+1) # Off by one Error in frontend..
-    resultVal["maxPage"] = str(int(totalCount/N_ENTRIES))
+    logger.warning("Total Count: "+str(paginationCount))
+    resultVal["maxPage"] = str(int(paginationCount/N_ENTRIES))
     resultFilter = {}
     for key in dict(request.POST):
         resultFilter[key] = dict(request.POST)[key][0]
@@ -423,7 +430,7 @@ def index(request):
     JobOffers = mergeImages(JobOffer.objects.all()[:N_ENTRIES])
     manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
     pagination = False
-    maxPage = int(GenericOffer.objects.all().count()/N_ENTRIES)
+    maxPage = int(GenericOffer.objects.all().count()/(N_ENTRIES*len(GenericOffer.OFFER_CHOICES)))
     currentElements = {}
     for key in OFFERTYPESOBJ:
         currentElements[key] = "True"
@@ -644,7 +651,7 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Translation",'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
@@ -675,6 +682,7 @@ def getOfferDetails(request, offer_id):
         return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False):
+    logger.warning("Getting offer:"+str(offer_id))
     context = getOfferDetails(request, offer_id)
     if edit_active:
         context["edit_active"] = edit_active

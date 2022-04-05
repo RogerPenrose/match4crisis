@@ -1,0 +1,1623 @@
+[
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ab",
+            "englishName": "Abkhaz",
+            "nativeName": "\u0430\u04a7\u0441\u0443\u0430",
+            "country": "hn"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "aa",
+            "englishName": "Afar",
+            "nativeName": "Afaraf",
+            "country": "dj"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "af",
+            "englishName": "Afrikaans",
+            "nativeName": "Afrikaans",
+            "country": "na"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ak",
+            "englishName": "Akan",
+            "nativeName": "Akan",
+            "country": "gh"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sq",
+            "englishName": "Albanian",
+            "nativeName": "Shqip",
+            "country": "al"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "am",
+            "englishName": "Amharic",
+            "nativeName": "\u12a0\u121b\u122d\u129b",
+            "country": "et"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ar",
+            "englishName": "Arabic",
+            "nativeName": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+            "country": "ae"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "an",
+            "englishName": "Aragonese",
+            "nativeName": "Aragon\u00e9s",
+            "country": "tw"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "hy",
+            "englishName": "Armenian",
+            "nativeName": "\u0540\u0561\u0575\u0565\u0580\u0565\u0576",
+            "country": "am"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "as",
+            "englishName": "Assamese",
+            "nativeName": "\u0985\u09b8\u09ae\u09c0\u09af\u09bc\u09be",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "av",
+            "englishName": "Avaric",
+            "nativeName": "\u0430\u0432\u0430\u0440 \u043c\u0430\u0446\u04c0, \u043c\u0430\u0433\u04c0\u0430\u0440\u0443\u043b \u043c\u0430\u0446\u04c0",
+            "country": "ru"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ae",
+            "englishName": "Avestan",
+            "nativeName": "avesta"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ay",
+            "englishName": "Aymara",
+            "nativeName": "aymar aru",
+            "country": "bo"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "az",
+            "englishName": "Azerbaijani",
+            "nativeName": "az\u0259rbaycan dili",
+            "country": "az"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bm",
+            "englishName": "Bambara",
+            "nativeName": "bamanankan",
+            "country": "ml"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ba",
+            "englishName": "Bashkir",
+            "nativeName": "\u0431\u0430\u0448\u04a1\u043e\u0440\u0442 \u0442\u0435\u043b\u0435",
+            "country": "om"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "eu",
+            "englishName": "Basque",
+            "nativeName": "euskara, euskera",
+            "country": "es"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "be",
+            "englishName": "Belarusian",
+            "nativeName": "\u0411\u0435\u043b\u0430\u0440\u0443\u0441\u043a\u0430\u044f",
+            "country": "by"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bn",
+            "englishName": "Bengali",
+            "nativeName": "\u09ac\u09be\u0982\u09b2\u09be",
+            "country": "bd"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bh",
+            "englishName": "Bihari",
+            "nativeName": "\u092d\u094b\u091c\u092a\u0941\u0930\u0940",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bi",
+            "englishName": "Bislama",
+            "nativeName": "Bislama",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bs",
+            "englishName": "Bosnian",
+            "nativeName": "bosanski jezik",
+            "country": "ba"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "br",
+            "englishName": "Breton",
+            "nativeName": "brezhoneg",
+            "country": "fr"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bg",
+            "englishName": "Bulgarian",
+            "nativeName": "\u0431\u044a\u043b\u0433\u0430\u0440\u0441\u043a\u0438 \u0435\u0437\u0438\u043a",
+            "country": "bg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "my",
+            "englishName": "Burmese",
+            "nativeName": "\u1017\u1019\u102c\u1005\u102c",
+            "country": "mm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ca",
+            "englishName": "Catalan; Valencian",
+            "nativeName": "Catal\u00e0",
+            "country": "ad"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ch",
+            "englishName": "Chamorro",
+            "nativeName": "Chamoru",
+            "country": "fm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ce",
+            "englishName": "Chechen",
+            "nativeName": "\u043d\u043e\u0445\u0447\u0438\u0439\u043d \u043c\u043e\u0442\u0442",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ny",
+            "englishName": "Chichewa; Chewa; Nyanja",
+            "nativeName": "chiChe\u0175a, chinyanja",
+            "country": "mw"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "zh",
+            "englishName": "Chinese",
+            "nativeName": "\u4e2d\u6587 (Zh\u014dngw\u00e9n), \u6c49\u8bed, \u6f22\u8a9e",
+            "country": "cn"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "cv",
+            "englishName": "Chuvash",
+            "nativeName": "\u0447\u04d1\u0432\u0430\u0448 \u0447\u04d7\u043b\u0445\u0438",
+            "country": "ru"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kw",
+            "englishName": "Cornish",
+            "nativeName": "Kernewek"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "co",
+            "englishName": "Corsican",
+            "nativeName": "corsu, lingua corsa",
+            "country": "fr"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "cr",
+            "englishName": "Cree",
+            "nativeName": "\u14c0\u1426\u1403\u152d\u140d\u140f\u1423"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "hr",
+            "englishName": "Croatian",
+            "nativeName": "hrvatski",
+            "country": "at"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "cs",
+            "englishName": "Czech",
+            "nativeName": "\u010desky, \u010de\u0161tina",
+            "country": "cz"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "da",
+            "englishName": "Danish",
+            "nativeName": "dansk",
+            "country": "dk"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "dv",
+            "englishName": "Divehi; Dhivehi; Maldivian;",
+            "nativeName": "\u078b\u07a8\u0788\u07ac\u0780\u07a8",
+            "country": "mv"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "nl",
+            "englishName": "Dutch",
+            "nativeName": "Nederlands, Vlaams",
+            "country": "aw"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "en",
+            "englishName": "English",
+            "nativeName": "English",
+            "country": "ae"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "eo",
+            "englishName": "Esperanto",
+            "nativeName": "Esperanto"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "et",
+            "englishName": "Estonian",
+            "nativeName": "eesti, eesti keel",
+            "country": "ee"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ee",
+            "englishName": "Ewe",
+            "nativeName": "E\u028begbe",
+            "country": "gh"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "fo",
+            "englishName": "Faroese",
+            "nativeName": "f\u00f8royskt",
+            "country": "dk"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "fj",
+            "englishName": "Fijian",
+            "nativeName": "vosa Vakaviti",
+            "country": "fj"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "fi",
+            "englishName": "Finnish",
+            "nativeName": "suomi, suomen kieli",
+            "country": "fi"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "fr",
+            "englishName": "French",
+            "nativeName": "fran\u00e7ais, langue fran\u00e7aise",
+            "country": "ar"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ff",
+            "englishName": "Fula; Fulah; Pulaar; Pular",
+            "nativeName": "Fulfulde, Pulaar, Pular",
+            "country": "gm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "gl",
+            "englishName": "Galician",
+            "nativeName": "Galego",
+            "country": "es"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ka",
+            "englishName": "Georgian",
+            "nativeName": "\u10e5\u10d0\u10e0\u10d7\u10e3\u10da\u10d8",
+            "country": "ge"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "de",
+            "englishName": "German",
+            "nativeName": "Deutsch",
+            "country": "ar"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "el",
+            "englishName": "Greek, Modern",
+            "nativeName": "\u0395\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac",
+            "country": "al"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "gn",
+            "englishName": "Guaran\u00ed",
+            "nativeName": "Ava\u00f1e\u1ebd",
+            "country": "ar"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "gu",
+            "englishName": "Gujarati",
+            "nativeName": "\u0a97\u0ac1\u0a9c\u0ab0\u0abe\u0aa4\u0ac0",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ht",
+            "englishName": "Haitian; Haitian Creole",
+            "nativeName": "Krey\u00f2l ayisyen",
+            "country": "ht"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ha",
+            "englishName": "Hausa",
+            "nativeName": "Hausa, \u0647\u064e\u0648\u064f\u0633\u064e",
+            "country": "ne"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "he",
+            "englishName": "Hebrew (modern)",
+            "nativeName": "\u05e2\u05d1\u05e8\u05d9\u05ea",
+            "country": "il"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "hz",
+            "englishName": "Herero",
+            "nativeName": "Otjiherero",
+            "country": "na"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "hi",
+            "englishName": "Hindi",
+            "nativeName": "\u0939\u093f\u0928\u094d\u0926\u0940, \u0939\u093f\u0902\u0926\u0940",
+            "country": "ae"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ho",
+            "englishName": "Hiri Motu",
+            "nativeName": "Hiri Motu",
+            "country": "mu"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "hu",
+            "englishName": "Hungarian",
+            "nativeName": "Magyar",
+            "country": "at"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ia",
+            "englishName": "Interlingua",
+            "nativeName": "Interlingua",
+            "country": "sd"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "id",
+            "englishName": "Indonesian",
+            "nativeName": "Bahasa Indonesia",
+            "country": "et"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ie",
+            "englishName": "Interlingue",
+            "nativeName": "Originally called Occidental; then Interlingue after WWII"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ga",
+            "englishName": "Irish",
+            "nativeName": "Gaeilge",
+            "country": "ie"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ig",
+            "englishName": "Igbo",
+            "nativeName": "As\u1ee5s\u1ee5 Igbo",
+            "country": "er"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ik",
+            "englishName": "Inupiaq",
+            "nativeName": "I\u00f1upiaq, I\u00f1upiatun",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "io",
+            "englishName": "Ido",
+            "nativeName": "Ido"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "is",
+            "englishName": "Icelandic",
+            "nativeName": "\u00cdslenska",
+            "country": "is"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "it",
+            "englishName": "Italian",
+            "nativeName": "Italiano",
+            "country": "ar"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "iu",
+            "englishName": "Inuktitut",
+            "nativeName": "\u1403\u14c4\u1483\u144e\u1450\u1466",
+            "country": "ca"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ja",
+            "englishName": "Japanese",
+            "nativeName": "\u65e5\u672c\u8a9e (\u306b\u307b\u3093\u3054\uff0f\u306b\u3063\u307d\u3093\u3054)",
+            "country": "jp"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "jv",
+            "englishName": "Javanese",
+            "nativeName": "basa Jawa",
+            "country": "id"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kl",
+            "englishName": "Kalaallisut, Greenlandic",
+            "nativeName": "kalaallisut, kalaallit oqaasii",
+            "country": "gl"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kn",
+            "englishName": "Kannada",
+            "nativeName": "\u0c95\u0ca8\u0ccd\u0ca8\u0ca1",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kr",
+            "englishName": "Kanuri",
+            "nativeName": "Kanuri",
+            "country": "fm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ks",
+            "englishName": "Kashmiri",
+            "nativeName": "\u0915\u0936\u094d\u092e\u0940\u0930\u0940, \u0643\u0634\u0645\u064a\u0631\u064a\u200e",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kk",
+            "englishName": "Kazakh",
+            "nativeName": "\u049a\u0430\u0437\u0430\u049b \u0442\u0456\u043b\u0456",
+            "country": "kz"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "km",
+            "englishName": "Khmer",
+            "nativeName": "\u1797\u17b6\u179f\u17b6\u1781\u17d2\u1798\u17c2\u179a",
+            "country": "kh"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ki",
+            "englishName": "Kikuyu, Gikuyu",
+            "nativeName": "G\u0129k\u0169y\u0169"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "rw",
+            "englishName": "Kinyarwanda",
+            "nativeName": "Ikinyarwanda",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ky",
+            "englishName": "Kirghiz, Kyrgyz",
+            "nativeName": "\u043a\u044b\u0440\u0433\u044b\u0437 \u0442\u0438\u043b\u0438",
+            "country": "kg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kv",
+            "englishName": "Komi",
+            "nativeName": "\u043a\u043e\u043c\u0438 \u043a\u044b\u0432",
+            "country": "ru"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kg",
+            "englishName": "Kongo",
+            "nativeName": "KiKongo",
+            "country": "cd"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ko",
+            "englishName": "Korean",
+            "nativeName": "\ud55c\uad6d\uc5b4 (\u97d3\u570b\u8a9e), \uc870\uc120\ub9d0 (\u671d\u9bae\u8a9e)",
+            "country": "fm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ku",
+            "englishName": "Kurdish",
+            "nativeName": "Kurd\u00ee, \u0643\u0648\u0631\u062f\u06cc\u200e",
+            "country": "er"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "kj",
+            "englishName": "Kwanyama, Kuanyama",
+            "nativeName": "Kuanyama"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "la",
+            "englishName": "Latin",
+            "nativeName": "latine, lingua latina",
+            "country": "va"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "lb",
+            "englishName": "Luxembourgish, Letzeburgesch",
+            "nativeName": "L\u00ebtzebuergesch",
+            "country": "lu"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "lg",
+            "englishName": "Luganda",
+            "nativeName": "Luganda",
+            "country": "ug"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "li",
+            "englishName": "Limburgish, Limburgan, Limburger",
+            "nativeName": "Limburgs",
+            "country": "fm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ln",
+            "englishName": "Lingala",
+            "nativeName": "Ling\u00e1la",
+            "country": "cd"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "lo",
+            "englishName": "Lao",
+            "nativeName": "\u0e9e\u0eb2\u0eaa\u0eb2\u0ea5\u0eb2\u0ea7",
+            "country": "la"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "lt",
+            "englishName": "Lithuanian",
+            "nativeName": "lietuvi\u0173 kalba",
+            "country": "lt"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "lu",
+            "englishName": "Luba-Katanga",
+            "nativeName": "",
+            "country": "cd"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "lv",
+            "englishName": "Latvian",
+            "nativeName": "latvie\u0161u valoda",
+            "country": "lv"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "gv",
+            "englishName": "Manx",
+            "nativeName": "Gaelg, Gailck",
+            "country": "im"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mk",
+            "englishName": "Macedonian",
+            "nativeName": "\u043c\u0430\u043a\u0435\u0434\u043e\u043d\u0441\u043a\u0438 \u0458\u0430\u0437\u0438\u043a",
+            "country": "mk"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mg",
+            "englishName": "Malagasy",
+            "nativeName": "Malagasy fiteny",
+            "country": "mg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ms",
+            "englishName": "Malay",
+            "nativeName": "bahasa Melayu, \u0628\u0647\u0627\u0633 \u0645\u0644\u0627\u064a\u0648\u200e",
+            "country": "bn"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ml",
+            "englishName": "Malayalam",
+            "nativeName": "\u0d2e\u0d32\u0d2f\u0d3e\u0d33\u0d02",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mt",
+            "englishName": "Maltese",
+            "nativeName": "Malti",
+            "country": "mt"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mi",
+            "englishName": "M\u0101ori",
+            "nativeName": "te reo M\u0101ori",
+            "country": "ck"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mr",
+            "englishName": "Marathi (Mar\u0101\u1e6dh\u012b)",
+            "nativeName": "\u092e\u0930\u093e\u0920\u0940",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mh",
+            "englishName": "Marshallese",
+            "nativeName": "Kajin M\u0327aje\u013c",
+            "country": "mh"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "mn",
+            "englishName": "Mongolian",
+            "nativeName": "\u043c\u043e\u043d\u0433\u043e\u043b",
+            "country": "fi"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "na",
+            "englishName": "Nauru",
+            "nativeName": "Ekakair\u0169 Naoero",
+            "country": "na"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "nv",
+            "englishName": "Navajo, Navaho",
+            "nativeName": "Din\u00e9 bizaad, Din\u00e9k\u02bceh\u01f0\u00ed"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "nb",
+            "englishName": "Norwegian Bokm\u00e5l",
+            "nativeName": "Norsk bokm\u00e5l",
+            "country": "no"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "nd",
+            "englishName": "North Ndebele",
+            "nativeName": "isiNdebele",
+            "country": "zw"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ne",
+            "englishName": "Nepali",
+            "nativeName": "\u0928\u0947\u092a\u093e\u0932\u0940",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ng",
+            "englishName": "Ndonga",
+            "nativeName": "Owambo"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "nn",
+            "englishName": "Norwegian Nynorsk",
+            "nativeName": "Norsk nynorsk",
+            "country": "no"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "no",
+            "englishName": "Norwegian",
+            "nativeName": "Norsk",
+            "country": "is"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ii",
+            "englishName": "Nuosu",
+            "nativeName": "\ua188\ua320\ua4bf Nuosuhxop"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "nr",
+            "englishName": "South Ndebele",
+            "nativeName": "isiNdebele",
+            "country": "gg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "oc",
+            "englishName": "Occitan",
+            "nativeName": "Occitan",
+            "country": "es"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "oj",
+            "englishName": "Ojibwe, Ojibwa",
+            "nativeName": "\u140a\u14c2\u1511\u14c8\u142f\u14a7\u140e\u14d0"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "cu",
+            "englishName": "Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic",
+            "nativeName": "\u0469\u0437\u044b\u043a\u044a \u0441\u043b\u043e\u0432\u0463\u043d\u044c\u0441\u043a\u044a"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "om",
+            "englishName": "Oromo",
+            "nativeName": "Afaan Oromoo",
+            "country": "bg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "or",
+            "englishName": "Oriya",
+            "nativeName": "\u0b13\u0b21\u0b3c\u0b3f\u0b06",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "os",
+            "englishName": "Ossetian, Ossetic",
+            "nativeName": "\u0438\u0440\u043e\u043d \u00e6\u0432\u0437\u0430\u0433",
+            "country": "bf"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "pa",
+            "englishName": "Panjabi, Punjabi",
+            "nativeName": "\u0a2a\u0a70\u0a1c\u0a3e\u0a2c\u0a40, \u067e\u0646\u062c\u0627\u0628\u06cc\u200e",
+            "country": "aw"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "pi",
+            "englishName": "P\u0101li",
+            "nativeName": "\u092a\u093e\u0934\u093f",
+            "country": "pg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "fa",
+            "englishName": "Persian",
+            "nativeName": "\u0641\u0627\u0631\u0633\u06cc",
+            "country": "ae"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "pl",
+            "englishName": "Polish",
+            "nativeName": "polski",
+            "country": "lt"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ps",
+            "englishName": "Pashto, Pushto",
+            "nativeName": "\u067e\u069a\u062a\u0648",
+            "country": "af"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "pt",
+            "englishName": "Portuguese",
+            "nativeName": "Portugu\u00eas",
+            "country": "ao"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "qu",
+            "englishName": "Quechua",
+            "nativeName": "Runa Simi, Kichwa",
+            "country": "bo"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "rm",
+            "englishName": "Romansh",
+            "nativeName": "rumantsch grischun",
+            "country": "ch"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "rn",
+            "englishName": "Kirundi",
+            "nativeName": "kiRundi",
+            "country": "bi"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ro",
+            "englishName": "Romanian, Moldavian, Moldovan",
+            "nativeName": "rom\u00e2n\u0103",
+            "country": "bg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ru",
+            "englishName": "Russian",
+            "nativeName": "\u0440\u0443\u0441\u0441\u043a\u0438\u0439 \u044f\u0437\u044b\u043a",
+            "country": "az"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sa",
+            "englishName": "Sanskrit (Sa\u1e41sk\u1e5bta)",
+            "nativeName": "\u0938\u0902\u0938\u094d\u0915\u0943\u0924\u092e\u094d",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sc",
+            "englishName": "Sardinian",
+            "nativeName": "sardu",
+            "country": "it"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sd",
+            "englishName": "Sindhi",
+            "nativeName": "\u0938\u093f\u0928\u094d\u0927\u0940, \u0633\u0646\u068c\u064a\u060c \u0633\u0646\u062f\u06be\u06cc\u200e",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "se",
+            "englishName": "Northern Sami",
+            "nativeName": "Davvis\u00e1megiella",
+            "country": "no"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sm",
+            "englishName": "Samoan",
+            "nativeName": "gagana faa Samoa",
+            "country": "as"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sg",
+            "englishName": "Sango",
+            "nativeName": "y\u00e2ng\u00e2 t\u00ee s\u00e4ng\u00f6",
+            "country": "cf"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sr",
+            "englishName": "Serbian",
+            "nativeName": "\u0441\u0440\u043f\u0441\u043a\u0438 \u0458\u0435\u0437\u0438\u043a",
+            "country": "ba"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "gd",
+            "englishName": "Scottish Gaelic; Gaelic",
+            "nativeName": "G\u00e0idhlig",
+            "country": "gb"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sn",
+            "englishName": "Shona",
+            "nativeName": "chiShona",
+            "country": "mr"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "si",
+            "englishName": "Sinhala, Sinhalese",
+            "nativeName": "\u0dc3\u0dd2\u0d82\u0dc4\u0dbd",
+            "country": "et"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sk",
+            "englishName": "Slovak",
+            "nativeName": "sloven\u010dina",
+            "country": "cz"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sl",
+            "englishName": "Slovene",
+            "nativeName": "sloven\u0161\u010dina",
+            "country": "at"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "so",
+            "englishName": "Somali",
+            "nativeName": "Soomaaliga, af Soomaali",
+            "country": "dj"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "st",
+            "englishName": "Southern Sotho",
+            "nativeName": "Sesotho",
+            "country": "ls"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "es",
+            "englishName": "Spanish; Castilian",
+            "nativeName": "espa\u00f1ol, castellano",
+            "country": "ar"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "su",
+            "englishName": "Sundanese",
+            "nativeName": "Basa Sunda"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sw",
+            "englishName": "Swahili",
+            "nativeName": "Kiswahili",
+            "country": "cd"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ss",
+            "englishName": "Swati",
+            "nativeName": "SiSwati",
+            "country": "sz"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "sv",
+            "englishName": "Swedish",
+            "nativeName": "svenska",
+            "country": "ax"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ta",
+            "englishName": "Tamil",
+            "nativeName": "\u0ba4\u0bae\u0bbf\u0bb4\u0bcd",
+            "country": "cn"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "te",
+            "englishName": "Telugu",
+            "nativeName": "\u0c24\u0c46\u0c32\u0c41\u0c17\u0c41",
+            "country": "in"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tg",
+            "englishName": "Tajik",
+            "nativeName": "\u0442\u043e\u04b7\u0438\u043a\u04e3, to\u011fik\u012b, \u062a\u0627\u062c\u06cc\u06a9\u06cc\u200e",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "th",
+            "englishName": "Thai",
+            "nativeName": "\u0e44\u0e17\u0e22",
+            "country": "my"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ti",
+            "englishName": "Tigrinya",
+            "nativeName": "\u1275\u130d\u122d\u129b",
+            "country": "er"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "bo",
+            "englishName": "Tibetan Standard, Tibetan, Central",
+            "nativeName": "\u0f56\u0f7c\u0f51\u0f0b\u0f61\u0f72\u0f42"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tk",
+            "englishName": "Turkmen",
+            "nativeName": "T\u00fcrkmen, \u0422\u04af\u0440\u043a\u043c\u0435\u043d",
+            "country": "af"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tl",
+            "englishName": "Tagalog",
+            "nativeName": "Wikang Tagalog, \u170f\u1712\u1703\u1705\u1714 \u1706\u1704\u170e\u1713\u1704\u1714",
+            "country": "mp"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tn",
+            "englishName": "Tswana",
+            "nativeName": "Setswana",
+            "country": "bw"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "to",
+            "englishName": "Tonga (Tonga Islands)",
+            "nativeName": "faka Tonga",
+            "country": "as"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tr",
+            "englishName": "Turkish",
+            "nativeName": "T\u00fcrk\u00e7e",
+            "country": "bg"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ts",
+            "englishName": "Tsonga",
+            "nativeName": "Xitsonga",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tt",
+            "englishName": "Tatar",
+            "nativeName": "\u0442\u0430\u0442\u0430\u0440\u0447\u0430, tatar\u00e7a, \u062a\u0627\u062a\u0627\u0631\u0686\u0627\u200e",
+            "country": "ru"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "tw",
+            "englishName": "Twi",
+            "nativeName": "Twi",
+            "country": "gh"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ty",
+            "englishName": "Tahitian",
+            "nativeName": "Reo Tahiti",
+            "country": "pf"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ug",
+            "englishName": "Uighur, Uyghur",
+            "nativeName": "Uy\u01a3urq\u0259, \u0626\u06c7\u064a\u063a\u06c7\u0631\u0686\u06d5\u200e",
+            "country": "cn"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "uk",
+            "englishName": "Ukrainian",
+            "nativeName": "\u0443\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",
+            "country": "ua"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ur",
+            "englishName": "Urdu",
+            "nativeName": "\u0627\u0631\u062f\u0648",
+            "country": "ae"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "uz",
+            "englishName": "Uzbek",
+            "nativeName": "zbek, \u040e\u0437\u0431\u0435\u043a, \u0623\u06c7\u0632\u0628\u06d0\u0643\u200e",
+            "country": "af"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "ve",
+            "englishName": "Venda",
+            "nativeName": "Tshiven\u1e13a",
+            "country": "za"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "vi",
+            "englishName": "Vietnamese",
+            "nativeName": "Ti\u1ebfng Vi\u1ec7t",
+            "country": "vn"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "vo",
+            "englishName": "Volap\u00fck",
+            "nativeName": "Volap\u00fck"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "wa",
+            "englishName": "Walloon",
+            "nativeName": "Walon",
+            "country": "ph"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "cy",
+            "englishName": "Welsh",
+            "nativeName": "Cymraeg",
+            "country": "gb"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "wo",
+            "englishName": "Wolof",
+            "nativeName": "Wollof",
+            "country": "fm"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "fy",
+            "englishName": "Western Frisian",
+            "nativeName": "Frysk",
+            "country": "nl"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "xh",
+            "englishName": "Xhosa",
+            "nativeName": "isiXhosa",
+            "country": "ls"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "yi",
+            "englishName": "Yiddish",
+            "nativeName": "\u05d9\u05d9\u05b4\u05d3\u05d9\u05e9"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "yo",
+            "englishName": "Yoruba",
+            "nativeName": "Yor\u00f9b\u00e1",
+            "country": "ng"
+        }
+    },
+    {
+        "model": "accounts.languages",
+        "fields": {
+            "isoCode": "za",
+            "englishName": "Zhuang, Chuang",
+            "nativeName": "Sa\u026f cue\u014b\u0185, Saw cuengh",
+            "country": "cn"
+        }
+    }
+]

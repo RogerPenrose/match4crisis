@@ -390,9 +390,11 @@ def preferences(request):
     elif(user.isOrganisation):
         userTypeClass = Organisation
         userTypeForm = OrganisationPreferencesForm
-    else:
+    elif(user.isHelper):
         userTypeClass = Helper
         userTypeForm = HelperPreferencesForm
+    else: 
+        return HttpResponse("Unknown user type")
 
     specificAccount = userTypeClass.objects.get(user=user)
     if user.is_authenticated and user.is_active:
@@ -404,7 +406,7 @@ def preferences(request):
             if comPrefForm.is_valid() and specPrefForm.is_valid():
                 user = comPrefForm.save()
                 specificAccount = specPrefForm.save()
-                return HttpResponseRedirect("/accounts/preferences")
+                return login_redirect(request)
         else:
             comPrefForm = CommonPreferencesForm(instance=user)
             specPrefForm = userTypeForm(instance = specificAccount)
