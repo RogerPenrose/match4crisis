@@ -249,7 +249,7 @@ formBody = formBody.join("&");
                   {% if entry.image.url|length > 0 %}
                   <div class="background-photo" style="background-image: url({{ entry.image.url }})"></div>
                   {% else %}
-                    <div class="background-photo" style=" padding: 0 0 0 0"><img src="/offers/translation/de_ua" style="height:100%; width:100%"></img></div>
+                    <div class="background-photo" style=" padding: 0 0 0 0"><img src="/offers/translation/{{entry.offer.firstLanguage.country}}_{{entry.offer.secondLanguage.country}}" style="height:100%; width:100%"></img></div>
                   {%endif%}
                   </div>
                 <div class="description col-7 col-sm-8">

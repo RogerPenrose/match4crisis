@@ -51,6 +51,7 @@ class Languages(models.Model):
     isoCode = models.CharField(max_length=2, primary_key=True)
     englishName = models.CharField(max_length=128)
     nativeName = models.CharField(max_length=128)
+    country = models.CharField(max_length=2)
 
     def __str__(self) -> str:
         return "%s (%s)" % (self.englishName, self.nativeName)
