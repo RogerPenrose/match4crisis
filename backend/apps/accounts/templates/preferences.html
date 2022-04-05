@@ -11,12 +11,12 @@
 {% block content %}
 <div class="container">
     <div class="row" style="margin-top:30px; margin-bottom:55px;">
-               <div class="col-lg-10 col-sm-12 col-12">
-
+        <div class="col-lg-10 col-sm-12 col-12">
+            <form action="{% url 'preferences' %}" class="blueForms" method="post">
                 {% csrf_token %}
-               {% crispy comPrefForm comPrefForm.helper %}
-               {% crispy specPrefForm specPrefForm.helper %}
-
+                {% crispy comPrefForm comPrefForm.helper %}
+                {% crispy specPrefForm specPrefForm.helper %}
+            </form>
         </div>
    </div>
 </div>
