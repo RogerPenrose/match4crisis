@@ -111,7 +111,7 @@ navigator.share({
       
     <form action="/offers/{{id}}/update" method="post" enctype="multipart/form-data">
       <div name="invisible" style="display:none">{{ generic.offerType }} {{generic.postCode }} {{generic.country }}</div>
-        <p> <div name="non_edit"> {% if images.0.url|length > 0 %}
+       {% if generic.offerType.value != "TL" %} <p> <div name="non_edit"> {% if images.0.url|length > 0 %}
            <img src="{{ images.0.url }}">
             {% else %}
             <img src="{% static 'img/offers/no-acc-img.jpg' %}">
@@ -122,7 +122,7 @@ navigator.share({
           <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
           <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
         </svg></button></p>
-        {% endfor %}{{ imageForm }}</div></div>
+        {% endfor %}{{ imageForm }}</div>{% else%} <p> <div name="non_edit"><img src="/offers/translation/{{firstLanguage}}_{{secondLanguage}}"></div></p>{%endif%}</div>
             <div class="col-sm-12 col-lg-8 description">
               
       {% csrf_token %}

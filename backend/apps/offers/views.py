@@ -644,7 +644,7 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return {'offerType': "Translation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Translation",'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationOffer(model_to_dict(detail))
@@ -675,6 +675,7 @@ def getOfferDetails(request, offer_id):
         return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False):
+    logger.warning("Getting offer:"+str(offer_id))
     context = getOfferDetails(request, offer_id)
     if edit_active:
         context["edit_active"] = edit_active
