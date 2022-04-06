@@ -76,13 +76,7 @@ urlpatterns = [
     path("preferences", views.preferences, name="preferences"),
     #path("profile_helper", views.edit_helper_profile, name="edit_helper_profile"),
     #path("profile_organisation", views.edit_organisation_profile, name="edit_organisation_profile"),
-    #path("approve_organisations", views.approve_organisations, name="approve_organisations"),
-    # path(
-    #     "change_organisation_approval/<str:uuid>/",
-    #     views.change_organisation_approval,
-    #     name="change_organisation_approval",
-    # ),
-    path("delete_organisation/<str:uuid>/", views.delete_organisation, name="delete_organisationl"),
+
     #path("count", views.UserCountView.as_view(), name="count"),
     path("change_activation", views.change_activation_ask, name="activate_helper_ask"),
     path("change_activation_confirm", views.change_activation, name="activate_helper"),
@@ -90,6 +84,5 @@ urlpatterns = [
     #path("new_newsletter", views.new_newsletter, name="new_newsletter"),
     #path("list_newsletter", views.list_newsletter, name="list_newsletter"),
     #path("did_see_newsletter/<uuid>/<token>", views.did_see_newsletter, name="did_see_newsletter"),
-    path("profile_staff", views.staff_profile, name="staff_profile"),
     path("i18n/", include("django.conf.urls.i18n")),
 ]

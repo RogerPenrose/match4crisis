@@ -29,6 +29,7 @@ urlpatterns = [
     path("ineedhelp/", include("apps.ineedhelp.urls")),
     path("iofferhelp/", include("apps.iofferhelp.urls")),
     path("iamorganisation/", include("apps.iamorganisation.urls")),
+    path("staff/", include("apps.staff.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("use_statistics/", include("apps.use_statistics.urls")),
     path("offers/", include("apps.offers.urls")),

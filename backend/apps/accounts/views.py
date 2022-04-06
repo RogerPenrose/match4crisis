@@ -1,7 +1,6 @@
 import logging
 
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
@@ -10,7 +9,6 @@ from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
-from django.utils.text import format_lazy
 from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
@@ -30,18 +28,11 @@ from apps.iamorganisation.forms import (
 from apps.iamorganisation.models import Organisation
 from apps.ineedhelp.models import Refugee
 from apps.offers.models import GenericOffer, OFFER_MODELS
-#from apps.iamorganisation.views import ApprovalOrganisationTable
 
 from .decorator import organisationRequired, helperRequired
 from .models import User
 
 logger = logging.getLogger(__name__)
-
-
-@login_required
-@staff_member_required
-def staff_profile(request):
-    return render(request, "staff_profile.html", {})
 
 
 def signup_refugee(request):
@@ -155,7 +146,7 @@ def login_redirect(request):
         return HttpResponseRedirect("/iamorganisation/organisation_dashboard")
 
     elif user.is_staff:
-        return HttpResponseRedirect("approve_organisations")
+        return HttpResponseRedirect("/staff/staff_dashboard")
 
     else:
         # TODO: throw 404  # noqa: T003
@@ -213,63 +204,6 @@ def edit_organisation_profile(request):
         form = OrganisationFormEditProfile(instance=organisation, prefix="infos")
 
     return render(request, "organisation_edit.html", {"form": form})"""
-
-"""
-@login_required
-@staff_member_required
-def approve_organisations(request):
-    table_approved = ApprovalOrganisationTable(Organisation.objects.filter(is_approved=True))
-    table_approved.prefix = "approved"
-    table_approved.paginate(page=request.GET.get(table_approved.prefix + "page", 1), per_page=5)
-
-    table_unapproved = ApprovalOrganisationTable(Organisation.objects.filter(is_approved=False))
-    table_unapproved.prefix = "unapproved"
-    table_unapproved.paginate(page=request.GET.get(table_unapproved.prefix + "page", 1), per_page=5)
-
-    return render(
-        request,
-        "approve_organisations.html",
-        {"table_approved": table_approved, "table_unapproved": table_unapproved},
-    )
-
-
-@login_required
-@staff_member_required
-def change_organisation_approval(request, uuid):
-
-    h = Organisation.objects.get(uuid=uuid)
-    logger.info(
-        "Set Organisation %s approval to %s", uuid, (not h.is_approved), extra={"request": request},
-    )
-
-    if not h.is_approved:
-        h.is_approved = True
-        h.approval_date = timezone.now()
-        h.approved_by = request.user
-    else:
-        h.is_approved = False
-        h.approval_date = None
-        h.approved_by = None
-    h.save()
-
-    if h.is_approved:
-        send_mails_for(h)
-
-    return HttpResponseRedirect("/accounts/approve_organisations")
-"""
-
-@login_required
-@staff_member_required
-def delete_organisation(request, uuid):
-    h = Organisation.objects.get(uuid=uuid)
-    logger.info(
-        "Delete Organisation %s by %s", uuid, request.user, extra={"request": request},
-    )
-    name = h.user
-    h.delete()
-    text = format_lazy(_("Du hast die Institution mit user '{name}' gelöscht."), name=name)
-    messages.add_message(request, messages.INFO, text)
-    return HttpResponseRedirect("/accounts/approve_organisations")
 
 
 @login_required
