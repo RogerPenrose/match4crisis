@@ -308,14 +308,19 @@ def by_type(request, offer_type):
 def filter(request):
     N_ENTRIES = 5
     pageCount = int(request.POST.get("page", 0))
-    logger.warning("Pagecount: "+str(pageCount))
     logger.warning(str(request.POST))
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
     ids = []
     currentFilter = {}
+    categoryCounter = 1
     for key in request.POST:
-        currentFilter[key] = request.POST.get(key)
+        if "Visible" in key:
+            categoryCounter = categoryCounter +1 
+    if not currentFilter:
+        categoryCounter = 10
+    N_ENTRIES = int(50 / categoryCounter)
+    logger.warning("N_ENTRIES: "+str(N_ENTRIES))
     childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter())
     childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
     
@@ -363,6 +368,7 @@ def filter(request):
         numEntries += len(translation.qs)
     if request.POST.get("accommodationVisible", "0") == "1" or not currentFilter:
         numEntries += len(accommodation.qs)
+    logger.warning("NumEntries: "+str(numEntries))
     maxPage = int(numEntries/(N_ENTRIES*len(context["entries"].keys())))
     if not currentFilter:
         context["currentFilter"] = {"childShortVisible": "1","childLongVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
