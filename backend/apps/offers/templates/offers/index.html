@@ -20,40 +20,39 @@
     document.searchForm.submit()
   }
     {% if currentFilter %}
-  function search_with_current_filter(target){
-    var page = {{ page }}
-    var data = {{ currentFilter|safe}}
-    data.show_list = "True"
-    var csrfmiddlewaretoken = '{{ csrf_token }}'
-    if (target == "+1")
-      data.page = page
-    else data.page = page -2 
-    data.show_list = "True"
-    var xhr = new XMLHttpRequest();
-  xhr.open("POST", "handle_filter", true);
-  xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
-xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-var formBody = [];
-for (var property in data) {
-  var encodedKey = encodeURIComponent(property);
-  var encodedValue = encodeURIComponent(data[property]);
-  formBody.push(encodedKey + "=" + encodedValue);
-}
-formBody = formBody.join("&");
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-        console.log('you should be redirected or render a new page: '+JSON.stringify(xhr.response))
-        document.open();
-    document.write(xhr.responseText);
-    document.close();
-
-    } else {
-        // Handle error
-    }
-}
-    console.log("sending: "+JSON.stringify(data))
-  xhr.send(formBody);
+    function search_with_current_filter(target){
+      var page = {{ page }}
+      var data = {{ currentFilter|safe}}
+      data.show_list = "True"
+      var csrfmiddlewaretoken = '{{ csrf_token }}'
+      if (target == "+1")
+        data.page = page+1
+      else data.page = page -2 
+      data.show_list = "True"
+      var xhr = new XMLHttpRequest();
+    xhr.open("POST", "handle_filter", true);
+    xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  var formBody = [];
+  for (var property in data) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(data[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
   }
+  formBody = formBody.join("&");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+          document.open();
+      document.write(xhr.responseText);
+      document.close();
+  
+      } else {
+          // Handle error
+      }
+  }
+      console.log("sending: "+JSON.stringify(data))
+    xhr.send(formBody);
+    }
   {% endif %}
 </script>
 <div class="container">
@@ -115,65 +114,45 @@ formBody = formBody.join("&");
             </button>
           </div>
           <div class="modal-body">
-            <div style="display:{%if AccommodationOffers|length > 0 %} block {% else %} none {%endif%}">
-            <p ><input type="checkbox" value="True" name="accommodation" id="accommodation_hidden"{%if AccommodationOffers|length > 0 %} checked {%endif%}></input><label for="accommodation_hidden">{%blocktrans %}Show Accommodation Offers{% endblocktrans %}</label></p>
-          <p><label for="accommodation_numberOfAdults__gte">{%blocktrans %}How Many Adults{% endblocktrans %}</label><input type="number"name="accommodation_numberOfAdults__gte" id="accommodation_numberOfAdults__gte" min="1"></input></p> 
-          <p><label for="accommodation_numberOfChildren__gte">{%blocktrans %}How many Children{% endblocktrans %}</label><input type="number" name="accommodation_numberOfChildren__gte"id="accommodation_numberOfChildren__gte"></input></p> 
-          <p><label for="accommodation_numberOfPets__gte">{%blocktrans %}How many Pets{% endblocktrans %}</label><input type="number" name="accommodation_numberOfPets__gte"id="accommodation_numberOfPets__gte"></input></p> 
-          <p><label for="accommodation_typeOfResidence">{%blocktrans %}Type of residence{% endblocktrans %}</label><select  name="accommodation_typeOfResidence"id="accommodation_typeOfResidence"><option value="">All</option><option value='"SO"'>Sofa / Bed</option><option value='"RO"'>Private Room</option><option value='"HO"'>Whole Flat / House</option></select></p> 
-          
-          <p><label for="accommodation_genericOffer__cost__lte">{%blocktrans %}Maximum Cost{% endblocktrans %}</label><input type="number" id="accommodation_genericOffer__cost__lte" name="accommodation_genericOffer__cost__lte"  min="0" step="0.01"></input></p>
-            <hr></div>
-          <div style="display:{%if TransportationOffers|length > 0 %} block {% else %} none {%endif%}">
-            <p ><input type="checkbox" value="True" name="transportation" id="transportation_hidden"{%if TransportationOffers|length > 0 %} checked {%endif%}></input><label for="transportation_hidden">{%blocktrans %}Show Transportation Offers{% endblocktrans %}</label></p>
-            <p><label for="transportation_numberOfPassengers__gte">{%blocktrans %}Number of Passengers{% endblocktrans %}</label><input type="number" name="transportation_numberOfPassengers" id="transportation_numberOfPassengers" min="1"></input></p>  
-            <p><label for="transportation_genericOffer__cost__lte">{%blocktrans %}Maximum Cost{% endblocktrans %}</label><input type="number" name="transportation_genericOffer__cost__lte"id="transportation_genericOffer__cost__lte" min="0" step="0.01"></input></p>
-            <p><label for="transportation_postCodeEnd">{%blocktrans %}Target Postcode{% endblocktrans %}</label><input type="text" name="transportation_postCodeEnd"id="transportation_postCodeEnd"></input></p>
-            <p><label for="transportation_genericOffer__postCode">{%blocktrans %}Start Postcode{% endblocktrans %}</label><input type="text" name="transportation_genericOffer__postCode" id="transportation_genericOffer__postCode"></input></p>
-            
-            <hr></div>
-            <div style="display:{%if TranslationOffers|length > 0 %} block {% else %} none {%endif%}">
-            <p ><input type="checkbox" value="True" name="translation" id="translation_hidden"{%if TranslationOffers|length > 0 %} checked {%endif%}></input><label for="translation_hidden">{%blocktrans %}Show Translation Offers{% endblocktrans %}</label></p>
-          
-            <p><label for="translation_genericOffer__cost__lte">{%blocktrans %}Maximum Cost{% endblocktrans %}</label><input type="number" name="translation_genericOffer__cost__lte" id="translation_genericOffer__cost__lte" min="0" step="0.01"></input></p>
-            <p><label for="translation_firstLanguage">{%blocktrans %}Translate from{% endblocktrans %}</label><input type="text" name="translation_firstLanguage" id="translation_firstLanguage"></input></p>
-            <p><label for="translation_secondLanguage">{%blocktrans %}Translate To{% endblocktrans %}</label><input type="text"name="translation_secondLanguage" id="translation_secondLanguage"></input></p>
-            <hr>
-          </div><div style="display:{%if BuerocraticOffers|length > 0 %} block {% else %} none {%endif%}">
-          <p ><input type="checkbox" value="True" name="buerocratic" id="buerocratic_hidden"{%if BuerocraticOffers|length > 0 %} checked {%endif%}></input><label for="buerocratic_hidden">{%blocktrans %}Show Buerocratic Aidoffers{% endblocktrans %}</label></p>
-          <p><label for="buerocratic_helpType">{%blocktrans %}Type of Help{% endblocktrans %}</label><select  name="buerocratic_helpType"id="buerocratic_helpType"><option value="">All</option><option value='"AM"'>Accompaniment</option><option value='"LE"'>Legal</option><option value='"OT"'>Other</option></select></p> 
-          
-          <hr>
-            </div><div style="display:{%if ManpowerOffers|length > 0 %} block {% else %} none {%endif%}">
-              <p ><input type="checkbox" value="True" name="manpower" id="manpower_hidden"{%if BuerocraticOffers|length > 0 %} checked {%endif%}></input><label for="manpower_hidden">{%blocktrans %}Show Manpower Offers{% endblocktrans %}</label></p>
-              <p><label for="manpower_helptype">{%blocktrans %}Type of Help{% endblocktrans %}</label><select  name="manpower_helptype"id="manpower_helpType"><option value="">All</option><option value='"ON"'>Online</option><option value='"OS"'>On-site / In Person</option><option value='"OT"'>Other</option></select></p> 
-              
-              <hr>
-                </div><div style="display:{%if ChildcareOffersLongterm|length > 0 %} block {% else %} none {%endif%}">
-                  <p ><input type="checkbox" value="True" name="childcarelongterm" id="childcarelongterm_hidden"{%if ChildcareOffersLongterm|length > 0 %} checked {%endif%}></input><label for="childcarelongterm_hidden">{%blocktrans %}Show Longterm Childcare Offers{% endblocktrans %}</label></p>
-                  <p><label for="childcarelongterm_gender">{%blocktrans %}Preferred Gender{% endblocktrans %}</label><select  name="childcarelongterm_gender"id="childcarelongterm_gender"><option value="">All</option><option value='"MA"'>Male</option><option value='"FE"'>Female</option></select></p> 
-                  
-                  <hr>
-                  </div><div style="display:{%if ChildcareOffersShortterm|length > 0 %} block {% else %} none {%endif%}">
-                    <p ><input type="checkbox" value="True" name="childcareshortterm" id="childcareshortterm_hidden"{%if ChildcareOffersShortterm|length > 0 %} checked {%endif%}></input><label for="childcareshortterm_hidden">{%blocktrans %}Show Shortterm Childcare Offers{% endblocktrans %}</label></p>
-                    <p><label for="childcareshortterm_gender">{%blocktrans %}Preferred Gender{% endblocktrans %}</label><select  name="childcareshortterm_gender"id="childcareshortterm_gender"><option value="">All</option><option value='"MA"'>Male</option><option value='"FE"'>Female</option></select></p> 
-                    <p><label for="childcareshortterm_numberOfChildrenToCare__gte">{%blocktrans %}How many Children{% endblocktrans %}</label><input type="number" name="childcareshortterm_numberOfChildrenToCare__gte"id="childcareshortterm_numberOfChildrenToCare__gte"></input></p> 
-                    <p><label for="childcareshortterm_isRegular">{%blocktrans %}Regular Occurence{% endblocktrans %}</label><input type="checkbox" name="childcareshortterm_isRegular"id="childcareshortterm_isRegular"></input></p> 
-          
-                    <hr>
-                    </div><div style="display:{%if WelfareOffers|length > 0 %} block {% else %} none {%endif%}">
-                      <p ><input type="checkbox" value="True" name="welfare" id="welfare_hidden"{%if WelfareOffers|length > 0 %} checked {%endif%}></input><label for="welfare_hidden">{%blocktrans %}Show Medical Assistance Offers{% endblocktrans %}</label></p>
-                      <p><label for="welfare_helpType">{%blocktrans %}Type of Help{% endblocktrans %}</label><select  name="welfare_helpType"id="welfare_helpType"><option value="">All</option><option value='"ELD"'>Care for Elderly People</option><option value='"DIS"'>Care for Handicapped People</option><option value='"PSY"'>Psychological Aid</option></select></p> 
-                      
-                      <hr>
-                        </div><div style="display:{%if JobOffers|length > 0 %} block {% else %} none {%endif%}">
-                          <p ><input type="checkbox" value="True" name="job" id="job_hidden"{%if JobOffers|length > 0 %} checked {%endif%}></input><label for="job_hidden">{%blocktrans %}Show Job Offers{% endblocktrans %}</label></p>
-                          
-                          <hr>  </div><div style="display:{%if DonationOffers|length > 0 %} block {% else %} none {%endif%}">
-                            <p ><input type="checkbox" value="True" name="donation" id="donation_hidden"{%if DonationOffers|length > 0 %} checked {%endif%}></input><label for="donation_hidden">{%blocktrans %}Show Donation Offers{% endblocktrans %}</label></p>
-                            
-                            <hr>
-                              </div>
+            <p><input type="checkbox" id="accommodationVisible" value="1" name="accommodationVisible" {% if currentFilter.accommodationVisible  %}checked {%endif%}><label for="accommodationVisible">Show Accommodation Offers</label></p>
+            <p><input type="checkbox" id="translationVisible" value="1" name="translationVisible" {% if currentFilter.translationVisible  %}checked {%endif%}><label for="translationVisible">Show Translation Offers</label></p>
+            <p><input type="checkbox" id="transportationVisible" value="1" name="transportationVisible"  {% if currentFilter.transportationVisible  %}checked {%endif%}><label for="transportationVisible">Show Transportation Offers</label></p>
+            <p><input type="checkbox" id="jobVisible" value="1" name="jobVisible"  {% if currentFilter.jobVisible  %}checked {%endif%}><label for="jobVisible">Show Job Offers</label></p>
+            <p><input type="checkbox" id="manpowerVisible" value="1" name="manpowerVisible"  {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible">Show Manpower Offers</label></p>
+            <p><input type="checkbox" id="welfareVisible" value="1" name="welfareVisible"  {% if currentFilter.welfareVisible  %}checked {%endif%}><label for="welfareVisible">Show Medical Assistance Offers</label></p>
+            <p><input type="checkbox" id="buerocraticVisible" value="1" name="buerocraticVisible"  {% if currentFilter.buerocraticVisible  %}checked {%endif%}><label for="buerocraticVisible">Show Buerocratic Aid Offers</label></p>
+            <p><input type="checkbox" id="childShortVisible" value="1" name="childShortVisible"  {% if currentFilter.childShortVisible  %}checked {%endif%}><label for="childShortVisible">Show Childcare Shortterm Offers</label></p>
+            <p><input type="checkbox" id="childLongVisible" value="1" name="childLongVisible"  {% if currentFilter.childLongVisible  %}checked {%endif%}><label for="childLongVisible">Show Childcare Longterm Offers</label></p>
+            <p><input type="checkbox" id="donationVisible" value="1" name="donationVisible"  {% if currentFilter.donationVisible  %}checked {%endif%}><label for="donationVisible">Show Donation Offers</label></p>
+            {% if currentFilter.accommodationVisible  %}    <p> Accommodation: </p>
+        <p> {{ filter.accommodation.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.translationVisible  %}     <p> Translation: </p>
+        <p>{{ filter.translation.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.transportationVisible  %}    <p> Transportation: </p>
+        <p>{{ filter.transportation.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.jobVisible  %}     <p> Jobs: </p>
+        <p>{{ filter.job.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.manpowerVisible  %}     <p> Manpower: </p>
+        <p>{{ filter.manpower.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.welfareVisible  %}    <p> Medical Assistance: </p>
+        <p>{{ filter.welfare.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.buerocraticVisible  %}    <p> Buerocratic Aide: </p>
+        <p>{{ filter.buerocratic.form.as_p }}</p>
+        <hr>{% endif%}
+        
+        {% if currentFilter.childShortVisible  %}     <p> Shortterm Childcare: </p>
+        <p>{{ filter.buerocratic.form.as_p }}</p>
+        <hr>{% endif%}
+        {% if currentFilter.childLongVisible  %}     <p> Longterm Childcare: </p>
+        <p>{{ filter.welfare.form.as_p }}</p>
+        <hr>{% endif%}
+        
               </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary"  data-dismiss="modal" onclick="search()">Close</button>
@@ -194,11 +173,11 @@ formBody = formBody.join("&");
         <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}&accommodation={%if AccommodationOffers|length > 0 %}True{% else%}False{%endif%}&transportation={%if TransportationOffers|length > 0 %}True{% else%}False{%endif%}&translation={%if TranslationOffers|length > 0 %}True{% else%}False{%endif%}&accompaniment={%if AccompanimentOffers|length > 0 %}True{% else%}False{%endif%} ">Show {{ ResultCount }} results on Map</a></p></div>
         </div>
         </div>
-        {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} Page {{ page }} of {{ maxPage }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
+        {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} Page {{ page|add:"1"  }} of {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
           </div>{% endif %}
         </form>
         <div class="container cards">
-    {% for entry in  AccommodationOffers %}
+          {% if currentFilter.accommodationVisible  %}  {% for entry in  entries.accommodation %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -236,11 +215,11 @@ formBody = formBody.join("&");
 
             </div>   
             </a>  
-            {% endfor %}
+            {% endfor %}{% endif %}
       
             
-
-{% for entry in TranslationOffers %}
+            {% if currentFilter.translationVisible  %}
+{% for entry in entries.translation %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -269,10 +248,9 @@ formBody = formBody.join("&");
 
             </div>   
             </a>  
-            {% endfor %}
-
-
-      {% for entry in TransportationOffers %}
+            {% endfor %}{%endif%}
+            {% if currentFilter.transportationVisible  %}
+      {% for entry in entries.transportation %}
             <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -316,12 +294,12 @@ formBody = formBody.join("&");
 
             </div>   
             </a>  
-            {% endfor %}
+            {% endfor %}{%endif%}
 
 
 
-              
-      {% for entry in BuerocraticOffers %}
+            {% if currentFilter.buerocraticVisible  %}
+      {% for entry in entries.buerocratic %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -334,7 +312,7 @@ formBody = formBody.join("&");
             {%endif%}
             </div>
           <div class="description col-7 col-sm-8">
-<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{ entry.offer.get_helpType_display }}</h3>
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{ entry.offer.get_helpType_buerocratic_display }}</h3>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
   <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
   <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -355,10 +333,10 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}
+      {% endfor %}{% endif %}
       
-              
-      {% for entry in ManpowerOffers %}
+      {% if currentFilter.manpowerVisible  %}
+      {% for entry in entries.manpower %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -371,7 +349,7 @@ formBody = formBody.join("&");
             {%endif%}
             </div>
           <div class="description col-7 col-sm-8">
-<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{ entry.offer.get_helpType_display }}</h3>
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{ entry.offer.get_helpType_manpower_display }}</h3>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
   <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
   <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -386,9 +364,9 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}
-              
-      {% for entry in ChildcareOffersLongterm %}
+      {% endfor %}{%endif%}
+      {% if currentFilter.childLongVIsible  %}
+      {% for entry in entries.childLong %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -416,8 +394,8 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}          
-      {% for entry in ChildcareOffersShortterm %}
+      {% endfor %}     {%endif%}     {% if currentFilter.childShortVisible  %}
+      {% for entry in entries.childShort %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -449,8 +427,8 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}
-      {% for entry in WelfareOffers %}
+      {% endfor %}{%endif%}{% if currentFilter.welfareVisible  %}
+      {% for entry in entries.welfare %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -463,7 +441,7 @@ formBody = formBody.join("&");
             {%endif%}
             </div>
           <div class="description col-7 col-sm-8">
-<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{entry.offer.get_helpType_display }} </h3>
+<h3>{{ entry.offer.genericOffer.get_offerType_display }} | {{entry.offer.get_helpType_welfare_display }} </h3>
 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
   <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
   <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
@@ -477,8 +455,8 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}
-      {% for entry in JobOffers %}
+      {% endfor %}{% endif%}{% if currentFilter.jobsVisible  %}
+      {% for entry in entries.job %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -506,8 +484,8 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}
-      {% for entry in DonationOffers %}
+      {% endfor %}{%endif%}{% if currentFilter.donationVisible  %}
+      {% for entry in entries.donation %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
 
@@ -532,7 +510,7 @@ formBody = formBody.join("&");
 
       </div>   
       </a>  
-      {% endfor %}
+      {% endfor %}{%endif%}
   </div>
 </div>
 {% endblock %}

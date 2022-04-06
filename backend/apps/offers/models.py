@@ -58,7 +58,7 @@ class ChildcareOfferLongterm(models.Model):
         ('FE', "Female"),
         ('MA', "Male"),
     ]
-    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
+    gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 class ChildcareOfferShortterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     GENDER_CHOICES = [
@@ -66,7 +66,7 @@ class ChildcareOfferShortterm(models.Model):
         ('FE', "Female"),
         ('MA', "Male"),
     ]
-    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
+    gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
     numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)
 class JobOffer(models.Model):
@@ -104,7 +104,7 @@ class DonationOffer(models.Model):
 class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
+    helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
@@ -112,7 +112,7 @@ class ImageClass(models.Model):
 class ManpowerOffer(models.Model):
     HELP_CHOICES= [('ON', 'Online'), ('OS', 'On-site')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
+    helpType_manpower = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
 
 class AccommodationOffer(models.Model):
 
@@ -133,13 +133,11 @@ class AccommodationOffer(models.Model):
     def __str__(self):
         return self.typeOfResidence
 
-    def flavor_verbose(self):
-        return dict(AccommodationOffer.ACCOMMODATIONCHOICES)[self.typeOfResidence]
 class WelfareOffer(models.Model):
     WELFARE_CHOICES = [("ELD", "Elderly Care"),("DIS", "Care for handicapped People"), ("PSY", "Psychological Aid")]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    helpType = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
+    helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

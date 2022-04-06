@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<script>
+    console.log("{{ currentFilter|safe }}")
+    function search_with_current_filter(target){
+      var page = {{ page }}
+      var data = {{ currentFilter|safe}}
+      data.show_list = "True"
+      var csrfmiddlewaretoken = '{{ csrf_token }}'
+      if (target == "+1")
+        data.page = page+1
+      else data.page = page -2 
+      data.show_list = "True"
+      var xhr = new XMLHttpRequest();
+    xhr.open("POST", "filter", true);
+    xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  var formBody = [];
+  for (var property in data) {
+    var encodedKey = encodeURIComponent(property);
+    var encodedValue = encodeURIComponent(data[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+          document.open();
+      document.write(xhr.responseText);
+      document.close();
+  
+      } else {
+          // Handle error
+      }
+  }
+      console.log("sending: "+JSON.stringify(data))
+    xhr.send(formBody);
+    }
+  </script>
+{% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} Page {{ page }} of {{ maxPage }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
+    <form method="post">
+        <input type="checkbox" id="childShortVisible" name="childShortVisible"><label for=""childShortVisible>Show Childcare Shortterm Offers</label>
+        {% csrf_token %}
+        {{ filter.childShort.form.as_p }}
+        {{ filter.childLong.form.as_p }}
+        {{ filter.accommodation.form.as_p }}
+        {{ filter.translation.form.as_p }}
+        {{ filter.transportation.form.as_p }}
+        {{ filter.manpower.form.as_p }}
+        {{ filter.buerocratic.form.as_p }}
+        {{ filter.welfare.form.as_p }}
+        {{ filter.job.form.as_p }}
+        <input type="submit" />
+    </form>
+    {% for obj in childShort.qs %}
+        {{ obj.get_gender_shortterm_display }} - ${{ obj.genericOffer.cost }}<br />
+    {% endfor %}
+    --------------- <br />
+    {% for obj in childLong.qs %}
+        {{ obj.get_gender_longterm_display }} - ${{ obj.genericOffer.cost }}<br />
+    {% endfor %}
+    
+    --------------- <br />
+    {% for obj in accommodation.qs %}
+        {{ obj.get_typeOfResidence_display }} - ${{ obj.genericOffer.cost }}<br />
+    {% endfor %}
+    
+    --------------- <br />
+    {% for obj in translation.qs %}
+        {{ obj.firstLanguage.englishName }} - ${{ obj.genericOffer.cost }}<br />
+    {% endfor %}{% endblock %}
