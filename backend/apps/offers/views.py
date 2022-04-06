@@ -224,7 +224,40 @@ def contact(request, offer_id):
     details = getOfferDetails(request,offer_id)
     return render(request, 'offers/contact.html', details)
 def search(request):
-    return render(request, 'offers/search.html')
+    # Ideally: Associate Postcode with city here...
+    #Get list of all PostCodes within the City: 
+    city = "Berlin"
+    postCodes = scrapePostCodeJson(city)
+    #Dummy data:
+    donations = GenericOffer.objects.filter(offerType="DN", postCode__in=postCodes).count()
+    accommodations = GenericOffer.objects.filter(offerType="AC", postCode__in=postCodes).count()
+    translations = GenericOffer.objects.filter(offerType="TL", postCode__in=postCodes).count()
+    transportations = GenericOffer.objects.filter(offerType="TR", postCode__in=postCodes).count()
+    accompaniments = GenericOffer.objects.filter(offerType="AP", postCode__in=postCodes).count()
+    buerocratic = GenericOffer.objects.filter(offerType="BU", postCode__in=postCodes).count()
+    childcareShortterm = GenericOffer.objects.filter(offerType="BA", postCode__in=postCodes).count()
+    welfare = WelfareOffer.objects.filter(helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
+    psych = WelfareOffer.objects.filter(helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
+    
+    jobs = GenericOffer.objects.filter(offerType="JO", postCode__in=postCodes).count()
+    childcareLongterm = GenericOffer.objects.filter(offerType="CL", postCode__in=postCodes).count()
+    manpower = GenericOffer.objects.filter(offerType="MP", postCode__in=postCodes).count()
+    totalAccommodations = GenericOffer.objects.filter(offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
+    totalBuerocratic = GenericOffer.objects.filter(offerType="BU").count()
+    totalWelfare = GenericOffer.objects.filter(offerType="WE").count()
+    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA").count()
+    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
+    totalJobs = GenericOffer.objects.filter(offerType="JO").count()
+    context = {
+        'city' : city,
+        'local' : {'PsychologicalOffers': psych, 'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
+        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
+    }
+    logger.warning(str(context))
+    return render(request, 'offers/search.html', context)
+    #return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
