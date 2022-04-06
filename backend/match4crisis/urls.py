@@ -41,5 +41,6 @@ urlpatterns = [
     path("dataprotection/", views.dataprotection),
     path("legal-questions/", views.legal_questions),
     path("terms-of-use/", views.terms_of_use),
+    path("select2/", include("django_select2.urls")),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
