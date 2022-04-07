@@ -18,15 +18,10 @@ from apps.iamorganisation.models import Organisation
 logger = logging.getLogger(__name__)
 
 
-
-@login_required
-@staff_member_required
 def staff_dashboard(request):
     return render(request, "staff_dashboard.html", {})
 
     
-@login_required
-@staff_member_required
 def approve_organisations(request):
     table_approved = ApprovalOrganisationTable(Organisation.objects.filter(isApproved=True))
     table_approved.prefix = "approved"
@@ -43,8 +38,6 @@ def approve_organisations(request):
     )
 
 
-@login_required
-@staff_member_required
 def change_organisation_approval(request, uuid):
 
     h = Organisation.objects.get(uuid=uuid)
@@ -68,8 +61,6 @@ def change_organisation_approval(request, uuid):
     return HttpResponseRedirect("/staff/approve_organisations")
 
 
-@login_required
-@staff_member_required
 def delete_organisation(request, uuid):
     h = Organisation.objects.get(uuid=uuid)
     logger.info(

@@ -18,7 +18,7 @@
 {% block content %}
 <hr>
 
-<div class="container" style="margin-bottom:30px;">
+<div class="container" style="margin-bottom:30px; max-width: 1500px">
    {% for message in messages %}
   <div class="alert {{ message.tags }} alert-dismissible" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -30,8 +30,8 @@
     <p style="margin-top:30px;">
     {% blocktrans %}
     <h1>Liebes Staff-Mitglied,</h1></p>
-    <p>Hier kannst du Krankenhäuser, die sich angemeldet haben,
-        <mark>die Berechtigung geben, Studierende anzusehen und zu kontaktieren</mark>
+    <p>Hier kannst du Organisationen, die sich angemeldet haben,
+        <mark>die Berechtigung geben, Helfende anzusehen und zu kontaktieren</mark>
         wenn alles gut aussieht, auf der ersten Tabelle. Wenn sie Mist machen, kannst du ihnen in der zweiten Tabelle
         die
         <mark>Berechtigung wieder entziehen</mark>
@@ -41,7 +41,7 @@
 
     <div class="card border-info" style="margin-top:30px;">
         <div class="card-header">
-            {% blocktrans %}Diese Krankenhäuser warten auf deine Genehmigung{% endblocktrans %}
+            {% blocktrans %}Diese Organisationen warten auf deine Genehmigung{% endblocktrans %}
         </div>
         <div class="card-body">
             {% render_table table_unapproved %}
@@ -50,7 +50,7 @@
     <hr>
     <div class="card ">
         <div class="card-header">
-            {% blocktrans %}Diese Krankenhäuser wurden schon genehmigt, du kannst ihnen aber jederzeit die Berechtigung
+            {% blocktrans %}Diese Organisationen wurden schon genehmigt, du kannst ihnen aber jederzeit die Berechtigung
             entziehen. {% endblocktrans %}
         </div>
         <div class="card-body">

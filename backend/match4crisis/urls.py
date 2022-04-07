@@ -20,6 +20,11 @@ from match4crisis import views
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
+from decorator_include import decorator_include
+
 
 handler404 = views.handler404
 handler500 = views.handler500
@@ -29,7 +34,7 @@ urlpatterns = [
     path("ineedhelp/", include("apps.ineedhelp.urls")),
     path("iofferhelp/", include("apps.iofferhelp.urls")),
     path("iamorganisation/", include("apps.iamorganisation.urls")),
-    path("staff/", include("apps.staff.urls")),
+    path("staff/", decorator_include((login_required, staff_member_required), "apps.staff.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("use_statistics/", include("apps.use_statistics.urls")),
     path("offers/", include("apps.offers.urls")),
