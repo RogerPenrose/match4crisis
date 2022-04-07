@@ -340,12 +340,14 @@ def by_type(request, offer_type):
 
 def filter(request):
     N_ENTRIES = 5
+    filters = {} 
+    if request.POST.get("city"):
+        postcodes = scrapePostCodeJson(request.POST.get("city"))
+        filters = {"genericOffer__postCode__in": postcodes}
     pageCount = int(request.POST.get("page", 0))
-    logger.warning(str(request.POST))
-    firstEntry = (pageCount+1)* N_ENTRIES
-    lastEntry = pageCount * N_ENTRIES
     ids = []
-    currentFilter = {}
+    currentFilter = dict(request.POST)
+    logger.warning("Request:"+str(currentFilter))
     categoryCounter = 1
     for key in request.POST:
         if "Visible" in key:
@@ -353,19 +355,21 @@ def filter(request):
     if not currentFilter:
         categoryCounter = 10
     N_ENTRIES = int(50 / categoryCounter)
+    firstEntry = (pageCount+1)* N_ENTRIES
+    lastEntry = pageCount * N_ENTRIES
     logger.warning("N_ENTRIES: "+str(N_ENTRIES))
-    childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter())
+    childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
     childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
     
-    childLong = ChildCareFilterLongterm(request.POST, queryset=ChildcareOfferLongterm.objects.filter())
-    accommodation = AccommodationFilter(request.POST, queryset=AccommodationOffer.objects.filter())
-    translation = TranslationFilter(request.POST, queryset=TranslationOffer.objects.filter())
-    transportation = TransportationFilter(request.POST, queryset=TransportationOffer.objects.filter())
-    job = JobFilter(request.POST, queryset=JobOffer.objects.filter())
-    buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter())
-    welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter())
-    donation = DonationOffer.objects.all()
-    manpower = ManpowerOffer.objects.all()
+    childLong = ChildCareFilterLongterm(request.POST, queryset=ChildcareOfferLongterm.objects.filter(**filters))
+    accommodation = AccommodationFilter(request.POST, queryset=AccommodationOffer.objects.filter(**filters))
+    translation = TranslationFilter(request.POST, queryset=TranslationOffer.objects.filter(**filters))
+    transportation = TransportationFilter(request.POST, queryset=TransportationOffer.objects.filter(**filters))
+    job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**filters))
+    buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter(**filters))
+    welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
+    donation = DonationOffer.objects.filter(**filters)
+    manpower = ManpowerOffer.objects.filter(**filters)
     translationEntries = mergeImages(translation.qs[lastEntry:firstEntry])
     accommodationEntries = mergeImages(accommodation.qs[lastEntry:firstEntry])
     transportationEntries = mergeImages(transportation.qs[lastEntry:firstEntry])
@@ -401,14 +405,14 @@ def filter(request):
         numEntries += len(translation.qs)
     if request.POST.get("accommodationVisible", "0") == "1" or not currentFilter:
         numEntries += len(accommodation.qs)
-    logger.warning("NumEntries: "+str(numEntries))
-    maxPage = int(numEntries/(N_ENTRIES*len(context["entries"].keys())))
+    maxPage = int(numEntries/(N_ENTRIES))
     if not currentFilter:
         context["currentFilter"] = {"childShortVisible": "1","childLongVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
     context["maxPage"] = maxPage
     if maxPage > 1:
         context["pagination"] = True
     context["ResultCount"] = numEntries
+    logger.warning("N_ENTRIES:"+str(N_ENTRIES)+"Max Page:"+str(maxPage)+" Entries:"+str(len(context["entries"].keys())))
     return  context
 
 def handle_filter(request):

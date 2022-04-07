@@ -78,7 +78,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         </div>
         </div>
         <div class="container cards">
-            <a href="#">        
+            <a onclick="search_offers(['accommodation']);">        
             <div class="col-12 col-lg-6 offer-card"> 
 
                 <div class="row align-self-center align-items-center">
@@ -92,7 +92,6 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 <p>Place to sleep</p>
 
 </div>
-
 <div class="count col-2 col-sm-2">
 
     <p>{{ local.AccommodationOffers }}</p>
@@ -105,7 +104,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
           
 
        
-            <a href="#">        
+            <a onclick="search_offers(['buerocracy'])">        
                 <div class="col-12 col-lg-6 offer-card"> 
     
                     <div class="row align-self-center align-items-center">
@@ -131,7 +130,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                 </a>  
 
 
-                <a href="#">        
+                <a onclick="search_offers(['manpower']);">        
                     <div class="col-12 col-lg-6 offer-card"> 
         
                         <div class="row align-self-center align-items-center">
@@ -159,7 +158,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                     <p style="margin-top: 35px; text-align: center; clear:both;">More results around your area</p>
 
          
-                    <a href="#">        
+                    <a onclick="search_offers(['childcareShort', 'childcareLong']);">      
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -185,8 +184,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                         </a>  
 
 
-
-                    <a href="#">        
+                        <a onclick="search_offers(['welfare']);">       
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -213,7 +211,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 
-                    <a href="#">        
+                        <a onclick="search_offers(['job']);">         
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -240,7 +238,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 
-                    <a href="#">        
+                        <a onclick="search_offers(['welfare']);">             
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -267,7 +265,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 
-                    <a href="#">        
+                        <a onclick="search_offers(['donations']);">      
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -298,4 +296,47 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 </div>
 
+<script>
+  console.log("Hello")
+  function search_offers(types){
+    visibles = []
+    for (var i = 0; i < types.length; i++)
+    {
+      visibles.push(types[i]+"Visible")
+    }
+    data = {}
+    for (var i = 0; i < visibles.length; i++)
+    {
+      data[visibles[i]] = "1"
+    }
+    data["city"] = "{{ city }}"
+    console.log("Visibles: "+JSON.stringify(data))
+  
+    data["show_list"] = "True"
+    var csrfmiddlewaretoken = '{{ csrf_token }}'
+    data.show_list = "True"
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "handle_filter", true);
+    xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    var formBody = [];
+    for (var property in data) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(data[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        document.open();
+        document.write(xhr.responseText);
+        document.close();
+      } 
+    }
+    console.log("sending: "+JSON.stringify(data))
+    xhr.send(formBody);
+  
+  
+  }
+</script>
 {% endblock %}

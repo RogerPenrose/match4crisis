@@ -17,17 +17,30 @@
 <script>
   function search(){
     document.getElementById("list_checkbox").checked = true
+    form = new FormData(document.searchForm)
+    
+    console.log("Sending:"+JSON.stringify(form))
     document.searchForm.submit()
   }
     {% if currentFilter %}
     function search_with_current_filter(target){
       var page = {{ page }}
-      var data = {{ currentFilter|safe}}
+      var myForm = document.getElementById('searchForm');
+     //var data = {{ currentFilter|safe}}
+     var data = new FormData(myForm)
+     for (var pair of data.entries()) {
+        if (pair[1] != ""){
+          data[pair[0]]  = pair[1]}
+      }
+      var city= "{{currentFilter.city|safe}}"
+      data.city = city.slice(2,city.length - 2)
+      console.log(data.city)
       data.show_list = "True"
       var csrfmiddlewaretoken = '{{ csrf_token }}'
       if (target == "+1")
         data.page = page+1
-      else data.page = page -2 
+      else if (target == "-1") 
+        data.page = page -2 
       data.show_list = "True"
       var xhr = new XMLHttpRequest();
     xhr.open("POST", "handle_filter", true);
@@ -50,7 +63,6 @@
           // Handle error
       }
   }
-      console.log("sending: "+JSON.stringify(data))
     xhr.send(formBody);
     }
   {% endif %}
@@ -68,7 +80,7 @@
 
         <div class="row align-self-center align-items-center">
 <div class="col-lg-12">
-<form action="/offers/handle_filter" name="searchForm" method="POST">
+<form action="/offers/handle_filter" name="searchForm" id="searchForm" method="POST">
   {% csrf_token %}
     <div style="position: relative">
       <input
@@ -155,7 +167,7 @@
         
               </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary"  data-dismiss="modal" onclick="search()">Close</button>
+            <button type="button" class="btn btn-primary"  data-dismiss="modal" onclick="search_with_current_filter()">Close</button>
           </div>
         </div>
       </div>
@@ -455,7 +467,7 @@
 
       </div>   
       </a>  
-      {% endfor %}{% endif%}{% if currentFilter.jobsVisible  %}
+      {% endfor %}{% endif%}{% if currentFilter.jobVisible  %}
       {% for entry in entries.job %}
       <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
       <div class="col-12 col-lg-6 offer-card"> 
