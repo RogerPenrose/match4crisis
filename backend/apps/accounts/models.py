@@ -6,9 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.contrib.auth.base_user import BaseUserManager
 
-
-from .email_utils import send_mass_mail_sendgrid
-
 logger = logging.getLogger("django")
 
 # source: https://tech.serhatteker.com/post/2020-01/email-as-username-django/
