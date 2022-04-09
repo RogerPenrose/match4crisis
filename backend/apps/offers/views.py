@@ -10,6 +10,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
+from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildCareFilterLongterm, ChildCareFilterShortterm, WelfareFilter, JobFilter
 from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
 from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
 from django.contrib.auth.decorators import login_required
@@ -217,12 +218,46 @@ def updateTranslationModel(g, form, offer_id=0):
         t.secondLanguage=form.get("secondLanguage")
         t.save()
         return t
+
 @login_required
 def contact(request, offer_id):
     details = getOfferDetails(request,offer_id)
     return render(request, 'offers/contact.html', details)
 def search(request):
-    return render(request, 'offers/search.html')
+    # Ideally: Associate Postcode with city here...
+    #Get list of all PostCodes within the City: 
+    city = "Berlin"
+    postCodes = scrapePostCodeJson(city)
+    #Dummy data:
+    donations = GenericOffer.objects.filter(offerType="DN", postCode__in=postCodes).count()
+    accommodations = GenericOffer.objects.filter(offerType="AC", postCode__in=postCodes).count()
+    translations = GenericOffer.objects.filter(offerType="TL", postCode__in=postCodes).count()
+    transportations = GenericOffer.objects.filter(offerType="TR", postCode__in=postCodes).count()
+    accompaniments = GenericOffer.objects.filter(offerType="AP", postCode__in=postCodes).count()
+    buerocratic = GenericOffer.objects.filter(offerType="BU", postCode__in=postCodes).count()
+    childcareShortterm = GenericOffer.objects.filter(offerType="BA", postCode__in=postCodes).count()
+    welfare = WelfareOffer.objects.filter(helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
+    psych = WelfareOffer.objects.filter(helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
+    
+    jobs = GenericOffer.objects.filter(offerType="JO", postCode__in=postCodes).count()
+    childcareLongterm = GenericOffer.objects.filter(offerType="CL", postCode__in=postCodes).count()
+    manpower = GenericOffer.objects.filter(offerType="MP", postCode__in=postCodes).count()
+    totalAccommodations = GenericOffer.objects.filter(offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
+    totalBuerocratic = GenericOffer.objects.filter(offerType="BU").count()
+    totalWelfare = GenericOffer.objects.filter(offerType="WE").count()
+    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA").count()
+    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
+    totalJobs = GenericOffer.objects.filter(offerType="JO").count()
+    context = {
+        'city' : city,
+        'local' : {'PsychologicalOffers': psych, 'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
+        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
+    }
+    logger.warning(str(context))
+    return render(request, 'offers/search.html', context)
+    #return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
@@ -302,66 +337,87 @@ def by_type(request, offer_type):
                 "Title": OFFERTYPESOBJ[offer_type]["title"],
                 OFFERTYPESOBJ[offer_type]["offersName"]: eval("mergeImages("+OFFERTYPESOBJ[offer_type]["modelName"]+".objects.all())")}
     return render(request, 'offers/index.html', context)
-def create_by_filter(request):
-    #Below: Lots of convoluted Logic to create a valid filter - Maybe we can automate this more sexily, since we need to add every field here by hand...
-    resultVal = {"TransportationOffers":[], "DonationOffers":[],"TranslationOffers":[], "AccommodationOffers": [],"BuerocraticOffers":[],"ManpowerOffers":[],"ChildcareOffersLongterm":[],"ChildcareOffersShortterm":[],"WelfareOffers":[],"JobOffers":[]}
-    titleAll = True
-    totalCount = 0
-    pagination = False
-    pageCount = 0
-    if request.POST.get("page") != None and len(request.POST.get("page"))> 0:
-        pageCount = int(request.POST.get("page"))
+
+def filter(request):
+    N_ENTRIES = 5
+    filters = {} 
+    if request.POST.get("city"):
+        postcodes = scrapePostCodeJson(request.POST.get("city"))
+        filters = {"genericOffer__postCode__in": postcodes}
+    pageCount = int(request.POST.get("page", 0))
+    ids = []
+    currentFilter = dict(request.POST)
+    logger.warning("Request:"+str(currentFilter))
+    categoryCounter = 1
+    for key in request.POST:
+        if "Visible" in key:
+            categoryCounter = categoryCounter +1 
+    if not currentFilter:
+        categoryCounter = 10
+    N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
-    paginationCount = 0
-    logger.warning("getting Page from: "+str(firstEntry)+" To "+str(lastEntry))
-    for offertype in OFFERTYPESOBJ:
-        entry = OFFERTYPESOBJ[offertype]
-        if request.POST.get(entry["requestName"]) == "True":
-            filters = []
-            for key in request.POST:
-                if entry["requestName"]+"_" in key:
-                    if request.POST.get(key) != None  and len(request.POST.get(key)) > 0 :
-                        filters.append(key.replace(entry["requestName"]+"_","")+"="+request.POST.get(key))
-            filterstring = str(filters).replace("'", "").replace("[","").replace("]", "")
-            entryCount = eval(entry["modelName"]+".objects.filter("+filterstring+").count()")
-            logger.warning("Entrycount for "+entry["modelName"]+str(entryCount))
-            totalCount += entryCount
-            if entryCount > N_ENTRIES:
-                paginationCount += entryCount
-            if  entryCount <firstEntry:
-                resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+"))")
-            else:
-                resultVal[entry["offersName"]] =  eval("mergeImages("+entry["modelName"]+".objects.filter("+filterstring+")["+str(lastEntry)+":"+str(firstEntry)+"])")
-                logger.warning("PAGINATION ADDED")
-                pagination = True
-        else:
-            titleAll = False
-    if  titleAll:
-        resultVal["Title"] = "All Offers"
-    else: 
-        title = ""
-        for entry in OFFERTYPESOBJ:
-            if request.POST.get(entry) == "True":
-                title += OFFERTYPESOBJ[entry]["title"]+","
-        title = title[:-1]
-        resultVal["Title"] = title
-    resultVal["ResultCount"] = totalCount
-    resultVal["page"] = str(int(pageCount)+1) # Off by one Error in frontend..
-    logger.warning("Total Count: "+str(paginationCount))
-    resultVal["maxPage"] = str(int(paginationCount/N_ENTRIES))
-    resultFilter = {}
-    for key in dict(request.POST):
-        resultFilter[key] = dict(request.POST)[key][0]
-    resultVal["currentFilter"] = json.dumps(resultFilter)
-    logger.warning("Current Filter: "+str(resultVal["currentFilter"]))
-    resultVal["pagination"] = pagination
-    return resultVal
-
+    logger.warning("N_ENTRIES: "+str(N_ENTRIES))
+    childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
+    childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
+    
+    childLong = ChildCareFilterLongterm(request.POST, queryset=ChildcareOfferLongterm.objects.filter(**filters))
+    accommodation = AccommodationFilter(request.POST, queryset=AccommodationOffer.objects.filter(**filters))
+    translation = TranslationFilter(request.POST, queryset=TranslationOffer.objects.filter(**filters))
+    transportation = TransportationFilter(request.POST, queryset=TransportationOffer.objects.filter(**filters))
+    job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**filters))
+    buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter(**filters))
+    welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
+    donation = DonationOffer.objects.filter(**filters)
+    manpower = ManpowerOffer.objects.filter(**filters)
+    translationEntries = mergeImages(translation.qs[lastEntry:firstEntry])
+    accommodationEntries = mergeImages(accommodation.qs[lastEntry:firstEntry])
+    transportationEntries = mergeImages(transportation.qs[lastEntry:firstEntry])
+    jobEntries = mergeImages(job.qs[lastEntry:firstEntry])
+    buerocraticEntries = mergeImages(buerocratic.qs[lastEntry:firstEntry])
+    childLongEntries = mergeImages(childLong.qs[lastEntry:firstEntry])
+    welfareEntries = mergeImages(welfare.qs[lastEntry:firstEntry])
+    donationEntries = mergeImages(donation[lastEntry:firstEntry])
+    manpowerEntries = mergeImages(manpower[lastEntry:firstEntry])
+    maxPage = 0
+    numEntries = 0
+    context = {'currentFilter': currentFilter, "ResultCount": 0,
+    'entries': {'manpower': manpowerEntries, 'job': jobEntries,'buerocratic': buerocraticEntries, 'childShort':childShortEntries, "translation": translationEntries, 'welfare': welfareEntries, 'childLong': childLongEntries, 'accommodation': accommodationEntries, 'transportation': transportationEntries},
+    'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
+    
+    if request.POST.get("childShortVisible", "0") == "1" or not currentFilter :
+        numEntries += len(childShort.qs)
+    if request.POST.get("childLongVisible", "0") == "1" or not currentFilter:
+        numEntries += len(childLong.qs)
+    if request.POST.get("jobVisible", "0") == "1" or not currentFilter:
+        numEntries += len(job.qs)
+    if request.POST.get("buerocraticVisible", "0") == "1" or not currentFilter:
+        numEntries += len(buerocratic.qs)
+    if request.POST.get("welfareVisible", "0") == "1" or not currentFilter:
+        numEntries += len(welfare.qs)
+    if request.POST.get("manpowerVisible", "0") == "1" or not currentFilter:
+        numEntries += len(manpower)
+    if request.POST.get("donationVisible", "0") == "1" or not currentFilter:
+        numEntries += len(donation)
+    if request.POST.get("transportationVisible", "0") == "1" or not currentFilter:
+        numEntries += len(transportation.qs)
+    if request.POST.get("translationVisible", "0") == "1" or not currentFilter:
+        numEntries += len(translation.qs)
+    if request.POST.get("accommodationVisible", "0") == "1" or not currentFilter:
+        numEntries += len(accommodation.qs)
+    maxPage = int(numEntries/(N_ENTRIES))
+    if not currentFilter:
+        context["currentFilter"] = {"childShortVisible": "1","childLongVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
+    context["maxPage"] = maxPage
+    if maxPage > 1:
+        context["pagination"] = True
+    context["ResultCount"] = numEntries
+    logger.warning("N_ENTRIES:"+str(N_ENTRIES)+"Max Page:"+str(maxPage)+" Entries:"+str(len(context["entries"].keys())))
+    return  context
 
 def handle_filter(request):
     if request.POST.get("show_list") == "True":
-        context = create_by_filter(request)
+        context = filter(request)
         return render(request, 'offers/index.html', context)
     else :
         query = ""
@@ -418,42 +474,7 @@ def mergeImages(offers):
     return resultOffers
 N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
 def index(request):
-    accommodationOffers = mergeImages(AccommodationOffer.objects.all()[:N_ENTRIES])
-    buerocraticOffers = mergeImages(BuerocraticOffer.objects.all()[:N_ENTRIES])
-    transportationOffers = mergeImages(TransportationOffer.objects.all()[:N_ENTRIES])
-    translationOffers = mergeImages(TranslationOffer.objects.all()[:N_ENTRIES])
-    manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
-    donationOffers = mergeImages(DonationOffer.objects.all()[:N_ENTRIES])
-    ChildcareOffersLongterm = mergeImages(ChildcareOfferLongterm.objects.all()[:N_ENTRIES])
-    ChildcareOffersShortterm = mergeImages(ChildcareOfferShortterm.objects.all()[:N_ENTRIES])
-    WelfareOffers = mergeImages(WelfareOffer.objects.all()[:N_ENTRIES])
-    JobOffers = mergeImages(JobOffer.objects.all()[:N_ENTRIES])
-    manpowerOffers = mergeImages(ManpowerOffer.objects.all()[:N_ENTRIES])
-    pagination = False
-    maxPage = int(GenericOffer.objects.all().count()/(N_ENTRIES*len(GenericOffer.OFFER_CHOICES)))
-    currentElements = {}
-    for key in OFFERTYPESOBJ:
-        currentElements[key] = "True"
-    currentFilter = json.dumps(currentElements)
-    if maxPage > 1:
-        pagination = True
-    context = {
-        "currentFilter" :json.dumps(currentElements),
-        "pagination": pagination,
-        "maxPage": maxPage,
-        "page": 1,
-        "ResultCount": GenericOffer.objects.all().count(), 
-    'Title': "All Offers",
-        'AccommodationOffers': accommodationOffers, \
-               'TransportationOffers': transportationOffers,\
-               'TranslationOffers': translationOffers,\
-               'ManpowerOffers': manpowerOffers,\
-               'DonationOffers': donationOffers,\
-               'ChildcareOffersLongterm': ChildcareOffersLongterm,\
-               'ChildcareOffersShortterm': ChildcareOffersShortterm,\
-               'WelfareOffers': WelfareOffers,\
-               'JobOffers': JobOffers,\
-               'BuerocraticOffers': buerocraticOffers}
+    context = filter(request)
     
     return render(request, 'offers/index.html', context)
 

@@ -632,7 +632,7 @@ class Command(BaseCommand):
                 if counter == 2: # Accompaniment
                     g.offerType = "BU"
                     g.save()
-                    b = BuerocraticOffer(genericOffer=g, helpType=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
+                    b = BuerocraticOffer(genericOffer=g, helpType_buerocratic=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
                     b.save()
                 if counter == 3: # Transportation
 
@@ -646,22 +646,22 @@ class Command(BaseCommand):
 
                     g.offerType = "MP"
                     g.save()
-                    b = ManpowerOffer(genericOffer=g, helpType=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
+                    b = ManpowerOffer(genericOffer=g, helpType_manpower=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
                     b.save()
                 if counter == 5: # Transportation
                     g.offerType = "CL"
                     g.save()
-                    b = ChildcareOfferLongterm(genericOffer=g, gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                    b = ChildcareOfferLongterm(genericOffer=g, gender_longterm=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
                     b.save()
                 if counter == 6: # Transportation
                     g.offerType = "BA"
                     g.save()
-                    b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildrenToCare=np.random.randint(0,5),gender=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                    b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildrenToCare=np.random.randint(0,5),gender_shortterm=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
                     b.save()
                 if counter == 7: # Transportation
                     g.offerType = "WE"
                     g.save()
-                    b = WelfareOffer(genericOffer=g, helpType=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
+                    b = WelfareOffer(genericOffer=g, helpType_welfare=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
                     b.save()
                 if counter == 8: # Transportation
                     g.offerType = "JO"
