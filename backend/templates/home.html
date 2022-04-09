@@ -162,7 +162,7 @@ Home {% endblock %} {% block header %}
             with those who need it most.{% endblocktrans %}
           </h2>
           <br />
-          <form action="/mapview/">
+          <form action="/offers/list">
             <div style="position: relative; margin-bottom: 35px;">
               <input
                 type="text"
@@ -171,6 +171,9 @@ Home {% endblock %} {% block header %}
                 class="input-form"
                 placeholder="{% blocktrans %}Search for help in city or country{% endblocktrans %}"
               />
+              <input type="hidden" value="" name="lat">
+              <input type="hidden" value="" name="lng">
+              <input type="hidden" value="" name="bb">
               <svg
                 class="bi bi-search"
                 style="
