@@ -57,6 +57,6 @@ function initMapsAutocomplete(){
 
 function init_google_maps() {
     if (typeof initMap === "function") initMap() // we are at mapview
-    else if (typeof initList === "function") initList() // we are at /offers
+    else if (typeof mapViewPage === "object") mapViewPage.initAutocomplete() // we are at /offers
     else initMapsAutocomplete();
 }

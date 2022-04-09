@@ -1,5 +1,3 @@
-
-
 mapViewPage = {
     options: {
         mapViewContainerId: '',
@@ -26,40 +24,15 @@ mapViewPage = {
     },
 
     mapObject: null,
-       
-    createGenericIcon: function createGenericIcon(count) {
+    
+    createIcon: function createIcon(count, className) {
         return L.divIcon({
-            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive genericMarker',
+            className: `leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive ${ className }`,
             html: `<div><span>${count}</span></div>`,
             iconSize: [40, 40],
             popupAnchor: [-10,-10],
         })
     },
-    createAccommodationIcon: function createAccommodationIcon(count) {
-        return L.divIcon({
-            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive accommodationMarker',
-            html: `<div><span>${count}</span></div>`,
-            iconSize: [40, 40],
-            popupAnchor: [-10,-10],
-        })
-    },
-
-    createTransportationIcon: function createTransportationIcon(count) {
-        return L.divIcon({
-            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive transportationMarker',
-            html: `<div><span>${count}</span></div>`,
-            iconSize: [40, 40],
-        })
-    },
-
-    createTranslationIcon: function createTranslationIcon(count) {
-        return L.divIcon({
-            className: 'leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive translationMarker',
-            html: `<div><span>${count}</span></div>`,
-            iconSize: [40, 40],
-        })
-    },
-
 
     cssClassedIconCreateFunction: function cssClassedIconCreateFunction(cssClass) {
         return (function (cluster) {
@@ -85,12 +58,25 @@ mapViewPage = {
 
 
     initializeMap:  function initializeMap() {
-       
-        let mapOptions = {
-            center: this.options.startPosition,
-            zoom: this.options.zoom
-        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
     
+        getParamUrlCenter = [Number(urlParams.get('lat')), Number(urlParams.get('lng'))]
+
+        let mapOptions;
+        
+        if (typeof getParamUrlCenter[0] === "number" && typeof getParamUrlCenter[1] === "number") {
+            mapOptions = {
+                center: getParamUrlCenter,
+                zoom: this.options.zoom
+            }
+        } else {
+            mapOptions = {
+                center: this.options.startPosition,
+                zoom: this.options.zoom
+            }
+        }
+
         let tileLayerURL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}@2x?access_token=' + this.options.mapboxToken
         let tileLayerOptions = {
             attribution: ' <a href="https://www.mapbox.com/about/maps/">© Mapbox</a> | <a href="http://www.openstreetmap.org/copyright">© OpenStreetMap</a> | <a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a>',
@@ -101,7 +87,18 @@ mapViewPage = {
             preferCanvas: true,
           }
     
-        this.mapObject = L.map(this.options.mapViewContainerId,mapOptions)
+        this.mapObject = L.map(this.options.mapViewContainerId,mapOptions);
+
+        const bb = urlParams.get('bb')
+        if (bb){
+            try {
+                const vp = JSON.parse(bb);
+                mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.south, vp.west], [vp.north, vp.east]]));
+            } catch(e){
+                console.log("Url_param bb is damaged!")
+            }
+        }
+
         L.tileLayer(tileLayerURL, tileLayerOptions).addTo(this.mapObject);    
 
         // Enhance MarkerCluster - override getChildCount
@@ -135,7 +132,7 @@ mapViewPage = {
         });
         let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createMapMarkers(accommodations,(lat,lon,countrycode,city,plz,count) => {
             return L.marker([lon,lat],{ 
-                icon:  this.createAccommodationIcon(count),
+                icon:  this.createIcon(count, "accommodationMarker"),
                 itemCount: count,
            }).bindPopup(this.options.createPopupTextAccommodation(countrycode,city, plz, count, this.options.accommodationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
@@ -146,7 +143,7 @@ mapViewPage = {
         });
         var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,countrycode,city,plz,count) => {
             return L.marker([lon,lat],{
-                 icon:  this.createTransportationIcon(count),
+                 icon:  this.createIcon(count, "transportationMarker"),
                  itemCount: count,
             }).bindPopup(this.options.createPopupTextTransportation(countrycode,city, plz, count, this.options.transportationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
@@ -158,7 +155,7 @@ mapViewPage = {
         });
         var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,countrycode,city,plz,count) => {
             return L.marker([lon,lat],{
-                 icon:  this.createTranslationIcon(count),
+                 icon:  this.createIcon(count, "translationMarker"),
                  itemCount: count,
             }).bindPopup(this.options.createPopupTextTranslation(countrycode,city, plz, count, this.options.translationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
@@ -169,7 +166,7 @@ mapViewPage = {
         });
         let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,countrycode,city,plz,count) => {
             return L.marker([lon,lat],{ 
-                icon:  this.createGenericIcon(count),
+                icon:  this.createIcon(count, "genericMarker"),
                 itemCount: count,
            }).bindPopup(this.options.createPopupTextGeneric(countrycode,city, plz, count, this.options.genericOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
         }))
@@ -235,7 +232,82 @@ mapViewPage = {
         }
 
         return markerArray
-    }
+    },
+
+    initAutocomplete: () => {
+        const input = document.getElementById("location");
+    
+        const autocomplete = initMapsAutocomplete()
+    
+        autocomplete.addListener("place_changed", () => {
+            const place = autocomplete.getPlace();
+    
+            if (!place.geometry || !place.geometry.location) {
+                // User entered the name of a Place that was not suggested and
+                // pressed the Enter key, or the Place Details request failed.
+                return;
+            }
+    
+            // If the place has a geometry, then present it on a map.
+            
+            const lat = place.geometry.location.lat()
+            const lng = place.geometry.location.lng()
+
+            if (place.geometry.viewport) {
+                const vp = place.geometry.viewport
+                mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.zb.h, vp.Ua.h], [vp.zb.j, vp.Ua.j]]));
+                mapViewPage.setGetParameter([
+                    ["location", input.value], 
+                    ["lat", lat], 
+                    ["lng", lng], 
+                    ["bb", JSON.stringify(place.geometry.viewport)]
+                ])
+            } else {
+                mapViewPage.mapObject.setView(new L.LatLng(lat, lng), 15);
+                mapViewPage.setGetParameter([
+                    ["location", input.value], 
+                    ["lat", lat], 
+                    ["lng", lng], 
+                ])
+            }        
+        });
+    
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+    
+        loc = urlParams.get('location')
+        if (loc) {
+            input.setAttribute("value", loc)
+        }
+    },
+
+    setGetParameter: function setGetParameter(params)
+        {
+            var url = window.location.href;
+            var hash = location.hash;
+            url = url.replace(hash, '');
+        
+            for (i = 0; i < params.length; i++){
+                if (url.indexOf(params[i][0] + "=") >= 0)
+                {
+                    var prefix = url.substring(0, url.indexOf(params[i][0] + "=")); 
+                    var suffix = url.substring(url.indexOf(params[i][0] + "="));
+                    suffix = suffix.substring(suffix.indexOf("=") + 1);
+                    suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
+                    url = prefix + params[i][0] + "=" + params[i][1] + suffix;
+                }
+                else
+                {
+                    if (url.indexOf("?") < 0)
+                        url += "?" + params[i][0] + "=" + params[i][1];
+                    else
+                        url += "&" + params[i][0] + "=" + params[i][1];
+                }
+            }
+            
+        
+            window.history.pushState("", "", url + hash);
+        }
 }
 $.extend(mapViewPage.options, pageOptions)
 
