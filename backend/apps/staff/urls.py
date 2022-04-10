@@ -16,4 +16,5 @@ urlpatterns = [
     path("new_newsletter", views.new_newsletter, name="new_newsletter"),
     path("list_newsletter", views.list_newsletter, name="list_newsletter"),
     path("did_see_newsletter/<id>/<token>", views.did_see_newsletter, name="did_see_newsletter"),
+    path("database_stats", views.database_stats, name="database_stats"),
 ]

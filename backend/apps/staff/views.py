@@ -1,4 +1,9 @@
 import logging
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
+import mpld3
+
 from django.shortcuts import render
 from django.contrib import messages
 from django.utils import timezone
@@ -12,9 +17,11 @@ from .models import LetterApprovedBy, Newsletter, NewsletterState
 from .forms import NewsletterEditForm, NewsletterViewForm, TestMailForm
 from .tables import ApprovalOrganisationTable, NewsletterTable
 
+from .db_stats import DataBaseStats
 
 logger = logging.getLogger(__name__)
 
+matplotlib.use("agg")
 
 def staff_dashboard(request):
     return render(request, "staff_dashboard.html", {})
@@ -224,3 +231,24 @@ def did_see_newsletter(request, id, token):
     except Exception:
         return HttpResponse("Not registered")
     return HttpResponseRedirect("/staff/view_newsletter/" + str(id))
+
+
+def database_stats(request):
+    stats = DataBaseStats(length_history_days=14)
+
+    count_stats = stats.all_stats()
+    graphs = stats.all_graphs()
+
+    stats_with_plot = []
+    for name, history in graphs:
+        (x, y) = history
+        fig, ax = plt.subplots()
+        ax.plot(x, y, "ks-", mec="w", mew=5, ms=17)
+        ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        ax.set_title(name)
+        fig_html = mpld3.fig_to_html(fig)
+        stats_with_plot.append((name, fig_html))
+
+    return render(
+        request, "database_stats.html", {"count_statistics": count_stats, "graphs": stats_with_plot}
+    )
