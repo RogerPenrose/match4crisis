@@ -52,7 +52,7 @@
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>
         <li class="nav-item {% if "offers/list" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/list">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
         {% if not user.is_authenticated %}
-        <li class="nav-item {% if "signup_helper" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_helper">{% blocktrans %}Ich will
+        <li class="nav-item {% if "signup_helper" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/iofferhelp/choose_help">{% blocktrans %}Ich will
           helfen{% endblocktrans %}</a> </li>
         <li class="nav-item  {% if "signup_organisation" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/accounts/signup_refugee">{% blocktrans %}Ich brauche
           Hilfe{% endblocktrans %}</a> </li>
