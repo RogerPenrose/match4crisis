@@ -10,12 +10,14 @@ Gespeicherte Angebote
 
 {% block content%}
 <div class="container">
-    <div style="height:40px"></div>
-
+  <div style="height:40px"></div>
+  <h3>Favorite listings</h3>
+  </div>
+    <div class="container cards">
 {% for entry in offers %}
 <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
-    <div class="container cards">
 
+  <div class="col-12 col-lg-6 offer-card">
 
     <div class="row align-self-center align-items-center">
     <div class="col-5 col-sm-4">
