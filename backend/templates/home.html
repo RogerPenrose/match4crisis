@@ -31,6 +31,7 @@ Home {% endblock %} {% block header %}
 <style>
 .box-left h4, .box-right h4 { font-weight: 300; font-size: 30px; line-height: 40px;}
 .home-logo { width: 300px; height: auto;}
+.fixed-top { position: absolute;}
   @media only screen and (min-width: 768px) {
     .home-box { margin-top: -50px;}
     .home-title {
@@ -103,7 +104,7 @@ Home {% endblock %} {% block header %}
     }
 
     .home-title h2 {
-      font-size: 3vw;
+      font-size: 22px;
       color: #fff !important;
       font-weight: 300;
     }
@@ -133,7 +134,8 @@ Home {% endblock %} {% block header %}
       display: none;
     }
 
-    .partners  { text-align:center; margin-bottom: 100px; }
+    .partners  { text-align:center; margin-bottom: 65px;}
+    .partners > div { margin-bottom: 35px;}
     .partners img { width: 100%; max-width: 200px; height: auto; }
   @media only screen and (min-width: 768px) and (max-width: 991px) {
     .navbar > .container {
@@ -187,57 +189,6 @@ Home {% endblock %} {% block header %}
       </div>
     </div>
   </div>
-
-
-  <div class="container hide-home" style="padding: 100px 0; margin-top: 35px; text-align: center;">
-    <div class="row align-self-center">
-      <div class="col-md-8" style="margin: 0 auto; ">
-    <h2 class="title" style="margin-bottom: 35px;">Disaster relief is the only way to overcome crises.</h2>
-    <p style="margin-bottom: 35px;">
-      The goal of this platform is to create an easy way to connect people. Whether they are providing or seeking for help, this way suffering can be minimized and everyone has the possibility to offer their help capacities to the right people. 
-
-This project is driven only by volunteers and is 100% open source. See our team
-    </p>
-
-    <a href="/accounts/signup_refugee" class="btn btn-orange hide-home" role="button" aria-pressed="true"
-    >I need help
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      fill="currentColor"
-      class="bi bi-arrow-right-circle"
-      style="margin-top: -2px; margin-left: 10px"
-      viewBox="0 0 16 16"
-    >
-      <path
-        fill-rule="evenodd"
-        d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
-      />
-    </svg>
-  </a>
-
-  <a href="/iofferhelp/choose_help" class="btn btn-yellow-2 hide-home" role="button" aria-pressed="true"
-  >I offer help
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="20"
-    height="20"
-    fill="currentColor"
-    class="bi bi-arrow-right-circle"
-    style="margin-top: -2px; margin-left: 10px"
-    viewBox="0 0 16 16"
-  >
-    <path
-      fill-rule="evenodd"
-      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
-    />
-  </svg>
-</a>
-    </div></div>
-  </div>
-
-
 
   <div class="container home-box">
     <div class="row align-self-center">

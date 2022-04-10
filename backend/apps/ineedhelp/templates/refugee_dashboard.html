@@ -131,12 +131,12 @@ User Dashboard
 <div class="dashboard-title">
     <div class="container">
       <div class="row align-self-center align-items-center">
-        <div class="col-md-8 col-xl-5">
+        <div class="col-md-8 col-xl-7">
           <h1 class="text-white">
-            {% blocktrans %}Glad you are here, Anastasia!{% endblocktrans %}
+            {% blocktrans %}Schön dass du da bist, Anastasia!{% endblocktrans %}
           </h1>
           <h2 class="font-weight-regular">
-            {% blocktrans %}Don't wait any longer, start looking for help right now.{% endblocktrans %}
+            {% blocktrans %}Hör auf zu warten und starte mit der Suche nach Hilfe!{% endblocktrans %}
           </h2>
           <br />
           <form action="/mapview/">
@@ -146,7 +146,7 @@ User Dashboard
                 id="location"
                 name="location"
                 class="input-form"
-                placeholder="{% blocktrans %}Search for help in city or country{% endblocktrans %}"
+                placeholder="{% blocktrans %}Sieh dir Angebote in deiner Stadt an ...{% endblocktrans %}"
               />
               <svg
                 class="bi bi-search"
@@ -183,13 +183,13 @@ User Dashboard
   </div>
 
   <div class="container" style="margin-top: 35px;">
-<h2 style="margin-bottom: 35px;">User Dashboard</h2>
+<h2 style="margin-bottom: 35px;">{% blocktrans %}User Dashboard{% endblocktrans %}</h2>
     <div class="buttons row">
         
         <div class="col-12 col-md-6 col-xl-6 left">
             <a href="{% url 'recently_viewed' %}">
         <div class="row align-self-center align-items-center">
-            <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/recent.png' %}" width="40px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>Recently viewed</h3><p>Check your recently viewed listings.</p></div>
+            <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/recent.png' %}" width="40px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Kürzlich angesehen{% endblocktrans %}</h3><p>{% blocktrans %}Kürzlich angesehene Angebote.{% endblocktrans %}/p></div>
             </div>
         </a>
         </div>
@@ -199,7 +199,7 @@ User Dashboard
 
             <a href="#">
             <div class="row align-self-center align-items-center">
-                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/contacted.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>Recently contaced</h3><p>Check who you contacted for help.</p></div>
+                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/contacted.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Kürzlich kontaktiert{% endblocktrans %}</h3><p>{% blocktrans %}Schau nach, wen du bereits kontaktiert hast.{% endblocktrans %}</p></div>
                 </div>
             </a>
             </div>
@@ -207,7 +207,7 @@ User Dashboard
             <div class="col-12 col-md-6 col-xl-6 left">
                 <a href="{% url 'favourite_offers' %}">
             <div class="row align-self-center align-items-center">
-                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/favorite.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>Favorites</h3><p>Your favorite listings in one place.</p></div>
+                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/favorite.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Favoriten{% endblocktrans %}</h3><p>{% blocktrans %}Deine gespeicherten Favoriten.{% endblocktrans %}</p></div>
                 </div>
             </a>
             </div>
@@ -217,7 +217,7 @@ User Dashboard
     
                 <a href="/accounts/preferences">
                 <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/settings.png' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>Profile Settings</h3><p>Change your profile settings.</p></div>
+                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/settings.png' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3><p>{% blocktrans %}Profil Einstellungen ändern.{% endblocktrans %}</p></div>
                     </div>
                 </a>
                 </div>      

@@ -8,6 +8,7 @@
 
 {% block header %}
 <style>
+  .fixed-top { position: absolute; } 
     div.team { margin-top: 55px;}
 .team h2 {  font-size: 18px; margin-bottom: 35px;}
     .team img { max-width: 200px; height: auto; margin-bottom: 15px;} 
@@ -116,10 +117,10 @@
           {% blocktrans %}With match4crisis.{% endblocktrans %}
         </h2>
         <br />
-        <p class="text-white">At the beginning of the war in Ukraine it was quickly clear that very many people will need help very quickly. Children will suffer and there will be chaos. They will be dependent on the help of others. 
+        <p class="text-white">{% blocktrans %}At the beginning of the war in Ukraine it was quickly clear that very many people will need help very quickly. Children will suffer and there will be chaos. They will be dependent on the help of others. 
 
             After quickly seeing how many people are willing to help and drive to the borders, we thought we must create a central interface. People should be able to easily search on their smartphone for help in the areas where they need it, and get results from people who can provide it. 
-            
+            {% endblocktrans %}
             </p>
       </div>
     </div>
@@ -129,7 +130,7 @@
 <div class="container">
   <div class="col-md-12" style="text-align: center; margin: 0 auto; margin-top: 55px;">
     <h2>
-      {% blocktrans %}Our Team{% endblocktrans %}
+      {% blocktrans %}Unser Team{% endblocktrans %}
     </h2>
   </div>
 
