@@ -11,7 +11,7 @@
   .count { text-align: right; }
 .count p { display: inline; margin-bottom: 0px !important; padding:5px; border-radius: 5px; background-color: #f5980f; color: #fff;  }
 div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-width: 100%; background-size: cover;}
-
+.pointer { cursor: pointer; }
 @media only screen and (max-width: 767px) { div.background-photo-search {padding-top: 80%;max-width: 100%;  }   }
 </style>
 {% endblock %}
@@ -24,9 +24,9 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 <div class="col-6 left">
  <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-      </svg> <a href="#">Back</a> </p></div>
+      </svg> <a href="#">{% blocktrans %}Zurück{% endblocktrans %}</a> </p></div>
     <div class="col-6 filter">
-        <p><a href="#">Filter</a></p></div>
+        <p><a href="#">{% blocktrans %}Filter{% endblocktrans %}</a></p></div>
         </div>
 
         <div class="row align-self-center align-items-center">
@@ -77,11 +77,11 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
  <div class="col-12 text-center" style="text-align:center;" >
-    <h2 class="title">In what area do you need help?</h2><p>Select a category to display results in {{ city }}.</p></div>
+    <h2 class="title">{% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2><p>{% blocktrans %}Wähle eine Kategorie, um Angebote in {{ city }} anzuzeigen.{% endblocktrans %}</p></div>
         </div>
         </div>
         <div class="container cards">
-            <a onclick="search_offers(['accommodation']);">        
+            <a onclick="search_offers(['accommodation']);" class="pointer">        
             <div class="col-12 col-lg-6 offer-card"> 
 
                 <div class="row align-self-center align-items-center">
@@ -91,8 +91,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
                   </div>
                 <div class="description col-6 col-sm-8">
-<h3>Accommodation</h3>
-<p>Place to sleep</p>
+<h3>{% blocktrans %}Unterkunft{% endblocktrans %}</h3>
+<p>{% blocktrans %}Suche nach einer passenden Unterkunft.{% endblocktrans %}</p>
 
 </div>
 <div class="count col-2 col-sm-2">
@@ -107,7 +107,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
           
 
        
-            <a onclick="search_offers(['buerocracy'])">        
+            <a onclick="search_offers(['buerocracy'])" class="pointer">        
                 <div class="col-12 col-lg-6 offer-card"> 
     
                     <div class="row align-self-center align-items-center">
@@ -117,8 +117,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     
                       </div>
                     <div class="description col-6 col-sm-8">
-    <h3>Bueraucracy</h3>
-    <p>E.g. communication with authorities</p>
+    <h3>{% blocktrans %}Bürokratie{% endblocktrans %}</h3>
+    <p>{% blocktrans %}z.B. Unterstützung bei Behördengängen.{% endblocktrans %}</p>
     
     </div>
     
@@ -133,7 +133,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                 </a>  
 
 
-                <a onclick="search_offers(['manpower']);">        
+                <a onclick="search_offers(['manpower']);" class="pointer">        
                     <div class="col-12 col-lg-6 offer-card"> 
         
                         <div class="row align-self-center align-items-center">
@@ -143,8 +143,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         
                           </div>
                         <div class="description col-6 col-sm-8">
-        <h3>Women-/Manpower</h3>
-        <p>E.g. online or on-site support.</p>
+        <h3>{% blocktrans %}Manneskraft{% endblocktrans %}</h3>
+        <p>{% blocktrans %}z.B. online oder Hilfe vor Ort.{% endblocktrans %}</p>
         
         </div>
         
@@ -158,10 +158,10 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                     </div>   
                     </a>  
 
-                    <p style="margin-top: 35px; text-align: center; clear:both;">More results around your area</p>
+                    <p style="margin-top: 35px; text-align: center; clear:both;">{% blocktrans %}Mehr Angebote in deiner Nähe{% endblocktrans %}</p>
 
          
-                    <a onclick="search_offers(['childcareShort', 'childcareLong']);">      
+                    <a onclick="search_offers(['childcareShort', 'childcareLong']);" class="pointer">      
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -171,8 +171,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
                               </div>
                             <div class="description col-6 col-sm-8">
-            <h3>Childcare</h3>
-            <p>E.g babysitting</p>
+            <h3>{% blocktrans %}Kinderfürsorge{% endblocktrans %}</h3>
+            <p>{% blocktrans %}z.B. Babysitting{% endblocktrans %}</p>
             
             </div>
             
@@ -187,7 +187,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                         </a>  
 
 
-                        <a onclick="search_offers(['welfare']);">       
+                        <a onclick="search_offers(['welfare']);" class="pointer">       
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -197,8 +197,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
                               </div>
                             <div class="description col-6 col-sm-8">
-            <h3>Medical Assistance</h3>
-            <p>E.g for elderly or disabled.</p>
+            <h3>{% blocktrans %}Medizinische Unterstützung{% endblocktrans %}</h3>
+            <p>{% blocktrans %}z.B. für ältere Personen oder Personen mit Behinderungen.{% endblocktrans %}</p>
             
             </div>
             
@@ -214,7 +214,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 
-                        <a onclick="search_offers(['job']);">         
+                        <a onclick="search_offers(['job']);" class="pointer">         
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -224,8 +224,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
                               </div>
                             <div class="description col-6 col-sm-8">
-            <h3>Jobs</h3>
-            <p>Find a job close to you.</p>
+            <h3>{% blocktrans %}Jobs{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Finde einen passenden Job.{% endblocktrans %}</p>
             
             </div>
             
@@ -241,7 +241,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 
-                        <a onclick="search_offers(['welfare']);">             
+                        <a onclick="search_offers(['welfare']);" class="pointer">             
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -251,8 +251,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
                               </div>
                             <div class="description col-6 col-sm-8">
-            <h3>Psychological Assistace</h3>
-            <p>Online or in person help.</p>
+            <h3>{% blocktrans %}Psychologische Unterstützung{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Online oder persönlich.{% endblocktrans %}</p>
             
             </div>
             
@@ -268,7 +268,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
 
 
-                        <a onclick="search_offers(['donations']);">      
+                        <a onclick="search_offers(['donations']);" class="pointer">      
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -278,8 +278,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
                               </div>
                             <div class="description col-6 col-sm-8">
-            <h3>Donations</h3>
-            <p>Donate to organizations.</p>
+            <h3>{% blocktrans %}Spenden{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Spende an Hilfsorganisationen{% endblocktrans %}</p>
             
             </div>
             
