@@ -49,6 +49,8 @@
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarsExampleDefault">
       <ul class="navbar-nav ml-auto">
+        <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview/?generic=True">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
+
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>
         <li class="nav-item {% if "offers/list" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/list">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
         {% if not user.is_authenticated %}
@@ -60,8 +62,6 @@
         {% if user.is_authenticated and user.isOrganisation %}
         {% url 'list_by_plz' user.organisation.countrycode user.organisation.plz 10 as filter_helper_url %}
         {% endif %}
-
-        <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview/?generic=True">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
 
         {% if user.is_authenticated %}
         <li class="nav-item {% if "profile" in request.path %}active{% endif %}"> <a class="nav-link" href="/accounts/login_redirect">{% blocktrans %}Mein

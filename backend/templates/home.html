@@ -29,11 +29,17 @@ Home {% endblock %} {% block header %}
   content="match4crisis - Wir vernetzen Helfende mit Hilfesuchenden."
 />
 <style>
+.box-left h4, .box-right h4 { font-weight: 300; font-size: 30px; line-height: 40px;}
+.home-logo { width: 300px; height: auto;}
   @media only screen and (min-width: 768px) {
+    .home-box { margin-top: -50px;}
     .home-title {
-      padding: 100px 0px 150px 0px;
+      padding: 140px 0px 170px 0px;
     }
-
+    .navbar-dark .navbar-nav .nav-link { margin: 0 30px;}
+    .navbar-expand-md .navbar-nav .nav-link:first-child { margin-left: -1rem;}
+    .navbar-brand { display: none;}
+    .navbar-nav { margin-left: 0px !important;}
     .navbar { background: transparent !important;     -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
     -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
     box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
@@ -46,24 +52,32 @@ Home {% endblock %} {% block header %}
     }
     .hide-desktop { display: none;}
     .home-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;}
-    .btn-yellow-2 { background-color: #FAC903; margin-left: 10px; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
-    .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
-    .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+  
   }
 
+  .btn-yellow-2 { background-color: #FAC903; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+    .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
+    .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
   @media only screen and (min-width: 992px) {
+    .home-logo { width: 350px; height: auto;}
     .home-title {
-      padding: 100px 0px 200px 0px;
+      padding: 170px 0px 200px 0px;
+    }
+    .home-title h2 {
+      font-size: 28px;
     }
   }
 
   @media only screen and (min-width: 1200px) {
     .home-title {
-      padding: 180px 0px 200px 0px;
+      padding: 220px 0px 240px 0px;
     }
   }
 
   @media only screen and (max-width: 767px) {
+    .home-box { margin-top: -50px;}
+    .hide-button { display: none;}
+    .navbar-brand { visibility: hidden;}
     .navbar-collapse { background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
 .navbar { padding: 0px !important; }
 .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
@@ -75,7 +89,7 @@ Home {% endblock %} {% block header %}
 
     .home-title {
       background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%);
-      padding: 100px 0px 35px 0px;
+      padding: 95px 0px 135px 0px;
       border-bottom-left-radius: 15px;
       border-bottom-right-radius: 15px;
       box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
@@ -89,13 +103,13 @@ Home {% endblock %} {% block header %}
     }
 
     .home-title h2 {
-      font-size: 4vw;
+      font-size: 3vw;
       color: #fff !important;
       font-weight: 300;
     }
 
     .home-box > div > div > a > div {
-      padding: 60px 10px 15px 30px;
+      padding: 60px 10px 45px 30px;
     }
 
     .home-box-description {
@@ -108,9 +122,6 @@ Home {% endblock %} {% block header %}
       box-shadow: none;
     }
 
-    .hide-home {
-      display: none;
-    }
 
     .ml-auto {
       margin-left: 0 !important;
@@ -118,6 +129,12 @@ Home {% endblock %} {% block header %}
     }
   }
 
+  .hide-home {
+      display: none;
+    }
+
+    .partners  { text-align:center; margin-bottom: 100px; }
+    .partners img { width: 100%; max-width: 200px; height: auto; }
   @media only screen and (min-width: 768px) and (max-width: 991px) {
     .navbar > .container {
       width: 100%;
@@ -125,6 +142,9 @@ Home {% endblock %} {% block header %}
       padding-left: 15px;
       padding-right: 0px;
     }
+    .box-left h4, .box-right h4 { font-weight: 300; font-size: 24px; line-height: 30px;}
+    .home-box > div > div > a > div { padding: 50px 10px 50px 25px;}
+    .home-box-description { margin-bottom: 25px;}
   }
 
   #searchsubmit {
@@ -146,6 +166,7 @@ Home {% endblock %} {% block header %}
   .steps > div {
     margin-bottom: 35px;
   }
+  div.steps { margin-top: 55px;}
 
 </style>
 {% endblock %} {% block content %}
@@ -153,91 +174,15 @@ Home {% endblock %} {% block header %}
   <div class="home-title">
     <div class="container">
       <div class="row align-self-center align-items-center">
-        <div class="col-md-8 col-xl-5">
+        <div class="col-md-8 col-xl-7">
           <h1 class="text-white">
-            {% blocktrans %}Together through times of crisis.{% endblocktrans %}
+            <img src="{% static 'img/match4crisis-logo.svg' %}" class="home-logo" style="margin-bottom: 20px;">
           </h1>
           <h2 class="font-weight-regular">
-            {% blocktrans %}A platform that connects peoplpe willing to help
-            with those who need it most.{% endblocktrans %}
+            {% blocktrans %}Wir vernetzen Helfende und Hilfesuchende, um Krisen gemeinsam zu bewältigen.{% endblocktrans %}
           </h2>
-          <br />
-          <form action="/offers/list">
-            <div style="position: relative; margin-bottom: 35px;">
-              <input
-                type="text"
-                id="location"
-                name="location"
-                class="input-form"
-                placeholder="{% blocktrans %}Search for help in city or country{% endblocktrans %}"
-              />
-              <input type="hidden" value="" name="lat">
-              <input type="hidden" value="" name="lng">
-              <input type="hidden" value="" name="bb">
-              <svg
-                class="bi bi-search"
-                style="
-                  margin-left: 3px;
-                  position: absolute;
-                  top: 10px;
-                  left: 10px;
-                "
-                width="14px"
-                height="14px"
-                viewBox="0 0 18 14"
-                fill="#495057"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
-                  clip-rule="evenodd"
-                />
-                <path
-                  fill-rule="evenodd"
-                  d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <input id="searchsubmit" type="submit" value="Submit" />
-          </form>
 
-          <a href="/accounts/signup_refugee" class="btn btn-orange hide-home" role="button" aria-pressed="true"
-          >I need help
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            fill="currentColor"
-            class="bi bi-arrow-right-circle"
-            style="margin-top: -2px; margin-left: 10px"
-            viewBox="0 0 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
-            />
-          </svg>
-        </a>
 
-        <a href="/iofferhelp/choose_help" class="btn btn-yellow-2 hide-home" role="button" aria-pressed="true"
-        >I offer help
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          fill="currentColor"
-          class="bi bi-arrow-right-circle"
-          style="margin-top: -2px; margin-left: 10px"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
-          />
-        </svg>
-      </a>
         </div>
       </div>
     </div>
@@ -293,25 +238,35 @@ This project is driven only by volunteers and is 100% open source. See our team
   </div>
 
 
-  <div class="container hide-desktop" style="margin-top: 35px">
-    <h2 class="title">Registration</h2>
-    <p>
-      For save & active matching an account is needed. Please choose your role:
-    </p>
-  </div>
 
-  <div class="container home-box hide-desktop">
+  <div class="container home-box">
     <div class="row align-self-center">
       <div class="col-md-6">
         <a href="/iofferhelp/choose_help">
           <div class="box-left">
             <h4 class="text-white">
-              {% blocktrans %}I offer help{% endblocktrans %}
+              {% blocktrans %}Ich will <br><b>helfen/unterstützen</b>{% endblocktrans %}
             </h4>
             <p class="text-white home-box-description">
-              {% blocktrans %}Choose if you want to connect with people who need
-              help{% endblocktrans %}
+              {% blocktrans %}Registriere dich und biete Hilfe an.{% endblocktrans %}
             </p>
+            <span class="btn btn-yellow-2" role="button" aria-pressed="true"
+            >Hilfe anbieten
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="currentColor"
+              class="bi bi-arrow-right-circle"
+              style="margin-top: -2px; margin-left: 10px"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
+              />
+            </svg>
+          </span>
           </div>
         </a>
       </div>
@@ -323,8 +278,25 @@ This project is driven only by volunteers and is 100% open source. See our team
         <a href="/accounts/signup_refugee">
        
           <div class="box-right">
-            <h4 class="text-white">{% blocktrans %}I need help{% endblocktrans %}</h4>
-            <p class="text-white home-box-description">{% blocktrans %}Choose if you want to connect with people that can provide help.{% endblocktrans %}</p>
+            <h4 class="text-white">{% blocktrans %}Ich brauche<br><b>Hilfe/Unterstützung</b>{% endblocktrans %}</h4>
+            <p class="text-white home-box-description">{% blocktrans %}Registriere dich und suche nach Hilfe.{% endblocktrans %}</p>
+            <span class="btn btn-orange" role="button" aria-pressed="true"
+            >Hilfe suchen
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="currentColor"
+              class="bi bi-arrow-right-circle"
+              style="margin-top: -2px; margin-left: 10px"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
+              />
+            </svg>
+          </span>
           </div>
          </a>
     </div>
@@ -333,90 +305,47 @@ This project is driven only by volunteers and is 100% open source. See our team
   </div>
 
   <div class="container" style="margin-top: 35px">
-    <div class="row" style="margin-bottom: 55px">
-      <div class="col-md-12 col-lg-8" style="text-align: center; margin: 0 auto">
-        <h2 class="title">
-          {% blocktrans %}Wie funktioniert Match4Crisis?{% endblocktrans %}
-        </h2>
-        {% get_current_language as LANGUAGE_CODE %}
-        <!-- { % if request.session.lang == "en" % } does not work until we save the language choice in cookie-->
-        <div
-          style="
-            position: relative;
-            height: 0;
-            padding-bottom: 56%;
-            width: 99.6%;
-            margin-top: 35px;
-          "
-        >
-          <iframe
-            style="
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              border-radius: 25px;
-            "
-            src="https://www.youtube.com/embed/g8-EqUU55Bo"
-            width="1280"
-            height="720"
-            frameborder="0"
-            allowfullscreen="allowfullscreen"
-          ></iframe>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-12" style="text-align: left; margin: 0 auto">
-      <h2
-        style="
-          text-align: center;
-          font-size: 1.5rem;
-          font-weight: 600;
-          margin-bottom: 55px;
-        "
+    
+    <div class="col-md-12" style="text-align: left; margin: 0 auto; margin-top: 85px;">
+      <h3
+        style="text-align: center; "
       >
-        {% blocktrans %}100% ehrenamtlich und uneigennützig.{% endblocktrans %}
-      </h2>
+        {% blocktrans %}So funktioniert's:{% endblocktrans %}
+      </h3>
     </div>
 
     <div class="row align-self-center steps">
       <div class="col-sm-12 col-md-4">
         <p><img src="{% static 'img/step-1.svg' %}" /></p>
-        <p>Register as someone who needs help or who wants to help</p>
+        <p>{% blocktrans %}Registriere dich als Helfer*in/Hilfesuchende*r.{% endblocktrans %}</p>
       </div>
       <div class="col-sm-12 col-md-4">
         <p><img src="{% static 'img/step-2.svg' %}" /></p>
-        <p>Check the boxes in what category you can or need help</p>
+        <p>{% blocktrans %}Wähle den Ort und die Kategorie, in welchen du helfen kannst, oder Hilfe benötigst.{% endblocktrans %}</p>
       </div>
       <div class="col-sm-12 col-md-4">
         <p><img src="{% static 'img/step-3.svg' %}" /></p>
         <p>
-          Get matched with someone in your proximity wanting to help or needing
-          help
+          {% blocktrans %}Vernetze dich und helfe oder erhalte Hilfe, von Angeboten in deiner Nähe.{% endblocktrans %}
         </p>
       </div>
     </div>
 
     <div class="row align-self-center">
-      <div class="col-sm-12" style="text-align: center">
-        <a href="#" class="btn btn-green" role="button" aria-pressed="true"
-          >Start searching
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            fill="currentColor"
-            class="bi bi-arrow-right-circle"
-            style="margin-top: -2px; margin-left: 10px"
-            viewBox="0 0 16 16"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"
-            />
-          </svg>
-        </a>
+      <div class="col-sm-12" style="text-align: center; margin-top: 65px; margin-bottom: 35px;">
+       <h3>{% blocktrans %}Kooperationspartner{% endblocktrans %}</h3>
+      </div>
+    </div>
+
+    <div class="row align-self-center partners">
+      <div class="col-sm-12 col-md-4">
+        <p><a href="https://www.future-doctor.de" target="_blank"><img src="{% static 'img/partners/future-doctor.svg' %}" /></a></p>
+      </div>
+      <div class="col-sm-12 col-md-4">
+        <p><a href="https://www.twilio.com" target="_blank"><img src="{% static 'img/partners/twilio.svg' %}" /></a></p>
+      </div>
+      <div class="col-sm-12 col-md-4">
+        <p><a href="https://www.webspace-verkauf.de" target="_blank"><img src="{% static 'img/partners/webspace-verkauf.svg' %}" /></a></p>
       </div>
     </div>
   </div>
