@@ -87,8 +87,8 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
     <div class="row" style=" margin-bottom:55px;">
                <div class="col-12 col-lg-6" style="margin: 0 auto">
 
-                <h2 class="title">Where do you want to help?</h2>
-                <p style="margin-bottom: 35px;">You can choose multiple categories</p>
+                <h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
+
 
 <form action="/offers/create" method="post" enctype="multipart/form-data">
     {% csrf_token %}

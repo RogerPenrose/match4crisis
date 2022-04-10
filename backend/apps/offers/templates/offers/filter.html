@@ -38,9 +38,9 @@
     xhr.send(formBody);
     }
   </script>
-{% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} Page {{ page }} of {{ maxPage }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
+{% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page }} {% blocktrans %}von{% endblocktrans %} {{ maxPage }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
     <form method="post">
-        <input type="checkbox" id="childShortVisible" name="childShortVisible"><label for=""childShortVisible>Show Childcare Shortterm Offers</label>
+        <input type="checkbox" id="childShortVisible" name="childShortVisible"><label for=""childShortVisible>{% blocktrans %}Show Childcare Shortterm Offers{% endblocktrans %}</label>
         {% csrf_token %}
         {{ filter.childShort.form.as_p }}
         {{ filter.childLong.form.as_p }}
