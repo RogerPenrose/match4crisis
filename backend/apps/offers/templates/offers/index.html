@@ -7,8 +7,89 @@
 
 {% block header %}
 <style>
+  .modal-content { border:0px; border-radius: 25px;}
+  .modal-header span { font-size: 50px;}
+  .modal-header .close {padding: .5rem 1rem 0rem 1rem }
   div.description { padding: 10px; position: relative; }
   div.description:after { content:url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>"); position: absolute; top: 45%; right: 15px;}
+.filter-title { font-weight: 700;}
+  .custom-control { margin-bottom: 0px;}
+
+  label.custom-control-label { position: relative;
+  display: inline-block;
+ margin-right: .5rem;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  transition: all 0.3s linear;
+margin-bottom: 0px;
+    width: 100%;
+    padding: 10px 10px 10px 70px;
+    font-weight: 600;
+}
+input { width: 100%; display: inline-block;
+  font-weight: 300 !important;
+line-height: 1.5 !important;
+color: #495057;
+background-color: #fff;
+border: 0px !important;
+border-radius: .75rem !important;
+box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
+padding: .275rem .75rem; }
+.custom-checkbox .custom-control-label::before {
+content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 42px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+  transition: all 0.25s linear; 
+  box-shadow: 0 0 0px 2px #e6e6e6;
+}
+
+.custom-control-label::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+  transform: translate3d(2px, 2px, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-control-label:active .custom-control-label::after {
+  width: 28px;
+  transform: translate3d(2px, 2px, 0);
+}
+
+.custom-control input { display: none; }
+
+.custom-control-input:checked~.custom-control-label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+
+.custom-control-input:checked~.custom-control-label::after { transform: translate3d(22px, 2px, 0); }
+
+.custom-control { padding-left: 0px; }
+
+
+.custom-control-label::before { border: 0px;}
+
+.btn {     background-color: #32bd69;
+    font-size: 1rem;
+    color: #fff;
+    padding: .8rem 2.5rem;
+    border-radius: 15px;
+    border: 0px;
+    font-weight: bold;
+margin-top: 20px; }
+
+    .btn:hover { background-color: #1eb159; }
+
 </style>
 {% endblock %}
 
@@ -126,44 +207,44 @@
             </button>
           </div>
           <div class="modal-body">
-            <p><input type="checkbox" id="accommodationVisible" value="1" name="accommodationVisible" {% if currentFilter.accommodationVisible  %}checked {%endif%}><label for="accommodationVisible">Show Accommodation Offers</label></p>
-            <p><input type="checkbox" id="translationVisible" value="1" name="translationVisible" {% if currentFilter.translationVisible  %}checked {%endif%}><label for="translationVisible">Show Translation Offers</label></p>
-            <p><input type="checkbox" id="transportationVisible" value="1" name="transportationVisible"  {% if currentFilter.transportationVisible  %}checked {%endif%}><label for="transportationVisible">Show Transportation Offers</label></p>
-            <p><input type="checkbox" id="jobVisible" value="1" name="jobVisible"  {% if currentFilter.jobVisible  %}checked {%endif%}><label for="jobVisible">Show Job Offers</label></p>
-            <p><input type="checkbox" id="manpowerVisible" value="1" name="manpowerVisible"  {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible">Show Manpower Offers</label></p>
-            <p><input type="checkbox" id="welfareVisible" value="1" name="welfareVisible"  {% if currentFilter.welfareVisible  %}checked {%endif%}><label for="welfareVisible">Show Medical Assistance Offers</label></p>
-            <p><input type="checkbox" id="buerocraticVisible" value="1" name="buerocraticVisible"  {% if currentFilter.buerocraticVisible  %}checked {%endif%}><label for="buerocraticVisible">Show Buerocratic Aid Offers</label></p>
-            <p><input type="checkbox" id="childShortVisible" value="1" name="childShortVisible"  {% if currentFilter.childShortVisible  %}checked {%endif%}><label for="childShortVisible">Show Childcare Shortterm Offers</label></p>
-            <p><input type="checkbox" id="childLongVisible" value="1" name="childLongVisible"  {% if currentFilter.childLongVisible  %}checked {%endif%}><label for="childLongVisible">Show Childcare Longterm Offers</label></p>
-            <p><input type="checkbox" id="donationVisible" value="1" name="donationVisible"  {% if currentFilter.donationVisible  %}checked {%endif%}><label for="donationVisible">Show Donation Offers</label></p>
-            {% if currentFilter.accommodationVisible  %}    <p> Accommodation: </p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="accommodationVisible" value="1" name="accommodationVisible" {% if currentFilter.accommodationVisible  %}checked {%endif%}><label for="accommodationVisible" class="custom-control-label">Show Accommodation Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="translationVisible" value="1" name="translationVisible" {% if currentFilter.translationVisible  %}checked {%endif%}><label for="translationVisible" class="custom-control-label">Show Translation Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="transportationVisible" value="1" name="transportationVisible"  {% if currentFilter.transportationVisible  %}checked {%endif%}><label for="transportationVisible" class="custom-control-label">Show Transportation Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="jobVisible" value="1" name="jobVisible"  {% if currentFilter.jobVisible  %}checked {%endif%}><label for="jobVisible" class="custom-control-label">Show Job Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="manpowerVisible" value="1" name="manpowerVisible"  {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible" class="custom-control-label">Show Manpower Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="welfareVisible" value="1" name="welfareVisible"  {% if currentFilter.welfareVisible  %}checked {%endif%}><label for="welfareVisible" class="custom-control-label">Show Medical Assistance Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="buerocraticVisible" value="1" name="buerocraticVisible"  {% if currentFilter.buerocraticVisible  %}checked {%endif%}><label for="buerocraticVisible" class="custom-control-label">Show Buerocratic Aid Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="childShortVisible" value="1" name="childShortVisible"  {% if currentFilter.childShortVisible  %}checked {%endif%}><label for="childShortVisible" class="custom-control-label">Show Childcare Shortterm Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="childLongVisible" value="1" name="childLongVisible"  {% if currentFilter.childLongVisible  %}checked {%endif%}><label for="childLongVisible" class="custom-control-label">Show Childcare Longterm Offers</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input" id="donationVisible" value="1" name="donationVisible"  {% if currentFilter.donationVisible  %}checked {%endif%}><label for="donationVisible" class="custom-control-label">Show Donation Offers</label></p>
+            <hr>      {% if currentFilter.accommodationVisible  %}    <p class="filter-title"> Accommodation: </p>
         <p> {{ filter.accommodation.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.translationVisible  %}     <p> Translation: </p>
+        {% if currentFilter.translationVisible  %}     <p class="filter-title"> Translation: </p>
         <p>{{ filter.translation.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.transportationVisible  %}    <p> Transportation: </p>
+        {% if currentFilter.transportationVisible  %}    <p class="filter-title"> Transportation: </p>
         <p>{{ filter.transportation.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.jobVisible  %}     <p> Jobs: </p>
+        {% if currentFilter.jobVisible  %}     <p class="filter-title"> Jobs: </p>
         <p>{{ filter.job.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.manpowerVisible  %}     <p> Manpower: </p>
+        {% if currentFilter.manpowerVisible  %}     <p class="filter-title"> Manpower: </p>
         <p>{{ filter.manpower.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.welfareVisible  %}    <p> Medical Assistance: </p>
+        {% if currentFilter.welfareVisible  %}    <p class="filter-title"> Medical Assistance: </p>
         <p>{{ filter.welfare.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.buerocraticVisible  %}    <p> Buerocratic Aide: </p>
+        {% if currentFilter.buerocraticVisible  %}    <p class="filter-title"> Buerocratic Aide: </p>
         <p>{{ filter.buerocratic.form.as_p }}</p>
         <hr>{% endif%}
         
-        {% if currentFilter.childShortVisible  %}     <p> Shortterm Childcare: </p>
+        {% if currentFilter.childShortVisible  %}     <p class="filter-title"> Shortterm Childcare: </p>
         <p>{{ filter.buerocratic.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.childLongVisible  %}     <p> Longterm Childcare: </p>
+        {% if currentFilter.childLongVisible  %}     <p class="filter-title"> Longterm Childcare: </p>
         <p>{{ filter.welfare.form.as_p }}</p>
-        <hr>{% endif%}
+       {% endif%}
         
               </div>
           <div class="modal-footer">
