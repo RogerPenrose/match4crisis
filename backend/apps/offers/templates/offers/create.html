@@ -100,12 +100,12 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>   
             </tr>
             {% endfor %}
-
+             <tbody id="imageTable">   
             {% for field in imageForm.visible_fields %}
             <tr>
             <td>{{ field.label_tag }} {{ field }}</td> 
             </tr>
-            {% endfor %}
+            {% endfor %}</tbody>
         </tbody>
         <tbody id="acTable">
             {% for field in accommodationForm.visible_fields %}
@@ -170,7 +170,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             </tr>
             {% endfor %}
         </tbody>
-        <tbody id="doTable">
+        <tbody id="doTable"> 
             {% for field in donationForm.visible_fields %}
             <tr>    
                 <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
@@ -206,6 +206,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
     var weTable = document.getElementById("weTable")
     var joTable = document.getElementById("joTable")
     var doTable = document.getElementById("doTable")
+    var imageTable = document.getElementById("imageTable")
     document.getElementById("id_offerType").onchange =function(){ refresh()}
     refresh()
     markEntries()
@@ -239,11 +240,12 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             }
         }
     }
+
     function refresh(){
         typeSelection = document.getElementById("id_offerType").value
         if (typeSelection == "AC"){
             // Show only Accommodation Table
-
+            imageTable.style.display = "table-row-group"
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, true)
             toggleRequiredTag(trTable, false)
@@ -260,6 +262,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
         else if (typeSelection == "TR"){
             // Show only Transportation Table
             // Toggle AC and TL Table values...
+            imageTable.style.display = "none"
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
             toggleRequiredTag(trTable, true)
@@ -274,6 +277,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
         }
         else if (typeSelection == "TL"){
             // Show only Translation Table
+            imageTable.style.display = "none"
             toggleRequiredTag(tlTable, true)
             toggleRequiredTag(acTable, false)
             toggleRequiredTag(trTable, false)
@@ -288,6 +292,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
         }
         else if (typeSelection == "BU"){
             console.log("BU Table ? ")
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
@@ -302,6 +307,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
         }
         else if (typeSelection == "MP"){
             console.log("BU Table ? ")
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
@@ -315,6 +321,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "BA"){
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
@@ -328,6 +335,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "CL"){
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
@@ -341,6 +349,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "WE"){
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
@@ -354,6 +363,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "JO"){
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
@@ -367,6 +377,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             toggleRequiredTag(doTable, false)
         }
         else if (typeSelection == "DO"){
+            imageTable.style.display = "none"
             
             toggleRequiredTag(tlTable, false)
             toggleRequiredTag(acTable, false)
