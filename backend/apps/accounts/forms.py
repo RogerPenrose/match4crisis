@@ -136,6 +136,9 @@ class SpecialPreferencesForm(forms.ModelForm):
         self.helper.form_action = "preferences"
         self.helper.form_tag = False
 
+        for f in self.fields:
+            self.fields[f].required = False
+
         self.helper.add_input(Submit("submit", _("Speichern")))
     
 
