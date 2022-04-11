@@ -90,7 +90,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
                 <h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
 
 
-<form action="/offers/create" method="post" enctype="multipart/form-data">
+<form id="thisForm" action="/offers/create" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <table id="mainTable">
         <tbody>
@@ -178,10 +178,23 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             {% endfor %}
         </tbody>
     </table>
-    <input type="submit" value="Submit" class="btn">
+    <input type="submit" onclick="save_with_active()" value="{% blocktrans %}Erstellen und teilen {%endblocktrans%}" class="btn">
+    <input type="button" onclick="save_without_active()" value="{% blocktrans %}Speichern und später bearbeiten{%endblocktrans%}" class="btn btn-yellow">
 </form>
 </div></div></div>
 <script>
+    function save_without_active(){
+        var checkbox= document.getElementById("id_active")
+        checkbox.checked = false
+        var form = document.getElementById("thisForm");
+        form.submit();
+    }
+    function save_with_active(){
+        var checkbox= document.getElementById("id_active")
+        checkbox.checked = true
+        var form = document.getElementById("thisForm");
+        form.submit();
+    }
     var typeSelection = "AC"
     var tlTable = document.getElementById("tlTable")
     var trTable = document.getElementById("trTable")
