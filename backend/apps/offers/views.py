@@ -236,8 +236,8 @@ def search(request):
     accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", postCode__in=postCodes).count()
     buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", postCode__in=postCodes).count()
     childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", postCode__in=postCodes).count()
-    welfare = WelfareOffer.objects.filter(active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
-    psych = WelfareOffer.objects.filter(active=True,helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
+    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
+    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
     
     jobs = GenericOffer.objects.filter(active=True,offerType="JO", postCode__in=postCodes).count()
     childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL", postCode__in=postCodes).count()
