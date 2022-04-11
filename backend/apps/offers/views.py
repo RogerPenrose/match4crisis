@@ -350,10 +350,11 @@ def filter(request):
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
     if not currentFilter:
-        categoryCounter = 10
+        categoryCounter = 11
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
+    logger.warning("First : "+str(firstEntry)+" Last: "+str(lastEntry)+" N_ENTRIES"+str(N_ENTRIES)+" Categories: "+str(categoryCounter))
     childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
     childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
     
