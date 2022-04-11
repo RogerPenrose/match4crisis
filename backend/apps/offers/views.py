@@ -255,7 +255,6 @@ def search(request):
         'local' : {'PsychologicalOffers': psych, 'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
-    logger.warning(str(context))
     return render(request, 'offers/search.html', context)
     #return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
@@ -330,7 +329,6 @@ def by_city(request, city):
         'local' : {'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
         'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
-    logger.warning(str(context))
     return render(request, 'offers/list.html', context)
 def by_type(request, offer_type):
     context = { "ResultCount" : eval(OFFERTYPESOBJ[offer_type]["modelName"]+".objects.all().count()"),
@@ -347,7 +345,6 @@ def filter(request):
     pageCount = int(request.POST.get("page", 0))
     ids = []
     currentFilter = dict(request.POST)
-    logger.warning("Request:"+str(currentFilter))
     categoryCounter = 1
     for key in request.POST:
         if "Visible" in key:
@@ -357,7 +354,6 @@ def filter(request):
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
-    logger.warning("N_ENTRIES: "+str(N_ENTRIES))
     childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
     childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
     
@@ -412,7 +408,6 @@ def filter(request):
     if maxPage > 1:
         context["pagination"] = True
     context["ResultCount"] = numEntries
-    logger.warning("N_ENTRIES:"+str(N_ENTRIES)+"Max Page:"+str(maxPage)+" Entries:"+str(len(context["entries"].keys())))
     return  context
 
 def handle_filter(request):
@@ -497,14 +492,10 @@ def create(request):
 def update(request, offer_id):
     form = GenericForm(request.POST)
        # form.image = request.FILES
-       # logger.warning("Set file: "+str(form.image))
     if form.is_valid():
-        logger.warning("FORM IS VALID")
         currentForm = form.cleaned_data
         g = updateGenericModel(currentForm, offer_id, request.user.id)
         if request.FILES.get("image") != None:
-            logger.warning("Have file, trying to set.. "+str(request.FILES))
-            logger.warning("Trying: "+str(type(offer_id))+" Value: "+str(offer_id))
             image = ImageClass(image=request.FILES.get('image'), offerId = g)
             image.save()
         if g is not None:
@@ -594,7 +585,7 @@ def update(request, offer_id):
                     logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id)
                 else:
-                    logger.warning(str(request.POST))
+                    logger.warning("Object empty")
                     return HttpResponse(str(acForm.errors))
             elif currentForm.get("offerType") == "TR":
                 trForm = TransportationForm(request.POST)
@@ -606,6 +597,7 @@ def update(request, offer_id):
                     
                     return detail(request, offer_id)
                 else:
+                    logger.warning("Object empty")
                     return HttpResponse(str(trForm.errors))
             if currentForm.get("offerType") == "TL":
                 tlForm = TranslationForm(request.POST)
@@ -616,6 +608,7 @@ def update(request, offer_id):
                     offer_id = t.genericOffer.id
                     return detail(request, offer_id)
                 else:
+                    logger.warning("Object empty")
                     return HttpResponse(str(tlForm.errors))
         else:
             logger.warning("No USER")
@@ -703,7 +696,6 @@ def getOfferDetails(request, offer_id):
         return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False):
-    logger.warning("Getting offer:"+str(offer_id))
     context = getOfferDetails(request, offer_id)
     if edit_active:
         context["edit_active"] = edit_active
