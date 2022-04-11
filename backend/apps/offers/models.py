@@ -57,6 +57,7 @@ class ChildcareOfferLongterm(models.Model):
         ('NO', "Don't want to disclose"),
         ('FE', "Female"),
         ('MA', "Male"),
+        ('OT', "Other"),
     ]
     gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 class ChildcareOfferShortterm(models.Model):
@@ -65,6 +66,7 @@ class ChildcareOfferShortterm(models.Model):
         ('NO', "Don't want to disclose"),
         ('FE', "Female"),
         ('MA', "Male"),
+        ('OT', "Other"),
     ]
     gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
     numberOfChildrenToCare =  models.IntegerField(default=2)
@@ -152,8 +154,8 @@ class TransportationOffer(models.Model):
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    firstLanguage = models.ForeignKey(Languages,related_name='firstLanguage', on_delete=models.CASCADE)
-    secondLanguage = models.ForeignKey(Languages,related_name='secondLanguage', on_delete=models.CASCADE)
+    firstLanguage = models.ForeignKey(Languages,related_name='firstLanguage', on_delete=models.CASCADE, default="de")
+    secondLanguage = models.ForeignKey(Languages,related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer,

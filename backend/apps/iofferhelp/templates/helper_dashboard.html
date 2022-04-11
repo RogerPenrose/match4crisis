@@ -183,7 +183,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         <div class="buttons row">
             
             <div class="col-12 col-md-6 col-xl-6 left">
-                <a href="/iofferhelp/running_offers">
+                <a href="{% url 'running_offers' %}">
             <div class="row align-self-center align-items-center">
                 <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/recent.png' %}" width="40px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Aktive Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine aktuelle aktiven Angebote.{% endblocktrans %}</p></div>
                 </div>
@@ -193,7 +193,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     
             <div class="col-12 col-md-6 col-xl-6">
     
-                <a href="/iofferhelp/paused_offers">
+                <a href="{% url 'paused_offers' %}">
                 <div class="row align-self-center align-items-center">
                     <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/pause.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Pausierte Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine inaktiven pausierten Angebote.{% endblocktrans %}</p></div>
                     </div>
@@ -201,7 +201,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                 </div>
     
                 <div class="col-12 col-md-6 col-xl-6 left">
-                    <a href="/iofferhelp/incomplete_offers' %}">
+                    <a href="{% url 'incomplete_offers' %}">
                 <div class="row align-self-center align-items-center">
                     <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/incomplete.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Unvollständige Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Angebote, von denen noch Informationen fehlen.{% endblocktrans %}</p></div>
                     </div>
@@ -211,7 +211,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         
                 <div class="col-12 col-md-6 col-xl-6">
         
-                    <a href="/accounts/preferences">
+                    <a href="{% url 'preferences' %}">
                     <div class="row align-self-center align-items-center">
                         <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/settings.png' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3><p>{% blocktrans %}Ändere hier dein Profil.{% endblocktrans %}</p></div>
                         </div>
