@@ -66,7 +66,8 @@ def change_organisation_approval(request, uuid):
     return HttpResponseRedirect("/staff/approve_organisations")
 
 
-def delete_organisation(request, uuid):
+def delete_organisation(request, uuid=None):
+    return HttpResponse(str(request.session))
     h = Organisation.objects.get(uuid=uuid)
     logger.info(
         "Delete Organisation %s by %s", uuid, request.user, extra={"request": request},
@@ -77,7 +78,11 @@ def delete_organisation(request, uuid):
     messages.add_message(request, messages.INFO, text)
     return HttpResponseRedirect("/staff/approve_organisations")
 
-
+def confirm_delete(request, uuid):
+    request.session['delete_organisation_uuid'] = uuid
+    resp = HttpResponseRedirect("#exampleModal1", headers = {})
+    resp.request = request
+    return resp
 
 
 
