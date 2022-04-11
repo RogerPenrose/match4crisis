@@ -112,7 +112,7 @@ class WelfareForm(forms.Form):
 class BuerocraticForm(forms.Form):
     helpType_buerocratic= forms.CharField(label=HELPTYPE, max_length=2, widget=forms.Select(choices=BuerocraticOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
 class TransportationForm(forms.Form):
-    date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
+    date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
     numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
     postCodeEnd = forms.CharField(label=POSTCODE_END, max_length=5, validators=[validate_plz], widget=forms.TextInput(attrs={'class': 'form-control'}))
     streetNameEnd = forms.CharField(label=STREETNAME_END, max_length=200, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -125,8 +125,8 @@ class TranslationForm(forms.Form):
       
 class AccommodationForm(forms.Form):
    
-    startDateAccommodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
-    endDateAccommodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(attrs={'class':'form-control', 'type': 'date'}))
+    startDateAccommodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
+    endDateAccommodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
     numberOfAdults= forms.IntegerField(label=NUMBERADULTS,  widget=forms.NumberInput(attrs={'class':'form-control'}))
     numberOfChildren= forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class':'form-control'}))
     numberOfPets= forms.IntegerField(label=NUMBERPETS, widget=forms.NumberInput(attrs={'class':'form-control'}))
