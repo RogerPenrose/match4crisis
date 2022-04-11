@@ -65,16 +65,12 @@ class User(AbstractUser):
     # our User model has no username and instead uses the email address as the main form of authentication
 
     username = None
-    first_name = None
-    last_name = None
     email = models.EmailField(_('email address'), unique=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-
-    fullName = models.CharField(max_length=100)
 
     validatedEmail = models.BooleanField(default=False)
     emailValidationDate = models.DateTimeField(blank=True, null=True)

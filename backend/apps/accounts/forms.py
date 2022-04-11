@@ -23,16 +23,19 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
         fields = (
-            "fullName",
+            "first_name",
+            "last_name",
             "email",
         )
         labels={
-            "fullName": "",
+            "first_name": "",
+            "last_name": "",
             "email": "",
         }
 
         widgets = {
-            "fullName": forms.TextInput(attrs={"placeholder": _("Vor- und Nachname(n)")}),
+            "first_name": forms.TextInput(attrs={"placeholder": _("Vorname(n)")}),
+            "last_name": forms.TextInput(attrs={"placeholder": _("Nachname(n)")}),
             "email": forms.TextInput(attrs={"placeholder": _("E-Mail")}),
         }
 
@@ -98,7 +101,8 @@ class CommonPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            "fullName",
+            "first_name",
+            "last_name",
             "spokenLanguages", # TODO By default a manytomany model field will be displayed as a MultipleChoiceField. Instead one should be able to search&add langs
             "phoneNumber",
             "sharePhoneNumber",
@@ -119,7 +123,8 @@ class CommonPreferencesForm(forms.ModelForm):
 
         if 'instance' in kwargs:
             if kwargs['instance'].isOrganisation:
-                del self.fields["fullName"]
+                del self.fields["first_name"]
+                del self.fields["last_name"]
                 
 class SpecialPreferencesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
