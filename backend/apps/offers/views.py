@@ -229,27 +229,27 @@ def search(request):
     city = "Berlin"
     postCodes = scrapePostCodeJson(city)
     #Dummy data:
-    donations = GenericOffer.objects.filter(offerType="DN", postCode__in=postCodes).count()
-    accommodations = GenericOffer.objects.filter(offerType="AC", postCode__in=postCodes).count()
-    translations = GenericOffer.objects.filter(offerType="TL", postCode__in=postCodes).count()
-    transportations = GenericOffer.objects.filter(offerType="TR", postCode__in=postCodes).count()
-    accompaniments = GenericOffer.objects.filter(offerType="AP", postCode__in=postCodes).count()
-    buerocratic = GenericOffer.objects.filter(offerType="BU", postCode__in=postCodes).count()
-    childcareShortterm = GenericOffer.objects.filter(offerType="BA", postCode__in=postCodes).count()
-    welfare = WelfareOffer.objects.filter(helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
-    psych = WelfareOffer.objects.filter(helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
+    donations = GenericOffer.objects.filter(active=True,offerType="DN", postCode__in=postCodes).count()
+    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", postCode__in=postCodes).count()
+    translations = GenericOffer.objects.filter(active=True,offerType="TL", postCode__in=postCodes).count()
+    transportations = GenericOffer.objects.filter(active=True,offerType="TR", postCode__in=postCodes).count()
+    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", postCode__in=postCodes).count()
+    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", postCode__in=postCodes).count()
+    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", postCode__in=postCodes).count()
+    welfare = WelfareOffer.objects.filter(active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
+    psych = WelfareOffer.objects.filter(active=True,helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
     
-    jobs = GenericOffer.objects.filter(offerType="JO", postCode__in=postCodes).count()
-    childcareLongterm = GenericOffer.objects.filter(offerType="CL", postCode__in=postCodes).count()
-    manpower = GenericOffer.objects.filter(offerType="MP", postCode__in=postCodes).count()
-    totalAccommodations = GenericOffer.objects.filter(offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(offerType="JO").count()
+    jobs = GenericOffer.objects.filter(active=True,offerType="JO", postCode__in=postCodes).count()
+    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL", postCode__in=postCodes).count()
+    manpower = GenericOffer.objects.filter(active=True,offerType="MP", postCode__in=postCodes).count()
+    totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
+    totalBuerocratic = GenericOffer.objects.filter(active=True,offerType="BU").count()
+    totalWelfare = GenericOffer.objects.filter(active=True,offerType="WE").count()
+    totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
+    totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
+    totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
     context = {
         'city' : city,
         'local' : {'PsychologicalOffers': psych, 'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
@@ -309,22 +309,22 @@ def by_city(request, city):
     welfare = 0
     childcareShortterm = 0
     for postCode in postCodes:
-        accommodations += GenericOffer.objects.filter(offerType="AC", postCode=postCode).count()
-        translations += GenericOffer.objects.filter(offerType="TL", postCode=postCode).count()
-        transportations += GenericOffer.objects.filter(offerType="TR", postCode=postCode).count()
-        accompaniments += GenericOffer.objects.filter(offerType="AP", postCode=postCode).count()
-        buerocratic += GenericOffer.objects.filter(offerType="BU", postCode=postCode).count()
-        childcareShortterm += GenericOffer.objects.filter(offerType="BA", postCode=postCode).count()
-        welfare += GenericOffer.objects.filter(offerType="WE", postCode=postCode).count()
-        jobs += GenericOffer.objects.filter(offerType="JO", postCode=postCode).count()
-    totalAccommodations = GenericOffer.objects.filter(offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(offerType="JO").count()
+        accommodations += GenericOffer.objects.filter(active=True,offerType="AC", postCode=postCode).count()
+        translations += GenericOffer.objects.filter(active=True,offerType="TL", postCode=postCode).count()
+        transportations += GenericOffer.objects.filter(active=True,offerType="TR", postCode=postCode).count()
+        accompaniments += GenericOffer.objects.filter(active=True,offerType="AP", postCode=postCode).count()
+        buerocratic += GenericOffer.objects.filter(active=True,offerType="BU", postCode=postCode).count()
+        childcareShortterm += GenericOffer.objects.filter(active=True,offerType="BA", postCode=postCode).count()
+        welfare += GenericOffer.objects.filter(active=True,offerType="WE", postCode=postCode).count()
+        jobs += GenericOffer.objects.filter(active=True,offerType="JO", postCode=postCode).count()
+    totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
+    totalBuerocratic = GenericOffer.objects.filter(active=True,offerType="BU").count()
+    totalWelfare = GenericOffer.objects.filter(active=True,offerType="WE").count()
+    totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
+    totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
+    totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
     context = {
         'local' : {'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
         'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
@@ -338,7 +338,7 @@ def by_type(request, offer_type):
 
 def filter(request):
     N_ENTRIES = 5
-    filters = {} 
+    filters = {"genericOffer__active": True} 
     if request.POST.get("city"):
         postcodes = scrapePostCodeJson(request.POST.get("city"))
         filters = {"genericOffer__postCode__in": postcodes}
@@ -428,31 +428,31 @@ def handle_filter(request):
 def list_by_city(request, city):
     postCodes = scrapePostCodeJson(city)
     #Dummy data:
-    context = {"ResultCount": GenericOffer.objects.filter(postCode__in=postCodes).count(), 
+    context = {"ResultCount": GenericOffer.objects.filter(genericOffer__active=True, postCode__in=postCodes).count(), 
     'Title': "All Offers",'city': city,
-    'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__postCode__in=postCodes)),
-     'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__postCode__in=postCodes)), 
-     'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode__in=postCodes))}
+    'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)),
+     'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
+     'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes))}
     return render(request, 'offers/index.html', context)
     
 def by_postCode(request, postCode):
-    context = {'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__postCode=postCode)), \
-               'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__postCode=postCode)),\
-               'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__postCode=postCode)),\
-               'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__postCode=postCode)),\
-                'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__postCode=postCode)), 
-     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__postCode=postCode)), 
-     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__postCode=postCode)), 
-     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__postCode=postCode)), 
-     'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__postCode=postCode)), 
-               'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__postCode=postCode))}
+    context = {'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), \
+               'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)),\
+               'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)),\
+               'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)),\
+                'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
+     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
+     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
+     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
+     'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
+               'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode))}
     
     return render(request, 'offers/index.html', context)
 def mergeImages(offers):
