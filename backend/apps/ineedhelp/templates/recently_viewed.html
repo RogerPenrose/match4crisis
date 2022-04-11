@@ -15,6 +15,7 @@ Kürzlich angesehene Angebote
   </div>
 
     <div class="container cards">
+{% if offers %}
 {% for entry in offers %}
 <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
 
@@ -54,5 +55,10 @@ Kürzlich angesehene Angebote
 </div>   
 </a>  
 {% endfor %}
+{% else %}
+{% blocktrans %}
+Du hast noch keine Angebote angeschaut. Suche jetzt nach Hilfe in deiner Umgebung!
+{% endblocktrans %}
+{% endif %}
 </div>
 {% endblock %}

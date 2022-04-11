@@ -14,6 +14,7 @@ Gespeicherte Angebote
   <h3>{% blocktrans %}Favoriten{% endblocktrans %}</h3>
   </div>
     <div class="container cards">
+{% if offers %}
 {% for entry in offers %}
 <a href="/offers/{{ entry.offer.genericOffer.id }}/">        
 
@@ -54,5 +55,10 @@ Gespeicherte Angebote
 </div>   
 </a>  
 {% endfor %}
+{% else %}
+{% blocktrans %}
+Du hast keine Angebote gespeichert. Suche nach Hilfe in deiner Umgebung und speichere dir deine Lieblingsangebote durch einen Klick auf den Stern ab.
+{% endblocktrans %}
+{% endif %}
 </div>
 {% endblock %}
