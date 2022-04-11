@@ -21,12 +21,13 @@ class HelperDashboardView(DashboardView):
         pausedOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=False, incomplete=False).count()
         incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
         runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
-
+        firstname = request.user.first_name
 
         context = {
             "pausedOffersCount": pausedOffersCount,
             "incompleteOffersCount": incompleteOffersCount,
             "runningOffersCount": runningOffersCount,
+            "firstname": firstname
         }
 
         return self.render_to_response(context)
