@@ -175,46 +175,34 @@ mapViewPage = {
            }).bindPopup(this.options.createPopupTextGeneric(descr, location, refer_url))
         }))
 
-        
+        /*var checks = document.querySelectorAll('[type = "checkbox"]'), i;
+        function disCheck() {
+            for (i = 0; i < checks.length; ++i) {
+                checks[i].disabled = true;*/
+
+                
         var overlays = {}
 
-        const countItems = (o) => {
-            var count = 0
-            for (countryCode in o) {
-                for (zipCode in o[countryCode]) {
-                    count += o[countryCode][zipCode].count
-                }
-            }
-            return count
-        }
-
-        {%if translation  %}
         translationClusterMarkerGroup.addTo(this.mapObject)
         translationMarkers.addTo(this.mapObject)
-        overlays[this.options.createTranslationCountText(countItems(translations))] = translationMarkers
-        {% endif %}
-        {%if transportation  %}
+        overlays[this.options.createTranslationCountText(translations.length)] = translationMarkers
+
         transportationClusterMarkerGroup.addTo(this.mapObject)
         transportationMarkers.addTo(this.mapObject)
-        overlays[this.options.createTransportationCountText(countItems(transportations))] = transportationMarkers
-        {% endif %}
-        {%if accommodation  %}
+        overlays[this.options.createTransportationCountText(transportations.length)] = transportationMarkers
+
         accommodationClusterMarkerGroup.addTo(this.mapObject)
         accommodationMarkers.addTo(this.mapObject)
-        overlays[this.options.createAccommodationCountText(countItems(accommodations))] = accommodationMarkers
-        {% endif %}
-        {%if generic  %}
+        overlays[this.options.createAccommodationCountText(accommodations.length)] = accommodationMarkers
+
         genericClusterMarkerGroup.addTo(this.mapObject)
         genericMarkers.addTo(this.mapObject)
-        overlays[this.options.createGenericCountText(countItems(generic))] = genericMarkers
-        {% endif %}
-        
+        overlays[this.options.createGenericCountText(generic.length)] = genericMarkers
 
-
-        control = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
-        var htmlObject = control.getContainer();
+        const control = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
+        const htmlObject = control.getContainer();
         // Get the desired parent node.
-        var a = document.getElementById('controlContainer');
+        const a = document.getElementById('controlContainer');
 
         // Finally append that node to the new parent, recursively searching out and re-parenting nodes.
         function setParent(el, newParent)
@@ -223,6 +211,24 @@ mapViewPage = {
         }
         setParent(htmlObject, a);
 
+        
+        // click (uncheck) checkboxes, if not selected in URL-Params
+        const checkboxes_to_disable = [
+            "{{ translation }}",
+            "{{ transportation }}",
+            "{{ accommodation }}",
+            "{{ generic }}"
+        ].map(b => b == "True")
+
+        const offersCheckboxParents = document.getElementById("controlContainer")
+                                    .childNodes[0]
+                                    .childNodes[1]
+                                    .childNodes[2]
+                                    .childNodes
+
+        for (i in checkboxes_to_disable){
+            if (!checkboxes_to_disable[i]) offersCheckboxParents[i].childNodes[0].childNodes[0].click();
+        }
     },
 
     createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
