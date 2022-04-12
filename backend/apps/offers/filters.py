@@ -8,7 +8,7 @@ class GenericFilter(django_filters.FilterSet):
     cost_lt = django_filters.NumberFilter(field_name="cost", lookup_expr="lt")
     class Meta:
         model = GenericOffer
-        fields = ['offerType', 'postCode']
+        fields = ['offerType',"lat","lng"]
 
 class ChildCareFilterLongterm(django_filters.FilterSet):
     class Meta:

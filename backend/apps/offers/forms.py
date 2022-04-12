@@ -53,31 +53,29 @@ DEPARTUREDATE="Date"
 NUMBERADULTS="How many Adults"
 NUMBERPETS = "How many Pets"
 IMAGE = "Upload Image"
+LOCATION="Location"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
         attrs = { "class": "form-control"}
         model = GenericOffer
 
-        fields = ["offerType", "offerDescription", "country", "postCode",  "streetName", "streetNumber", "cost", "isDigital", "active"]
+        fields = ["offerType", "offerDescription","location", "lat","lng", "bb", "cost", "isDigital", "active"]
         labels={
             "offerType": OFFERTYPE,
             "offerDescription": OFFERDESCRIPTION, 
-            "country": COUNTRY, 
-            "postCode": POSTCODE,  
-            "streetName": STREETNAME, 
-            "streetNumber": HOUSENUMBER, 
             "cost": PRICE, 
             "isDigital": DIGITAL, 
+            "location": LOCATION,
             "active": ACTIVE,
         }
         widgets = {
+            'location': forms.TextInput(attrs={ 'class': 'form-control'}),
+            'lat': forms.TextInput(attrs={'class': 'form-control'}),
+            'lng': forms.TextInput(attrs={'class': 'form-control'}),
+            'bb': forms.TextInput(attrs={'class': 'form-control'}),
         'offerType':  forms.Select(attrs={'class': 'form-control'}),
         'offerDescription': forms.Textarea(attrs={'class': 'form-control'}),
-        'country': forms.Select(choices=countries, attrs={'class': 'form-control'}),
-        'postCode': forms.TextInput(attrs={'class': 'form-control'}),
-        'streetName': forms.TextInput(attrs={'class': 'form-control'}),
-        'streetNumber': forms.TextInput(attrs={'class': 'form-control'}),
         'cost': forms.TextInput(attrs={'class': 'form-control'}),
         'isDigital': forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
         'active': forms.CheckboxInput(attrs={'class': 'custom-control-input'})

@@ -37,7 +37,7 @@ logger = logging.getLogger("django")
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
-    locations_and_number = prepare_offers(ttl_hash=get_ttl_hash()) # @todo: not sure if this caching still does anything with how we fetch our stuff.. 
+  #  locations_and_number = prepare_offers(ttl_hash=get_ttl_hash()) # @todo: not sure if this caching still does anything with how we fetch our stuff.. 
     startPosition =  [51.13, 10.018]
     zoom = 6
     logger.warning("Received Request in Mapview: "+str(request.GET))
