@@ -84,7 +84,7 @@ mapViewPage = {
             id: 'mapbox/streets-v11',
             tileSize: 512,
             zoomOffset: -1,
-            preferCanvas: true,
+            preferCanvas: true
           }
     
         this.mapObject = L.map(this.options.mapViewContainerId,mapOptions);
@@ -96,7 +96,10 @@ mapViewPage = {
                 mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.south, vp.west], [vp.north, vp.east]]));
             } catch(e){
                 console.log("Url_param bb is damaged!")
+                mapViewPage.mapObject.fitBounds(new L.latLngBounds([[49.27, 7.86], [53.1, 13.04]]));
             }
+        } else {
+            mapViewPage.mapObject.fitBounds(new L.latLngBounds([[49.27, 7.86], [53.1, 13.04]]));
         }
 
         L.tileLayer(tileLayerURL, tileLayerOptions).addTo(this.mapObject);    
