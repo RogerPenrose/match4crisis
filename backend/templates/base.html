@@ -49,6 +49,7 @@
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarsExampleDefault">
       <ul class="navbar-nav ml-auto">
+        <li class="nav-item {% if "donation" in request.path %}active{% endif %}" > <a class="nav-link" href="/offers/donations">{% blocktrans %}Spenden{% endblocktrans %}</a> </li>
         <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview/?generic=True">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
 
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>

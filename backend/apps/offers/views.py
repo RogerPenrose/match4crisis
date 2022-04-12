@@ -473,7 +473,10 @@ def index(request):
     context = filter(request)
     
     return render(request, 'offers/index.html', context)
-
+def donations(request):
+    donation = DonationOffer.objects.filter(genericOffer__active=True)
+    context = {"ResultCount": donation.count(), "DonationOffers": donation }
+    return render(request, 'offers/donations.html', context)
 @login_required
 def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
@@ -488,7 +491,7 @@ def create(request):
         return update(request, 0)
     elif request.method == 'GET':
         form = GenericForm()
-        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accommodationForm":AccommodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm(), 'donationForm': DonationForm()})
+        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accommodationForm":AccommodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm()})
 
 def update(request, offer_id):
     form = GenericForm(request.POST)

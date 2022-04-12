@@ -12,6 +12,7 @@ urlpatterns = [
     path('by_city/<str:city>', views.by_city, name='by_city'),
     path('list_by_city/<str:city>', views.list_by_city, name='by_city'),
     path('create', views.create, name='create'),
+    path('donations', views.donations, name="donations"),
     # ex: /polls/5/
     path('<int:offer_id>/', views.detail, name='detail'),
     path('<int:offer_id>/contact', views.contact, name='contact'),
