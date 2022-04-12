@@ -600,8 +600,10 @@ class Command(BaseCommand):
                     created_at=timezone.now(), \
                     offerDescription="Automatically generated", \
                     isDigital=False,  \
-                    country="DE", \
-                    postCode=plzs[i], \
+                    #country="DE", \
+                    #postCode=plzs[i], \
+                    lat = 48 + 6*np.random.random(), \
+                    lng = 6 + 9*np.random.random(), \
                     cost=0.00, \
                     active= (np.random.random() < 0.7), \
                     incomplete= (np.random.random() > 0.7),
