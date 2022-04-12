@@ -17,8 +17,6 @@ def validate_plz(value):
         )
 
 class GenericOffer(models.Model):
-
-
     OFFER_CHOICES = [
     ('AC', 'Accommodation'),
     ('TL', 'Translation'),
