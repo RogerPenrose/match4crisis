@@ -74,13 +74,14 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
   </form>
 
 </div></div> 
-<div style="{% if  city == None %} display:none{%endif%} ">
+
+<div style="{% if  city == None or city == ""%} display:none{%endif%} ">
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title" >{% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2><p>{% blocktrans %}Wähle eine Kategorie, um Angebote in {{ city }} anzuzeigen.{% endblocktrans %}</p></div>
         </div>
         </div>
-        <div class="container cards" style="{% if  city == None %} display:none{%endif%} ">
+        <div class="container cards" style="{% if  city == None or city == "" %} display:none{%endif%} ">
             <a onclick="search_offers(['accommodation']);" class="pointer">        
             <div class="col-12 col-lg-6 offer-card"> 
 
