@@ -90,7 +90,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
                 <h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
 
 
-<form id="thisForm" action="/offers/create" method="POST" enctype="multipart/form-data">
+<form id="thisForm" action="/offers/createOffer" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <table id="mainTable">
         <tbody>
@@ -107,66 +107,10 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             </tr>
             {% endfor %}</tbody>
         </tbody>
-        <tbody id="acTable">
-            {% for field in accommodationForm.visible_fields %}
+        <tbody id="detailTable">
+            {% for field in detailForm.visible_fields %}
             <tr>        
                 <td id="{{ field.name }}">{{ field.label_tag }} {{ field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody  id="trTable">
-            {% for field in transportationForm.visible_fields %}
-            <tr>  
-                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="tlTable">
-            {% for field in translationForm.visible_fields %}
-            <tr>    
-                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="buTable">
-            {% for field in buerocraticForm.visible_fields %}
-            <tr>    
-                <td>{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="mpTable">
-            {% for field in manpowerForm.visible_fields %}
-            <tr>    
-                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="clTable">
-            {% for field in childcarelongtermForm.visible_fields %}
-            <tr>    
-                <td>{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="baTable">
-            {% for field in childcareshorttermForm.visible_fields %}
-            <tr>    
-                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="weTable">
-            {% for field in welfareForm.visible_fields %}
-            <tr>    
-                <td  id="{{ field.name }}">{{ field.label_tag }} {{field }}</td>   
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tbody id="joTable">
-            {% for field in jobForm.visible_fields %}
-            <tr>    
-                <td>{{ field.label_tag }} {{field }}</td>   
             </tr>
             {% endfor %}
         </tbody>
@@ -211,177 +155,7 @@ document.getElementById("thisForm").querySelectorAll(`[name=${i.name}]`).forEach
         }
         form.submit();
     }
-    var typeSelection = "AC"
-    var tlTable = document.getElementById("tlTable")
-    var trTable = document.getElementById("trTable")
-    var acTable = document.getElementById("acTable")
-    var buTable = document.getElementById("buTable")
-    var mpTable = document.getElementById("mpTable")
-    var baTable = document.getElementById("baTable")
-    var clTable = document.getElementById("clTable")
-    var weTable = document.getElementById("weTable")
-    var joTable = document.getElementById("joTable")
-    var imageTable = document.getElementById("imageTable")
-    document.getElementById("id_offerType").onchange =function(){ refresh()}
-    refresh()
-    markEntries()
-    function markEntries(){
-        var table = document.getElementById("mainTable")
-        var entries = table.querySelectorAll("[required]")
-        for(var i = 0; i < entries.length; i++){
-            var entry = entries[i]
-            entry.setAttribute("wasRequired", "true") 
+    document.getElementById("offerType").style.display ="none"
 
-        }
-    }
-    function toggleRequiredTag(subtable, state){
-            console.log(subtable.id+" to "+state)
-        if (state == false ){
-            subtable.style.display = "none"
-            var entries = subtable.querySelectorAll("[required]")
-            for (var i = 0; i < entries.length; i ++){
-                var entry = entries[i]
-                entry.required = false
-
-            }
-        }
-        else {
-            subtable.style.display = "table-row-group"
-            var entries = subtable.querySelectorAll("[wasRequired]")
-            for (var i = 0; i < entries.length; i ++){
-                var entry = entries[i]
-                entry.required = true
-
-            }
-        }
-    }
-
-    function refresh(){
-        typeSelection = document.getElementById("id_offerType").value
-        if (typeSelection == "AC"){
-            // Show only Accommodation Table
-            imageTable.style.display = "table-row-group"
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, true)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-            // Mark all invisible fields as "nonrequired":
-           
-        }
-        else if (typeSelection == "TR"){
-            // Show only Transportation Table
-            // Toggle AC and TL Table values...
-            imageTable.style.display = "none"
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, true)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-            
-        }
-        else if (typeSelection == "TL"){
-            // Show only Translation Table
-            imageTable.style.display = "none"
-            toggleRequiredTag(tlTable, true)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-
-        }
-        else if (typeSelection == "BU"){
-            console.log("BU Table ? ")
-            imageTable.style.display = "none"
-            
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, true)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-        }
-        else if (typeSelection == "MP"){
-            console.log("BU Table ? ")
-            imageTable.style.display = "none"
-            
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, true)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-        }
-        else if (typeSelection == "BA"){
-            imageTable.style.display = "none"
-            
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, true)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-        }
-        else if (typeSelection == "CL"){
-            imageTable.style.display = "none"
-            
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, true)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, false)
-        }
-        else if (typeSelection == "WE"){
-            imageTable.style.display = "none"
-            
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, true)
-            toggleRequiredTag(joTable, false)
-        }
-        else if (typeSelection == "JO"){
-            imageTable.style.display = "none"
-            
-            toggleRequiredTag(tlTable, false)
-            toggleRequiredTag(acTable, false)
-            toggleRequiredTag(trTable, false)
-            toggleRequiredTag(buTable, false)
-            toggleRequiredTag(mpTable, false)
-            toggleRequiredTag(clTable, false)
-            toggleRequiredTag(baTable, false)
-            toggleRequiredTag(weTable, false)
-            toggleRequiredTag(joTable, true)
-        }
-}
 </script>
 {% endblock %}

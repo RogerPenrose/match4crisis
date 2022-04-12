@@ -11,7 +11,8 @@ urlpatterns = [
     path('search', views.search, name='search'),
     path('by_city/<str:city>', views.by_city, name='by_city'),
     path('list_by_city/<str:city>', views.list_by_city, name='by_city'),
-    path('create', views.create, name='create'),
+    path('createOffer', views.create, name='create'),
+    path('create', views.selectOfferType, name='create'),
     path('save', views.save, name='save'),
     path('donations', views.donations, name="donations"),
     # ex: /polls/5/

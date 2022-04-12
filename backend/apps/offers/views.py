@@ -486,12 +486,40 @@ def delete_offer(request, offer_id):
     else :
         return HttpResponse("Wrong User")
 @login_required
+def selectOfferType(request):
+    context= {"entries": GenericOffer.OFFER_CHOICES[:-1]}
+    return render(request, 'offers/selectOfferType.html', context)
+def getFormForOfferType(offerType):
+    if offerType == "AC":
+        return AccommodationForm()
+    elif offerType == "TL":
+        return TranslationForm()
+    elif offerType == "TR":
+        return TransportationForm()
+    elif offerType == "BU":
+        return BuerocraticForm()
+    elif offerType == "MP":
+        return ManpowerForm()
+    elif offerType == "CL":
+        return ChildcareFormLongterm()
+    elif offerType == "BA":
+        return ChildcareFormShortterm()
+    elif offerType == "WE":
+        return WelfareForm()
+    elif offerType == "JO":
+        return JobForm()
+@login_required
 def create(request):
     if request.method == 'POST':
-        return update(request, 0)
+        return update(request, 0, newly_created=True)
     elif request.method == 'GET':
-        form = GenericForm()
-        return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accommodationForm":AccommodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm()})
+        context = {}
+        context["genericForm"]  = GenericForm()
+        context["detailForm"] = getFormForOfferType(request.GET.get("type"))
+        if request.GET.get("type") == "AC":
+            context["imageForm"] = ImageForm()
+        logger.warning("Returning: "+str(context))
+        return render(request, 'offers/create.html', context)
 def save(request):
     logger.warning("SAVING")
     # Fill all empty fields with placeholder values ? 
@@ -500,7 +528,7 @@ def save(request):
         form[entry] = "-"
     logger.warning(str(form.errors.as_data()))
 
-def update(request, offer_id):
+def update(request, offer_id, newly_created = False):
     form = GenericForm(request.POST)
        # form.image = request.FILES
     if form.is_valid():
@@ -517,7 +545,7 @@ def update(request, offer_id):
                     a = updateManpowerModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(buForm.errors))
@@ -528,7 +556,7 @@ def update(request, offer_id):
                     a = updateDonationModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(buForm.errors))
@@ -539,7 +567,7 @@ def update(request, offer_id):
                     a = updateWelfareModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(weForm.errors))
@@ -550,7 +578,7 @@ def update(request, offer_id):
                     a = updateJobModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(joForm.errors))
@@ -561,7 +589,7 @@ def update(request, offer_id):
                     a = updateChildcareShortTermModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(baForm.errors))
@@ -572,7 +600,7 @@ def update(request, offer_id):
                     a = updateChildcareLongTermModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(clForm.errors))
@@ -583,7 +611,7 @@ def update(request, offer_id):
                     a = updateBuerocraticModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(buForm.errors))
@@ -594,7 +622,7 @@ def update(request, offer_id):
                     a = updateAccommodationModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(acForm.errors))
@@ -606,7 +634,7 @@ def update(request, offer_id):
                     offer_id = t.genericOffer.id
                     logger.warning("Offer ID: "+str(offer_id))
                     
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(trForm.errors))
@@ -617,7 +645,7 @@ def update(request, offer_id):
                     t = updateTranslationModel(g, currentForm,offer_id)
                     
                     offer_id = t.genericOffer.id
-                    return detail(request, offer_id)
+                    return detail(request, offer_id, newly_created=newly_created)
                 else:
                     logger.warning("Object empty")
                     return HttpResponse(str(tlForm.errors))
@@ -706,10 +734,12 @@ def getOfferDetails(request, offer_id):
         detailForm = BuerocraticForm(model_to_dict(detail))
         return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
-def detail(request, offer_id, edit_active = False):
+def detail(request, offer_id, edit_active = False,  newly_created = False) :
     context = getOfferDetails(request, offer_id)
     if edit_active:
         context["edit_active"] = edit_active
+    if newly_created:
+        context["newly_created"] = newly_created
     if request.user.is_authenticated and request.user.isRefugee:
         # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
         offer = GenericOffer.objects.get(pk=offer_id)
