@@ -31,15 +31,15 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
         <div class="row align-self-center align-items-center">
 <div class="col-lg-12">
-<form action="/mapview/">
+<form action="/offers/search">
     <div style="position: relative">
       <input
         type="text"
-        id="location"
+        id="id_location"
         name="location"
         class="input-form-search"
         placeholder="{% blocktrans %}Berlin{% endblocktrans %}"
-      />
+      >
       <input type="hidden" value="" name="lat">
       <input type="hidden" value="" name="lng">
       <input type="hidden" value="" name="bb">
@@ -70,17 +70,17 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
       </svg>
     </div>
     
-    <input id="searchsubmit" type="submit" value="Submit" />
+    <input id="searchsubmit" type="button"  onclick="triggerGoogleSearch()" />
   </form>
 
 </div></div> 
-
+<div style="{% if  city == None %} display:none{%endif%} ">
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
  <div class="col-12 text-center" style="text-align:center;" >
-    <h2 class="title">{% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2><p>{% blocktrans %}Wähle eine Kategorie, um Angebote in {{ city }} anzuzeigen.{% endblocktrans %}</p></div>
+    <h2 class="title" >{% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2><p>{% blocktrans %}Wähle eine Kategorie, um Angebote in {{ city }} anzuzeigen.{% endblocktrans %}</p></div>
         </div>
         </div>
-        <div class="container cards">
+        <div class="container cards" style="{% if  city == None %} display:none{%endif%} ">
             <a onclick="search_offers(['accommodation']);" class="pointer">        
             <div class="col-12 col-lg-6 offer-card"> 
 
@@ -300,7 +300,6 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 </div>
 
 <script>
-  console.log("Hello")
   function search_offers(types){
     visibles = []
     for (var i = 0; i < types.length; i++)
@@ -341,5 +340,31 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
   
   
   }
+  function selectFirstOnEnter(input) {  // store the original event binding function
+    console.log(input)
+    var _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
+    function addEventListenerWrapper(type, listener) {  // Simulate a 'down arrow' keypress on hitting 'return' when no pac suggestion is selected, and then trigger the original listener.
+        if (type == "keydown") { 
+            var orig_listener = listener;
+            listener = function(event) {
+                var suggestion_selected = $(".pac-item-selected").length > 0;
+                if (event.which == 13 && !suggestion_selected) { 
+                    var simulated_downarrow = $.Event("keydown", {keyCode: 40, which: 40}); 
+                    orig_listener.apply(input, [simulated_downarrow]); 
+                }
+                orig_listener.apply(input, [event]);
+            };
+        }
+        _addEventListener.apply(input, [type, listener]); // add the modified listener
+    }
+
+    if (input.addEventListener) { 
+        input.addEventListener = addEventListenerWrapper; 
+    } else if (input.attachEvent) { 
+        input.attachEvent = addEventListenerWrapper; 
+    }
+}
+var input = document.getElementById("id_location")
+selectFirstOnEnter(input)
 </script>
 {% endblock %}

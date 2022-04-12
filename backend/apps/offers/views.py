@@ -219,6 +219,38 @@ def updateTranslationModel(g, form, offer_id=0):
         t.secondLanguage=form.get("secondLanguage")
         t.save()
         return t
+def getCityBbFromLocation(locationData):
+    reverse_geocode_result = gmaps.geocode(locationData)
+    returnVal = {
+    "latMin": reverse_geocode_result[0]["geometry"]["bounds"]["southwest"]["lat"], 
+    "lngMin": reverse_geocode_result[0]["geometry"]["bounds"]["southwest"]["lng"], 
+    "lngMax": reverse_geocode_result[0]["geometry"]["bounds"]["northeast"]["lng"], 
+    "latMax": reverse_geocode_result[0]["geometry"]["bounds"]["northeast"]["lat"],}
+    
+    for x in reverse_geocode_result[0]['address_components']:
+        if 'locality' in x["types"]:
+            returnVal["city"] = x["long_name"]
+    
+        logger.warning("X: "+str(x))
+    logger.warning(str(returnVal))
+    
+    return returnVal
+
+def getCityFromCoordinates(locationData):
+    reverse_geocode_result = gmaps.reverse_geocode(locationData)
+    for entry in reverse_geocode_result:
+        if "administrative_area_level_2" in entry["types"]:
+            returnVal = {
+            "latMin": entry["geometry"]["bounds"]["southwest"]["lat"], 
+            "lngMin": entry["geometry"]["bounds"]["southwest"]["lng"], 
+            "lngMax": entry["geometry"]["bounds"]["northeast"]["lng"], 
+            "latMax": entry["geometry"]["bounds"]["northeast"]["lat"],}
+    for x in reverse_geocode_result[0]['address_components']:
+        if 'locality' in x["types"]:
+            returnVal["city"] = x["long_name"]
+    
+    return returnVal
+
 
 @login_required
 def contact(request, offer_id):
@@ -227,22 +259,32 @@ def contact(request, offer_id):
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
-    city = "Berlin"
-    postCodes = scrapePostCodeJson(city)
+    if request.GET.get("lat") == "" and request.GET.get("location")  is not None: 
+        logger.warning("Searching location")
+        locationData = getCityBbFromLocation(request.GET.get("location"))
+    else: 
+        logger.warning("Sending: "+str(request.GET.get("bb")))
+        bb = json.loads(request.GET.get("bb"))
+        locationData = { "city": request.GET.get("location"), "latMax": bb["east"], "latMin": bb["west"], "lngMax": bb["north"], "lngMin": bb["south"]}
+    city = locationData["city"]
+    lngMax = locationData["lngMax"]
+    latMin = locationData["latMin"]
+    lngMin = locationData["lngMin"]
+    latMax = locationData["latMax"]
+    logger.warning("Location Data: "+str(locationData))
+    #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    donations = GenericOffer.objects.filter(active=True,offerType="DN", postCode__in=postCodes).count()
-    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", postCode__in=postCodes).count()
-    translations = GenericOffer.objects.filter(active=True,offerType="TL", postCode__in=postCodes).count()
-    transportations = GenericOffer.objects.filter(active=True,offerType="TR", postCode__in=postCodes).count()
-    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", postCode__in=postCodes).count()
-    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", postCode__in=postCodes).count()
-    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", postCode__in=postCodes).count()
-    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__postCode__in=postCodes).count()
-    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__postCode__in=postCodes).count()
-    
-    jobs = GenericOffer.objects.filter(active=True,offerType="JO", postCode__in=postCodes).count()
-    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL", postCode__in=postCodes).count()
-    manpower = GenericOffer.objects.filter(active=True,offerType="MP", postCode__in=postCodes).count()
+    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=[latMin, latMax], genericOffer__lng__range=[lngMin, lngMax]).count()
+    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=[latMin, latMax], genericOffer__lng__range=[lngMin, lngMax]).count()
+    jobs = GenericOffer.objects.filter(active=True,offerType="JO",  lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL",  lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
+    manpower = GenericOffer.objects.filter(active=True,offerType="MP",  lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
     totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
@@ -277,22 +319,6 @@ def getTranslationImage(request, firstLanguage, secondLanguage):
     context = {"firstLanguage" : firstData.decode("utf-8")
 , "secondLanguage" : secondLanguage.decode("utf-8")}
     return render(request, 'offers/drawing.svg', context=context,content_type="image/svg+xml")
-def scrapePostCodeJson(city):
-
-    current_location = dirname(abspath(__file__))
-    with open(join(current_location,"files/cities_to_plz.json"), "r") as read_file:
-        mappings = json.load(read_file)
-        plzs = mappings.get(city.capitalize())
-        if plzs is not None:
-            return plzs
-        else:
-            logger.error("NO PLZS FOUND FOR CITY "+city+" Trying for a partial match...")
-            for entry in mappings:
-                if city.lower() in entry.lower():
-                    logger.error("Found a match: "+entry)
-                    plzs = mappings.get(entry)
-                    return plzs
-            
 def by_city(request, city):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
@@ -336,8 +362,8 @@ def filter(request):
     N_ENTRIES = 5
     filters = {"genericOffer__active": True} 
     if request.POST.get("city"):
-        postcodes = scrapePostCodeJson(request.POST.get("city"))
-        filters = {"genericOffer__postCode__in": postcodes}
+        locationData = getCityBbFromLocation(request.POST.get("city"))
+        filters = {"genericOffer__lat__range": [locationData["latMin"], locationData["latMax"]],"genericOffer__lng__range": [locationData["lngMin"], locationData["lngMax"]] }
     pageCount = int(request.POST.get("page", 0))
     ids = []
     currentFilter = dict(request.POST)

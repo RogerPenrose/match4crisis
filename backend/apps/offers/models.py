@@ -7,7 +7,6 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from match4crisis.constants.countries import countries
 from apps.iofferhelp.models import Helper
-from geoposition.fields import GeopositionField
 def validate_plz(value):
     try:
         number = int(value)

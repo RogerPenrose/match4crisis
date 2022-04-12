@@ -1,6 +1,7 @@
+
 function initMapsAutocomplete(){
     let input = document.getElementById("location");
-    if (input.nodeName != "input"){
+    if (input== null || input.nodeName != "input"){
         input = document.getElementById("id_location")
     }
     if (input !== null) {

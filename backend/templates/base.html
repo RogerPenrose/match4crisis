@@ -53,7 +53,7 @@
         <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a class="nav-link" href="/mapview/?generic=True">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
 
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>
-        <li class="nav-item {% if "offers/list" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/list">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
+        <li class="nav-item {% if "offers/list" in request.path %}active{% endif %}"> <a class="nav-link" href="/offers/search">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
         {% if not user.is_authenticated %}
         <li class="nav-item {% if "signup_helper" in request.path %}active{% endif %} hide-home"> <a class="nav-link" href="/iofferhelp/choose_help">{% blocktrans %}Ich will
           helfen{% endblocktrans %}</a> </li>
@@ -135,7 +135,7 @@
   </div>
 </footer>
 
-<script src="{% static 'js/maps_api.js' %}"></script>
+<script id="mapsJs" src="{% static 'js/maps_api.js' %}"></script>
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&callback=init_google_maps&libraries=places&v=weekly"
   async
