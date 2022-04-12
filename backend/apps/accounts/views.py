@@ -276,13 +276,9 @@ def delete_organisation(request, uuid):
 def delete_me(request):
     user = request.user
     logout(request)
+    logger.info("Delete User with email %s", user.email, extra={"request": request})
     user.delete()
     return render(request, "deleted_user.html")
-
-
-@login_required
-def delete_me_ask(request):
-    return render(request, "deleted_user_ask.html")
 
 
 @login_required
