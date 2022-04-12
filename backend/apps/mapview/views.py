@@ -117,7 +117,7 @@ def format_generic_offers(entities):
         "location": e.location,
         "bb": e.bb,
         "offerDescription": e.offerDescription,
-        "refer_url": "generic_offer/123"
+        "refer_url": str(e.id)
     } for e in entities]
 
 def get_ttl_hash(seconds=300):
