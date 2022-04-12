@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
 import json
+import googlemaps
 import base64
 from apps.accounts.models import User
 from django.utils import timezone
@@ -14,6 +15,8 @@ from .filters import GenericFilter, AccommodationFilter, TranslationFilter, Tran
 from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
 from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
 from django.contrib.auth.decorators import login_required
+
+gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
 OFFERTYPESOBJ = { "accommodation": { "title": "Accommodation", "requestName": "accommodation", "modelName" : "AccommodationOffer", "offersName": "AccommodationOffers"}, 
                 "transportation": { "title": "Transportation", "requestName": "transportation", "modelName": "TransportationOffer", "offersName": "TransportationOffers"},
@@ -35,10 +38,9 @@ def updateGenericModel( form, offer_id=0, userId=None):
                 offerDescription=form.get("offerDescription"), \
                 isDigital=form.get("isDigital"),  \
                 active=form.get("active"),  \
-                country=form.get("country"), \
-                postCode=form.get("postCode"), \
-                streetName=form.get("streetName"), \
-                streetNumber=form.get("streetNumber"), \
+                lat=form.get("lat"), \
+                lng=form.get("lng"), \
+                bb=form.get("bb"), \
                 cost=form.get("cost"), \
                 )
         g.save()
@@ -51,10 +53,9 @@ def updateGenericModel( form, offer_id=0, userId=None):
             g.offerDescription=form.get("offerDescription")
             g.isDigital=form.get("isDigital")
             g.active=form.get("active")
-            g.country=form.get("country")
-            g.postCode=form.get("postCode")
-            g.streetName=form.get("streetName")
-            g.streetNumber=form.get("streetNumber")
+            g.lat=form.get("lat")
+            g.lng=form.get("lng")
+            g.bb=form.get("bb")
             g.cost=form.get("cost")
             g.save()
             return g
@@ -292,11 +293,6 @@ def scrapePostCodeJson(city):
                     plzs = mappings.get(entry)
                     return plzs
             
-def getCityFromPostCode(postCode):
-    current_location = dirname(abspath(__file__))
-    with open(join(current_location,"files/plzs_to_cities.json"), "r") as read_file:
-        mappings = json.load(read_file)
-        return mappings.get(postCode)
 def by_city(request, city):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
@@ -656,6 +652,26 @@ def update(request, offer_id, newly_created = False):
     else:
         logger.warning("TEST")
         return HttpResponse(str(form.errors))
+def getCityFromLocation(offer):
+    reverse_geocode_result = gmaps.reverse_geocode((offer.lat, offer.lng))
+    returnVal = {"lat": str(offer.lat), "lng": str(offer.lng)}
+    for x in reverse_geocode_result[0]['address_components']:
+        if 'country' in x["types"]:
+            returnVal["country"] = x["short_name"]
+        if 'locality' in x["types"]:
+            returnVal["city"] = x["long_name"]
+        if 'postal_code' in x["types"]:
+            returnVal["plz"] = x["long_name"]
+        if 'sublocality_level_1' in x["types"]:
+            returnVal["quarter"] = x["long_name"]
+        if 'street_number' in x["types"]:
+            returnVal["streetnumber"] = x["long_name"]
+        if 'route' in x["types"]:
+            returnVal["streetname"] = x["long_name"]
+    
+    return returnVal
+
+
 def user_is_allowed(request, target_id):
     try:
         user = User.objects.get(pk=request.user.id)
@@ -691,12 +707,12 @@ def getOfferDetails(request, offer_id):
         imageForm.id = image.image_id
         images.append(imageForm)
     allowed = user_is_allowed(request, generic.userId.id)
-    city = getCityFromPostCode(generic.postCode)
+    location = getCityFromLocation(generic)
 
     if generic.offerType == "AC":
         detail = get_object_or_404(AccommodationOffer, pk=generic.id)
         detailForm = AccommodationForm(model_to_dict(detail))
-        return {'offerType': "Accommodation", 'generic': genericForm, 'detail': detailForm, "city": city, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Accommodation", 'generic': genericForm, 'detail': detailForm, "location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))

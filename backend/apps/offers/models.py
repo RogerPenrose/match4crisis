@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from match4crisis.constants.countries import countries
 from apps.iofferhelp.models import Helper
+from geoposition.fields import GeopositionField
 def validate_plz(value):
     try:
         number = int(value)
@@ -31,14 +32,13 @@ class GenericOffer(models.Model):
     ('JO', 'Job'),
     ('DO', 'Donation')
     ]
-
+    location = models.TextField(max_length=300)
+    lat = models.FloatField()
+    lng = models.FloatField()
+    bb = models.CharField(max_length=300)
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
-    postCode = models.CharField(max_length=5, validators=[validate_plz])
-    streetName = models.CharField(max_length=200,blank=True)
-    streetNumber = models.CharField(max_length=10,blank=True)#Edge case of number+Letter forces us to use a character field here...
     cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     #image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
-    country = models.CharField(max_length=2, choices=countries, default="DE") # Do this as a select ? 
     # TODO maybe this should be Helper instead of User?
     userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
     offerDescription = models.TextField()
