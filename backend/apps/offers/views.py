@@ -259,19 +259,28 @@ def contact(request, offer_id):
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
+    city = ""
+    lngMax = 0
+    lngMin = 0
+    latMax = 0
+    latMin = 0
     if request.GET.get("lat") == "" and request.GET.get("location")  is not None: 
         logger.warning("Searching location")
         locationData = getCityBbFromLocation(request.GET.get("location"))
-    else: 
+        city = locationData["city"]
+        lngMax = locationData["lngMax"]
+        latMin = locationData["latMin"]
+        lngMin = locationData["lngMin"]
+        latMax = locationData["latMax"]
+    elif request.GET.get("lat") is not None: 
         logger.warning("Sending: "+str(request.GET.get("bb")))
         bb = json.loads(request.GET.get("bb"))
         locationData = { "city": request.GET.get("location"), "latMax": bb["east"], "latMin": bb["west"], "lngMax": bb["north"], "lngMin": bb["south"]}
-    city = locationData["city"]
-    lngMax = locationData["lngMax"]
-    latMin = locationData["latMin"]
-    lngMin = locationData["lngMin"]
-    latMax = locationData["latMax"]
-    logger.warning("Location Data: "+str(locationData))
+        city = locationData["city"]
+        lngMax = locationData["lngMax"]
+        latMin = locationData["latMin"]
+        lngMin = locationData["lngMin"]
+        latMax = locationData["latMax"]
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
     accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()

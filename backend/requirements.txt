@@ -11,6 +11,7 @@ django-select2==7.10.0
 djangorestframework==3.11.0
 djangorestframework-filters
 jinja2==2.11.2
+googlemaps
 JSON-log-formatter==0.3.0
 matplotlib==3.2.1
 mpld3==0.3
