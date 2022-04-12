@@ -37,7 +37,7 @@ class GenericOffer(models.Model):
     cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     #image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
     # TODO maybe this should be Helper instead of User?
-    userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
+    userId = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)# Can be blank for shell testing...
     offerDescription = models.TextField()
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)

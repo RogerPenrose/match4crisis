@@ -587,9 +587,11 @@ class Command(BaseCommand):
         GENDER_CHOICES = ['FE', 'MA', 'NO']
         HELP_CHOICES= ['AM', 'LE', 'OT']
         WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
-        user = User.objects.all()[0] 
         if options['user_id']:
             user_id = int(options["user_id"])
+            user = User.objects.get(id=user_id)
+        else:
+            user = User.objects.all()[0] 
         if settings.DEBUG:
             n_offers = options["n"]
             plzs = np.random.choice(big_city_plzs, size=n_offers)
