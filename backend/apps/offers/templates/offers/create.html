@@ -90,7 +90,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
                 <h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
 
 
-<form id="thisForm" action="/offers/create" method="post" enctype="multipart/form-data">
+<form id="thisForm" action="/offers/create" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <table id="mainTable">
         <tbody>
@@ -177,16 +177,38 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
 </form>
 </div></div></div>
 <script>
+    function validate(){
+        document.getElementById("thisForm").querySelectorAll("[required]").forEach(function(i) {
+    if (!allAreFilled) return;
+    if (i.type === "radio") {
+      let radioValueCheck = false;
+document.getElementById("thisForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
+        if (r.checked) radioValueCheck = true;
+      })
+      allAreFilled = radioValueCheck;
+      return;
+    }
+    if (!i.value) { allAreFilled = false;  return; }
+  })
+  if (!allAreFilled) {
+    alert('Fill all the fields');
+  }
+    }
     function save_without_active(){
         var checkbox= document.getElementById("id_active")
         checkbox.checked = false
         var form = document.getElementById("thisForm");
+        form.action = "/offers/save"
         form.submit();
     }
     function save_with_active(){
         var checkbox= document.getElementById("id_active")
         checkbox.checked = true
         var form = document.getElementById("thisForm");
+        validate = validateForm()
+        if (!validate){
+            return
+        }
         form.submit();
     }
     var typeSelection = "AC"

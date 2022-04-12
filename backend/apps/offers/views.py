@@ -492,6 +492,13 @@ def create(request):
     elif request.method == 'GET':
         form = GenericForm()
         return render(request, 'offers/create.html', {"imageForm": ImageForm(),"jobForm": JobForm(), "genericForm": GenericForm(), "accommodationForm":AccommodationForm(), "manpowerForm":ManpowerForm(),"buerocraticForm": BuerocraticForm(), "transportationForm": TransportationForm(), "translationForm": TranslationForm(), "childcarelongtermForm": ChildcareFormLongterm(), "childcareshorttermForm": ChildcareFormShortterm(), 'welfareForm': WelfareForm()})
+def save(request):
+    logger.warning("SAVING")
+    # Fill all empty fields with placeholder values ? 
+    form = GenericForm(request.POST)
+    for entry in form.errors.as_data():
+        form[entry] = "-"
+    logger.warning(str(form.errors.as_data()))
 
 def update(request, offer_id):
     form = GenericForm(request.POST)
