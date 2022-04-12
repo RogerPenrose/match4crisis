@@ -134,22 +134,22 @@ mapViewPage = {
         var accommodationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
         });
-        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createMapMarkers(accommodations,(lat,lon,countrycode,city,plz) => {
+        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createMapMarkers(accommodations,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{ 
                 icon:  this.createIcon(1, "accommodationMarker"),
                 itemCount: 1,
-           }).bindPopup(this.options.createPopupTextAccommodation(countrycode,city, plz, 1, this.options.accommodationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+           }).bindPopup(this.options.createPopupTextAccommodation(descr, location, refer_url))
         }))
         // TRANSPORTATIONS:
 
         var transportationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('transportationMarker'),
         });
-        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,countrycode,city,plz) => {
+        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{
                  icon:  this.createIcon(1, "transportationMarker"),
                  itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTransportation(countrycode,city, plz, 1, this.options.transportationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+            }).bindPopup(this.options.createPopupTextTransportation(descr, location, refer_url))
         }))
 
         // TRANSLATIONS:
@@ -157,22 +157,22 @@ mapViewPage = {
         var translationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('translationMarker'),
         });
-        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,countrycode,city,plz) => {
+        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{
                  icon:  this.createIcon(1, "translationMarker"),
                  itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTranslation(countrycode,city, plz, 1, this.options.translationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+            }).bindPopup(this.options.createPopupTextTranslation(descr, location, refer_url))
         }))
         
         // GENERIC:
         var genericClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('genericMarker'),
         });
-        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,countrycode,city,plz) => {
+        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{ 
                 icon:  this.createIcon(1, "genericMarker"),
                 itemCount: 1,
-           }).bindPopup(this.options.createPopupTextGeneric(countrycode,city, plz, 1, this.options.genericOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+           }).bindPopup(this.options.createPopupTextGeneric(descr, location, refer_url))
         }))
 
         
@@ -227,14 +227,8 @@ mapViewPage = {
 
     createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
         return markers.map(marker => {
-            console.log(marker, marker.lat, marker.lng)
-            return createMarkerFunction(marker.lng, marker.lat, "DE", "Zeuthen", 15738)
+            return createMarkerFunction(marker.lng, marker.lat, marker.offerDescription, marker.location, marker.refer_url)
         })
-
-        /*for (zipCodeKey in markers[countryCode]) {
-            let zipCode = markers[countryCode][zipCodeKey]
-            markerArray.push(createMarkerFunction(zipCode.latitude, zipCode.longitude, countryCode, zipCode.city, zipCode.plz, zipCode.count))
-        }*/
     },
 
     initAutocomplete: () => {
