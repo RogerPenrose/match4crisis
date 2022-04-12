@@ -15,6 +15,15 @@ def thx(request):
 class RefugeeDashboardView(DashboardView):
     template_name = "refugee_dashboard.html"
 
+    def get(self, request, *args, **kwargs):
+        firstname = request.user.first_name
+
+        context = {
+            "firstname": firstname
+        }
+
+        return self.render_to_response(context)
+
 @refugeeRequired
 def favouriteOffers(request):
     refugee : Refugee = Refugee.objects.get(user=request.user)
