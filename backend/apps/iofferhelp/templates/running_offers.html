@@ -18,7 +18,7 @@
   <h3>{% blocktrans %}Aktive Angebote{% endblocktrans %}</h3>
   </div>
     <div class="container cards">
-
+{% if offers %}
 {% for entry in offers %}
 <a href="/offers/{{ entry.offer.genericOffer.id }}/">    
   <div class="col-12 col-lg-6 offer-card">
@@ -56,6 +56,11 @@
   </div>
 </a>  
 {% endfor %}
+{% else %}
+{% blocktrans %}
+Du hast keine aktiven Angebote. Erstelle jetzt eins über dein Dashboard.
+{% endblocktrans %}
+{% endif %}
 </div>
 
 

@@ -65,8 +65,6 @@ class User(AbstractUser):
     # our User model has no username and instead uses the email address as the main form of authentication
 
     username = None
-    first_name = None
-    last_name = None
     email = models.EmailField(_('email address'), unique=True)
 
     USERNAME_FIELD = 'email'
@@ -74,17 +72,15 @@ class User(AbstractUser):
 
     objects = CustomUserManager()
 
-    fullName = models.CharField(max_length=100)
-
-    validatedEmail = models.BooleanField(default=False)
-    emailValidationDate = models.DateTimeField(blank=True, null=True)
+    validatedEmail = models.BooleanField(default=False, verbose_name=_("Email bestätigt"))
+    emailValidationDate = models.DateTimeField(blank=True, null=True, verbose_name=_("Email bestätigt am"))
     # m:n to the Languages Table using LanguageKnowledge as intermediary
-    spokenLanguages = models.ManyToManyField(Languages, through='LanguageKnowledge', blank=True)
+    spokenLanguages = models.ManyToManyField(Languages, through='LanguageKnowledge', blank=True, verbose_name=_("Sprachkenntnisse"))
     # Regex for Phone Numbers in E164 format
     phoneNumberRegex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
-    phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True, blank=True)
+    phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True, blank=True, verbose_name=_("Telefonnummer"))
     # Should the phone number be visible to contacts
-    sharePhoneNumber = models.BooleanField(default=False)
+    sharePhoneNumber = models.BooleanField(default=False, verbose_name=_("Telefonnummer teilen"))
 
     isRefugee = models.BooleanField(default=False)
     isHelper = models.BooleanField(default=False)

@@ -18,7 +18,7 @@ from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
 
-from .forms import PostingForm, RequestHelpForm
+from .forms import RequestHelpForm
 
 
 #organisation_overview (mapview)
@@ -91,25 +91,6 @@ class OrganisationTable(tables.Table):
         template_name = "django_tables2/bootstrap4.html"
         fields = ["organisationName", "contactPerson"]
         exclude = ["id"]
-
-#Anzeige der Organisation
-@login_required
-@organisationRequired
-def change_posting(request):
-    if request.method == "POST":
-        anzeige_form = PostingForm(request.POST, instance=request.user.organisation)
-
-        if anzeige_form.is_valid():
-            anzeige_form.save()
-            messages.add_message(
-                request, messages.INFO, _("Deine Anzeige wurde erfolgreich aktualisiert."),
-            )
-
-    else:
-        anzeige_form = PostingForm(instance=request.user.organisation)
-
-    context = {"anzeige_form": anzeige_form}
-    return render(request, "change_posting.html", context)
 
 def thx(request):
     return render(request, "thanks_organisation.html")
