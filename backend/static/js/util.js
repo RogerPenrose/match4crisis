@@ -1,7 +1,7 @@
 function upadateLinksElementParams(a_tag,params){
     const splitted_href = a_tag.href.split("?");
     const route = splitted_href[0];
-    const rest = splitted_href[1] ? splitted_href[1] : "";
+    let rest = splitted_href[1] ? splitted_href[1] : "";
 
     for (i = 0; i < params.length; i++){
         if (rest.indexOf(params[i][0] + "=") >= 0)

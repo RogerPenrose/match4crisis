@@ -273,13 +273,22 @@ mapViewPage = {
     
         loc = urlParams.get('location')
         if (loc) {
-            input.setAttribute("value", loc)
+            input.setAttribute("value", loc);
         }
+
+        update_link_params = [];
+        ["lat", "lng", "bb", "location"].forEach(p => {
+            if (urlParams.get(p)){
+                update_link_params.push([p, urlParams.get(p)])
+            }
+        });
+
+        mapViewPage.update_link_element_params(update_link_params);
     },
 
     setGetParameter: function setGetParameter(params)
         {
-            var url = window.location.href;
+            var url = window.location.href.split("#")[0];
             var hash = location.hash;
             url = url.replace(hash, '');
         
@@ -303,7 +312,16 @@ mapViewPage = {
             
         
             window.history.pushState("", "", url + hash);
-        }
+
+            this.update_link_element_params(params);
+        },
+
+    update_link_element_params : params => ["results_as_list", "nav-link_search", "nav-link_map"].forEach(id => {
+        upadateLinksElementParams(
+            document.getElementById(id),
+            params
+        )
+    })
 }
 $.extend(mapViewPage.options, pageOptions)
 

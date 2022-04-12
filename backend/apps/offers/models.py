@@ -70,15 +70,15 @@ class ChildcareOfferShortterm(models.Model):
     isRegular = models.BooleanField(default=False)
 class JobOffer(models.Model):
     JOB_CHOICES = [
-        ( "ACA","Academic Support"),
-        ( "ADM","Administration"),
+        ("ACA","Academic Support"),
+        ("ADM","Administration"),
         ("ADV","Advancement"),
         ("CON","Conference and Events"),
         ("FAC","Facility Operations"),
         ("FIN","Finance and Accounting"),
         ("GEN","General Administration"),
         ("HEA","Health Services"),
-        ( "HUM","Human Resources"),
+        ("HUM","Human Resources"),
         ("INF","Information Technology"),
         ("INT","International Program and Services"),
         ("LEG","Legal"),
@@ -88,8 +88,8 @@ class JobOffer(models.Model):
         ("PER","Performing Arts and Museum Administration"),
         ("PUB","Public Safety"),
         ("RES","Research and Program Admin"),
-        ( "SPO","Sports and Recreation"),
-        ( "STU","Student Services"),
+        ("SPO","Sports and Recreation"),
+        ("STU","Student Services"),
         ("HAN","Handicraft profession")]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
