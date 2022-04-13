@@ -22,7 +22,6 @@ from django.utils.translation import ugettext_lazy as _
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 RUN_DIR = os.path.join(BASE_DIR, "run")
 MEDIA_URL = '/media/'
-GEOPOSITION_GOOGLE_MAPS_API_KEY ='AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8'
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
@@ -44,7 +43,6 @@ INSTALLED_APPS = [
     "apps.ineedhelp",
     "apps.iamorganisation",
     "apps.offers",
-    "geoposition",
     "apps.accounts",
     "apps.use_statistics",
     "django_select2",
