@@ -58,7 +58,7 @@
         <li class="nav-item {% if "about" in request.path %}active{% endif %}"> <a id="nav-link_about" class="nav-link" href="/about">{% blocktrans %}Über uns{% endblocktrans %}</a> </li>
 
         {% if user.is_authenticated %}
-        <li class="nav-item {% if "iofferhelp/helper_dashboard" or "ineedhelp/refugee_dashboard" in request.path %}active{% endif %}"> <a class="nav-link" href="/accounts/login_redirect">{% blocktrans %}Mein
+        <li class="nav-item {% if "iofferhelp/helper_dashboard" in request.path %}active{% endif %} {% if "ineedhelp/refugee_dashboard" in request.path %}active{% endif %}"> <a class="nav-link" href="/accounts/login_redirect">{% blocktrans %}Mein
           Profil{% endblocktrans %}</a> </li>
           <li class="nav-item"> <a class="nav-link" href="{% url 'logout' %}">{% blocktrans %}Logout{% endblocktrans %}</a> </li>
           {% else %}
