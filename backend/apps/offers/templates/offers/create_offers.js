@@ -1,27 +1,33 @@
-function getInputs(list){
-    var inputs = []
-    for(var i = 0; i < list.length; i++){
-        var input = document.getElementById(list[i].name)
-        if (input != null && input.nodeName == "INPUT"){
-            console.log("Hit for "+list[i])
-            inputs.push({"input":input, "latName": list[i].latName, "bbName": list[i].bbName, "lngName": list[i].lngName})
-        }
-    }
-    return inputs
-}
-
 function offer_autocomplete(){
+    function getInputs(list){
+        const inputs = []
+        for(var i = 0; i < list.length; i++){
+            const input = document.getElementById(list[i].name)
+            if (input != null && input.nodeName == "INPUT"){
+                console.log("Hit for "+list[i])
+                inputs.push({
+                    "input": input, 
+                    "latNames": list[i].latNames, 
+                    "bbNames": list[i].bbNames, 
+                    "lngNames": list[i].lngNames
+                })
+            }
+        }
+        return inputs
+    }
+
     const autocompletes = []
     const inputIDList = [
-        {name: "id_location", latName: "lat", lngName: "lng", bbName : "bb"},
-        {name: "id_locationEnd", latName: "latEnd", lngName: "lngEnd", bbName : "bbEnd"}
+        {name: "id_location", latNames: ["lat", "id_lat"], lngNames: ["lng", "id_lng"], bbNames : ["bb", "id_bb"]},
+        {name: "id_locationEnd", latNames: ["latEnd", "id_latEnd"], lngNames: ["lngEnd", "id_lngEnd"], bbNames : ["bbEnd", "id_bbEnd"]}
     ]
     const inputs = getInputs(inputIDList)
     for(var i = 0; i < inputs.length; i++){
-        var input = inputs[i].input
-        var latName = inputs[i].latName
-        var bbName = inputs[i].bbName
-        var lngName = inputs[i].lngName
+        console.log("Hit")
+        const input = inputs[i].input;
+        const latNames = inputs[i].latNames;
+        const bbNames = inputs[i].bbNames;
+        const lngNames = inputs[i].lngNames;
 
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -31,7 +37,7 @@ function offer_autocomplete(){
             input.setAttribute("value", loc)
         }
 
-        var autocomplete = new google.maps.places.Autocomplete(input, {
+        const autocomplete = new google.maps.places.Autocomplete(input, {
             type:"geocode"
         });
         autocomplete.inputId = input.id;
@@ -41,18 +47,21 @@ function offer_autocomplete(){
             country: ["be", "bg", "cz", "dk", "de", "ee", "ie", "el", "es", "fr", "hr", "it", "cy", "lv", "lt", "lu", "hu", "mt", "nl", "at", "pl", "pt", "ro", "si", "sk", "fi", "se",    "is", "no", "ch", "li", "uk"],
         });   
         autocomplete.addListener("place_changed", () => {
-            try {
-                const lat = document.getElementsByName(latName)[0];
-                const lng = document.getElementsByName(lngName)[0];
-                const bb = document.getElementsByName(bbName)[0];
-                const place = autocomplete.getPlace();
-                lat.value = place.geometry.location.lat();
-                lng.value = place.geometry.location.lng();
-                if (place.geometry.viewport){
-                    bb.value = JSON.stringify(place.geometry.viewport)
-                }
-            } catch {
-                console.log("ERROR")
+            const place = autocomplete.getPlace();
+            latNames.forEach(n => {
+                lat = document.getElementsByName(n)[0]
+                if (lat) lat.value = place.geometry.location.lat()
+            })
+            lngNames.forEach(n => {
+                lng = document.getElementsByName(n)[0]
+                if (lng) lng.value = place.geometry.location.lng()
+            })
+            
+            if (place.geometry.viewport){
+                bbNames.forEach(n => {
+                    bb = document.getElementsByName(n)[0]
+                    if (bb) bb.value = JSON.stringify(place.geometry.viewport)
+                })
             }
             input.focus();
         });
