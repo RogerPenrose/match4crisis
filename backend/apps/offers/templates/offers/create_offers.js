@@ -12,10 +12,12 @@ function getInputs(list){
 
 function offer_autocomplete(){
     const autocompletes = []
-    const inputIDList = [{name: "id_location", latName: "lat", lngName: "lng", bbName : "bb"}, {name: "location", latName: "lat", lngName: "lng", bbName : "bb"}, {name: "id_locationEnd", latName: "latEnd", lngName: "lngEnd", bbName : "bbEnd"}]
+    const inputIDList = [
+        {name: "id_location", latName: "lat", lngName: "lng", bbName : "bb"},
+        {name: "id_locationEnd", latName: "latEnd", lngName: "lngEnd", bbName : "bbEnd"}
+    ]
     const inputs = getInputs(inputIDList)
     for(var i = 0; i < inputs.length; i++){
-        console.log("Hit")
         var input = inputs[i].input
         var latName = inputs[i].latName
         var bbName = inputs[i].bbName
@@ -90,6 +92,7 @@ function validateForm(){
   });
   return allAreFilled;
 }
+
 function save_without_active(){
     var checkbox= document.getElementById("id_active")
     checkbox.checked = false
@@ -97,6 +100,7 @@ function save_without_active(){
     form.action = "/offers/save"
     form.submit();
 }
+
 function save_with_active(){
     var checkbox= document.getElementById("id_active")
     checkbox.checked = true
@@ -108,10 +112,3 @@ function save_with_active(){
     }
     form.submit();
 }
-document.getElementById("offerType").style.display ="none"
-document.getElementById("lng").style.display ="none"
-document.getElementById("bb").style.display ="none"
-document.getElementById("latEnd").style.display ="none"
-document.getElementById("lngEnd").style.display ="none"
-document.getElementById("bbEnd").style.display ="none"
-document.getElementById("lat").style.display ="none"

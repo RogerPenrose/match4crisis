@@ -60,6 +60,6 @@ function initMapsAutocomplete(){
 function init_google_maps() {
     if (typeof initMap === "function") initMap() // we are at mapview
     else if (typeof mapViewPage === "object") mapViewPage.initAutocomplete() // we are at /offers
-    else if (typeof offer_autocomplete === "object") offer_autocomplete() // we are at /offers/createOffer
+    else if (typeof offer_autocomplete === "function") offer_autocomplete() // we are at /offers/createOffer
     else initMapsAutocomplete();
 }
