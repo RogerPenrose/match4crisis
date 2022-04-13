@@ -25,20 +25,6 @@ from . import views
         name="password_change_form",
     ),
     path(
-        "password_reset/",
-        auth_views.PasswordResetView.as_view(
-            template_name="registration/password_reset_form_.html", from_email=settings.NOREPLY_MAIL
-        ),
-        name="password_reset_form",
-    ),
-    path(
-        "password_reset/done/",
-        auth_views.PasswordResetDoneView.as_view(
-            template_name="registration/password_reset_done_.html"
-        ),
-        name="password_reset_done",
-    ),
-    path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
             template_name="registration/password_reset_complete_.html"
@@ -59,6 +45,20 @@ urlpatterns = [
         "resend_validation_email/<email>",
         views.resend_validation_email,
         name="resend_validation_email",
+    ),
+    path(
+        "password_reset/",
+        auth_views.PasswordResetView.as_view(
+            template_name="registration/password_reset_form_.html", from_email=settings.NOREPLY_MAIL
+        ),
+        name="password_reset_form",
+    ),
+    path(
+        "password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="registration/password_reset_done_.html"
+        ),
+        name="password_reset_done",
     ),
     path(
         "login/",
