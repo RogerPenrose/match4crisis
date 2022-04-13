@@ -93,7 +93,7 @@ class ChildcareFormShortterm(forms.Form):
 
 class ImageForm(forms.Form):
     
-    image = forms.ImageField(label=IMAGE, widget=forms.FileInput(attrs={'class': 'form-control'}), required=False)
+    image = forms.ImageField(label=IMAGE, widget=forms.FileInput(attrs={'class': 'form-control', 'multiple': 'on'}), required=False)
     image.url = forms.CharField(required=False)
     image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 

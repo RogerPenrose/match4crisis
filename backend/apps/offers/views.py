@@ -566,8 +566,13 @@ def update(request, offer_id, newly_created = False):
         currentForm = form.cleaned_data
         g = updateGenericModel(currentForm, offer_id, request.user.id)
         if request.FILES.get("image") != None:
-            image = ImageClass(image=request.FILES.get('image'), offerId = g)
-            image.save()
+            counter = 0
+            images = request.FILES.getlist('image')
+            for image in images:
+                counter = counter + 1
+                image = ImageClass(image=image, offerId = g)
+                image.save()
+            logger.warning("added Images:"+str(counter))
         if g is not None:
             if currentForm.get("offerType") == "MP": # Special case since we have no particular fields in this type.
                 buForm = ManpowerForm(request.POST)
