@@ -201,7 +201,7 @@ filter: invert(100%);
 .leaflet-control-layers-overlays span img {  width: 20px; height: 20px; margin-right: 5px;} 
 
 .leaflet-control-layers-expanded { padding: 0px !important;}
-.search-input { margin-top: 25px; position: relative; z-index:999; width: 100%;     display: block;
+.search-input { margin-top: 15px; position: relative; z-index:999; width: 100%;     display: block;
   width: 100%;
   height: calc(1.5em + 1rem + 2px);
   padding: 0.375rem 0.75rem 0.375rem 1.2rem;
@@ -267,7 +267,7 @@ filter: invert(100%);
   background-image: url(/static/img/map/translation.svg);
 }
 
-.genericMarker { background-color: #F5980F; border-radius: 30px !important;}
+.genericMarker { background-color: #ed0061; border-radius: 30px !important;}
 
 .marker-cluster-single div,
 .marker-cluster-small div,

@@ -10,8 +10,9 @@ Dashboard - Hilfesuchende
 
 {% block header %}
 <style>
+  .buttons > div > a > div { cursor: pointer;}
 .dashboard-title { background: #ed0061;}
-.dashboard-title * { color: #fff;}
+.dashboard-title p, .dashboard-title h1, .dashboard-title h2 { color: #fff;}
     @media only screen and (min-width: 768px) {
       .dashboard-title {
         padding: 80px 0px 80px 0px;
@@ -100,9 +101,8 @@ Dashboard - Hilfesuchende
     }
   
   
-    .buttons > div { border-radius: 30px;padding:15px; margin-bottom: 15px;     box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
-    border-radius: 25px;
-    padding: 10px;} 
+    .buttons > div > a > div { border-radius: 30px; margin-bottom: 15px;     box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    border-radius: 25px;} 
     .buttons h3 { color: #28445b; font-size: 18px;}
     .buttons p { margin-bottom: 0px;}
     .buttons a, .buttons a:hover { color: #28445b;}
@@ -133,13 +133,10 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 @media only screen and (max-width: 767px) { div.background-photo-search {padding-top: 80%;max-width: 100%;  }   }
   
   
-.buttons > div {     box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
-    border-radius: 25px;
-    padding: 10px; border-radius: 30px; padding:15px; margin-bottom: 15px;} 
     .buttons h3 { color: #28445b font-size: 18px; margin-bottom: 0px;}
+    .buttons > div > a > div { padding:25px 15px;  }
     .buttons p { margin-bottom: 0px;}
     .buttons a, .buttons a:hover { color: #28445b;}
-
   </style>
 {% endblock %}
 
@@ -168,14 +165,14 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
  
   
 
-  <div class="container" style="margin-top: 35px;">
+  <div class="container" style="margin-top: 55px;">
     <h2 style="margin-bottom: 35px;">{% blocktrans %}Helfer Dashboard{% endblocktrans %}</h2>
         <div class="buttons row">
             
             <div class="col-12 col-md-6 col-xl-6 left">
                 <a href="{% url 'running_offers' %}">
             <div class="row align-self-center align-items-center">
-                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/recent.png' %}" width="40px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Aktive Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine aktuelle aktiven Angebote.{% endblocktrans %}</p></div>
+                <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/recent.svg' %}" width="45px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Aktive Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine aktuelle aktiven Angebote.{% endblocktrans %}</p></div>
                 </div>
             </a>
             </div>
@@ -185,7 +182,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     
                 <a href="{% url 'paused_offers' %}">
                 <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/pause.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Pausierte Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine inaktiven pausierten Angebote.{% endblocktrans %}</p></div>
+                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/pause.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Pausierte Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine inaktiven pausierten Angebote.{% endblocktrans %}</p></div>
                     </div>
                 </a>
                 </div>
@@ -193,7 +190,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                 <div class="col-12 col-md-6 col-xl-6 left">
                     <a href="{% url 'incomplete_offers' %}">
                 <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/incomplete.png' %}" width="40px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Unvollständige Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Angebote, von denen noch Informationen fehlen.{% endblocktrans %}</p></div>
+                    <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/incomplete.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Unvollständige Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Angebote, von denen noch Informationen fehlen.{% endblocktrans %}</p></div>
                     </div>
                 </a>
                 </div>
@@ -203,7 +200,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         
                     <a href="{% url 'preferences' %}">
                     <div class="row align-self-center align-items-center">
-                        <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/settings.png' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3><p>{% blocktrans %}Ändere hier dein Profil.{% endblocktrans %}</p></div>
+                        <div class="col-3 col-sm-2" style="padding-right: 0px; text-align:center;"><img src="{% static 'img/users/settings.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3><p>{% blocktrans %}Ändere hier dein Profil.{% endblocktrans %}</p></div>
                         </div>
                     </a>
                     </div>      

@@ -7,8 +7,8 @@
 
 {% block header %}
 <style>
-
-
+.content { background-color: #f7f7f7; background-image: url('{% static 'img/bg-wave.png' %}'); background-size: 100%; background-position: top; background-repeat: no-repeat; padding-bottom: 55px;}
+.footer { margin-top: 0px; }
   .radius {float: left; display: block;
   height: calc(1.5em + 1rem + 2px);
   padding: 0.375rem .75rem 0.375rem 1.2rem;
@@ -78,8 +78,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         <div class="row align-self-center align-items-center" style="margin-bottom: 55px;">
 <div class="col-lg-12">
 
-  <h2 class="title" style="text-align:center; margin-bottom: 15px;">{% blocktrans %}1. Wo suchst du nach Hilfe?{% endblocktrans %}</h2>
-<p style="text-align:center; margin-bottom: 35px;">{% blocktrans %}Teile uns zuerst bitte mit, an welchem Ort du nach Hilfe suchst.{% endblocktrans %}</p>
+  <h2 class="title" style="margin-bottom: 35px;margin-top: 35px;"><img src="{% static 'img/step-1.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% blocktrans %}Wo suchst du nach Hilfe?{% endblocktrans %}</h2>
   <form action="/offers/search">
     <div style="position: relative">
       <input
@@ -135,9 +134,9 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 </div></div> 
 
 <div style="{% if  city == None or city == ""%} display:none{%endif%} ">
-    <div class="row align-self-center align-items-center" style="margin-top:35px;">
- <div class="col-12 text-center" style="text-align:center;" >
-    <h2 class="title" >{% blocktrans %}2. Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2><p>{% blocktrans %}Wähle eine Kategorie, um Angebote in {{ city }} anzuzeigen.{% endblocktrans %}</p></div>
+    <div class="row align-self-center align-items-center" style="margin-top:75px;">
+ <div class="col-12" >
+    <h2 class="title" ><img src="{% static 'img/step-2.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2></div>
         </div>
         </div>
         <div class="container cards" style="{% if  city == None or city == "" %} display:none{%endif%} ">

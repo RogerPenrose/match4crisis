@@ -655,11 +655,11 @@ input.back { background: transparent; border: 0px; font-weight: 700; color: #284
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border: 0px;
   border-radius: 1rem;}
-  .container.cards { margin-top:25px;}
+  .container.cards { margin-top:35px;}
 
   .filter { text-align:right; text-decoration: underline; }
   .offer-card .row .col-5 { padding-left:0px;}
-  div.offer-card > .row { padding: 15px; color: #28445b;}
+  div.offer-card > .row { padding: 15px; color: #28445b; background: #fff;}
 .container.cards { display: table; }
   .description h3 {font-size: 16px;}
   .text-center a { color: #28445b;}
