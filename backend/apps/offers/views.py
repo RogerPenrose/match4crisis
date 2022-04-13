@@ -698,7 +698,7 @@ def update(request, offer_id, newly_created = False):
     else:
         logger.warning("TEST")
         return HttpResponse(str(form.errors))
-def getCityFromLocation(offer):
+def getLocationFromOffer(offer):
     reverse_geocode_result = gmaps.reverse_geocode((offer.lat, offer.lng))
     returnVal = {"lat": str(offer.lat), "lng": str(offer.lng)}
     for x in reverse_geocode_result[0]['address_components']:
@@ -715,6 +715,7 @@ def getCityFromLocation(offer):
         if 'route' in x["types"]:
             returnVal["streetname"] = x["long_name"]
     
+    returnVal["string"] = reverse_geocode_result[0]["formatted_address"]
     return returnVal
 
 
@@ -753,7 +754,7 @@ def getOfferDetails(request, offer_id):
         imageForm.id = image.image_id
         images.append(imageForm)
     allowed = user_is_allowed(request, generic.userId.id)
-    location = getCityFromLocation(generic)
+    location = getLocationFromOffer(generic)
 
     if generic.offerType == "AC":
         detail = get_object_or_404(AccommodationOffer, pk=generic.id)
@@ -809,6 +810,7 @@ def detail(request, offer_id, edit_active = False,  newly_created = False) :
         refugee = Refugee.objects.get(user=request.user)
         refugee.addRecentlyViewedOffer(offer)
     return render(request, 'offers/detail.html', context)
+
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."
     return HttpResponse(response % offer_id)

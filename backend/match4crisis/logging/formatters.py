@@ -32,8 +32,8 @@ class DjangoRequestJSONFormatter(json_log_formatter.JSONFormatter):
 
         extra["level"] = LogLevel[record.levelname].value
         extra["message"] = "[{}]: {}".format(record.name, record.getMessage())
-        if "timestamp" not in extra:
-            extra["timestamp"] = timezone.utcnow()
+        # if "timestamp" not in extra:
+        #    extra["timestamp"] = timezone.utcnow()
         if hasattr(record, "request"):
             request = record.request
             # Overwrite request information in extra, avoid circular references by copying only selected items
