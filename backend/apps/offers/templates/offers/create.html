@@ -96,7 +96,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
 
 <form id="thisForm" action="/offers/createOffer" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
+    {% csrf_token %} 
     <table id="mainTable">
         <tbody>
             {% for field in genericForm.visible_fields %}

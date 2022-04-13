@@ -187,9 +187,10 @@ def updateBuerocraticModel(g, form, offer_id=0):
 def updateTransportationModel(g, form, offer_id=0):
     if offer_id == 0:
         t = TransportationOffer(genericOffer=g, \
-            postCodeEnd=form.get("postCodeEnd"), \
-            streetNameEnd=form.get("streetNameEnd"),\
-            streetNumberEnd = form.get("streetNumberEnd"),\
+            locationEnd=form.get("locationEnd"), \
+            latEnd=form.get("latEnd"),\
+            lngEnd = form.get("lngEnd"),\
+            bbEnd = form.get("bbEnd"),\
             date = form.get("date"), \
             numberOfPassengers=form.get("numberOfPassengers"))
         t.save()
@@ -197,9 +198,10 @@ def updateTransportationModel(g, form, offer_id=0):
     else:
         t = TransportationOffer.objects.get(pk=offer_id)
         t.genericOffer=g
-        t.postCodeEnd=form.get("postCodeEnd")
-        t.streetNameEnd=form.get("streetNameEnd")
-        t.streetNumberEnd = form.get("streetNumberEnd")
+        t.locationEnd=form.get("locationEnd")
+        t.latEnd=form.get("latEnd")
+        t.lngEnd = form.get("lngEnd")
+        t.bbEnd = form.get("bbEnd")
         t.date = form.get("date")
         t.numberOfPassengers=form.get("numberOfPassengers")
         t.save()
@@ -545,7 +547,9 @@ def create(request):
         return update(request, 0, newly_created=True)
     elif request.method == 'GET':
         context = {}
-        context["genericForm"]  = GenericForm()
+        offerType = request.GET.get("type")
+        newOffer = GenericOffer(offerType=offerType)
+        context["genericForm"]  = GenericForm(instance=newOffer)
         context["detailForm"] = getFormForOfferType(request.GET.get("type"))
         if request.GET.get("type") == "AC":
             context["imageForm"] = ImageForm()
@@ -560,10 +564,12 @@ def save(request):
     logger.warning(str(form.errors.as_data()))
 
 def update(request, offer_id, newly_created = False):
+    logger.warning("REQUEST: "+str(request.POST))
     form = GenericForm(request.POST)
        # form.image = request.FILES
     if form.is_valid():
         currentForm = form.cleaned_data
+        logger.warning("FORM TYPE: "+currentForm.get("offerType"))
         g = updateGenericModel(currentForm, offer_id, request.user.id)
         if request.FILES.get("image") != None:
             counter = 0
