@@ -38,7 +38,7 @@ Home {% endblock %} {% block header %}
       padding: 90px 0px 170px 0px;
     }
     .navbar-dark .navbar-nav .nav-link { margin: 0 30px;}
-    .navbar-expand-md .navbar-nav .nav-link:first-child { margin-left: -1rem;}
+    .navbar-expand-md .navbar-nav .nav-item:first-child { margin-left: -1rem;}
     .navbar-brand { display: none;}
     .navbar-nav { margin-left: 0px !important;}
     .navbar { background: transparent !important;     -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
@@ -152,7 +152,7 @@ Home {% endblock %} {% block header %}
   }
   .steps p {
     font-size: 1.2rem;
-    font-weight: 400;
+    font-weight: 300;
     color: #000;
   }
   .steps > div {
@@ -277,7 +277,7 @@ Home {% endblock %} {% block header %}
 
     <div class="row align-self-center">
       <div class="col-sm-12" style="text-align: center; margin-top: 65px; margin-bottom: 35px;">
-       <h3>{% blocktrans %}Kooperationspartner{% endblocktrans %}</h3>
+       <h3>{% blocktrans %}Wir werden unterstützt von{% endblocktrans %}</h3>
       </div>
     </div>
 
@@ -286,7 +286,7 @@ Home {% endblock %} {% block header %}
         <p><a href="https://www.future-doctor.de" target="_blank"><img src="{% static 'img/partners/future-doctor.svg' %}" /></a></p>
       </div>
       <div class="col-sm-12 col-md-4">
-        <p><a href="https://www.twilio.com" target="_blank"><img src="{% static 'img/partners/twilio.svg' %}" /></a></p>
+        <p><a href="https://www.twilio.com" target="_blank"><img src="{% static 'img/partners/twilio.svg' %}" style="padding: 5px;" /></a></p>
       </div>
       <div class="col-sm-12 col-md-4">
         <p><a href="https://www.webspace-verkauf.de" target="_blank"><img src="{% static 'img/partners/webspace-verkauf.svg' %}" /></a></p>

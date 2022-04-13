@@ -680,4 +680,4 @@ input.back { background: transparent; border: 0px; font-weight: 700; color: #284
     border: 0px !important;
     box-shadow: none; 
   padding-left: 10px; }
-    .pac-logo:after { height: 0px;}
+    .pac-logo:after { height: 0px; padding: 0; }
