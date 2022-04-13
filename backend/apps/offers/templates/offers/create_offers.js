@@ -19,7 +19,8 @@ function offer_autocomplete(){
     const autocompletes = []
     const inputIDList = [
         {name: "id_location", latNames: ["lat", "id_lat"], lngNames: ["lng", "id_lng"], bbNames : ["bb", "id_bb"]},
-        {name: "id_locationEnd", latNames: ["latEnd", "id_latEnd"], lngNames: ["lngEnd", "id_lngEnd"], bbNames : ["bbEnd", "id_bbEnd"]}
+        {name: "id_locationEnd", latNames: ["latEnd", "id_latEnd"], lngNames: ["lngEnd", "id_lngEnd"], bbNames : ["bbEnd", "id_bbEnd"]},
+        {name: "location", latNames: ["lat"], lngNames: ["lng"], bbNames : ["bb"]}
     ]
     const inputs = getInputs(inputIDList)
     for(var i = 0; i < inputs.length; i++){
