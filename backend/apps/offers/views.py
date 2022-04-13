@@ -4,6 +4,7 @@ import logging
 from os.path import dirname, abspath, join
 import json
 import googlemaps
+import math
 import base64
 from apps.accounts.models import User
 from django.utils import timezone
@@ -253,7 +254,14 @@ def getCityFromCoordinates(locationData):
     
     return returnVal
 
-
+def kmInLng(km, lat):
+    lng = float(km)/111.320*math.cos(math.radians(lat))
+    logger.warning("KMINLNG:"+str(lng))
+    return float(lng)
+def kmInLat(km):
+    lat = float(km)/110.574
+    logger.warning("KMINLAT:"+str(lat))
+    return float(lat)
 @login_required
 def contact(request, offer_id):
     details = getOfferDetails(request,offer_id)
@@ -266,23 +274,22 @@ def search(request):
     lngMin = 0
     latMax = 0
     latMin = 0
+    rangeKm = request.GET.get("range")
     if request.GET.get("lat") == "" and request.GET.get("location")  is not None: 
-        logger.warning("Searching location")
         locationData = getCityBbFromLocation(request.GET.get("location"))
         city = locationData["city"]
-        lngMax = locationData["lngMax"]
-        latMin = locationData["latMin"]
-        lngMin = locationData["lngMin"]
-        latMax = locationData["latMax"]
+        lngMax = float(locationData["lngMax"])+kmInLng(rangeKm, locationData["latMax"])
+        latMin = float(locationData["latMin"])-kmInLat(rangeKm)
+        lngMin = float(locationData["lngMin"])-kmInLng(rangeKm,  locationData["latMax"])
+        latMax = locationData["latMax"]+kmInLat(rangeKm )
     elif request.GET.get("lat") is not None: 
-        logger.warning("Sending: "+str(request.GET.get("bb")))
         bb = json.loads(request.GET.get("bb"))
         locationData = { "city": request.GET.get("location"), "latMax": bb["east"], "latMin": bb["west"], "lngMax": bb["north"], "lngMin": bb["south"]}
         city = locationData["city"]
-        lngMax = locationData["lngMax"]
-        latMin = locationData["latMin"]
-        lngMin = locationData["lngMin"]
-        latMax = locationData["latMax"]
+        lngMax = locationData["lngMax"]+kmInLng(rangeKm, locationData["latMax"])
+        latMin = locationData["latMin"]-kmInLat(rangeKm)
+        lngMin = locationData["lngMin"]-kmInLng(rangeKm, locationData["latMax"])
+        latMax = locationData["latMax"]+kmInLat(rangeKm)
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
     accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=[latMin, latMax], lng__range=[lngMin, lngMax]).count()
@@ -306,11 +313,11 @@ def search(request):
     totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
     context = {
         'city' : city,
+        'range': rangeKm,
         'local' : {'PsychologicalOffers': psych, 'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
     return render(request, 'offers/search.html', context)
-    #return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
@@ -763,15 +770,16 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))
-        return {'offerType': "Medical Assistance", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Medical Assistance", 'generic': genericForm, 'detail': detailForm,"location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return {'offerType': "Translation",'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': "Translation","location": location,'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
-        detailForm = TransportationOffer(model_to_dict(detail))
-        return {'offerType': "Transportation", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        detailForm = TransportationForm(model_to_dict(detail))
+        logger.warning("Detail: "+str(detailForm["latEnd"]))
+        return {'offerType': "Transportation", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerForm(model_to_dict(detail))
@@ -779,23 +787,23 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "DO":
         detail = get_object_or_404(DonationOffer, pk=generic.id)
         detailForm = DonationForm(model_to_dict(detail))
-        return {'offerType': "Donations", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': "Donations", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
         detailForm = ChildcareFormShortterm(model_to_dict(detail))
-        return {'offerType': "Babysitting", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': "Babysitting","location": location, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "CL":
         detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
         detailForm = ChildcareFormLongterm(model_to_dict(detail))
-        return {'offerType': "Childcare Longterm", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': "Childcare Longterm", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "JO":
         detail = get_object_or_404(JobOffer, pk=generic.id)
         detailForm = JobForm(model_to_dict(detail))
-        return {'offerType': "Job", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': "Job", 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
         detailForm = BuerocraticForm(model_to_dict(detail))
-        return {'offerType': "Buerocratic", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': "Buerocratic", 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False,  newly_created = False) :
     context = getOfferDetails(request, offer_id)

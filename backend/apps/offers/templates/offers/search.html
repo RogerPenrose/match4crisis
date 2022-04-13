@@ -71,6 +71,13 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     </div>
     
     <input id="searchsubmit" type="button"  onclick="triggerGoogleSearch()" />
+    <select class="form-control" name="range">
+      <option value="5">5 km</option>
+      <option value="10" {% if range == "10"%}selected{%endif%}>10 km</option>
+      <option value="25"{% if range == "25"%}selected{%endif%}>25 km</option>
+      <option value="50"{% if range == "50"%}selected{%endif%}>50 km</option>
+      <option value="100"{% if range == "100"%}selected{%endif%}>100 km</option>
+    </select>
   </form>
 
 </div></div> 
