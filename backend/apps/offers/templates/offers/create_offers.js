@@ -93,12 +93,14 @@ function validateForm(){
     document.getElementById("thisForm").querySelectorAll("[required]").forEach(function(i) {
       if (!allAreFilled) return;
       if (i.type === "radio") {
+        let at_least_one_filled = false;
         document.getElementById("thisForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
-          if (r.checked) return (allAreFilled = allAreFilled && true);
+            at_least_one_filled = at_least_one_filled || r.checked;
         })
+        return (allAreFilled = allAreFilled && at_least_one_filled);
+      } else {
+        allAreFilled = allAreFilled && i.value;
       }
-      allAreFilled = allAreFilled && i.value;
-      console.log(i, allAreFilled)
   });
   return allAreFilled;
 }
