@@ -166,7 +166,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                     </div>   
                     </a>  
 
-                    <p style="margin-top: 35px; text-align: center; clear:both;">{% blocktrans %}Mehr Angebote in deiner Nähe{% endblocktrans %}</p>
+               
 
          
                     <a onclick="search_offers(['childcareShort', 'childcareLong']);" class="pointer">      
@@ -248,33 +248,57 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                         </a>  
 
 
-
-                        <a onclick="search_offers(['welfare']);" class="pointer">             
-                        <div class="col-12 col-lg-6 offer-card"> 
-            
+                        <a onclick="search_offers(['transportation']);" class="pointer">             
+                          <div class="col-12 col-lg-6 offer-card"> 
+      
                             <div class="row align-self-center align-items-center">
                             <div class="col-4 col-sm-2" style="padding: 5px;">
-                         
+      
                                 <div class="background-photo-search" style="background-image: url({% static 'img/offers/psychological.jpg' %})"></div>
-            
+      
                               </div>
                             <div class="description col-6 col-sm-8">
-            <h3>{% blocktrans %}Psychologische Unterstützung{% endblocktrans %}</h3>
-            <p>{% blocktrans %}Online oder persönlich.{% endblocktrans %}</p>
-            
-            </div>
-            
-            <div class="count col-2 col-sm-2">
-            
-                <p>{{ local.PsychologicalOffers }}</p>
-                
-                </div>
+                            <h3>{% blocktrans %}Mitfahrgelegenheiten{% endblocktrans %}</h3>
+                            <p>{% blocktrans %}Ausgehend von {{city}}{% endblocktrans %}</p>
+      
                             </div>
-            
-                        </div>   
+      
+      
+                            <div class="count col-2 col-sm-2">
+      
+                            <p>{{ local.TransportationOffers }}</p>
+      
+                            </div>
+                          </div>
+      
+                          </div>   
                         </a>  
 
+                  <a onclick="search_offers(['welfare']);" class="pointer">             
+                    <div class="col-12 col-lg-6 offer-card"> 
 
+                      <div class="row align-self-center align-items-center">
+                      <div class="col-4 col-sm-2" style="padding: 5px;">
+
+                          <div class="background-photo-search" style="background-image: url({% static 'img/offers/psychological.jpg' %})"></div>
+
+                        </div>
+                      <div class="description col-6 col-sm-8">
+                      <h3>{% blocktrans %}Psychologische Unterstützung{% endblocktrans %}</h3>
+                      <p>{% blocktrans %}Online oder persönlich.{% endblocktrans %}</p>
+
+                      </div>
+
+
+                      <div class="count col-2 col-sm-2">
+
+                      <p>{{ local.PsychologicalOffers }}</p>
+
+                      </div>
+                    </div>
+
+                    </div>   
+                  </a>  
 
                         <a onclick="search_offers(['donations']);" class="pointer">      
                         <div class="col-12 col-lg-6 offer-card"> 
@@ -293,7 +317,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
             <div class="count col-2 col-sm-2">
             
-                <p>{{ local.DonationOffers }}</p>
+                <p>{{ total.DonationOffers }}</p>
                 
                 </div>
                             </div>
@@ -321,7 +345,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     }
     data["city"] = "{{ city }}"
     console.log("Visibles: "+JSON.stringify(data))
-  
+    data["range"] = "{{ range }}"
     data["show_list"] = "True"
     var csrfmiddlewaretoken = '{{ csrf_token }}'
     data.show_list = "True"

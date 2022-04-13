@@ -241,6 +241,7 @@ def getCityBbFromLocation(locationData):
 
 def getCityFromCoordinates(locationData):
     reverse_geocode_result = gmaps.reverse_geocode(locationData)
+    returnVal = {}
     for entry in reverse_geocode_result:
         if "administrative_area_level_2" in entry["types"]:
             returnVal = {
@@ -311,11 +312,12 @@ def search(request):
     totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
     totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
     totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
+    totalDonations = GenericOffer.objects.filter(active=True,offerType="DO").count()
     context = {
         'city' : city,
         'range': rangeKm,
-        'local' : {'PsychologicalOffers': psych, 'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
-        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
+        'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
+        'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
     return render(request, 'offers/search.html', context)
 def getTranslationImage(request, firstLanguage, secondLanguage):
@@ -370,17 +372,20 @@ def by_city(request, city):
         'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
     return render(request, 'offers/list.html', context)
-def by_type(request, offer_type):
-    context = { "ResultCount" : eval(OFFERTYPESOBJ[offer_type]["modelName"]+".objects.all().count()"),
-                "Title": OFFERTYPESOBJ[offer_type]["title"],
-                OFFERTYPESOBJ[offer_type]["offersName"]: eval("mergeImages("+OFFERTYPESOBJ[offer_type]["modelName"]+".objects.all())")}
-    return render(request, 'offers/index.html', context)
+def padByRange(locationData, rangeKm):
+
+    locationData["lngMax"] +=kmInLng(rangeKm, locationData["latMax"])
+    locationData["latMin"]-=kmInLat(rangeKm)
+    locationData["lngMin"]-=kmInLng(rangeKm,  locationData["latMax"])
+    locationData["latMax"]+=kmInLat(rangeKm )
+    return locationData
 
 def filter(request):
     N_ENTRIES = 5
     filters = {"genericOffer__active": True} 
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
+        locationData = padByRange(locationData, request.POST.get("range"))
         filters = {"genericOffer__lat__range": [locationData["latMin"], locationData["latMax"]],"genericOffer__lng__range": [locationData["lngMin"], locationData["lngMax"]] }
     pageCount = int(request.POST.get("page", 0))
     ids = []
@@ -465,44 +470,21 @@ def handle_filter(request):
         if request.POST.get("city"):
             query +="city="+request.POST.get("city")+"&"
         return redirect("/mapview/?"+query)
-        
-def list_by_city(request, city):
-    postCodes = scrapePostCodeJson(city)
-    #Dummy data:
-    context = {"ResultCount": GenericOffer.objects.filter(genericOffer__active=True, postCode__in=postCodes).count(), 
-    'Title': "All Offers",'city': city,
-    'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)),
-     'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes)), 
-     'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode__in=postCodes))}
-    return render(request, 'offers/index.html', context)
-    
-def by_postCode(request, postCode):
-    context = {'AccommodationOffers': mergeImages(AccommodationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), \
-               'TransportationOffers': mergeImages(TransportationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)),\
-               'ManpowerOffers': mergeImages(ManpowerOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)),\
-               'DonationOffers': mergeImages(DonationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)),\
-                'BuerocraticOffers': mergeImages(BuerocraticOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
-     'ChildcareOffersShortterm': mergeImages(ChildcareOfferShortterm.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
-     'ChildcareOffersLongterm': mergeImages(ChildcareOfferLongterm.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
-     'JobOffers': mergeImages(JobOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
-     'WelfareOffers': mergeImages(WelfareOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode)), 
-               'TranslationOffers': mergeImages(TranslationOffer.objects.filter(genericOffer__active=True,genericOffer__postCode=postCode))}
-    
-    return render(request, 'offers/index.html', context)
+  
 def mergeImages(offers):
     resultOffers = []
     for entry in  offers: 
         images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
+        location = {}
+        if entry.genericOffer.location == "":
+            location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
+        else:    
+            location = {"city": entry.genericOffer.location}
+        logger.warning(str(location))
         newEntry =  {
             "image" : None,
-            "offer" : entry
+            "offer" : entry,
+            "location": location
         }
         if len(images) > 0:
             newEntry["image"] = images[0].image
