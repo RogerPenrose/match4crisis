@@ -50,7 +50,7 @@ class TransportationFilter(django_filters.FilterSet):
     date = django_filters.DateFilter(widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
     class Meta:
         model = TransportationOffer
-        fields = ['date', 'numberOfPassengers', 'postCodeEnd']
+        fields = ['date', 'numberOfPassengers', 'latEnd', 'lngEnd']
 class TranslationFilter(django_filters.FilterSet):
     class Meta:
         model = TranslationOffer

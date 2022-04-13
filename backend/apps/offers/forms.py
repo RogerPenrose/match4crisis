@@ -54,6 +54,7 @@ NUMBERADULTS="How many Adults"
 NUMBERPETS = "How many Pets"
 IMAGE = "Upload Image"
 LOCATION="Location"
+LOCATIONEND="Destination"
 logger = logging.getLogger("django")
 class GenericForm(forms.ModelForm):
     class Meta:
@@ -112,9 +113,10 @@ class BuerocraticForm(forms.Form):
 class TransportationForm(forms.Form):
     date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
     numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    postCodeEnd = forms.CharField(label=POSTCODE_END, max_length=5, validators=[validate_plz], widget=forms.TextInput(attrs={'class': 'form-control'}))
-    streetNameEnd = forms.CharField(label=STREETNAME_END, max_length=200, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    streetNumberEnd = forms.CharField(label=STREETNUMBER_END, max_length=4, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    locationEnd = forms.CharField( max_length=300, label=LOCATIONEND, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    latEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    lngEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    bbEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
 class TranslationForm(forms.Form):
 # Translation Fields
 #queryset=Languages.objects.all(), 

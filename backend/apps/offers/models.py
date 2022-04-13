@@ -142,10 +142,10 @@ class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     country = models.CharField(max_length=200) # Do this as a select ? 
     
-    postCodeEnd = models.CharField(max_length=5, validators=[validate_plz])
-    streetNameEnd = models.CharField(max_length=200)
-    streetNumberEnd = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
- 
+    locationEnd = models.TextField(max_length=300)
+    latEnd = models.FloatField()
+    lngEnd = models.FloatField()
+    bbEnd = models.FloatField()
     date=models.DateField(default=timezone.now)
     numberOfPassengers = models.IntegerField(default=2)
 class TranslationOffer(models.Model):
