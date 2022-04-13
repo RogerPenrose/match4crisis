@@ -24,4 +24,6 @@ urlpatterns = [
     path('<int:offer_id>/update', views.update, name='update'),
     path('by_postCode/<str:postCode>', views.by_postCode, name='by_postCode'),
     path('ajax_toggle_favourite', views.ajax_toggle_favourite, name='ajax_toggle_favourite'),
+
+    path("create_js/", views.create_js, name='create_js'),
 ]

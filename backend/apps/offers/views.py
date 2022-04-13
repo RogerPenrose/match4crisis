@@ -823,3 +823,6 @@ def ajax_toggle_favourite(request):
 
         except (Exception):
             return JsonResponse({"success":False})
+
+def create_js(request):
+    return render(request, 'offers/create_offers.js', {}, content_type='text/javascript')

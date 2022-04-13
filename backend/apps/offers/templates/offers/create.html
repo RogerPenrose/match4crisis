@@ -121,47 +121,6 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
     <input type="button" onclick="save_without_active()" value="{% blocktrans %}Speichern und später bearbeiten{%endblocktrans%}" class="btn btn-yellow">
 </form>
 </div></div></div>
-<script>
-    function validate(){
-        document.getElementById("thisForm").querySelectorAll("[required]").forEach(function(i) {
-    if (!allAreFilled) return;
-    if (i.type === "radio") {
-      let radioValueCheck = false;
-document.getElementById("thisForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
-        if (r.checked) radioValueCheck = true;
-      })
-      allAreFilled = radioValueCheck;
-      return;
-    }
-    if (!i.value) { allAreFilled = false;  return; }
-  })
-  if (!allAreFilled) {
-    alert('Fill all the fields');
-  }
-    }
-    function save_without_active(){
-        var checkbox= document.getElementById("id_active")
-        checkbox.checked = false
-        var form = document.getElementById("thisForm");
-        form.action = "/offers/save"
-        form.submit();
-    }
-    function save_with_active(){
-        var checkbox= document.getElementById("id_active")
-        checkbox.checked = true
-        var form = document.getElementById("thisForm");
-        validate = validateForm()
-        if (!validate){
-            return
-        }
-        form.submit();
-    }
-    document.getElementById("offerType").style.display ="none"
-    document.getElementById("lng").style.display ="none"
-    document.getElementById("bb").style.display ="none"
-    document.getElementById("latEnd").style.display ="none"
-    document.getElementById("lngEnd").style.display ="none"
-    document.getElementById("bbEnd").style.display ="none"
-    document.getElementById("lat").style.display ="none"
-</script>
+
+<script type="text/javascript" src="create_js"></script>
 {% endblock %}

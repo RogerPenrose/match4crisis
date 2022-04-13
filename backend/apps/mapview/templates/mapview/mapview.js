@@ -240,7 +240,8 @@ mapViewPage = {
     initAutocomplete: () => {
         const input = document.getElementById("location");
     
-        const autocomplete = initMapsAutocomplete()
+        const autocomplete = initMapsAutocomplete();
+        console.log(autocomplete);
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace();
     
