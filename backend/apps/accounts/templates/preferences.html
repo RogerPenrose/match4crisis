@@ -10,7 +10,7 @@
 {% block header %}
 
 <style>
-
+.form-group { margin-bottom: 25px; }
 
     label.custom-control-label { position: relative;
   display: inline-block;
@@ -19,13 +19,13 @@
   vertical-align: text-bottom;
   transition: all 0.3s linear;
 margin-bottom: 0px;
-box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
-    border-radius: 25px;
+box-shadow: 0px 0px 5px rgb(0 0 0 / 8%);
+    border-radius: 1rem;
     width: 100%;
     padding: 10px 10px 10px 70px;
     font-weight: 600;
 }
-
+label { font-weight: 700; color: #28445b;}
 .custom-checkbox .custom-control-label::before {
 content: "";
   position: absolute;
@@ -110,9 +110,8 @@ padding: .1rem .75rem;
 
       
 
-      <h3>{% blocktrans %} Gefährliche Einstellungen {% endblocktrans %}</h3>
       <!-- Danger zone --> 
-      <a class="btn btn-sm btn-danger" style="background-color:red" href="#deleteUserModal" data-toggle="modal" data-target="#deleteUserModal">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
+      <a class="btn btn-sm btn-danger" style="background-color:red; float: right;" href="#deleteUserModal" data-toggle="modal" data-target="#deleteUserModal">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
       
 
       <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">

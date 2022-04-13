@@ -77,14 +77,7 @@ Home {% endblock %} {% block header %}
     .home-box { margin-top: -50px;}
     .hide-button { display: none;}
     .navbar-brand { visibility: hidden;}
-.navbar { padding: 0px !important; }
-.navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
-.navbar-toggler { padding: 20px calc(20px);}
-.navbar-collapse { padding: 0px 20px 20px 20px;}
-    .navbar {
-      background: transparent;
-      position: absolute;
-    }
+
     .navbar-collapse { background: #fff;}
 
     .home-title {
@@ -222,8 +215,11 @@ Home {% endblock %} {% block header %}
 
 
       <div class="col-md-6">
-       
-        <a href="/accounts/signup_refugee">
+        {% if user.is_authenticated %}
+        <a href="/offers/search">
+          {% else %}
+          <a href="/accounts/signup_refugee">
+          {% endif %}
        
           <div class="box-right">
             <h4 class="text-white">{% blocktrans %}Ich brauche<br><b>Hilfe/Unterstützung</b>{% endblocktrans %}</h4>

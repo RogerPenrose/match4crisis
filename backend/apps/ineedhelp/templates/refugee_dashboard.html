@@ -10,69 +10,55 @@ User Dashboard
 
 {% block header %}
 <style>
+  
+.dashboard-title { background: #ed0061;}
+.dashboard-title p, .dashboard-title h1, .dashboard-title h2 { color: #fff;}
     @media only screen and (min-width: 768px) {
       .dashboard-title {
-        padding: 130px 0px 80px 0px;
+        padding: 80px 0px 80px 0px;
+        box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
       }
   
-      .navbar { background: transparent !important;     -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
-      -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
-      box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
-      body { margin-top: 0px !important;}
   
       .dashboard-title h2 {
         font-size: 20px;
-        color: #fff !important;
         font-weight: 300;
       }
       .hide-desktop { display: none;}
-      .dashboard-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
-      .btn-yellow-2 { background-color: #FAC903; margin-left: 10px; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
-      .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
-      .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+      .dashboard-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
     }
   
     @media only screen and (min-width: 992px) {
       .dashboard-title {
-        padding: 150px 0px 100px 0px;
+        padding: 100px 0px 100px 0px;
       }
     }
   
     @media only screen and (min-width: 1200px) {
       .dashboard-title {
-        padding: 180px 0px 100px 0px;
+        padding: 130px 0px 100px 0px;
       }
     }
   
     @media only screen and (max-width: 767px) {
         .buttons { margin-left:0px; margin-right:0px;}
-      .navbar-collapse { background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
-  .navbar { padding: 0px !important; }
-  .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
-  .navbar-toggler { padding: 20px calc(20px);}
-  .navbar-collapse { padding: 0px 20px 20px 20px;}
-      .navbar {
-        position: absolute;
-      }
+
   
       .dashboard-title {
-        background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%);
-        padding: 100px 0px 10px 0px;
+        padding: 55px 0px 55px 0px;
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 15px;
         box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
       }
-      .bg-yellow {
-        background: transparent !important;
-      }
+
       .dashboard-title h1 {
         font-size: 7vw;
-        color: #fff !important;
+
       }
   
       .dashboard-title h2 {
         font-size: 4vw;
-        color: #fff !important;
+
         font-weight: 300;
       }
   
@@ -83,12 +69,7 @@ User Dashboard
       .home-box-description {
         margin-bottom: 15px;
       }
-  
-      .navbar {
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-      }
+ 
   
       .hide-home {
         display: none;
@@ -120,11 +101,46 @@ User Dashboard
     }
   
   
-    .buttons > div { background-color: #F59E1B; border-radius: 30px; color: #fff; padding:15px; margin-bottom: 15px;} 
-    .buttons h3 { color: #fff; font-size: 18px; margin-bottom: 0px;}
+    .buttons > div { border-radius: 30px;padding:15px; margin-bottom: 15px;     box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    border-radius: 25px;
+    padding: 10px;} 
+    .buttons h3 { color: #28445b; font-size: 18px;}
     .buttons p { margin-bottom: 0px;}
-    .buttons a, .buttons a:hover { color: #fff;}
-  </style>
+    .buttons a, .buttons a:hover { color: #28445b;}
+.btn path {      fill:#ed0061;   -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;}
+.btn:hover path { fill: #fff; }
+
+    .btn {     background-color: #fff;
+      color: #ed0061;
+
+       font-size: 1rem;
+        padding: .8rem 2.5rem;
+        border-radius: 15px;
+        border: 0px;
+        font-weight: bold;
+        margin-bottom: 20px;
+}
+    
+    .btn:hover { color: #fff; background-color:#28445b;}
+    div.description { padding: 10px; position: relative; }
+  .count { text-align: right; }
+.count p { display: inline; margin-bottom: 0px !important; padding:5px 10px; border-radius: 10px; background-color: #32BD69; text-align:center; color: #fff;  }
+div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-width: 100%; background-size: cover;}
+.missing p { background-color: #FA5103;}
+@media only screen and (max-width: 767px) { div.background-photo-search {padding-top: 80%;max-width: 100%;  }   }
+  
+  
+.buttons > div {     box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    border-radius: 25px;
+    padding: 10px; border-radius: 30px; padding:15px; margin-bottom: 15px;} 
+    .buttons h3 { color: #28445b font-size: 18px; margin-bottom: 0px;}
+    .buttons p { margin-bottom: 0px;}
+    .buttons a, .buttons a:hover { color: #28445b;}
+ </style>
 {% endblock %}
 
 {% block content%}

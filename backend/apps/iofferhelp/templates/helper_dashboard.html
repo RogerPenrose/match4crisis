@@ -10,7 +10,8 @@ Dashboard - Hilfesuchende
 
 {% block header %}
 <style>
-
+.dashboard-title { background: #ed0061;}
+.dashboard-title * { color: #fff;}
     @media only screen and (min-width: 768px) {
       .dashboard-title {
         padding: 80px 0px 80px 0px;
@@ -24,9 +25,6 @@ Dashboard - Hilfesuchende
       }
       .hide-desktop { display: none;}
       .dashboard-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-      .btn-yellow-2 { background-color: #FAC903; margin-left: 10px; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
-      .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
-      .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
     }
   
     @media only screen and (min-width: 992px) {
@@ -46,7 +44,7 @@ Dashboard - Hilfesuchende
 
   
       .dashboard-title {
-        padding: 70px 0px 10px 0px;
+        padding: 55px 0px 55px 0px;
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 15px;
         box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
@@ -108,10 +106,16 @@ Dashboard - Hilfesuchende
     .buttons h3 { color: #28445b; font-size: 18px;}
     .buttons p { margin-bottom: 0px;}
     .buttons a, .buttons a:hover { color: #28445b;}
+.btn path {      fill:#ed0061;   -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;}
+.btn:hover path { fill: #fff; }
 
+    .btn {     background-color: #fff;
+      color: #ed0061;
 
-    .btn {     background-color: #ed0061;
-      color: #fff;
        font-size: 1rem;
         padding: .8rem 2.5rem;
         border-radius: 15px;
@@ -120,7 +124,7 @@ Dashboard - Hilfesuchende
         margin-bottom: 20px;
 }
     
-    .btn:hover { background-color: #fff; }
+    .btn:hover { color: #fff; background-color:#28445b;}
     div.description { padding: 10px; position: relative; }
   .count { text-align: right; }
 .count p { display: inline; margin-bottom: 0px !important; padding:5px 10px; border-radius: 10px; background-color: #32BD69; text-align:center; color: #fff;  }
