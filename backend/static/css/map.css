@@ -121,7 +121,8 @@ label[for=id_braucht_bezahlung]::before {
   top: 8px;
   right: 8px;
 }
-
+.leaflet-control-layers-expanded  { background: transparent;}
+/*
 .user-container,
 .leaflet-control-layers-expanded {
   color: #000943;
@@ -140,6 +141,7 @@ label[for=id_braucht_bezahlung]::before {
     background-color: rgba(255, 255, 255, 0.6);
   }
 }
+*/
 
 /* Disable css that would overwrite JS color
 path.leaflet-interactive  {
@@ -184,18 +186,33 @@ div.leaflet-control-layers-overlays {
   display: none;
 }
 
-.leaflet-control-layers-overlays input[type="checkbox"] + span:before {
-  content: "☐ ";
-  font-size: 18pt;
-  vertical-align: middle;
+
+
+.leaflet-control-layers-overlays input:checked + span {
+background:#ed0061;
+color:#fff;
+}
+.leaflet-control-layers-overlays input:checked + span img {
+filter: invert(100%);
 }
 
-.leaflet-control-layers-overlays input:checked + span:before {
-  content: "☑ ";
-  font-size: 18pt;
-  vertical-align: middle;
-}
 
+.leaflet-control-layers-overlays span { padding: 10px 10px; border-radius: 10px; background: #fff;}
+.leaflet-control-layers-overlays span img {  width: 20px; height: 20px; margin-right: 5px;} 
+
+.leaflet-control-layers-expanded { padding: 0px !important;}
+.search-input { margin-top: 25px; position: relative; z-index:999; width: 100%;     display: block;
+  width: 100%;
+  height: calc(1.5em + 1rem + 2px);
+  padding: 0.375rem 0.75rem 0.375rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  border: 0px;
+  border-radius: 1rem;}
 .marker-cluster-single div,
 .marker-cluster-small div,
 .marker-cluster-medium div,

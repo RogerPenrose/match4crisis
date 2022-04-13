@@ -20,21 +20,25 @@
 <script src="{% static 'js/Leaflet.FeatureGroup.SubGroup-1.0.2/leaflet.featuregroup.subgroup.js' %}" ></script>
 
 <style>.footer { margin-top:0px !important; }
+.control-container { margin-top: 15px;}
+.user-container, .leaflet-control-layers-expanded { z-index: 999 !important;}
 p.listview { margin-top: 25px;
     position: absolute;
     bottom: 20px;
     z-index: 900;
     text-align: center;
     width: 100%;}
+    div.leaflet-control-layers-overlays { display: inline-block !important;}
     div.leaflet-top.leaflet-right { width: 100%; }
     .leaflet-top .leaflet-control { margin-top: 0px; margin-right: 0px; border-radius: 0px; width: 100%;}
     .icon svg { margin-top: -2px; margin-right: 5px;}
-
+    .leaflet-control { float: none;}
+    .leaflet-control-layers-overlays > label > div { float: left; line-height: 50px;} 
     p.listview a {    color: #fff !important; }
 h4.popup-title { font-size: 16px; margin-top: 10px;}
     div.content { position: relative; }
     .leaflet-popup-content { padding-bottom: 10px; min-width: 180px;}
-    .btn { color: #fff !important; background-color: #fa5103; border-radius: 10px; font-size: 14px;}
+    .btn { color: #fff !important; background-color: #ed0061; border-radius: 10px; font-size: 14px;}
 </style>
 <script type="text/javascript">
   console.log("In html: {{startPosition}}")
@@ -73,16 +77,17 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
       <p style="padding-top: 5px;">
         <a href="/offers/${refer_url}" target="_blank" class="btn">{% blocktrans %} Mehr dazu{% endblocktrans %}</a>
       </p>`,
-    createAccommodationCountText: (count) => `<img src="{% static 'img/map/housing.svg' %}"> ${count} {% trans "Unterbringungs-Angebote" %}`,
-    createTransportationCountText: (count) => `<img src="{% static 'img/map/transport.svg' %}"> ${count} {% trans "Logistik-Angebote" %}`,
-    createTranslationCountText: (count) => `<img src="{% static 'img/map/translation.svg' %}"> ${count} {% trans "Übersetzungs-Angebote" %}`,
-    createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}"> ${count} {% trans "Digitale Angebote" %}`,
-    createGenericCountText: (count) => `<img src="{% static 'img/map/generic-marker.svg' %}"> ${count} {% trans "Angebote" %}`,
+    createAccommodationCountText: (count) => `<img src="{% static 'img/icons/icon_accommodations.svg' %}">{% trans "Unterbringungs-Angebote" %} (${count})`,
+    createTransportationCountText: (count) => `<img src="{% static 'img/icons/icon_transport.svg' %}">{% trans "Mitfahrgelegenheiten" %} (${count})`,
+    createTranslationCountText: (count) => `<img src="{% static 'img/icons/icon_translation.svg' %}">{% trans "Übersetzungen" %} (${count})`,
+    createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}">{% trans "Digitale Angebote" %} (${count})`,
+    createGenericCountText: (count) => `<img src="{% static 'img/icons/icon_everything.svg' %}">{% trans "Alle anzeigen" %} (${count})`,
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],
     }),
   }
+  
 </script>
 <!--<script type="text/javascript" src="mapview/?accommodation=False&translation=False&transportation=False&generic=True"></script> -->
 <script type="text/javascript" src="mapview/?accommodation={{ accommodation }}&translation={{ translation }}&transportation={{ transportation }}&generic={{ generic }}"></script> 
@@ -105,9 +110,10 @@ h4.popup-title { font-size: 16px; margin-top: 10px;}
   </div>
 </nav>
 {% endif %}
-<input id="location" type="text" placeholder="Enter a location" style="position: relative; top:40px; left: 300px; z-index:5"/>
-<div id="controlContainer" style="margin-top: -40px"></div>
-<div id="mapContainer" style="z-index:1;">
+
+<div id="mapContainer" style="z-index:1; position: relative;">
+  <div class="container"><input id="location" type="text" placeholder="{% trans "Gib hier einen Standort ein ... " %}" class="search-input"/></div>
+  <div id="controlContainer" class="container control-container"></div>
 	 <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
    <p class="listview">
     <a id="results_as_list" href="../offers/list" class="btn btn-yellow" role="button" aria-pressed="true">
