@@ -258,7 +258,14 @@ mapViewPage = {
 
             if (place.geometry.viewport) {
                 const vp = place.geometry.viewport
-                mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.zb.h, vp.Ua.h], [vp.zb.j, vp.Ua.j]]));
+
+                // seems like they changed vp param_names 
+                // TODO: -> fix google maps import version to specific value when finished with developing
+                try{
+                    mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.Ab.h, vp.Ua.h], [vp.Ab.j, vp.Ua.j]]));
+                } catch(e){
+                    mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.zb.h, vp.Ua.h], [vp.zb.j, vp.Ua.j]]));
+                }
                 mapViewPage.setGetParameter([
                     ["location", input.value], 
                     ["lat", lat], 
