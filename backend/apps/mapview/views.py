@@ -56,13 +56,14 @@ def index(request):
 
 
 @lru_cache(maxsize=1)
-def prepare_offers(ttl_hash=None):
+def prepare_offers(ttl_hash=None): # still needed ?
     # Source: https://stackoverflow.com/questions/31771286/python-in-memory-cache-with-time-to-live
     del ttl_hash  # to emphasize we don't use it and to shut pylint up
     offers = GenericOffer.objects.filter(active=True, isDigital= False)
     locations_and_number = {}
     i = 0
     for offer in offers:
+        logger.warning(str(offer))
         cc = offer.country
         plz = offer.postCode
         key = cc + "_" + plz
@@ -84,52 +85,40 @@ def prepare_offers(ttl_hash=None):
         except Exception:
             continue
     return locations_and_number
+logger = logging.getLogger("django")
 
 def accommodationOffersJSON(request):
     offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="AC")
-    facilities = group_by_zip_code(offers)
-    return JsonResponse(facilities)
+    facilities = format_generic_offers(offers)
+    return JsonResponse(facilities, safe=False) # safe=False is needed to return Arrays
     
 def transportationOffersJSON(request):
     offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="TR")
-    facilities = group_by_zip_code(offers)
-    return JsonResponse(facilities)
+    facilities = format_generic_offers(offers)
+    return JsonResponse(facilities, safe=False) 
 
 def translationOffersJSON(request):
     offers = GenericOffer.objects.filter(active = True, isDigital = False, offerType="TL")
-    facilities = group_by_zip_code(offers)
-    return JsonResponse(facilities)
+    facilities = format_generic_offers(offers)
+    return JsonResponse(facilities, safe=False) 
 
 def genericOffersJSON(request):
     offers = GenericOffer.objects.filter(
         active = True, isDigital = False
     )
-    facilities = group_by_zip_code(offers)
-    return JsonResponse(facilities)
+    facilities = format_generic_offers(offers)
+    return JsonResponse(facilities, safe=False)
 
 
-def group_by_zip_code(entities):
-    countrycode_plz_details = {}
-
-    for entity in entities:
-        countrycode = entity.country
-        plz = entity.postCode
-
-        if countrycode not in countrycode_plz_details:
-            countrycode_plz_details[countrycode] = {}
-
-        country = countrycode_plz_details[countrycode]
-        if plz not in country:
-            country[plz] = {
-                "countrycode": countrycode,
-                "plz": plz,
-                "count": 0,
-                **get_plz_data(countrycode, plz),
-            }
-
-        country[plz]["count"] += 1
-    return countrycode_plz_details
-
+def format_generic_offers(entities):
+    return [{
+        "lat": e.lat,
+        "lng": e.lng,
+        "location": e.location,
+        "bb": e.bb,
+        "offerDescription": e.offerDescription,
+        "refer_url": str(e.id)
+    } for e in entities]
 
 def get_ttl_hash(seconds=300):
     """Return the same value withing `seconds` time period."""

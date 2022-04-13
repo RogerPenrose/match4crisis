@@ -125,7 +125,6 @@ class Command(BaseCommand):
                 user=u,
                 contactPerson="Jon Skeet",
                 isApproved=np.random.choice([True, False], p=[0.7, 0.3]),
-                appearsInMap=np.random.choice([True, False], p=[0.8, 0.2]),
             )
 
         self.stdout.write(self.style.SUCCESS("Created %s organisations." % n))

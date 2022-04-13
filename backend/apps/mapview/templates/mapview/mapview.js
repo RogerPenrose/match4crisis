@@ -126,6 +126,7 @@ mapViewPage = {
     registerEventHandlers : function registerEventHandlers(document, window) {
         $(window).on("resize", (event) => { this.onResizeWindow() }).trigger("resize")
     },
+
 // @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
         let [ accommodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
@@ -133,22 +134,22 @@ mapViewPage = {
         var accommodationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
         });
-        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createMapMarkers(accommodations,(lat,lon,countrycode,city,plz,count) => {
+        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createMapMarkers(accommodations,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{ 
-                icon:  this.createIcon(count, "accommodationMarker"),
-                itemCount: count,
-           }).bindPopup(this.options.createPopupTextAccommodation(countrycode,city, plz, count, this.options.accommodationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+                icon:  this.createIcon(1, "accommodationMarker"),
+                itemCount: 1,
+           }).bindPopup(this.options.createPopupTextAccommodation(descr, location, refer_url))
         }))
         // TRANSPORTATIONS:
 
         var transportationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('transportationMarker'),
         });
-        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,countrycode,city,plz,count) => {
+        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{
-                 icon:  this.createIcon(count, "transportationMarker"),
-                 itemCount: count,
-            }).bindPopup(this.options.createPopupTextTransportation(countrycode,city, plz, count, this.options.transportationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+                 icon:  this.createIcon(1, "transportationMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextTransportation(descr, location, refer_url))
         }))
 
         // TRANSLATIONS:
@@ -156,64 +157,52 @@ mapViewPage = {
         var translationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('translationMarker'),
         });
-        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,countrycode,city,plz,count) => {
+        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{
-                 icon:  this.createIcon(count, "translationMarker"),
-                 itemCount: count,
-            }).bindPopup(this.options.createPopupTextTranslation(countrycode,city, plz, count, this.options.translationOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+                 icon:  this.createIcon(1, "translationMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextTranslation(descr, location, refer_url))
         }))
         
         // GENERIC:
         var genericClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('genericMarker'),
         });
-        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,countrycode,city,plz,count) => {
+        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,location,descr,refer_url) => {
             return L.marker([lon,lat],{ 
-                icon:  this.createIcon(count, "genericMarker"),
-                itemCount: count,
-           }).bindPopup(this.options.createPopupTextGeneric(countrycode,city, plz, count, this.options.genericOfferURL.replace("COUNTRYCODE",countrycode).replace("PLZ",plz)))
+                icon:  this.createIcon(1, "genericMarker"),
+                itemCount: 1,
+           }).bindPopup(this.options.createPopupTextGeneric(descr, location, refer_url))
         }))
 
-        
+        /*var checks = document.querySelectorAll('[type = "checkbox"]'), i;
+        function disCheck() {
+            for (i = 0; i < checks.length; ++i) {
+                checks[i].disabled = true;*/
+
+                
         var overlays = {}
 
-        const countItems = (o) => {
-            var count = 0
-            for (countryCode in o) {
-                for (zipCode in o[countryCode]) {
-                    count += o[countryCode][zipCode].count
-                }
-            }
-            return count
-        }
-
-        {%if translation  %}
         translationClusterMarkerGroup.addTo(this.mapObject)
         translationMarkers.addTo(this.mapObject)
-        overlays[this.options.createTranslationCountText(countItems(translations))] = translationMarkers
-        {% endif %}
-        {%if transportation  %}
+        overlays[this.options.createTranslationCountText(translations.length)] = translationMarkers
+
         transportationClusterMarkerGroup.addTo(this.mapObject)
         transportationMarkers.addTo(this.mapObject)
-        overlays[this.options.createTransportationCountText(countItems(transportations))] = transportationMarkers
-        {% endif %}
-        {%if accommodation  %}
+        overlays[this.options.createTransportationCountText(transportations.length)] = transportationMarkers
+
         accommodationClusterMarkerGroup.addTo(this.mapObject)
         accommodationMarkers.addTo(this.mapObject)
-        overlays[this.options.createAccommodationCountText(countItems(accommodations))] = accommodationMarkers
-        {% endif %}
-        {%if generic  %}
+        overlays[this.options.createAccommodationCountText(accommodations.length)] = accommodationMarkers
+
         genericClusterMarkerGroup.addTo(this.mapObject)
         genericMarkers.addTo(this.mapObject)
-        overlays[this.options.createGenericCountText(countItems(generic))] = genericMarkers
-        {% endif %}
-        
+        overlays[this.options.createGenericCountText(generic.length)] = genericMarkers
 
-
-        control = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
-        var htmlObject = control.getContainer();
+        const control = L.control.layers(null, overlays, { collapsed: false, position: 'topright' }).addTo(this.mapObject)
+        const htmlObject = control.getContainer();
         // Get the desired parent node.
-        var a = document.getElementById('controlContainer');
+        const a = document.getElementById('controlContainer');
 
         // Finally append that node to the new parent, recursively searching out and re-parenting nodes.
         function setParent(el, newParent)
@@ -222,26 +211,36 @@ mapViewPage = {
         }
         setParent(htmlObject, a);
 
+        
+        // click (uncheck) checkboxes, if not selected in URL-Params
+        const checkboxes_to_disable = [
+            "{{ translation }}",
+            "{{ transportation }}",
+            "{{ accommodation }}",
+            "{{ generic }}"
+        ].map(b => b == "True")
+
+        const offersCheckboxParents = document.getElementById("controlContainer")
+                                    .childNodes[0]
+                                    .childNodes[1]
+                                    .childNodes[2]
+                                    .childNodes
+
+        for (i in checkboxes_to_disable){
+            if (!checkboxes_to_disable[i]) offersCheckboxParents[i].childNodes[0].childNodes[0].click();
+        }
     },
 
     createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
-        let markerArray = []
-        
-        for (countryCode in markers) {
-            for (zipCodeKey in markers[countryCode]) {
-                let zipCode = markers[countryCode][zipCodeKey]
-                markerArray.push(createMarkerFunction(zipCode.latitude, zipCode.longitude, countryCode, zipCode.city, zipCode.plz, zipCode.count))
-            }
-        }
-
-        return markerArray
+        return markers.map(marker => {
+            return createMarkerFunction(marker.lng, marker.lat, marker.offerDescription, marker.location, marker.refer_url)
+        })
     },
 
     initAutocomplete: () => {
         const input = document.getElementById("location");
     
         const autocomplete = initMapsAutocomplete()
-    
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace();
     
@@ -280,13 +279,22 @@ mapViewPage = {
     
         loc = urlParams.get('location')
         if (loc) {
-            input.setAttribute("value", loc)
+            input.setAttribute("value", loc);
         }
+
+        update_link_params = [];
+        ["lat", "lng", "bb", "location"].forEach(p => {
+            if (urlParams.get(p)){
+                update_link_params.push([p, urlParams.get(p)])
+            }
+        });
+
+        mapViewPage.update_link_element_params(update_link_params);
     },
 
     setGetParameter: function setGetParameter(params)
         {
-            var url = window.location.href;
+            var url = window.location.href.split("#")[0];
             var hash = location.hash;
             url = url.replace(hash, '');
         
@@ -310,7 +318,16 @@ mapViewPage = {
             
         
             window.history.pushState("", "", url + hash);
-        }
+
+            this.update_link_element_params(params);
+        },
+
+    update_link_element_params : params => ["results_as_list", "nav-link_search", "nav-link_map"].forEach(id => {
+        upadateLinksElementParams(
+            document.getElementById(id),
+            params
+        )
+    })
 }
 $.extend(mapViewPage.options, pageOptions)
 

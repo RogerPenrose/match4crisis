@@ -35,7 +35,7 @@ Home {% endblock %} {% block header %}
   @media only screen and (min-width: 768px) {
     .home-box { margin-top: -50px;}
     .home-title {
-      padding: 140px 0px 170px 0px;
+      padding: 90px 0px 170px 0px;
     }
     .navbar-dark .navbar-nav .nav-link { margin: 0 30px;}
     .navbar-expand-md .navbar-nav .nav-link:first-child { margin-left: -1rem;}
@@ -44,11 +44,9 @@ Home {% endblock %} {% block header %}
     .navbar { background: transparent !important;     -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
     -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
     box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
-    body { margin-top: 0px !important;}
 
     .home-title h2 {
       font-size: 20px;
-      color: #fff !important;
       font-weight: 300;
     }
     .hide-desktop { display: none;}
@@ -56,13 +54,13 @@ Home {% endblock %} {% block header %}
   
   }
 
-  .btn-yellow-2 { background-color: #FAC903; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+  .btn-yellow-2 { background-color: #28445b; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
     .btn-yellow-2:hover, .btn-orange:hover { color: #fff;}
-    .btn-orange { background-color: #FA5103; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
+    .btn-orange { background-color: #ed0061; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 800; display: inline-block;}
   @media only screen and (min-width: 992px) {
     .home-logo { width: 350px; height: auto;}
     .home-title {
-      padding: 170px 0px 200px 0px;
+      padding: 120px 0px 200px 0px;
     }
     .home-title h2 {
       font-size: 28px;
@@ -71,7 +69,7 @@ Home {% endblock %} {% block header %}
 
   @media only screen and (min-width: 1200px) {
     .home-title {
-      padding: 220px 0px 240px 0px;
+      padding: 170px 0px 240px 0px;
     }
   }
 
@@ -79,33 +77,32 @@ Home {% endblock %} {% block header %}
     .home-box { margin-top: -50px;}
     .hide-button { display: none;}
     .navbar-brand { visibility: hidden;}
-    .navbar-collapse { background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
 .navbar { padding: 0px !important; }
 .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
 .navbar-toggler { padding: 20px calc(20px);}
 .navbar-collapse { padding: 0px 20px 20px 20px;}
     .navbar {
+      background: transparent;
       position: absolute;
     }
+    .navbar-collapse { background: #fff;}
 
     .home-title {
-      background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%);
-      padding: 95px 0px 135px 0px;
+
+      padding: 90px 0px 135px 0px;
       border-bottom-left-radius: 15px;
       border-bottom-right-radius: 15px;
       box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
     }
-    .bg-yellow {
-      background: transparent !important;
-    }
+
     .home-title h1 {
       font-size: 7vw;
-      color: #fff !important;
+      
     }
 
     .home-title h2 {
       font-size: 22px;
-      color: #fff !important;
+ 
       font-weight: 300;
     }
 
@@ -177,7 +174,7 @@ Home {% endblock %} {% block header %}
     <div class="container">
       <div class="row align-self-center align-items-center">
         <div class="col-md-8 col-xl-7">
-          <h1 class="text-white">
+          <h1>
             <img src="{% static 'img/match4crisis-logo.svg' %}" class="home-logo" style="margin-bottom: 20px;">
           </h1>
           <h2 class="font-weight-regular">
