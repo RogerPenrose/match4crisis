@@ -37,6 +37,7 @@ urlpatterns = [
     path("500/", views.handler500),
     path("", views.home),
     path("about/", views.about),
+    path("preregistration/", views.preregistration),
     path("impressum/", views.impressum),
     path("dataprotection/", views.dataprotection),
     path("legal-questions/", views.legal_questions),

@@ -16,6 +16,12 @@ def about(request):
 
     return HttpResponse(template.render(context, request))
 
+def preregistration(request):
+
+    context = {}
+    template = loader.get_template("preregistration.html")
+
+    return HttpResponse(template.render(context, request))
 
 def impressum(request):
     context = {}
