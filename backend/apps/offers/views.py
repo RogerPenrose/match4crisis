@@ -68,7 +68,7 @@ def updateChildcareShortTermModel(g, form, offer_id=0):
     if offer_id == 0:
         a = ChildcareOfferShortterm(genericOffer=g, \
             numberOfChildrenToCare=form.get("numberOfChildrenToCare"), \
-            gender=form.get("gender"), \
+            gender_shortterm=form.get("gender_shortterm"), \
             isRegular=form.get("isRegular"))
         a.save()
         return a
@@ -76,7 +76,7 @@ def updateChildcareShortTermModel(g, form, offer_id=0):
         a = ChildcareOfferShortterm.objects.get(pk=offer_id)
         a.genericOffer=g
         a.numberOfChildrenToCare=form.get("numberOfChildrenToCare")
-        a.gender=form.get("gender")
+        a.gender_shortterm=form.get("gender_shortterm")
         a.isRegular=form.get("isRegular")
         a.save()
         return a
@@ -84,13 +84,13 @@ def updateChildcareShortTermModel(g, form, offer_id=0):
 def updateChildcareLongTermModel(g, form, offer_id=0):
     if offer_id == 0:
         a = ChildcareOfferLongterm(genericOffer=g, \
-            gender=form.get("gender"))
+            gender_longterm=form.get("gender_longterm"))
         a.save()
         return a
     else:
         a = ChildcareOfferLongterm.objects.get(pk=offer_id)
         a.genericOffer=g
-        a.gender=form.get("gender")
+        a.gender=form.get("gender_longterm")
         a.save()
         return a
 
@@ -134,13 +134,13 @@ def updateJobModel(g, form, offer_id=0):
 def updateWelfareModel(g, form, offer_id=0):
     if offer_id == 0:
         t = WelfareOffer(genericOffer=g, \
-            helpType=form.get("helpType"))
+            helpType_welfare=form.get("helpType_welfare"))
         t.save()
         return t
     else:
         t = WelfareOffer.objects.get(pk=offer_id)
         t.genericOffer=g
-        t.helpType=form.get("helpType")
+        t.helpType_welfare=form.get("helpType_welfare")
         t.save()
         return t
 
@@ -162,26 +162,26 @@ def updateDonationModel(g, form, offer_id=0):
 def updateManpowerModel(g, form, offer_id=0):
     if offer_id == 0:
         t = ManpowerOffer(genericOffer=g, \
-            helpType=form.get("helpType"))
+            helpType_manpower=form.get("helpType_manpower"))
         t.save()
         return t
     else:
         t = ManpowerOffer.objects.get(pk=offer_id)
         t.genericOffer=g
-        t.helpType=form.get("helpType")
+        t.helpType_manpower=form.get("helpType_manpower")
         t.save()
         return t
         
 def updateBuerocraticModel(g, form, offer_id=0):
     if offer_id == 0:
         t = BuerocraticOffer(genericOffer=g, \
-            helpType=form.get("helpType"))
+            helpType_buerocratic=form.get("helpType_buerocratic"))
         t.save()
         return t
     else:
         t = BuerocraticOffer.objects.get(pk=offer_id)
         t.genericOffer=g
-        t.helpType=form.get("helpType")
+        t.helpType_buerocratic=form.get("helpType_buerocratic")
         t.save()
         return t
     
