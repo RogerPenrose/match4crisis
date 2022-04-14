@@ -8,40 +8,43 @@
 
 {% block header %}
 <style>
+  .about-title h1, .about-title h2, .about-title p { color: #fff;}
+  .about-title { background: #ed0061; }
     div.team { margin-top: 55px;}
-.team h2 {  font-size: 18px; margin-bottom: 35px;}
-    .team img { max-width: 200px; height: auto; margin-bottom: 15px;} 
+.team h2 {  font-size: 16px; margin-bottom: 35px; font-weight: 600;}
+    .team img { max-width: 150px; height: auto; margin-bottom: 15px;} 
     .team > div { text-align: center; }
     @media only screen and (min-width: 768px) {
       .about-title {
-        padding: 100px 0px 150px 0px;
+        padding: 90px 0px 100px 0px;
+        background-image: url({% static 'img/about.jpg' %});
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
       }
-      .navbar {   -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
-    -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
-    box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
+
     }
   
     @media only screen and (min-width: 992px) {
       .about-title {
-        padding: 100px 0px 200px 0px;
+        padding: 90px 0px 130px 0px;
       }
     }
   
     @media only screen and (min-width: 1200px) {
       .about-title {
-        padding: 150px 0px 150px 0px;
+        padding: 130px 0px 150px 0px;
       }
     }
   
     .about-title {
-        border-bottom-left-radius: 15px;
-        border-bottom-right-radius: 15px;
+        border-bottom-left-radius: 35px;
+        border-bottom-right-radius: 35px;
         box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
       }
 
       .about-title h1 {
         font-size: 60px;
-
         font-weight: 800;
       }
       .about-title h2 {
@@ -50,17 +53,12 @@
         font-weight: 300;
       }
     @media only screen and (max-width: 767px) {
-        .about-title {        padding: 100px 0px 35px 0px;}
-
-  
-  .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
-  .navbar-toggler { padding: 20px calc(20px);}
-  .navbar-collapse { padding: 0px 20px 20px 20px;}
+        .about-title {        padding: 65px 0px 65px 0px;}
 
   
  
       .about-title h1 {
-        font-size: 10vw;
+        font-size: 9vw;
 
       }
   
@@ -103,7 +101,7 @@
 <div class="about-title">
 <div class="container">
     <div class="row align-self-center align-items-center">
-      <div class="col-xl-7">
+      <div class="col-lg-8 col-xl-7">
         <h1>
           {% blocktrans %}Together one <br>step further.{% endblocktrans %}
         </h1>
@@ -129,32 +127,36 @@
   </div>
 
     <div class="row align-self-center team">
-        <div class="col-sm-12 col-md-4">
-          <img src="{% static 'img/team/lorenz.jpg' %}" alt="Lorenz Mader" />
-          <h2>Lorenz Mader</h2>
-        </div>
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-3">
          <img src="{% static 'img/team/amandeep.jpg' %}" alt="MUDr. Amandeep Grewal" />
           <h2>MUDr. Amandeep Grewal</h2>
         </div>
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-3">
          <img src="{% static 'img/team/andreas.jpg' %}" alt="MUDr. Andreas Zehetner" />
                    <h2>
             MUDr. Andreas Zehetner
           </h2>
         </div>
+        <div class="col-sm-12 col-md-3">
+          <img src="{% static 'img/team/lorenz.jpg' %}" alt="Lorenz Mader" />
+          <h2>Lorenz Mader</h2>
+        </div>
+        <div class="col-sm-12 col-md-3">
+          <img src="{% static 'img/team/julian.jpg' %}" alt="Lorenz Mader" />
+          <h2>Julian Woldan</h2>
+        </div>
       </div>
 
       <div class="row align-self-center team">
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-3">
           <img src="{% static 'img/team/christian.jpg' %}" alt="Christian Scharfstein" />
           <h2>Christian Scharfstein</h2>
         </div>
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-3">
          <img src="{% static 'img/team/adrian.jpg' %}" alt="Adrian Surojit Müller" />
           <h2>Adrian Surojit Müller</h2>
         </div>
-        <div class="col-sm-12 col-md-4">
+        <div class="col-sm-12 col-md-3">
          <img src="{% static 'img/team/felix.jpg' %}" alt="Felix Pätsch" />
                    <h2>
            Felix Pätsch

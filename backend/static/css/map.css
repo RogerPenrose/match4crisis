@@ -94,7 +94,7 @@ label[for=id_braucht_bezahlung]::before {
 
 
 .leaflet-container a {
-  color: #fa5103;
+  color: #ed0061;
 }
 
 .leaflet-popup-content-wrapper {
@@ -121,7 +121,8 @@ label[for=id_braucht_bezahlung]::before {
   top: 8px;
   right: 8px;
 }
-
+.leaflet-control-layers-expanded  { background: transparent;}
+/*
 .user-container,
 .leaflet-control-layers-expanded {
   color: #000943;
@@ -140,6 +141,7 @@ label[for=id_braucht_bezahlung]::before {
     background-color: rgba(255, 255, 255, 0.6);
   }
 }
+*/
 
 /* Disable css that would overwrite JS color
 path.leaflet-interactive  {
@@ -171,9 +173,25 @@ a.leaflet-control-zoom-out {
 }
 
 div.leaflet-control-layers-overlays {
-  display: flex;
+  display: inline-block;
   flex-direction: column;
   font-size: 12pt;
+}
+@media only screen and (max-width: 767px) {
+  div.leaflet-control-layers-overlays {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    overflow-x: auto;
+    width: auto;
+    transition: all 0.3s ease 0s;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
 }
 
 .leaflet-control-layers-overlays img {
@@ -184,18 +202,33 @@ div.leaflet-control-layers-overlays {
   display: none;
 }
 
-.leaflet-control-layers-overlays input[type="checkbox"] + span:before {
-  content: "☐ ";
-  font-size: 18pt;
-  vertical-align: middle;
+
+
+.leaflet-control-layers-overlays input:checked + span {
+background:#ed0061;
+color:#fff;
+}
+.leaflet-control-layers-overlays input:checked + span img {
+filter: invert(100%);
 }
 
-.leaflet-control-layers-overlays input:checked + span:before {
-  content: "☑ ";
-  font-size: 18pt;
-  vertical-align: middle;
-}
 
+.leaflet-control-layers-overlays span { padding: 10px 10px; border-radius: 10px; background: #fff;}
+.leaflet-control-layers-overlays span img {  width: 20px; height: 20px; margin-right: 5px;} 
+
+.leaflet-control-layers-expanded { padding: 0px !important;}
+.search-input { margin-top: 15px; position: relative; z-index:999; width: 100%;     display: block;
+  width: 100%;
+  height: calc(1.5em + 1rem + 2px);
+  padding: 0.375rem 0.75rem 0.375rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  border: 0px;
+  border-radius: 1rem;}
 .marker-cluster-single div,
 .marker-cluster-small div,
 .marker-cluster-medium div,
@@ -204,53 +237,15 @@ div.leaflet-control-layers-overlays {
 .marker-cluster-small,
 .marker-cluster-medium,
 .marker-cluster-large {
+  background-color: #ed0061;
   background-size: contain;
   background-position: center center;
-  background-color: transparent;
   background-repeat: no-repeat;
 }
 
-.marker-cluster, .marker-cluster div { border-radius: 0px !important; }
-.transportationMarker.marker-cluster-small,
-.transportationMarker.marker-cluster-medium,
-.transportationMarker.marker-cluster-large {
-  background-image: url(/static/img/map/transport.svg);
-}
+.marker-cluster, .marker-cluster div {   border-radius: 30px !important; }
 
-.transportationMarker.marker-cluster-single div,
-.transportationMarker.marker-cluster-small div,
-.transportationMarker.marker-cluster-medium div,
-.transportationMarker.marker-cluster-large div {
-  background-image: url(/static/img/map/transport.svg);
-}
-
-.accommodationMarker.marker-cluster-small,
-.accommodationMarker.marker-cluster-medium,
-.accommodationMarker.marker-cluster-large {
-  background-image:url(/static/img/map/housing.svg);
-}
-
-.accommodationMarker.marker-cluster-single div,
-.accommodationMarker.marker-cluster-small div,
-.accommodationMarker.marker-cluster-medium div,
-.accommodationMarker.marker-cluster-large div {
-  background-image:url(/static/img/map/housing.svg);
-}
-
-.translationMarker.marker-cluster-small,
-.translationMarker.marker-cluster-medium,
-.translationMarker.marker-cluster-large {
-  background-image: url(/static/img/map/translation.svg);
-}
-
-.translationMarker.marker-cluster-single div,
-.translationMarker.marker-cluster-small div,
-.translationMarker.marker-cluster-medium div,
-.translationMarker.marker-cluster-large div {
-  background-image: url(/static/img/map/translation.svg);
-}
-
-.genericMarker { background-color: #F5980F; border-radius: 30px !important;}
+.genericMarker { background-color: #ed0061; border-radius: 30px !important;}
 
 .marker-cluster-single div,
 .marker-cluster-small div,
@@ -259,24 +254,8 @@ div.leaflet-control-layers-overlays {
   color: white;
 }
 
-.transportationMarker.marker-cluster div,
-.accommodationMarker.marker-cluster div {
-  font-weight: bold;
-}
-
-.marker-cluster-single.transportationMarker,
-.marker-cluster-single.accommodationMarker,
-.marker-cluster-single.translationMarker {
-  background-color: transparent;
-}
-
-.marker-cluster.accommodationMarker {
-  margin-left: -30px !important;
-  margin-top: -30px !important;
-}
 
 div.leaflet-control-layers-overlays label {
   margin: 0;
-  float: left; 
   margin-right: 20px;
 }

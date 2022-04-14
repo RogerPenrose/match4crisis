@@ -1,13 +1,7 @@
-{% extends 'base.html' %} {% load static %} {% load i18n %} {% block title %} {% blocktrans %} Registrierung - Studierende {% endblocktrans %} {% endblock %} {% block header %}
+{% extends 'base.html' %} {% load static %} {% load i18n %} {% block title %} {% blocktrans %} Login {% endblocktrans %} {% endblock %} {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style type="text/css">
     .footer { margin-top: 0px !important;}
-
-    .navbar { background: transparent !important;
-    -webkit-box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);
-    -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0);
-    box-shadow: 0px 2px 5px 0px rgb(0, 0, 0, 0);}
-    body { margin-top: 0px !important;}
 
     .login-card { border-radius: 30px;}
 
@@ -20,17 +14,11 @@
         font-weight: bold;
     margin-top: 20px; }
     
+    .bg-container { background: #ed0061;}
     .btn:hover { background-color: #1eb159; }
     @media only screen and (max-width: 767px) {
         .about-title {        padding: 100px 0px 35px 0px;}
-      .navbar-collapse { background: linear-gradient(122.45deg, #f5980f 0%, #fac903 100%); }
-  .navbar { padding: 0px !important; }
-  .navbar .navbar-brand { padding: calc(20px + .3125rem) 20px;}
-  .navbar-toggler { padding: 20px calc(20px);}
-  .navbar-collapse { padding: 0px 20px 20px 20px;}
-      .navbar {
-        position: absolute;
-      }
+   
   
  
       .about-title h1 {
@@ -63,7 +51,7 @@
     
     label { display: none;}
     input { margin-bottom: 15px;}
-.login-form { padding-top: 100px;}
+.login-form { padding-top: 70px;}
 </style>
 <script type="text/javascript">
     window.addEventListener('load', function() {
@@ -71,11 +59,11 @@
 
             var height = $(window).height();
             var navHeight = $('.navbar').outerHeight();
-            var footerHeight = $('.footer').innerHeight();
+            var footerHeight = $('.footer').outerHeight();
 
-            var newHeight = height - footerHeight - 60;
+            var newHeight = height - footerHeight - navHeight;
 
-            $(".login-form").height(newHeight);
+            $(".login-form").css('min-height', newHeight);
 
         }).trigger("resize");
 
@@ -83,7 +71,7 @@
 </script>
 {% endblock %} {% load crispy_forms_tags %} {% block content %}
 <div class="bg-container">
-    <div class="container login-form" style="padding-top:60px; ">
+    <div class="container login-form" style="padding-top:0px; ">
 
         <div class="col-lg-6 col-md-10 col-sm-12 col-12" style="margin: 0 auto;">
             <div class="card login-card">
@@ -108,23 +96,17 @@
                 </div>
                 {% endif %}
 
-                <p style="margin-bottom:0px; margin-top: 35px; font-weight:600;">{% blocktrans %}Passwort vergessen?{% endblocktrans %}
+                <p style="margin-bottom:0px; margin-top: 35px;font-size: 18px; font-weight:600; color: #28445b;">{% blocktrans %}Passwort vergessen?{% endblocktrans %}
                 </p>
                 <a href="/accounts/password_reset">
                     <p style="font-size:.9rem;">{% blocktrans %}Passwort zurücksetzen{% endblocktrans %}</p>
                 </a>
 
-                <p style="margin-bottom:0px; font-weight:600;">{% blocktrans %}Noch kein Account?{% endblocktrans %}
+                <p style="margin-bottom:0px; font-weight:600; font-size: 18px; color:#28445b">{% blocktrans %}Noch kein Account?{% endblocktrans %}
                 </p>
-                <a href="/accounts/signup_refugee">
-                    <p style="margin-bottom: 0px; font-size:.9rem;">{% blocktrans %}Ich bin Hilfesuchende/r{% endblocktrans %}</p>
-                </a>
-                <a href="/accounts/signup_helper">
-                    <p style="margin-bottom: 0px; font-size:.9rem;">{% blocktrans %}Ich bin Helfende/r{% endblocktrans %}</p>
-                </a>
-                <a href="/accounts/signup_organisation">
-                    <p style="font-size:.9rem;">{% blocktrans %}Wir sind eine Organisation{% endblocktrans %}</p>
-                </a>
+                <a href="/preregistration">
+                    <p style="margin-bottom: 0px; font-size:.9rem;">{% blocktrans %}Hier registrieren{% endblocktrans %}</p>
+              
 
             </div>
         </div>

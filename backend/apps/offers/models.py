@@ -29,6 +29,7 @@ class GenericOffer(models.Model):
     ('JO', 'Job'),
     ('DO', 'Donation')
     ]
+    offerTitle = models.TextField(max_length=100)
     location = models.TextField(max_length=300)
     lat = models.FloatField()
     lng = models.FloatField()
@@ -145,7 +146,7 @@ class TransportationOffer(models.Model):
     locationEnd = models.TextField(max_length=300)
     latEnd = models.FloatField()
     lngEnd = models.FloatField()
-    bbEnd = models.FloatField()
+    bbEnd =  models.CharField(max_length=300)
     date=models.DateField(default=timezone.now)
     numberOfPassengers = models.IntegerField(default=2)
 class TranslationOffer(models.Model):

@@ -53,6 +53,7 @@ DEPARTUREDATE="Date"
 NUMBERADULTS="How many Adults"
 NUMBERPETS = "How many Pets"
 IMAGE = "Upload Image"
+OFFERTITLE = "Titel"
 LOCATION="Location"
 LOCATIONEND="Destination"
 logger = logging.getLogger("django")
@@ -61,7 +62,7 @@ class GenericForm(forms.ModelForm):
         attrs = { "class": "form-control"}
         model = GenericOffer
 
-        fields = ["offerType", "offerDescription","location", "lat","lng", "bb", "cost", "isDigital", "active"]
+        fields = ["offerType", "offerTitle", "offerDescription","location", "lat","lng", "bb", "cost", "isDigital", "active"]
         labels={
             "offerType": OFFERTYPE,
             "offerDescription": OFFERDESCRIPTION, 
@@ -69,12 +70,14 @@ class GenericForm(forms.ModelForm):
             "isDigital": DIGITAL, 
             "location": LOCATION,
             "active": ACTIVE,
+            "offerTitle": OFFERTITLE
         }
         widgets = {
             'location': forms.TextInput(attrs={ 'class': 'form-control'}),
             'lat': forms.TextInput(attrs={'class': 'form-control'}),
             'lng': forms.TextInput(attrs={'class': 'form-control'}),
             'bb': forms.TextInput(attrs={'class': 'form-control'}),
+            'offerTitle': forms.TextInput(attrs={'class': 'form-control'}),
         'offerType':  forms.Select(attrs={'class': 'form-control'}),
         'offerDescription': forms.Textarea(attrs={'class': 'form-control'}),
         'cost': forms.TextInput(attrs={'class': 'form-control'}),

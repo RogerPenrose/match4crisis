@@ -2,6 +2,7 @@ mapViewPage = {
     options: {
         mapViewContainerId: '',
         accommodationOfferURL : '',
+        jobOfferURL : '',
         transportationOfferURL : '',
         translationOfferURL : '',
         genericOfferURL : '',
@@ -12,7 +13,7 @@ mapViewPage = {
         createPopupTextTransportation  :  (countrycode,city, plz, count, url) => '',
         createPopupTextGeneric  :  (countrycode,city, plz, count, url) => '',
         createPopupTextTranslation :  (countrycode,city, plz, count, url) => '',
-        createPopupTextAccommodation :  (countrycode,city, plz, count, url) => '',
+        createPopupTextAccommodation :  (descr, location,type, numberOfAdults, numberOfChildren, numberOfPets, refer_url) => '',
         createAccommodationCountText: (count) => '',
         createTransportationCountText: (count) => '',
         createTranslationCountText: (count) => '',
@@ -129,27 +130,27 @@ mapViewPage = {
 
 // @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
-        let [ accommodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
+        let [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
           // ACCOMMODATIONS:
         var accommodationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
         });
-        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createMapMarkers(accommodations,(lat,lon,location,descr,refer_url) => {
-            return L.marker([lon,lat],{ 
+        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createBlankMapMarker(accommodations,(marker) => {
+            return L.marker([marker.lat,marker.lng],{ 
                 icon:  this.createIcon(1, "accommodationMarker"),
                 itemCount: 1,
-           }).bindPopup(this.options.createPopupTextAccommodation(descr, location, refer_url))
+           }).bindPopup(this.options.createPopupTextAccommodation(marker))
         }))
         // TRANSPORTATIONS:
 
         var transportationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('transportationMarker'),
         });
-        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createMapMarkers(transportations,(lat,lon,location,descr,refer_url) => {
-            return L.marker([lon,lat],{
+        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createBlankMapMarker(transportations,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
                  icon:  this.createIcon(1, "transportationMarker"),
                  itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTransportation(descr, location, refer_url))
+            }).bindPopup(this.options.createPopupTextTransportation(marker))
         }))
 
         // TRANSLATIONS:
@@ -157,19 +158,76 @@ mapViewPage = {
         var translationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('translationMarker'),
         });
-        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createMapMarkers(translations,(lat,lon,location,descr,refer_url) => {
-            return L.marker([lon,lat],{
+        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createBlankMapMarker(translations,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
                  icon:  this.createIcon(1, "translationMarker"),
                  itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTranslation(descr, location, refer_url))
+            }).bindPopup(this.options.createPopupTextTranslation(marker))
+        }))
+        
+        // BUEROCRATIC:
+       
+        var buerocraticClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('buerocraticMarker'),
+        });
+        var buerocraticMarkers = L.featureGroup.subGroup(buerocraticClusterMarkerGroup, this.createBlankMapMarker(buerocratics,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
+                 icon:  this.createIcon(1, "buerocraticMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextBuerocratic(marker))
+        }))
+        // JOBS:
+       
+        var jobClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('jobMarker'),
+        });
+        var jobMarkers = L.featureGroup.subGroup(jobClusterMarkerGroup, this.createBlankMapMarker(jobs,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
+                 icon:  this.createIcon(1, "jobMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextJob(marker))
+        }))
+        // MANPOWER:
+       
+        var manpowerClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('manpowerMarker'),
+        });
+        var manpowerMarkers = L.featureGroup.subGroup(manpowerClusterMarkerGroup, this.createBlankMapMarker(manpowers,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
+                 icon:  this.createIcon(1, "manpowerMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextManpower(marker))
+        }))
+        // MEDICAL:
+       
+        var medicalClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('medicalMarker'),
+        });
+        var medicalMarkers = L.featureGroup.subGroup(medicalClusterMarkerGroup, this.createBlankMapMarker(medicals,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
+                 icon:  this.createIcon(1, "medicalMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextMedical(marker))
+        }))
+        
+        // CHILDCARE:
+       
+        var childcareClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('childcareMarker'),
+        });
+        var childcareMarkers = L.featureGroup.subGroup(childcareClusterMarkerGroup, this.createBlankMapMarker(childcares,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
+                 icon:  this.createIcon(1, "childcareMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextChildcare(marker))
         }))
         
         // GENERIC:
         var genericClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('genericMarker'),
         });
-        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createMapMarkers(generic,(lat,lon,location,descr,refer_url) => {
-            return L.marker([lon,lat],{ 
+        let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createGenericMapMarkers(generic,(lat,lon,location,descr,refer_url) => {
+            return L.marker([lat,lon],{ 
                 icon:  this.createIcon(1, "genericMarker"),
                 itemCount: 1,
            }).bindPopup(this.options.createPopupTextGeneric(descr, location, refer_url))
@@ -182,6 +240,26 @@ mapViewPage = {
 
                 
         var overlays = {}
+        
+        childcareClusterMarkerGroup.addTo(this.mapObject)
+        childcareMarkers.addTo(this.mapObject)
+        overlays[this.options.createChildcareCountText(childcares.length)] = childcareMarkers
+
+        manpowerClusterMarkerGroup.addTo(this.mapObject)
+        manpowerMarkers.addTo(this.mapObject)
+        overlays[this.options.createManpowerCountText(manpowers.length)] = manpowerMarkers
+
+        jobClusterMarkerGroup.addTo(this.mapObject)
+        jobMarkers.addTo(this.mapObject)
+        overlays[this.options.createJobCountText(jobs.length)] = jobMarkers
+
+        buerocraticClusterMarkerGroup.addTo(this.mapObject)
+        buerocraticMarkers.addTo(this.mapObject)
+        overlays[this.options.createBuerocraticCountText(buerocratics.length)] = buerocraticMarkers
+
+        medicalClusterMarkerGroup.addTo(this.mapObject)
+        medicalMarkers.addTo(this.mapObject)
+        overlays[this.options.createMedicalCountText(medicals.length)] = medicalMarkers
 
         translationClusterMarkerGroup.addTo(this.mapObject)
         translationMarkers.addTo(this.mapObject)
@@ -213,28 +291,39 @@ mapViewPage = {
 
         
         // click (uncheck) checkboxes, if not selected in URL-Params
-        const checkboxes_to_disable = [
-            "{{ translation }}",
-            "{{ transportation }}",
-            "{{ accommodation }}",
-            "{{ generic }}"
-        ].map(b => b == "True")
 
-        const offersCheckboxParents = document.getElementById("controlContainer")
+        var offersCheckboxParents = document.getElementById("controlContainer")
                                     .childNodes[0]
                                     .childNodes[1]
                                     .childNodes[2]
                                     .childNodes
 
         for (i in checkboxes_to_disable){
-            if (!checkboxes_to_disable[i]) offersCheckboxParents[i].childNodes[0].childNodes[0].click();
+            
+            offersCheckboxParents[i].childNodes[0].childNodes[0].setAttribute("name", checkboxes_to_disable[i].type);
+            offersCheckboxParents[i].childNodes[0].childNodes[0].addEventListener("change",function(){
+                handleNumber(this.name, this.checked)
+                if (this.checked) {
+                    console.log("Checkbox is checked.."+this.name);
+                  } else {
+                    console.log("Checkbox is not checked..");
+                  }
+            });
+            if (checkboxes_to_disable[i].show == "False") {
+                checkboxes_to_disable[i].selected = false
+                offersCheckboxParents[i].childNodes[0].childNodes[0].click();
+                
+            } 
         }
     },
 
-    createMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
+    createGenericMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
         return markers.map(marker => {
             return createMarkerFunction(marker.lng, marker.lat, marker.offerDescription, marker.location, marker.refer_url)
         })
+    },
+    createBlankMapMarker: function addMapMarkers(markers, createMarkerFunction){
+        return markers.map(marker => {return createMarkerFunction(marker)})
     },
 
     initAutocomplete: () => {
@@ -258,7 +347,14 @@ mapViewPage = {
 
             if (place.geometry.viewport) {
                 const vp = place.geometry.viewport
-                mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.zb.h, vp.Ua.h], [vp.zb.j, vp.Ua.j]]));
+
+                // seems like they changed vp param_names 
+                // TODO: -> fix google maps import version to specific value when finished with developing
+                try{
+                    mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.Ab.h, vp.Ua.h], [vp.Ab.j, vp.Ua.j]]));
+                } catch(e){
+                    mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.zb.h, vp.Ua.h], [vp.zb.j, vp.Ua.j]]));
+                }
                 mapViewPage.setGetParameter([
                     ["location", input.value], 
                     ["lat", lat], 
@@ -331,7 +427,77 @@ mapViewPage = {
     })
 }
 $.extend(mapViewPage.options, pageOptions)
+var childcare = {{ entryCount.childcare }}
+var job = {{ entryCount.job }}
+var buerocratic = {{ entryCount.buerocratic }}
+var medical = {{ entryCount.medical }}
+var translation = {{ entryCount.translation }}
+var transportation = {{ entryCount.transportation }}
+var accommodation = {{ entryCount.accommodation }}
+var manpower = {{ entryCount.manpower }}
+var checkboxes_to_disable = [
+    {"type": "childcare", "show":"{{ childcare|default:False }}", selected: true },
+    {"type": "manpower", "show":"{{ manpower|default:False }}", selected: true },
+    {"type": "job", "show":"{{ job|default:False }}", selected: true },
+    {"type": "buerocratic", "show":"{{ buerocratic|default:False }}", selected: true },
+    {"type": "medical", "show":"{{ medical|default:False }}", selected: true },
+    {"type": "translation", "show":"{{ translational|default:False }}", selected: true },
+    {"type": "transportation", "show":"{{ transportation|default:False }}", selected: true },
+    {"type": "accommodation", "show":"{{ accommodation|default:False }}", selected: true },
+    {"type": "generic", "show":"{{ generic|default:False }}", selected: true }]
+function handleNumber(name, state){
+    console.log("Handling: "+name)
+    number = 0
+    checkAll = false
+    link = "/offers/handle_filter?show_list=True&"
+    
+    try{
+    if(window.document.getElementsByName("generic")[0].checked == true && name != "generic" && state == true)
+        window.document.getElementsByName("generic")[0].click()
+}catch (e){
 
+}
+finally{
+    
+    for (var i = 0; i < checkboxes_to_disable.length; i++)
+    {
+        checkbox = checkboxes_to_disable[i]
+        if (checkbox.type == name){
+            checkboxes_to_disable[i].selected = state
+            console.log("New State: "+checkboxes_to_disable[i].selected)
+        
+        }
+        if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type != "generic"){
+            console.log("Adding : "+checkboxes_to_disable[i].type)
+            number += eval(checkboxes_to_disable[i].type)
+            if (checkboxes_to_disable[i].type != "childcare")
+                link +=checkboxes_to_disable[i].type+"Visible=True&"
+            else link += "childShortVisible=True&childLongVisible=True&"
+        }
+        if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type == "generic"){
+            checkAll = true
+        }
+
+    }
+    if (checkAll){
+        number = 0
+        link = "/offers/handle_filter?show_list=True&"
+    for(var i = 0; i < checkboxes_to_disable.length; i++)
+    {   if(checkboxes_to_disable[i].type != "generic"){
+            number += eval(checkboxes_to_disable[i].type)
+        if (checkboxes_to_disable[i].type != "childcare")
+            link +=checkboxes_to_disable[i].type+"Visible=True"
+        else link += "childShortVisible=True&childLongVisible=True&"
+
+    }
+        }
+    }
+    console.log("States: "+JSON.stringify(checkboxes_to_disable))
+    console.log("New number: "+number)
+    
+    document.getElementById("results_as_list").href = link.slice(0,-1)
+    document.getElementById("resultString").innerHTML = number
+}}
 document.addEventListener("DOMContentLoaded", function domReady() {
 
     mapViewPage.initializeMap()

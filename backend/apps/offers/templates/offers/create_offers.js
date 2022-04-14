@@ -80,7 +80,7 @@ function offer_autocomplete(){
             document.getElementsByName(lngName)[0].setAttribute("value", urlParams.get('lng'));
             document.getElementsByName(bbName)[0].setAttribute("value", urlParams.get('bb'));
         } catch {
-            // values / elements not given
+            // values / elements not given || we are not at transportation_offers
         }
 
         autocompletes.push(autocomplete);
