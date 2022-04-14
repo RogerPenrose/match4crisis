@@ -177,7 +177,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
         <div class="col-12 col-md-6 col-xl-6">
 
-            <a href="#">
+            <a href="{% url 'recently_contacted' %}">
             <div class="row align-self-center align-items-center">
                 <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px; text-align:center;"><img src="{% static 'img/users/contacted.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Kürzlich kontaktiert{% endblocktrans %}</h3><p>{% blocktrans %}Schau nach, wen du bereits kontaktiert hast.{% endblocktrans %}</p></div>
                 </div>

@@ -34,3 +34,8 @@ def recentlyViewedOffers(request):
     refugee : Refugee = Refugee.objects.get(user=request.user)
     offers = getSpecificOffers(refugee.recentlyViewedOffers.all().order_by('-recentlyviewedintermediary__dateViewed'))
     return render(request, "recently_viewed.html", {"offers" : mergeImages(offers)})
+
+def recentlyContactedOffers(request):
+    refugee : Refugee = Refugee.objects.get(user=request.user)
+    offers = getSpecificOffers(refugee.recentlyContactedOffers.all().order_by('-recentlycontactedintermediary__dateContacted'))
+    return render(request, "recently_contacted.html", {"offers" : mergeImages(offers)})

@@ -9,9 +9,10 @@ import base64
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
+from apps.accounts.decorator import refugeeRequired
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildCareFilterLongterm, ChildCareFilterShortterm, WelfareFilter, JobFilter
 from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
 from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
@@ -265,10 +266,24 @@ def kmInLat(km):
     lat = float(km)/110.574
     logger.warning("KMINLAT:"+str(lat))
     return float(lat)
+
 @login_required
+@refugeeRequired
 def contact(request, offer_id):
-    details = getOfferDetails(request,offer_id)
-    return render(request, 'offers/contact.html', details)
+    if request.method == "POST":
+        # TODO send email
+
+        # If the current user is a Refugee: Add this offer to their recently contacted offers
+        if request.user.is_authenticated and request.user.isRefugee:
+            offer = GenericOffer.objects.get(pk=offer_id)
+            refugee = Refugee.objects.get(user=request.user)
+            refugee.addRecentlyContactedOffer(offer)
+
+        return HttpResponseRedirect(request.path[:-len("/contact")])
+    else:
+        details = getOfferDetails(request,offer_id)
+        return render(request, 'offers/contact.html', details)
+
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 

@@ -13,9 +13,12 @@ class Refugee(models.Model):
 
     favouriteOffers = models.ManyToManyField(GenericOffer, related_name="favouritedBy")
 
-    # The maximum number of recently viewed offers to save (for preserving space)
+    # The maximum number of recently viewed and recently contacted offers to save (for preserving space)
     MAX_RECENTLY_VIEWED = 25
+    MAX_RECENTLY_CONTACTED = 25
     recentlyViewedOffers = models.ManyToManyField(GenericOffer, through='RecentlyViewedIntermediary', related_name="recentlyViewedBy")
+    recentlyContactedOffers = models.ManyToManyField(GenericOffer, through='RecentlyContactedIntermediary', related_name="recentlyContactedBy")
+
 
     def toggleFavourite(self, offer : GenericOffer):
         """
@@ -33,7 +36,7 @@ class Refugee(models.Model):
     def addRecentlyViewedOffer(self, offer : GenericOffer):
         """
         Adds an offer to the recently viewed offers and removes the first one if the maximum has been reached.\n
-        If the viewed offer already exists changes the dated viewed to now.
+        If the viewed offer already exists changes the date viewed to now.
         """
         try:
             existingEntry = RecentlyViewedIntermediary.objects.get(refugee = self, offer=offer)
@@ -43,6 +46,21 @@ class Refugee(models.Model):
             self.recentlyViewedOffers.add(offer, through_defaults={'dateViewed': timezone.now()})
             if(self.recentlyViewedOffers.all().count() > self.MAX_RECENTLY_VIEWED):
                 RecentlyViewedIntermediary.objects.filter(refugee=self).earliest('dateViewed').delete()
+    
+    def addRecentlyContactedOffer(self, offer : GenericOffer):
+        """
+        Adds an offer to the recently contacted offers and removes the first one if the maximum has been reached.\n
+        If the contacted offer already exists changes the date contacted to now.
+        """
+        try:
+            existingEntry = RecentlyContactedIntermediary.objects.get(refugee = self, offer=offer)
+            existingEntry.dateContacted = timezone.now()
+            existingEntry.save()
+        except RecentlyContactedIntermediary.DoesNotExist:
+            self.recentlyViewedOffers.add(offer, through_defaults={'dateContacted': timezone.now()})
+            if(self.recentlyViewedOffers.all().count() > self.MAX_RECENTLY_VIEWED):
+                RecentlyContactedIntermediary.objects.filter(refugee=self).earliest('dateContacted').delete()
+
 
 class RecentlyViewedIntermediary(models.Model):
     """
@@ -52,3 +70,12 @@ class RecentlyViewedIntermediary(models.Model):
     refugee = models.ForeignKey(Refugee, on_delete=models.CASCADE)
     offer = models.ForeignKey(GenericOffer, on_delete=models.CASCADE)
     dateViewed = models.DateTimeField(null=False)
+
+class RecentlyContactedIntermediary(models.Model):
+    """
+    The intermediary model that is used for the m:n-relation between Refugees and recently contacted GenericOffers.\n
+    Additionally stores the date, on which the offer was contacted (for sorting)
+    """
+    refugee = models.ForeignKey(Refugee, on_delete=models.CASCADE)
+    offer = models.ForeignKey(GenericOffer, on_delete=models.CASCADE)
+    dateContacted = models.DateTimeField(null=False)
