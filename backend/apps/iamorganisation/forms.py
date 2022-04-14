@@ -41,7 +41,7 @@ class OrganisationFormO(ModelForm):
             'contactPerson': forms.TextInput(attrs={'placeholder': _("Name der Kontaktperson")}),
             'appearsInMap': forms.TextInput(attrs={'placeholder': _("Auf der Karte sichtbar und kontaktierbar für Helfende sein")}),
             'clubNumber': forms.TextInput(attrs={'placeholder': _("Vereinsnummer")}),
-            'streetNameAndNumber": forms.TextInput(attrs={'placeholder': _("Straße und Hausnummer")}),
+            'streetNameAndNumber': forms.TextInput(attrs={'placeholder': _("Straße und Hausnummer")}),
         }
         
     def __init__(self, *args, **kwargs):

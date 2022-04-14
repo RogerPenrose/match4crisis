@@ -39,13 +39,6 @@ from . import views
         name="password_reset_done",
     ),
     path(
-        "reset/done/",
-        auth_views.PasswordResetCompleteView.as_view(
-            template_name="registration/password_reset_complete_.html"
-        ),
-        name="password_reset_complete_",
-    ),
-    path(
         "reset/<uidb64>/<token>/",
         auth_views.PasswordResetConfirmView.as_view(
             template_name="registration/password_reset_confirm_.html",
@@ -54,7 +47,7 @@ from . import views
         ),
         name="password_reset_confirm_",
     ),"""
-urlpatterns = [ 
+urlpatterns = [
     path(
         "resend_validation_email/<email>",
         views.resend_validation_email,
@@ -92,4 +85,15 @@ urlpatterns = [
     #path("did_see_newsletter/<uuid>/<token>", views.did_see_newsletter, name="did_see_newsletter"),
     path("profile_staff", views.staff_profile, name="staff_profile"),
     path("i18n/", include("django.conf.urls.i18n")),
+    path("password_reset/", auth_views.PasswordResetView.as_view(
+            template_name="registration/password_reset_form_.html", from_email=settings.NOREPLY_MAIL
+        ), name="password_reset_form"),
+    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(
+            template_name="registration/password_reset_confirm_.html",
+            post_reset_login=True,
+            success_url="/accounts/validate_email",
+        ), name="password_reset_confirm_"),
+    path("reset/done/", auth_views.PasswordResetCompleteView.as_view(
+                template_name="registration/password_reset_complete_.html"
+            ), name="password_reset_complete_"),
 ]

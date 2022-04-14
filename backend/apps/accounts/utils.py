@@ -1,6 +1,5 @@
 # adapted from: https://gist.github.com/jcinis/2866253
 import logging
-from random import choice
 from string import ascii_lowercase, digits
 
 from django.conf import settings

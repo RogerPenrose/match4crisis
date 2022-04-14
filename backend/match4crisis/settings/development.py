@@ -30,7 +30,7 @@ NOREPLY_MAIL = "match4crisis-DEVELOPMENT<noreply@example.de>"
 
 # Possible values are 'file', 'external', 'sendgrid'
 # For storing mails local in files files, sending external (uberspace) or sending over sendgrid (production like)
-MAIL_RELAY_OPTION = "file"
+MAIL_RELAY_OPTION = "sendgrid"
 
 # +++ Store files locally
 if MAIL_RELAY_OPTION == "file":
@@ -39,7 +39,7 @@ if MAIL_RELAY_OPTION == "file":
 
 # +++ Use local debug server
 elif MAIL_RELAY_OPTION == "external":
-    pass
+    pass ## !!!!#
     """EMAIL_HOST = ""
     EMAIL_PORT = 587
     EMAIL_HOST_USER = ""
