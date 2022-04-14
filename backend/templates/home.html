@@ -29,10 +29,13 @@ Home {% endblock %} {% block header %}
   content="match4crisis - Wir vernetzen Helfende mit Hilfesuchenden."
 />
 <style>
+  .introduction { padding: 100px 0px 100px 0px;}
+  .introduction2 { padding: 70px 0px 70px 0px;}
 .box-left h4, .box-right h4 { font-weight: 300; font-size: 30px; line-height: 40px;}
 .home-logo { width: 300px; height: auto;}
 
 .fixed-top { position: absolute;}
+iframe { border-radius: 35px;}
 body { margin-top: 0px;}
   @media only screen and (min-width: 768px) {
     .home-box { margin-top: -50px;}
@@ -334,7 +337,25 @@ body { margin-top: 0px;}
 
   <div class="container" style="margin-top: 35px">
     
-    <div class="col-md-12" style="text-align: left; margin: 0 auto; margin-top: 85px;">
+   
+    <div class="row align-self-center align-items-center introduction">
+     
+      <div class="col-sm-12 col-lg-7 col-xl-6">
+
+<p style="font-size: 28px; font-weight: 300; color: #28445b;">Match4Crisis dient zur Vernetzung und der effizienten Verteilung von Ressourcen.</p>
+  <p>In Zeiten der Krise vernetzen wir Menschen die helfen wollen, mit denjenigen die Hilfe suchen. Auch Hilfsorganisationen haben die Möglichkeit Helfende am Ort des Geschehens zu kontaktieren und Kapazitäten zu verteilen. Über das Spendenportal können diese auch finanziell unterstützt werden. 
+  <br><br><b>Die Plattform ist eine 100% ehrenamtliche Initiative.</b></p>
+        </div>
+
+        <div class="col-sm-12 col-lg-5 col-xl-6">
+          <div style="position: relative; height: 0; padding-bottom: 56%; width: 99.6%;"><iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" src="https://www.youtube.com/embed/g8-EqUU55Bo" width="1280" height="720" frameborder="0" allowfullscreen="allowfullscreen"></iframe></div>
+                  </div>
+
+        </div>
+
+   <div class="introduction2">
+   
+    <div class="col-md-12" style="text-align: left; margin: 0 auto;">
       <h3
         style="text-align: center; "
       >
@@ -359,8 +380,13 @@ body { margin-top: 0px;}
       </div>
     </div>
 
+  </div>
+
+
+  <div class="introduction2">
+
     <div class="row align-self-center">
-      <div class="col-sm-12" style="text-align: center; margin-top: 65px; margin-bottom: 35px;">
+      <div class="col-sm-12" style="text-align: center; margin-bottom: 35px;">
        <h3>{% blocktrans %}Wir werden unterstützt von{% endblocktrans %}</h3>
       </div>
     </div>
@@ -375,6 +401,7 @@ body { margin-top: 0px;}
       <div class="col-sm-12 col-md-4">
         <p><a href="https://www.webspace-verkauf.de" target="_blank"><img src="{% static 'img/partners/webspace-verkauf.svg' %}" /></a></p>
       </div>
+    </div>
     </div>
   </div>
 </main>
