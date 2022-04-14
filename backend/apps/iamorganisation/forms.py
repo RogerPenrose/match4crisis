@@ -15,6 +15,7 @@ from .models import HelpRequest, Organisation
 
 class OrganisationFormO(ModelForm):
     phoneNumber = PhoneNumberField(label='',widget=forms.TextInput(attrs={'placeholder': _("Telefonnummer")}))
+    acceptTerms = forms.BooleanField(required=True, label=_('Ich habe die <a target="_blank" href="/dataprotection/">Datenschutzerklärung</a> gelesen und bin damit einverstanden'))
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
@@ -77,13 +78,7 @@ class OrganisationFormO(ModelForm):
             Row( Column("country"), Column("postalCode")),
             Row(Column("city"), Column("streetNameAndNumber")),
             Row(Column("password1"), Column("password2")),
-            HTML(
-                '<div class="registration_disclaimer">{}</div>'.format(
-                    _(
-                        'Hiermit bestätige ich die <a target="_blank" href="/dataprotection/">Datenschutzbedingungen</a>.'
-                    )
-                )
-            ),
+            Row("acceptTerms"),
         )
     
     def clean_password2(self):

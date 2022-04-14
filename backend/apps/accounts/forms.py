@@ -20,6 +20,8 @@ class PhoneNumberField(forms.CharField):
 
 class CustomUserCreationForm(UserCreationForm):
     """Custom form for creating both Refugees and Helpers (Organisations have a more complex form)"""
+    acceptTerms = forms.BooleanField(required=True, label=_('Ich habe die <a target="_blank" href="/dataprotection/">Datenschutzerklärung</a> gelesen und bin damit einverstanden'))
+
     class Meta:
         model = User
         fields = (
