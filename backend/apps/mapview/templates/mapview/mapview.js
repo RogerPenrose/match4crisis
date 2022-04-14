@@ -290,19 +290,7 @@ mapViewPage = {
                                     .childNodes[2]
                                     .childNodes
 
-        for (i in checkboxes_to_disable){    facilities.append(
-            {
-            "lat": e.genericOffer.lat,
-            "type": "Kurzzeit (einmalig)",
-            "lng": e.genericOffer.lng,
-            "children": e.numberOfChildrenToCare,
-            "location": e.genericOffer.location or "N/A",
-            "gender": e.get_gender_shortterm_display(),
-            "bb": e.genericOffer.bb,
-            "offerDescription": e.genericOffer.offerDescription,
-            "refer_url": str(e.genericOffer.id)
-
-            }
+        for (i in checkboxes_to_disable){
             if (!checkboxes_to_disable[i]) offersCheckboxParents[i].childNodes[0].childNodes[0].click();
         }
     },
