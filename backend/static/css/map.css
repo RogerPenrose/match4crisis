@@ -173,9 +173,25 @@ a.leaflet-control-zoom-out {
 }
 
 div.leaflet-control-layers-overlays {
-  display: flex;
+  display: inline-block;
   flex-direction: column;
   font-size: 12pt;
+}
+@media only screen and (max-width: 767px) {
+  div.leaflet-control-layers-overlays {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    overflow-x: auto;
+    width: auto;
+    transition: all 0.3s ease 0s;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
 }
 
 .leaflet-control-layers-overlays img {

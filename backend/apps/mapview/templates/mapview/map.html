@@ -28,7 +28,6 @@ p.listview { margin-top: 25px;
     z-index: 900;
     text-align: center;
     width: 100%;}
-    div.leaflet-control-layers-overlays { display: inline-block !important;}
     div.leaflet-top.leaflet-right { width: 100%; }
     .leaflet-top .leaflet-control { margin-top: 0px; margin-right: 0px; border-radius: 0px; width: 100%;}
     .icon svg { margin-top: -2px; margin-right: 2px;}
@@ -130,12 +129,12 @@ h4.popup-title { font-size: 14px; margin-top: 10px;}
         <a href="/offers/${marker.refer_url}" target="_blank" class="btn">{% blocktrans %} Mehr dazu{% endblocktrans %}</a>
       </p>`,
     createAccommodationCountText: (count) => `<img src="{% static 'img/icons/icon_AC.svg' %}">{% trans "Unterkünfte" %} (${count})`,
-    createTransportationCountText: (count) => `<img src="{% static 'img/icons/icon_TR.svg' %}">{% trans "Mitfahrgelegenheiten" %} (${count})`,
+    createTransportationCountText: (count) => `<img src="{% static 'img/icons/icon_TR.svg' %}">{% trans "Transporte" %} (${count})`,
     createTranslationCountText: (count) => `<img src="{% static 'img/icons/icon_TL.svg' %}">{% trans "Übersetzungen" %} (${count})`,
     createMedicalCountText: (count) => `<img src="{% static 'img/icons/icon_WE.svg' %}">{% trans "Medizinische Angebote" %} (${count})`,
-    createBuerocraticCountText: (count) => `<img src="{% static 'img/icons/icon_BU.svg' %}">{% trans "Bürokratische  Hilfsangebote" %} (${count})`,
-    createChildcareCountText: (count) => `<img src="{% static 'img/icons/icon_CL.svg' %}">{% trans "Betreuungsangebote" %} (${count})`,
-    createJobCountText: (count) => `<img src="{% static 'img/icons/icon_BU.svg' %}">{% trans "Jobangebote" %} (${count})`,
+    createBuerocraticCountText: (count) => `<img src="{% static 'img/icons/icon_BU.svg' %}">{% trans "Bürokratische  Hilfe" %} (${count})`,
+    createChildcareCountText: (count) => `<img src="{% static 'img/icons/icon_CL.svg' %}">{% trans "Betreuung" %} (${count})`,
+    createJobCountText: (count) => `<img src="{% static 'img/icons/icon_BU.svg' %}">{% trans "Jobs" %} (${count})`,
     createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}">{% trans "Digitale Angebote" %} (${count})`,
     createGenericCountText: (count) => `<img src="{% static 'img/icons/icon_everything.svg' %}">{% trans "Alle anzeigen" %} (${count})`,
     facilityIcon: L.icon({
