@@ -404,6 +404,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     xhr.open("POST", "handle_filter", true);
     xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("charset", "utf-8");
     var formBody = [];
     for (var property in data) {
       var encodedKey = encodeURIComponent(property);
