@@ -348,15 +348,7 @@ div.boxed {
   }
 }
 
-@media only screen and (min-width: 768px) {
-  .navbar-expand-md .navbar-nav .nav-link {
-    padding-right: 1rem;
-    padding-left: 1rem;
-  }
-  /* li.nav-item:first-child > a {
-    padding-left: 0 !important;
-  } */
-}
+
 .navbar-light .navbar-nav .active > .nav-link,
 .navbar-light .navbar-nav .nav-link.active,
 .navbar-light .navbar-nav .nav-link.show,
@@ -467,9 +459,24 @@ h5.card-title {
     width: 150px !important;
   }
   .navbar-light .navbar-nav .nav-link {
-    font-size: 0.98rem;
-    padding-left: 0.7rem;
-    padding-right: 0.7rem;
+    font-size: 0.8rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+
+@media only screen and (min-width: 992px) {
+  .navbar-expand-md .navbar-nav .nav-link {
+    padding-right: .8rem;
+    padding-left: .8rem;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .navbar-expand-md .navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem;
   }
 }
 
