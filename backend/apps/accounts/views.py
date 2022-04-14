@@ -123,6 +123,8 @@ def signup_organisation(request):
     form_info.helper.form_tag = False
     return render(request, "signup_organisation.html", {"form_info": form_info})
 
+def signup_complete(request):
+    return render(request, "signup_complete.html")
 
 @transaction.atomic
 def register_organisation_in_db(request, formData):

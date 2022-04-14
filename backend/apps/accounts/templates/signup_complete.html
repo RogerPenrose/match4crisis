@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}E-Mail-Adresse erfolgreich geändert{% endblocktrans %}
+{% blocktrans %}Registrierung erfolgreich{% endblocktrans %}
 {% endblock %}
 
 {% load crispy_forms_tags %}
@@ -20,8 +20,9 @@
       <path fill-rule="evenodd" d="M8 2.5A5.5 5.5 0 1013.5 8a.5.5 0 011 0 6.5 6.5 0 11-3.25-5.63.5.5 0 11-.5.865A5.472 5.472 0 008 2.5z" clip-rule="evenodd"/>
     </svg>
     
-        <h2 class="font-weight-light">{% blocktrans %}E-Mail-Adresse geändert{% endblocktrans %}</h2>
-        <p>{% blocktrans %}Deine E-Mail-Adresse wurde erfolgreich geändert.{% endblocktrans %}<br></p>
+        <h2 class="font-weight-light">{% blocktrans %}Vielen Dank!{% endblocktrans %}</h2>
+        <p>{% blocktrans %}Deine E-Mail-Adresse wurde bestätigt und du hast dich erfolgreich registriert!<br>
+          Logge dich jetzt ein und nutze alle Features von match4crisis.{% endblocktrans %}<br></p>
           <a class="btn" href="{% url 'login' %}">{% blocktrans %}Hier gelangst du zum Login{% endblocktrans %}</a>
         
     </div>

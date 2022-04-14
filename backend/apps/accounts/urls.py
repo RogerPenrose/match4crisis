@@ -74,6 +74,7 @@ urlpatterns = [
     path("signup_refugee", views.signup_refugee, name="signup_refugee"),
     path("signup_helper", views.signup_helper, name="signup_helper"),
     path("signup_organisation", views.signup_organisation, name="signup_organisation"),
+    path("signup_complete", views.signup_complete, name="signup_complete"),
     path("preferences", views.preferences, name="preferences"),
     path("deleted_user", views.delete_me, name="deleted_user"),
     #path("profile_helper", views.edit_helper_profile, name="edit_helper_profile"),
