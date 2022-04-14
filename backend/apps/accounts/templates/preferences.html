@@ -112,6 +112,7 @@ padding: .1rem .75rem;
 
       <h3>{% blocktrans %} Gefährliche Einstellungen {% endblocktrans %}</h3>
       <!-- Danger zone --> 
+      <a class="btn" href="{% url 'change_email' %}">{% blocktrans %} E-Mail-Adresse ändern {% endblocktrans %}</a>
       <a class="btn btn-sm btn-danger" style="background-color:red" href="#deleteUserModal" data-toggle="modal" data-target="#deleteUserModal">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
       
 

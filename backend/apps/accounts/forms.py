@@ -230,4 +230,21 @@ class CustomAuthenticationForm(forms.Form):
             params={"email": self.email_field.verbose_name},
         )
 
-# Newsletter form was removed since we might want to restructure this logic. But it can be found in M4H
+def check_unique_email(value):
+    if User.objects.filter(email=value).exists():
+        raise ValidationError(_("Ein Benutzer mit dieser E-Mail-Adresse existiert bereits"))
+    return value
+
+class ChangeEmailForm(forms.Form):
+    email = forms.EmailField(label=_("Neue E-Mail-Adresse"), validators=[check_unique_email])
+
+    def __init__(self, *args, **kwargs):
+        super(ChangeEmailForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-changeEmailForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "change_email"
+
+        self.helper.add_input(Submit("submit", _("E-Mail-Adresse ändern")))
+

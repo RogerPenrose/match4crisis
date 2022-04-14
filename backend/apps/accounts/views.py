@@ -15,7 +15,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
 from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
-from apps.accounts.forms import CommonPreferencesForm, CustomAuthenticationForm
+from apps.accounts.forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
@@ -289,6 +289,35 @@ def validate_email(request):
         request.user.save()
     return HttpResponseRedirect("login_redirect")
 
+@login_required
+def change_email(request):
+    if request.method == "POST":
+        logger.info("E-Mail change request", extra={"request": request})
+        form = ChangeEmailForm(request.POST)
+
+        if form.is_valid():
+            user = request.user
+            user.email = form.cleaned_data["email"]
+            user.validatedEmail = False
+            user.emailValidationDate = None
+            user.save()
+            logout(request)
+            # TODO send verification email
+            return HttpResponseRedirect("change_email_done")
+    else:
+        form = ChangeEmailForm()
+
+    return render(request, "change_email.html", {"form":form})
+
+def change_email_done(request):
+    return render(request, "change_email_done.html")
+
+@login_required
+def change_email_complete(request):
+    """The Page that opens when the user clicks on the confirmation link in the email."""
+    validate_email(request)
+    return render(request, "change_email_complete.html")
+    
 
 def resend_validation_email(request, email):
     if request.user.is_anonymous:
