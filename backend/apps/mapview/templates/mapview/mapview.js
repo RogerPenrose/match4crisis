@@ -227,7 +227,7 @@ mapViewPage = {
             iconCreateFunction: this.cssClassedIconCreateFunction('genericMarker'),
         });
         let genericMarkers = L.featureGroup.subGroup(genericClusterMarkerGroup, this.createGenericMapMarkers(generic,(lat,lon,location,descr,refer_url) => {
-            return L.marker([lon,lat],{ 
+            return L.marker([lat,lon],{ 
                 icon:  this.createIcon(1, "genericMarker"),
                 itemCount: 1,
            }).bindPopup(this.options.createPopupTextGeneric(descr, location, refer_url))
