@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}Über uns{% endblocktrans %}
+{% blocktrans %}Als was möchtest du dich registrieren?{% endblocktrans %}
 {% endblock %}
 
 {% block header %}
@@ -11,8 +11,16 @@
   .about-title h1, .about-title h2, .about-title p { color: #fff;}
   .about-title { background: #ed0061; }
   .about-title h2 {font-weight: 700;}
-  .about-title svg { width: 50%; height: auto; margin-bottom: 15px;}
-  .about-title a { display: inline-block; padding: 25px; background-color: #fff; color: #28445b; font-size: 18px; font-weight: 800; border-radius: 1rem; text-align: center; width: 100%;}
+  .about-title svg { width: 50%; height: auto; margin-bottom: 15px; -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;}
+  .about-title a { display: inline-block; padding: 25px; background-color: #fff; color: #28445b; font-size: 18px; font-weight: 800; border-radius: 2rem; text-align: center; width: 100%; -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;}
   .about-title a:hover .b { fill: #fff;}
   .about-title a:hover { background-color: #28445b; color: #fff;}
   .footer { margin-top: 0px; }
@@ -53,6 +61,8 @@
         font-size: 30px;
       }
     @media only screen and (max-width: 767px) {
+
+      .about-title a { margin-bottom: 35px;}
         .about-title {        padding: 65px 0px 65px 0px;}
 
   
