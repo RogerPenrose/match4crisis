@@ -10,7 +10,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
 
-from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOfferLongterm, ChildcareOfferShortterm
+from apps.offers.models import GenericOffer, AccommodationOffer, ManpowerOffer,TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOfferLongterm, ChildcareOfferShortterm
 from apps.mapview.utils import get_plz_data, plzs
 
 
@@ -36,8 +36,9 @@ def mapviewjs(request):
     jobCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="JO").count()
     medicalCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="WE").count()
     translationCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL").count()
+    manpowerCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL").count()
     childcareCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False ).count()
-    context = { "entryCount": {"buerocratic": buerocraticCount,
+    context = { "entryCount": {"buerocratic": buerocraticCount,"manpower": manpowerCount,
         "accommodation": accommodationCount, "transportation": transportationCount, "translation": translationCount, "childcare": childcareCount, "medical": medicalCount, "job": jobCount 
     },"accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
     logger.warning("rendering mapview JS ? "+str(request.GET))
@@ -53,22 +54,13 @@ def index(request):
         startPosition = getCenterOfCity(request.GET.get("city"))
         zoom = 10
         logger.warning("Received: "+str(startPosition))
-    accommodationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="AC")
-    transportationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="TR")
-    buerocraticCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="BU")
-    jobCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="JO")
-    medicalCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="WE")
-    translationCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL")
-    childcareCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False )
     context = {
     "startPosition":  startPosition,
     "zoom": zoom,
-    "entryCounts": {
-        "accommodation": accommodationCount, "transportation": transportationCount, "translation": translationCount, "childcare": childcareCount, "medical": medicalCount, "job": jobCount 
-    }, 
     "mapbox_token": settings.MAPBOX_TOKEN,
     "transportation": request.GET.get("transportation", "False"),  
     "accommodation" : request.GET.get("accommodation", "False"),
+    "manpower" : request.GET.get("manpower", "False"),
     "medical": request.GET.get("medical", "False"), 
     "buerocratic": request.GET.get("buerocratic", "False"),   
     "childcare": request.GET.get("childcare", "False"),  
@@ -196,6 +188,19 @@ def jobOffersJSON(request):
     } for e in offers]
     return JsonResponse(facilities, safe=False) 
 
+def manpowerOffersJSON(request):
+    offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False)
+    facilities = [{
+        "lat": e.genericOffer.lat,
+        "type": e.get_helpType_manpower_display(),
+        "lng": e.genericOffer.lng,
+        "location": e.genericOffer.location or "N/A",
+        "bb": e.genericOffer.bb,
+        "offerDescription": e.genericOffer.offerDescription,
+        "refer_url": str(e.genericOffer.id)
+    } for e in offers]
+    return JsonResponse(facilities, safe=False) 
+
 def translationOffersJSON(request):
     offers = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False)
     facilities =  [{
@@ -211,7 +216,7 @@ def translationOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
 
 def genericOffersJSON(request):
-    offers = GenericOffer.objects.filter(~Q(offerType = "MP") & ~Q(offerType = "DO"),
+    offers = GenericOffer.objects.filter(~Q(offerType = "DO"),
         active = True, isDigital = False
     )
     logger.warning("TOTAL AMOUNT OF OBJECTS: "+str(offers.count()))

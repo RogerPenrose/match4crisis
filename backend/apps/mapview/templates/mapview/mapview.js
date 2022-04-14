@@ -130,7 +130,7 @@ mapViewPage = {
 
 // @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
-        let [ childcares,medicals,buerocratics,jobs,accommodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
+        let [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
           // ACCOMMODATIONS:
         var accommodationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
@@ -187,6 +187,17 @@ mapViewPage = {
                  itemCount: 1,
             }).bindPopup(this.options.createPopupTextJob(marker))
         }))
+        // MANPOWER:
+       
+        var manpowerClusterMarkerGroup = L.markerClusterGroup({
+            iconCreateFunction: this.cssClassedIconCreateFunction('manpowerMarker'),
+        });
+        var manpowerMarkers = L.featureGroup.subGroup(manpowerClusterMarkerGroup, this.createBlankMapMarker(manpowers,(marker) => {
+            return L.marker([marker.lat,marker.lng],{
+                 icon:  this.createIcon(1, "manpowerMarker"),
+                 itemCount: 1,
+            }).bindPopup(this.options.createPopupTextManpower(marker))
+        }))
         // MEDICAL:
        
         var medicalClusterMarkerGroup = L.markerClusterGroup({
@@ -234,6 +245,9 @@ mapViewPage = {
         childcareMarkers.addTo(this.mapObject)
         overlays[this.options.createChildcareCountText(childcares.length)] = childcareMarkers
 
+        manpowerClusterMarkerGroup.addTo(this.mapObject)
+        manpowerMarkers.addTo(this.mapObject)
+        overlays[this.options.createManpowerCountText(manpowers.length)] = manpowerMarkers
 
         jobClusterMarkerGroup.addTo(this.mapObject)
         jobMarkers.addTo(this.mapObject)
@@ -420,8 +434,10 @@ var medical = {{ entryCount.medical }}
 var translation = {{ entryCount.translation }}
 var transportation = {{ entryCount.transportation }}
 var accommodation = {{ entryCount.accommodation }}
+var manpower = {{ entryCount.manpower }}
 var checkboxes_to_disable = [
     {"type": "childcare", "show":"{{ childcare|default:False }}", selected: true },
+    {"type": "manpower", "show":"{{ manpower|default:False }}", selected: true },
     {"type": "job", "show":"{{ job|default:False }}", selected: true },
     {"type": "buerocratic", "show":"{{ buerocratic|default:False }}", selected: true },
     {"type": "medical", "show":"{{ medical|default:False }}", selected: true },
