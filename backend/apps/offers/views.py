@@ -520,7 +520,9 @@ def delete_offer(request, offer_id):
         return HttpResponse("Wrong User")
 @login_required
 def selectOfferType(request):
-    context= {"entries": GenericOffer.OFFER_CHOICES[:-1]}
+    context= {"entries": []}
+    for entry in GenericOffer.OFFER_CHOICES[:-1]:
+        context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
     return render(request, 'offers/selectOfferType.html', context)
 def getFormForOfferType(offerType):
     if offerType == "AC":
