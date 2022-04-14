@@ -277,21 +277,29 @@ mapViewPage = {
 
         
         // click (uncheck) checkboxes, if not selected in URL-Params
-        const checkboxes_to_disable = [
-            "{{ translation }}",
-            "{{ transportation }}",
-            "{{ accommodation }}",
-            "{{ generic }}"
-        ].map(b => b == "True")
 
-        const offersCheckboxParents = document.getElementById("controlContainer")
+        var offersCheckboxParents = document.getElementById("controlContainer")
                                     .childNodes[0]
                                     .childNodes[1]
                                     .childNodes[2]
                                     .childNodes
 
         for (i in checkboxes_to_disable){
-            if (!checkboxes_to_disable[i]) offersCheckboxParents[i].childNodes[0].childNodes[0].click();
+            
+            offersCheckboxParents[i].childNodes[0].childNodes[0].setAttribute("name", checkboxes_to_disable[i].type);
+            offersCheckboxParents[i].childNodes[0].childNodes[0].addEventListener("change",function(){
+                handleNumber(this.name, this.checked)
+                if (this.checked) {
+                    console.log("Checkbox is checked.."+this.name);
+                  } else {
+                    console.log("Checkbox is not checked..");
+                  }
+            });
+            if (checkboxes_to_disable[i].show == "False") {
+                checkboxes_to_disable[i].selected = false
+                offersCheckboxParents[i].childNodes[0].childNodes[0].click();
+                
+            } 
         }
     },
 
@@ -405,7 +413,75 @@ mapViewPage = {
     })
 }
 $.extend(mapViewPage.options, pageOptions)
+var childcare = {{ entryCount.childcare }}
+var job = {{ entryCount.job }}
+var buerocratic = {{ entryCount.buerocratic }}
+var medical = {{ entryCount.medical }}
+var translation = {{ entryCount.translation }}
+var transportation = {{ entryCount.transportation }}
+var accommodation = {{ entryCount.accommodation }}
+var checkboxes_to_disable = [
+    {"type": "childcare", "show":"{{ childcare|default:False }}", selected: true },
+    {"type": "job", "show":"{{ job|default:False }}", selected: true },
+    {"type": "buerocratic", "show":"{{ buerocratic|default:False }}", selected: true },
+    {"type": "medical", "show":"{{ medical|default:False }}", selected: true },
+    {"type": "translation", "show":"{{ translational|default:False }}", selected: true },
+    {"type": "transportation", "show":"{{ transportation|default:False }}", selected: true },
+    {"type": "accommodation", "show":"{{ accommodation|default:False }}", selected: true },
+    {"type": "generic", "show":"{{ generic|default:False }}", selected: true }]
+function handleNumber(name, state){
+    console.log("Handling: "+name)
+    number = 0
+    checkAll = false
+    link = "/offers/handle_filter?show_list=True&"
+    
+    try{
+    if(window.document.getElementsByName("generic")[0].checked == true && name != "generic" && state == true)
+        window.document.getElementsByName("generic")[0].click()
+}catch (e){
 
+}
+finally{
+    
+    for (var i = 0; i < checkboxes_to_disable.length; i++)
+    {
+        checkbox = checkboxes_to_disable[i]
+        if (checkbox.type == name){
+            checkboxes_to_disable[i].selected = state
+            console.log("New State: "+checkboxes_to_disable[i].selected)
+        
+        }
+        if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type != "generic"){
+            console.log("Adding : "+checkboxes_to_disable[i].type)
+            number += eval(checkboxes_to_disable[i].type)
+            if (checkboxes_to_disable[i].type != "childcare")
+                link +=checkboxes_to_disable[i].type+"Visible=True&"
+            else link += "childShortVisible=True&childLongVisible=True&"
+        }
+        if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type == "generic"){
+            checkAll = true
+        }
+
+    }
+    if (checkAll){
+        number = 0
+        link = "/offers/handle_filter?show_list=True&"
+    for(var i = 0; i < checkboxes_to_disable.length; i++)
+    {   if(checkboxes_to_disable[i].type != "generic"){
+            number += eval(checkboxes_to_disable[i].type)
+        if (checkboxes_to_disable[i].type != "childcare")
+            link +=checkboxes_to_disable[i].type+"Visible=True"
+        else link += "childShortVisible=True&childLongVisible=True&"
+
+    }
+        }
+    }
+    console.log("States: "+JSON.stringify(checkboxes_to_disable))
+    console.log("New number: "+number)
+    
+    document.getElementById("results_as_list").href = link.slice(0,-1)
+    document.getElementById("resultString").innerHTML = number
+}}
 document.addEventListener("DOMContentLoaded", function domReady() {
 
     mapViewPage.initializeMap()

@@ -390,11 +390,16 @@ def filter(request):
     pageCount = int(request.POST.get("page", 0))
     ids = []
     currentFilter = dict(request.POST)
+    if not currentFilter:
+        currentFilter = dict(request.GET)
     categoryCounter = 1
     for key in request.POST:
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
-    if not currentFilter:
+    for key in request.GET:
+        if "Visible" in key:
+            categoryCounter = categoryCounter +1 
+    if not currentFilter and categoryCount == 1:
         categoryCounter = 11
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
@@ -427,25 +432,25 @@ def filter(request):
     'entries': {'manpower': manpowerEntries, 'job': jobEntries,'buerocratic': buerocraticEntries, 'childShort':childShortEntries, "translation": translationEntries, 'welfare': welfareEntries, 'childLong': childLongEntries, 'accommodation': accommodationEntries, 'transportation': transportationEntries},
     'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
     
-    if request.POST.get("childShortVisible", "0") == "1" or not currentFilter :
+    if request.POST.get("childShortVisible", "0") == "1" or request.GET.get("childShortVisible") == "True" or not currentFilter :
         numEntries += len(childShort.qs)
-    if request.POST.get("childLongVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("childLongVisible", "0") == "1" or request.GET.get("childLongVisible") == "True"or not currentFilter:
         numEntries += len(childLong.qs)
-    if request.POST.get("jobVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("jobVisible", "0") == "1" or request.GET.get("jobVisible") == "True" or not currentFilter:
         numEntries += len(job.qs)
-    if request.POST.get("buerocraticVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("buerocraticVisible", "0") == "1"or request.GET.get("buerocraticVisible") == "True" or not currentFilter:
         numEntries += len(buerocratic.qs)
-    if request.POST.get("welfareVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("welfareVisible", "0") == "1"or request.GET.get("welfareVisible") == "True" or not currentFilter:
         numEntries += len(welfare.qs)
-    if request.POST.get("manpowerVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
         numEntries += len(manpower)
-    if request.POST.get("donationVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("donationVisible", "0") == "1" or request.GET.get("donationVisible") == "True"or not currentFilter:
         numEntries += len(donation)
-    if request.POST.get("transportationVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
         numEntries += len(transportation.qs)
-    if request.POST.get("translationVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("translationVisible", "0") == "1"or request.GET.get("translationVisible") == "True" or not currentFilter:
         numEntries += len(translation.qs)
-    if request.POST.get("accommodationVisible", "0") == "1" or not currentFilter:
+    if request.POST.get("accommodationVisible", "0") == "1" or request.GET.get("accommodationVisible") == "True"or not currentFilter:
         numEntries += len(accommodation.qs)
     maxPage = int(numEntries/(N_ENTRIES))
     if not currentFilter:
@@ -457,7 +462,7 @@ def filter(request):
     return  context
 
 def handle_filter(request):
-    if request.POST.get("show_list") == "True":
+    if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
         context = filter(request)
         return render(request, 'offers/index.html', context)
     else :

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404,render
 import logging
 import json
 from os.path import dirname, abspath, join
-
+from django.db.models import Q
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
@@ -30,7 +30,16 @@ def getCenterOfCity(city):
                     center = mappings.get(entry)
                     return center
 def mapviewjs(request):
-    context = { "accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
+    accommodationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="AC").count()
+    transportationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="TR").count()
+    buerocraticCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="BU").count()
+    jobCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="JO").count()
+    medicalCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="WE").count()
+    translationCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL").count()
+    childcareCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False ).count()
+    context = { "entryCount": {"buerocratic": buerocraticCount,
+        "accommodation": accommodationCount, "transportation": transportationCount, "translation": translationCount, "childcare": childcareCount, "medical": medicalCount, "job": jobCount 
+    },"accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
     logger.warning("rendering mapview JS ? "+str(request.GET))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
@@ -44,12 +53,28 @@ def index(request):
         startPosition = getCenterOfCity(request.GET.get("city"))
         zoom = 10
         logger.warning("Received: "+str(startPosition))
+    accommodationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="AC")
+    transportationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="TR")
+    buerocraticCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="BU")
+    jobCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="JO")
+    medicalCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="WE")
+    translationCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL")
+    childcareCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False )
     context = {
-    "locations": [],
-    "mapbox_token": settings.MAPBOX_TOKEN,
     "startPosition":  startPosition,
     "zoom": zoom,
-        "accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'
+    "entryCounts": {
+        "accommodation": accommodationCount, "transportation": transportationCount, "translation": translationCount, "childcare": childcareCount, "medical": medicalCount, "job": jobCount 
+    }, 
+    "mapbox_token": settings.MAPBOX_TOKEN,
+    "transportation": request.GET.get("transportation", "False"),  
+    "accommodation" : request.GET.get("accommodation", "False"),
+    "medical": request.GET.get("medical", "False"), 
+    "buerocratic": request.GET.get("buerocratic", "False"),   
+    "childcare": request.GET.get("childcare", "False"),  
+    "job": request.GET.get("job", "False"),  
+    "translation": request.GET.get("translation", "False"),  
+    "generic": request.GET.get("generic", "False")
     }
     return render(request, "mapview/map.html", context )
 
@@ -186,9 +211,10 @@ def translationOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
 
 def genericOffersJSON(request):
-    offers = GenericOffer.objects.filter(
+    offers = GenericOffer.objects.filter(~Q(offerType = "MP") & ~Q(offerType = "DO"),
         active = True, isDigital = False
     )
+    logger.warning("TOTAL AMOUNT OF OBJECTS: "+str(offers.count()))
     facilities = format_generic_offers(offers)
     return JsonResponse(facilities, safe=False)
 def format_generic_offers(entities):
