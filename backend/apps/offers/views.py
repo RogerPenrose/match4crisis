@@ -35,6 +35,7 @@ def updateGenericModel( form, offer_id=0, userId=None):
         #create an Object..
         g = GenericOffer(userId=user, \
                 offerType=form.get("offerType"),  \
+                offerTitle = form.get("offerTitle"), \
                 created_at=timezone.now(), \
                 offerDescription=form.get("offerDescription"), \
                 isDigital=form.get("isDigital"),  \
@@ -50,6 +51,7 @@ def updateGenericModel( form, offer_id=0, userId=None):
         g = GenericOffer.objects.get(pk=offer_id)
         if g.userId.id == userId or user.is_superuser :# If the same user is there to edit OR the user is a superuser...
             g.offerType=form.get("offerType")
+            g.offerTitle=form.get("offerTitle")
             g.created_at=timezone.now()
             g.offerDescription=form.get("offerDescription")
             g.isDigital=form.get("isDigital")

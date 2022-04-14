@@ -81,6 +81,7 @@ def accommodationOffersJSON(request):
         "startDate": str(e.startDateAccommodation),
         "endDate": str(e.endDateAccommodation),
         "lng": e.genericOffer.lng,
+        "title": e.genericOffer.offerTitle,
         "location": e.genericOffer.location,
         "bb": e.genericOffer.bb,
         "offerDescription": e.genericOffer.offerDescription,
@@ -97,6 +98,7 @@ def transportationOffersJSON(request):
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
+        "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in offers]
@@ -108,6 +110,7 @@ def medicalOffersJSON(request):
         "lat": e.genericOffer.lat,
         "type": e.get_helpType_welfare_display(),
         "lng": e.genericOffer.lng,
+        "title": e.genericOffer.offerTitle,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
         "offerDescription": e.genericOffer.offerDescription,
@@ -123,6 +126,7 @@ def buerocraticOffersJSON(request):
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
+        "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in offers]
@@ -140,6 +144,7 @@ def childcareOffersJSON(request):
         "children": 1,
         "location": e.genericOffer.location or "N/A",
         "gender": e.get_gender_longterm_display(),
+        "title": e.genericOffer.offerTitle,
         "bb": e.genericOffer.bb,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
@@ -153,6 +158,7 @@ def childcareOffersJSON(request):
             "children": e.numberOfChildrenToCare,
             "location": e.genericOffer.location or "N/A",
             "gender": e.get_gender_shortterm_display(),
+             "title": e.genericOffer.offerTitle,
             "bb": e.genericOffer.bb,
             "offerDescription": e.genericOffer.offerDescription,
             "refer_url": str(e.genericOffer.id)
@@ -167,6 +173,7 @@ def childcareOffersJSON(request):
             "children": e.numberOfChildrenToCare,
             "location": e.genericOffer.location or "N/A",
             "gender": e.get_gender_shortterm_display(),
+            "title": e.genericOffer.offerTitle,
             "bb": e.genericOffer.bb,
             "offerDescription": e.genericOffer.offerDescription,
             "refer_url": str(e.genericOffer.id)
@@ -183,6 +190,7 @@ def jobOffersJSON(request):
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
+        "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in offers]
@@ -196,6 +204,7 @@ def manpowerOffersJSON(request):
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
+        "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in offers]
@@ -210,6 +219,7 @@ def translationOffersJSON(request):
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
+        "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in offers]

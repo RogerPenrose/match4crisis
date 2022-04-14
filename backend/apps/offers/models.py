@@ -29,6 +29,7 @@ class GenericOffer(models.Model):
     ('JO', 'Job'),
     ('DO', 'Donation')
     ]
+    offerTitle = models.TextField(max_length=100)
     location = models.TextField(max_length=300)
     lat = models.FloatField()
     lng = models.FloatField()
