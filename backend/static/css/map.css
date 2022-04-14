@@ -257,6 +257,5 @@ filter: invert(100%);
 
 div.leaflet-control-layers-overlays label {
   margin: 0;
-  float: left; 
   margin-right: 20px;
 }
