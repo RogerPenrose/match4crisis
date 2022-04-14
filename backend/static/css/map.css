@@ -237,51 +237,13 @@ filter: invert(100%);
 .marker-cluster-small,
 .marker-cluster-medium,
 .marker-cluster-large {
+  background-color: #ed0061;
   background-size: contain;
   background-position: center center;
-  background-color: transparent;
   background-repeat: no-repeat;
 }
 
-.marker-cluster, .marker-cluster div { border-radius: 0px !important; }
-.transportationMarker.marker-cluster-small,
-.transportationMarker.marker-cluster-medium,
-.transportationMarker.marker-cluster-large {
-  background-image: url(/static/img/map/transport.svg);
-}
-
-.transportationMarker.marker-cluster-single div,
-.transportationMarker.marker-cluster-small div,
-.transportationMarker.marker-cluster-medium div,
-.transportationMarker.marker-cluster-large div {
-  background-image: url(/static/img/map/transport.svg);
-}
-
-.accommodationMarker.marker-cluster-small,
-.accommodationMarker.marker-cluster-medium,
-.accommodationMarker.marker-cluster-large {
-  background-image:url(/static/img/map/housing.svg);
-}
-
-.accommodationMarker.marker-cluster-single div,
-.accommodationMarker.marker-cluster-small div,
-.accommodationMarker.marker-cluster-medium div,
-.accommodationMarker.marker-cluster-large div {
-  background-image:url(/static/img/map/housing.svg);
-}
-
-.translationMarker.marker-cluster-small,
-.translationMarker.marker-cluster-medium,
-.translationMarker.marker-cluster-large {
-  background-image: url(/static/img/map/translation.svg);
-}
-
-.translationMarker.marker-cluster-single div,
-.translationMarker.marker-cluster-small div,
-.translationMarker.marker-cluster-medium div,
-.translationMarker.marker-cluster-large div {
-  background-image: url(/static/img/map/translation.svg);
-}
+.marker-cluster, .marker-cluster div {   border-radius: 30px !important; }
 
 .genericMarker { background-color: #ed0061; border-radius: 30px !important;}
 
@@ -292,21 +254,6 @@ filter: invert(100%);
   color: white;
 }
 
-.transportationMarker.marker-cluster div,
-.accommodationMarker.marker-cluster div {
-  font-weight: bold;
-}
-
-.marker-cluster-single.transportationMarker,
-.marker-cluster-single.accommodationMarker,
-.marker-cluster-single.translationMarker {
-  background-color: transparent;
-}
-
-.marker-cluster.accommodationMarker {
-  margin-left: -30px !important;
-  margin-top: -30px !important;
-}
 
 div.leaflet-control-layers-overlays label {
   margin: 0;
