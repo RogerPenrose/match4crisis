@@ -8,6 +8,7 @@ urlpatterns = [
     path("accommodationOffers", views.accommodationOffersJSON, name="accommodationOffersJSON"),
     path("medicalOffers", views.medicalOffersJSON, name="medicalOffersJSON"),
     path("BuerocraticOffers", views.buerocraticOffersJSON, name="buerocraticOffersJSON"),
+    path("ManpowerOffers", views.manpowerOffersJSON, name="manpowerOffersJSON"),
     path("ChildcareOffers", views.childcareOffersJSON, name="childcareOffersJSON"),
     path("jobOffers", views.jobOffersJSON, name="jobOffersJSON"),
     path("translationOffers", views.translationOffersJSON, name="translationOffersJSON"),

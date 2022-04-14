@@ -390,11 +390,16 @@ def filter(request):
     pageCount = int(request.POST.get("page", 0))
     ids = []
     currentFilter = dict(request.POST)
+    if not currentFilter:
+        currentFilter = dict(request.GET)
     categoryCounter = 1
     for key in request.POST:
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
-    if not currentFilter:
+    for key in request.GET:
+        if "Visible" in key:
+            categoryCounter = categoryCounter +1 
+    if not currentFilter and categoryCount == 1:
         categoryCounter = 11
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
@@ -412,41 +417,42 @@ def filter(request):
     welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
     donation = DonationOffer.objects.filter(**filters)
     manpower = ManpowerOffer.objects.filter(**filters)
-    translationEntries = mergeImages(translation.qs[lastEntry:firstEntry])
-    accommodationEntries = mergeImages(accommodation.qs[lastEntry:firstEntry])
-    transportationEntries = mergeImages(transportation.qs[lastEntry:firstEntry])
-    jobEntries = mergeImages(job.qs[lastEntry:firstEntry])
-    buerocraticEntries = mergeImages(buerocratic.qs[lastEntry:firstEntry])
+    
     childLongEntries = mergeImages(childLong.qs[lastEntry:firstEntry])
     welfareEntries = mergeImages(welfare.qs[lastEntry:firstEntry])
-    donationEntries = mergeImages(donation[lastEntry:firstEntry])
-    manpowerEntries = mergeImages(manpower[lastEntry:firstEntry])
     maxPage = 0
     numEntries = 0
     context = {'currentFilter': currentFilter, "ResultCount": 0,
-    'entries': {'manpower': manpowerEntries, 'job': jobEntries,'buerocratic': buerocraticEntries, 'childShort':childShortEntries, "translation": translationEntries, 'welfare': welfareEntries, 'childLong': childLongEntries, 'accommodation': accommodationEntries, 'transportation': transportationEntries},
+    'entries': {},
     'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
     
-    if request.POST.get("childShortVisible", "0") == "1" or not currentFilter :
+    if request.POST.get("childShortVisible", "0") == "1" or request.GET.get("childShortVisible") == "True" or not currentFilter :
         numEntries += len(childShort.qs)
-    if request.POST.get("childLongVisible", "0") == "1" or not currentFilter:
+        context["entries"]["childShort"] = mergeImages(manpower[lastEntry:firstEntry])
+    if request.POST.get("childLongVisible", "0") == "1" or request.GET.get("childLongVisible") == "True"or not currentFilter:
         numEntries += len(childLong.qs)
-    if request.POST.get("jobVisible", "0") == "1" or not currentFilter:
+        context["entries"]["childLong"] = mergeImages(childLong[lastEntry:firstEntry])
+    if request.POST.get("jobVisible", "0") == "1" or request.GET.get("jobVisible") == "True" or not currentFilter:
         numEntries += len(job.qs)
-    if request.POST.get("buerocraticVisible", "0") == "1" or not currentFilter:
+        context["entries"]['job'] = mergeImages(job.qs[lastEntry:firstEntry])
+    if request.POST.get("buerocraticVisible", "0") == "1"or request.GET.get("buerocraticVisible") == "True" or not currentFilter:
         numEntries += len(buerocratic.qs)
-    if request.POST.get("welfareVisible", "0") == "1" or not currentFilter:
+        context["entries"]["buerocratic"] = mergeImages(buerocratic[lastEntry:firstEntry])
+    if request.POST.get("welfareVisible", "0") == "1"or request.GET.get("welfareVisible") == "True" or not currentFilter:
         numEntries += len(welfare.qs)
-    if request.POST.get("manpowerVisible", "0") == "1" or not currentFilter:
+        context["entries"]["welfare"] = mergeImages(welfare[lastEntry:firstEntry])
+    if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
         numEntries += len(manpower)
-    if request.POST.get("donationVisible", "0") == "1" or not currentFilter:
-        numEntries += len(donation)
-    if request.POST.get("transportationVisible", "0") == "1" or not currentFilter:
+        context["entries"]["manpower"] = mergeImages(manpower[lastEntry:firstEntry])
+    if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
         numEntries += len(transportation.qs)
-    if request.POST.get("translationVisible", "0") == "1" or not currentFilter:
+        context["entries"]["transportation"] = mergeImages(transportation.qs[lastEntry:firstEntry])
+    if request.POST.get("translationVisible", "0") == "1"or request.GET.get("translationVisible") == "True" or not currentFilter:
         numEntries += len(translation.qs)
-    if request.POST.get("accommodationVisible", "0") == "1" or not currentFilter:
+        context["entries"]["translation"] = mergeImages(translation.qs[lastEntry:firstEntry])
+    if request.POST.get("accommodationVisible", "0") == "1" or request.GET.get("accommodationVisible") == "True"or not currentFilter:
         numEntries += len(accommodation.qs)
+        context["entries"]["accommodation"] = mergeImages(accommodation.qs[lastEntry:firstEntry])
     maxPage = int(numEntries/(N_ENTRIES))
     if not currentFilter:
         context["currentFilter"] = {"childShortVisible": "1","childLongVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
@@ -457,7 +463,7 @@ def filter(request):
     return  context
 
 def handle_filter(request):
-    if request.POST.get("show_list") == "True":
+    if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
         context = filter(request)
         return render(request, 'offers/index.html', context)
     else :
@@ -478,9 +484,12 @@ def mergeImages(offers):
         location = {}
         if entry.genericOffer.location == "":
             location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
-        else:    
-            location = {"city": entry.genericOffer.location}
-        logger.warning(str(location))
+            if location.get("city"):
+                entry.genericOffer.location =  location["city"]
+            else :
+                entry.genericOffer.location = "N/A"
+            entry.genericOffer.save()  
+        location = {"city": entry.genericOffer.location}
         newEntry =  {
             "image" : None,
             "offer" : entry,
