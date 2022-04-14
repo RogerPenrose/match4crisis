@@ -29,8 +29,16 @@ Home {% endblock %} {% block header %}
   content="match4crisis - Wir vernetzen Helfende mit Hilfesuchenden."
 />
 <style>
-  .introduction { padding: 100px 0px 100px 0px;}
-  .introduction2 { padding: 70px 0px 70px 0px;}
+
+  .so-funktionierts { background: rgb(179,219,252);
+background: linear-gradient(180deg, rgba(179,219,252,1) 0%, rgba(255,255,255,1) 100%); 
+border-radius: 50px;
+padding: 75px 0px 55px 0px;
+margin-bottom: 75px;
+}
+  .steps h3 { font-size: 22px; margin-top: 15px; margin-bottom: 15px;}
+  .introduction { padding: 100px 0px 130px 0px;}
+  .introduction2 { padding: 0px 0px 70px 0px;}
 .box-left h4, .box-right h4 { font-weight: 300; font-size: 30px; line-height: 40px;}
 .home-logo { width: 300px; height: auto;}
 
@@ -342,9 +350,10 @@ body { margin-top: 0px;}
      
       <div class="col-sm-12 col-lg-7 col-xl-6">
 
-<p style="font-size: 28px; font-weight: 300; color: #28445b;">Match4Crisis dient zur Vernetzung und der effizienten Verteilung von Ressourcen.</p>
-  <p>In Zeiten der Krise vernetzen wir Menschen die helfen wollen, mit denjenigen die Hilfe suchen. Auch Hilfsorganisationen haben die Möglichkeit Helfende am Ort des Geschehens zu kontaktieren und Kapazitäten zu verteilen. Über das Spendenportal können diese auch finanziell unterstützt werden. 
-  <br><br><b>Die Plattform ist eine 100% ehrenamtliche Initiative.</b></p>
+<p style="font-size: 28px; font-weight: 600; color: #28445b;">
+  {% blocktrans %}match<span style="color:#ed0061;">4</span>crisis dient zur Vernetzung und der effizienten Verteilung von Ressourcen.{% endblocktrans %}</p>
+  <p style="font-size: 18px;">{% blocktrans %}In Zeiten der Krise vernetzen wir Menschen die helfen wollen, mit denjenigen die Hilfe suchen. Auch Hilfsorganisationen haben die Möglichkeit Helfende am Ort des Geschehens zu kontaktieren und Kapazitäten zu verteilen. Über das Spendenportal können diese auch finanziell unterstützt werden. 
+  <br><br>Die Plattform ist eine 100% ehrenamtliche Initiative.{% endblocktrans %}</p>
         </div>
 
         <div class="col-sm-12 col-lg-5 col-xl-6">
@@ -352,9 +361,9 @@ body { margin-top: 0px;}
                   </div>
 
         </div>
-
-   <div class="introduction2">
-   
+</div>
+   <div class="so-funktionierts">
+   <div class="container">
     <div class="col-md-12" style="text-align: left; margin: 0 auto;">
       <h3
         style="text-align: center; "
@@ -366,28 +375,34 @@ body { margin-top: 0px;}
     <div class="row align-self-center steps">
       <div class="col-sm-12 col-md-4">
         <p><img src="{% static 'img/step-1.svg' %}" /></p>
+        <h3>{% blocktrans %}Registrieren{% endblocktrans %}</h3>
         <p>{% blocktrans %}Registriere dich als Helfer*in/Hilfesuchende*r.{% endblocktrans %}</p>
       </div>
       <div class="col-sm-12 col-md-4">
         <p><img src="{% static 'img/step-2.svg' %}" /></p>
+        <h3>{% blocktrans %}Suchen/Helfen{% endblocktrans %}</h3>
         <p>{% blocktrans %}Wähle den Ort und die Kategorie, in welchen du helfen kannst, oder Hilfe benötigst.{% endblocktrans %}</p>
       </div>
       <div class="col-sm-12 col-md-4">
         <p><img src="{% static 'img/step-3.svg' %}" /></p>
+        <h3>{% blocktrans %}Vernetzen{% endblocktrans %}</h3>
         <p>
           {% blocktrans %}Vernetze dich und helfe oder erhalte Hilfe, von Angeboten in deiner Nähe.{% endblocktrans %}
         </p>
       </div>
+      <a href="/preregistration" class="btn btn-green" style="margin: 0 auto;" > {% blocktrans %}Hier registrieren{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-right-circle" style="margin-top: -2px; margin-left: 10px" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"></path>
+      </svg></a>
     </div>
-
+</div>
   </div>
 
-
-  <div class="introduction2">
+<div class="container">
+  
 
     <div class="row align-self-center">
       <div class="col-sm-12" style="text-align: center; margin-bottom: 35px;">
-       <h3>{% blocktrans %}Wir werden unterstützt von{% endblocktrans %}</h3>
+       <h3 style="font-size: 22px;">{% blocktrans %}Wir werden unterstützt von{% endblocktrans %}</h3>
       </div>
     </div>
 
@@ -402,7 +417,7 @@ body { margin-top: 0px;}
         <p><a href="https://www.webspace-verkauf.de" target="_blank"><img src="{% static 'img/partners/webspace-verkauf.svg' %}" /></a></p>
       </div>
     </div>
-    </div>
+
   </div>
 </main>
 {% endblock %}
