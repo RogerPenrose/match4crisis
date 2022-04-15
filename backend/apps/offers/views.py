@@ -586,8 +586,9 @@ def save(request):
     # Fill all empty fields with placeholder values ? 
     form = GenericForm(request.POST)
     for entry in form.errors.as_data():
-        form[entry] = "-"
+        form.fields[entry] = "-"
     logger.warning(str(form.errors.as_data()))
+    return HttpResponseRedirect("/iofferhelp/helper_dashboard")
 
 def update(request, offer_id, newly_created = False):
     form = GenericForm(request.POST)
