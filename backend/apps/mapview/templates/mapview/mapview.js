@@ -370,11 +370,10 @@ mapViewPage = {
                         el.el.click();
                     }
                 });
-                return;
             }
             
             // aktiv und nicht alle ausgewählt
-            if (mapViewPage.offers.findIndex(el => !el.show) !== -1){
+            else if (mapViewPage.offers.findIndex(el => !el.show) !== -1){
                 mapViewPage.offers[8].show = false;
                 mapViewPage.setGetParameter([["generic", "False"]])
                 e.target.click();
@@ -382,20 +381,21 @@ mapViewPage = {
             }
 
             // aktiv und alle ausgewählt
-            mapViewPage.offers[8].show = false;
-            mapViewPage.setGetParameter([["generic", "False"]])
-            mapViewPage.offers.forEach(el => {
-                if (el.type !== "generic"){
-                    el.el.click();
-                }
-            });
-
-            return;
+            else {
+                mapViewPage.offers[8].show = false;
+                mapViewPage.setGetParameter([["generic", "False"]])
+                mapViewPage.offers.forEach(el => {
+                    if (el.type !== "generic"){
+                        el.el.click();
+                    }
+                });
+            }
         } else {
             const index = mapViewPage.offers.findIndex(el => el.type == e.target.name);
             mapViewPage.offers[index].show = !mapViewPage.offers[index].show;
             mapViewPage.setGetParameter([[e.target.name, mapViewPage.offers[index].show]])
         }
+        mapViewPage.updateViewAsListBtn();
     },
 
     createGenericMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
@@ -406,7 +406,9 @@ mapViewPage = {
     createBlankMapMarker: function addMapMarkers(markers, createMarkerFunction){
         return markers.map(marker => {return createMarkerFunction(marker)})
     },
-
+    updateViewAsListBtn: () => {
+        document.getElementById("resultString").textContent = mapViewPage.offers.reduce((total, offer) => total + offer.show * offer.amt, 0)
+    },
     initAutocomplete: () => {
         const input = document.getElementById("location");
     
@@ -507,26 +509,7 @@ mapViewPage = {
     })
 }
 $.extend(mapViewPage.options, pageOptions)
-var childcare = {{ entryCount.childcare }}
-var job = {{ entryCount.job }}
-var buerocratic = {{ entryCount.buerocratic }}
-var medical = {{ entryCount.medical }}
-var translation = {{ entryCount.translation }}
-var transportation = {{ entryCount.transportation }}
-var accommodation = {{ entryCount.accommodation }}
-var manpower = {{ entryCount.manpower }}
 
-/*
-var checkboxes_to_disable = [
-    {"type": "childcare", "show":"{{ childcare|default:False }}", selected: true },
-    {"type": "manpower", "show":"{{ manpower|default:False }}", selected: true },
-    {"type": "job", "show":"{{ job|default:False }}", selected: true },
-    {"type": "buerocratic", "show":"{{ buerocratic|default:False }}", selected: true },
-    {"type": "medical", "show":"{{ medical|default:False }}", selected: true },
-    {"type": "translation", "show":"{{ translational|default:False }}", selected: true },
-    {"type": "transportation", "show":"{{ transportation|default:False }}", selected: true },
-    {"type": "accommodation", "show":"{{ accommodation|default:False }}", selected: true },
-    {"type": "generic", "show":"{{ generic|default:False }}", selected: true }]*/
 function handleNumber(name, state){
     // console.log("Handling: "+name)
     number = 0
