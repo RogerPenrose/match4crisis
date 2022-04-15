@@ -405,6 +405,7 @@ def filter(request):
     pageCount = int(request.POST.get("page", 0))
     logger.warning(str(filters))
     ids = []
+    mapparameter = ""
     currentFilter = dict(request.POST)
     if not currentFilter:
         currentFilter = dict(request.GET)
@@ -412,9 +413,17 @@ def filter(request):
     for key in request.POST:
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
+            if "child" in key:
+                mapparameter= "childcare"+"=True"
+            else:
+                mapparameter = key.replace("Visible","")+"=True"
     for key in request.GET:
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
+            if "child" in key:
+                mapparameter= "childcare"+"=True"
+            else:
+                mapparameter = key.replace("Visible","")+"=True"
     if not currentFilter and categoryCount == 1:
         categoryCounter = 11
     N_ENTRIES = int(50 / categoryCounter)
@@ -438,7 +447,7 @@ def filter(request):
     welfareEntries = mergeImages(welfare.qs[lastEntry:firstEntry])
     maxPage = 0
     numEntries = 0
-    context = {'currentFilter': currentFilter, "ResultCount": 0,"location": request.POST.get("city"), "range": request.POST.get("range"),
+    context = {'currentFilter': currentFilter, "mapparameter": mapparameter,"ResultCount": 0,"location": request.POST.get("city"), "range": request.POST.get("range"),
     'entries': {},
     'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
     
@@ -481,10 +490,11 @@ def filter(request):
     return  context
 
 def handle_filter(request):
-    if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
-        context = filter(request)
-        return render(request, 'offers/index.html', context)
-    else :
+    #if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
+    context = filter(request)
+    return render(request, 'offers/index.html', context)
+    '''else :
+        logger.warning("trying for mapview!?")
         query = ""
         for entry in OFFERTYPESOBJ:
             if request.POST.get(entry) == "True":
@@ -493,7 +503,7 @@ def handle_filter(request):
                 query += entry+"=False&"
         if request.POST.get("city"):
             query +="city="+request.POST.get("city")+"&"
-        return redirect("/mapview/?"+query)
+        return redirect("/mapview/?"+query)'''
   
 def mergeImages(offers):
     resultOffers = []

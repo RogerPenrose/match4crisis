@@ -40,8 +40,10 @@ def mapviewjs(request):
     childcareCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False ).count()
     context = { "entryCount": {"buerocratic": buerocraticCount,"manpower": manpowerCount,
         "accommodation": accommodationCount, "transportation": transportationCount, "translation": translationCount, "childcare": childcareCount, "medical": medicalCount, "job": jobCount 
-    },"accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
-    logger.warning("rendering mapview JS ? "+str(request.GET))
+    }}
+    #"accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
+    context.update(request.GET.dict())
+    logger.warning("rendering mapview JS ? "+str(context))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
 # Should be safe against BREACH attack because we don't have user input in reponse body

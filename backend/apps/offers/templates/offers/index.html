@@ -165,7 +165,8 @@ margin-top: 20px; }
 <div class="col-lg-12">
 <form action="/offers/handle_filter" name="searchForm" id="searchForm" method="POST">
   {% csrf_token %}
-    <div style="position: relative">
+    <div style="position: relative;">
+      <input type="text" style="display:none" name="range" value="{{range}}"/>
       <input
         type="text"
         id="id_location"
@@ -264,7 +265,7 @@ margin-top: 20px; }
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}&accommodation={%if AccommodationOffers|length > 0 %}True{% else%}False{%endif%}&transportation={%if TransportationOffers|length > 0 %}True{% else%}False{%endif%}&translation={%if TranslationOffers|length > 0 %}True{% else%}False{%endif%}&accompaniment={%if AccompanimentOffers|length > 0 %}True{% else%}False{%endif%} ">{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}</a></p></div>
+        <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}{{mapparameter}} ">{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}</a></p></div>
         </div>
         </div>
         {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page|add:"1"  }} {% blocktrans %}von{% endblocktrans %} {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
