@@ -334,9 +334,8 @@ mapViewPage = {
                                     .childNodes[2]
                                     .childNodes;
 
-        console.log(this.offers);
         for (const i in this.offers){
-            if (i !== 8){
+            if (i != 8){
                 this.offers[i].el = offersCheckboxParents[i].childNodes[0].childNodes[0]
                 this.offers[i].el.setAttribute("name", this.offers[i].type);
                 this.offers[i].el.addEventListener("change", e => this.handleCheckBoxClick(e));
@@ -356,6 +355,10 @@ mapViewPage = {
                     this.setGetParameter([[this.offers[i].type, "True"]])
                 }
                 this.offers[i].el.addEventListener("change", e => this.handleCheckBoxClick(e));
+                if (this.offers.findIndex((el) => el.show) == 8){
+                    this.offers[i].el.click();
+                    this.offers[i].el.click();
+                }
             }
         }
     },
@@ -394,6 +397,11 @@ mapViewPage = {
             const index = mapViewPage.offers.findIndex(el => el.type == e.target.name);
             mapViewPage.offers[index].show = !mapViewPage.offers[index].show;
             mapViewPage.setGetParameter([[e.target.name, mapViewPage.offers[index].show]])
+ 
+            // is not all are selected anymore
+            /* if (mapViewPage.offers.findIndex(el => !el.show) !== -1 && mapViewPage.offers[8].show){
+                mapViewPage.offers[8].el.click()
+            }*/
         }
         mapViewPage.updateViewAsListBtn();
     },
