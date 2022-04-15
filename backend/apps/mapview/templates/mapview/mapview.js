@@ -24,6 +24,46 @@ mapViewPage = {
 
     },
 
+    offers: [
+        {
+            type: "childcare",
+            amt: Number("{{ entryCount.childcare }}"),
+            show: "{{ childcare|default:False }}".toLowerCase() == "true"
+        },{
+            type: "manpower",
+            amt: Number("{{ entryCount.manpower }}"),
+            show: "{{ manpower|default:False }}".toLowerCase() == "true"
+        },{
+            type: "job",
+            amt: Number("{{ entryCount.job }}"),
+            show: "{{ job|default:False }}".toLowerCase() == "true"
+        },{
+            type: "buerocratic",
+            amt: Number("{{ entryCount.buerocratic }}"),
+            show: "{{ buerocratic|default:False }}".toLowerCase() == "true"
+        },{
+            type: "medical",
+            amt: Number("{{ entryCount.medical }}"),
+            show: "{{ medical|default:False }}".toLowerCase() == "true"
+        },{
+            type: "translation",
+            amt: Number("{{ entryCount.translation }}"),
+            show: "{{ translation|default:False }}".toLowerCase() == "true"
+        },{
+            type: "transportation",
+            amt: Number("{{ entryCount.transportation }}"),
+            show: "{{ transportation|default:False }}".toLowerCase() == "true"
+        },{
+            type: "accommodation",
+            amt: Number("{{ entryCount.accommodation }}"),
+            show: "{{ accommodation|default:False }}".toLowerCase() == "true"
+        },{
+            type: "generic",
+            amt: Number("{{ entryCount.generic }}"),
+            show: "{{ generic|default:False }}".toLowerCase() == "true"
+        }
+    ],
+
     mapObject: null,
     
     createIcon: function createIcon(count, className) {
@@ -130,8 +170,10 @@ mapViewPage = {
 
 // @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
-        let [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations, generic ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL),$.get(this.options.genericOfferURL)])
-          // ACCOMMODATIONS:
+        const [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
+        const generic = [] // we could remove that from lelfeat, since we only need it to activate / deactivate the others but it is easier to deal with it that way
+        
+        // ACCOMMODATIONS:
         var accommodationClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
         });
@@ -222,7 +264,7 @@ mapViewPage = {
             }).bindPopup(this.options.createPopupTextChildcare(marker))
         }))
         
-        // GENERIC:
+        // GENERIC:  // somewhat redundant
         var genericClusterMarkerGroup = L.markerClusterGroup({
             iconCreateFunction: this.cssClassedIconCreateFunction('genericMarker'),
         });
@@ -232,12 +274,6 @@ mapViewPage = {
                 itemCount: 1,
            }).bindPopup(this.options.createPopupTextGeneric(descr, location, refer_url))
         }))
-
-        /*var checks = document.querySelectorAll('[type = "checkbox"]'), i;
-        function disCheck() {
-            for (i = 0; i < checks.length; ++i) {
-                checks[i].disabled = true;*/
-
                 
         var overlays = {}
         
@@ -292,28 +328,73 @@ mapViewPage = {
         
         // click (uncheck) checkboxes, if not selected in URL-Params
 
-        var offersCheckboxParents = document.getElementById("controlContainer")
+        const offersCheckboxParents = document.getElementById("controlContainer")
                                     .childNodes[0]
                                     .childNodes[1]
                                     .childNodes[2]
-                                    .childNodes
+                                    .childNodes;
 
-        for (i in checkboxes_to_disable){
+        console.log(this.offers);
+        for (const i in this.offers){
+            if (i !== 8){
+                this.offers[i].el = offersCheckboxParents[i].childNodes[0].childNodes[0]
+                this.offers[i].el.setAttribute("name", this.offers[i].type);
+                this.offers[i].el.addEventListener("change", e => this.handleCheckBoxClick(e));
+                if (!this.offers[i].show) {
+                    this.offers[i].show = true; // because it gets flipped in next line
+                    this.offers[i].el.click();
+                } else {
+                    this.setGetParameter([[this.offers[i].type, "True"]])
+                }
+            } else {
+                this.offers[i].el = offersCheckboxParents[i].childNodes[0].childNodes[0]
+                this.offers[i].el.setAttribute("name", this.offers[i].type);
+                if (!this.offers[i].show) {
+                    this.offers[i].show = true; // because it gets flipped in next line
+                    this.offers[i].el.click();
+                } else {
+                    this.setGetParameter([[this.offers[i].type, "True"]])
+                }
+                this.offers[i].el.addEventListener("change", e => this.handleCheckBoxClick(e));
+            }
+        }
+    },
+
+    handleCheckBoxClick: (e) => {
+        if (e.target.name === "generic"){
+            if (!mapViewPage.offers[8].show){
+                mapViewPage.offers[8].show = true;
+                mapViewPage.setGetParameter([["generic", "True"]])
+                mapViewPage.offers.forEach(el => {
+                    if (el.type !== "generic" && !el.show){
+                        el.el.click();
+                    }
+                });
+                return;
+            }
             
-            offersCheckboxParents[i].childNodes[0].childNodes[0].setAttribute("name", checkboxes_to_disable[i].type);
-            offersCheckboxParents[i].childNodes[0].childNodes[0].addEventListener("change",function(){
-                handleNumber(this.name, this.checked)
-                if (this.checked) {
-                    console.log("Checkbox is checked.."+this.name);
-                  } else {
-                    console.log("Checkbox is not checked..");
-                  }
+            // aktiv und nicht alle ausgewählt
+            if (mapViewPage.offers.findIndex(el => !el.show) !== -1){
+                mapViewPage.offers[8].show = false;
+                mapViewPage.setGetParameter([["generic", "False"]])
+                e.target.click();
+                return;
+            }
+
+            // aktiv und alle ausgewählt
+            mapViewPage.offers[8].show = false;
+            mapViewPage.setGetParameter([["generic", "False"]])
+            mapViewPage.offers.forEach(el => {
+                if (el.type !== "generic"){
+                    el.el.click();
+                }
             });
-            if (checkboxes_to_disable[i].show == "False") {
-                checkboxes_to_disable[i].selected = false
-                offersCheckboxParents[i].childNodes[0].childNodes[0].click();
-                
-            } 
+
+            return;
+        } else {
+            const index = mapViewPage.offers.findIndex(el => el.type == e.target.name);
+            mapViewPage.offers[index].show = !mapViewPage.offers[index].show;
+            mapViewPage.setGetParameter([[e.target.name, mapViewPage.offers[index].show]])
         }
     },
 
@@ -330,7 +411,6 @@ mapViewPage = {
         const input = document.getElementById("location");
     
         const autocomplete = initMapsAutocomplete();
-        console.log(autocomplete);
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace();
     
@@ -435,6 +515,8 @@ var translation = {{ entryCount.translation }}
 var transportation = {{ entryCount.transportation }}
 var accommodation = {{ entryCount.accommodation }}
 var manpower = {{ entryCount.manpower }}
+
+/*
 var checkboxes_to_disable = [
     {"type": "childcare", "show":"{{ childcare|default:False }}", selected: true },
     {"type": "manpower", "show":"{{ manpower|default:False }}", selected: true },
@@ -444,60 +526,62 @@ var checkboxes_to_disable = [
     {"type": "translation", "show":"{{ translational|default:False }}", selected: true },
     {"type": "transportation", "show":"{{ transportation|default:False }}", selected: true },
     {"type": "accommodation", "show":"{{ accommodation|default:False }}", selected: true },
-    {"type": "generic", "show":"{{ generic|default:False }}", selected: true }]
+    {"type": "generic", "show":"{{ generic|default:False }}", selected: true }]*/
 function handleNumber(name, state){
-    console.log("Handling: "+name)
+    // console.log("Handling: "+name)
     number = 0
     checkAll = false
     link = "/offers/handle_filter?show_list=True&"
     
     try{
     if(window.document.getElementsByName("generic")[0].checked == true && name != "generic" && state == true)
-        window.document.getElementsByName("generic")[0].click()
-}catch (e){
+            window.document.getElementsByName("generic")[0].click()
+    }catch (e){
 
-}
-finally{
-    
-    for (var i = 0; i < checkboxes_to_disable.length; i++)
-    {
-        checkbox = checkboxes_to_disable[i]
-        if (checkbox.type == name){
-            checkboxes_to_disable[i].selected = state
-            console.log("New State: "+checkboxes_to_disable[i].selected)
+    }
+    finally{
         
+        for (var i = 0; i < checkboxes_to_disable.length; i++)
+        {
+            checkbox = checkboxes_to_disable[i]
+            if (checkbox.type == name){
+                checkboxes_to_disable[i].selected = state
+                // console.log("New State: "+checkboxes_to_disable[i].selected)
+            
+            }
+            if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type != "generic"){
+                // console.log("Adding : "+checkboxes_to_disable[i].type)
+                number += eval(checkboxes_to_disable[i].type)
+                if (checkboxes_to_disable[i].type != "childcare")
+                    link +=checkboxes_to_disable[i].type+"Visible=True&"
+                else link += "childShortVisible=True&childLongVisible=True&"
+            }
+            if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type == "generic"){
+                checkAll = true
+            }
+
         }
-        if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type != "generic"){
-            console.log("Adding : "+checkboxes_to_disable[i].type)
-            number += eval(checkboxes_to_disable[i].type)
+        if (checkAll){
+            number = 0
+            link = "/offers/handle_filter?show_list=True&"
+        for(var i = 0; i < checkboxes_to_disable.length; i++)
+        {   if(checkboxes_to_disable[i].type != "generic"){
+                number += eval(checkboxes_to_disable[i].type)
             if (checkboxes_to_disable[i].type != "childcare")
-                link +=checkboxes_to_disable[i].type+"Visible=True&"
+                link +=checkboxes_to_disable[i].type+"Visible=True"
             else link += "childShortVisible=True&childLongVisible=True&"
-        }
-        if (checkboxes_to_disable[i].selected == true && checkboxes_to_disable[i].type == "generic"){
-            checkAll = true
-        }
 
-    }
-    if (checkAll){
-        number = 0
-        link = "/offers/handle_filter?show_list=True&"
-    for(var i = 0; i < checkboxes_to_disable.length; i++)
-    {   if(checkboxes_to_disable[i].type != "generic"){
-            number += eval(checkboxes_to_disable[i].type)
-        if (checkboxes_to_disable[i].type != "childcare")
-            link +=checkboxes_to_disable[i].type+"Visible=True"
-        else link += "childShortVisible=True&childLongVisible=True&"
-
-    }
         }
+            }
+        }
+        // console.log("States: "+JSON.stringify(checkboxes_to_disable))
+        // console.log("New number: "+number)
+        
+        document.getElementById("results_as_list").href = link.slice(0,-1)
+        document.getElementById("resultString").innerHTML = number
     }
-    console.log("States: "+JSON.stringify(checkboxes_to_disable))
-    console.log("New number: "+number)
-    
-    document.getElementById("results_as_list").href = link.slice(0,-1)
-    document.getElementById("resultString").innerHTML = number
-}}
+}
+
 document.addEventListener("DOMContentLoaded", function domReady() {
 
     mapViewPage.initializeMap()
