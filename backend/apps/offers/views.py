@@ -237,7 +237,6 @@ def getCityBbFromLocation(locationData):
         if 'locality' in x["types"]:
             returnVal["city"] = x["long_name"]
     
-        logger.warning("X: "+str(x))
     logger.warning(str(returnVal))
     
     return returnVal
@@ -260,11 +259,9 @@ def getCityFromCoordinates(locationData):
 
 def kmInLng(km, lat):
     lng = float(km)/111.320*math.cos(math.radians(lat))
-    logger.warning("KMINLNG:"+str(lng))
     return float(lng)
 def kmInLat(km):
     lat = float(km)/110.574
-    logger.warning("KMINLAT:"+str(lat))
     return float(lat)
 
 @login_required
@@ -310,9 +307,7 @@ def search(request):
         latMax = locationData["latMax"]+kmInLat(rangeKm)
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    logger.warning("Lat: "+str(latMin)+"-"+str(latMax))
-    logger.warning("Lng: "+str(lngMin)+"-"+str(lngMax))
-    logger.warning("Found: "+str(GenericOffer.objects.filter(active=True, lng__range=[lngMin, lngMin]).count()))
+    logger.warning("LNG:"+str(lngMin)+"-"+str(lngMax)+"LAT:"+str(latMin)+"-"+str(latMax))
     accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
     translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
     transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
@@ -405,9 +400,10 @@ def filter(request):
     filters = {"genericOffer__active": True} 
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
-        locationData = padByRange(locationData, request.POST.get("range"))
-        filters = {"genericOffer__lat__range": [locationData["latMin"], locationData["latMax"]],"genericOffer__lng__range": [locationData["lngMin"], locationData["lngMax"]] }
+        locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
+        filters = {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
     pageCount = int(request.POST.get("page", 0))
+    logger.warning(str(filters))
     ids = []
     currentFilter = dict(request.POST)
     if not currentFilter:
@@ -442,28 +438,28 @@ def filter(request):
     welfareEntries = mergeImages(welfare.qs[lastEntry:firstEntry])
     maxPage = 0
     numEntries = 0
-    context = {'currentFilter': currentFilter, "ResultCount": 0,
+    context = {'currentFilter': currentFilter, "ResultCount": 0,"location": request.POST.get("city"), "range": request.POST.get("range"),
     'entries': {},
     'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
     
     if request.POST.get("childShortVisible", "0") == "1" or request.GET.get("childShortVisible") == "True" or not currentFilter :
         numEntries += len(childShort.qs)
-        context["entries"]["childShort"] = mergeImages(manpower[lastEntry:firstEntry])
+        context["entries"]["childShort"] = mergeImages(childShort.qs[lastEntry:firstEntry])
     if request.POST.get("childLongVisible", "0") == "1" or request.GET.get("childLongVisible") == "True"or not currentFilter:
         numEntries += len(childLong.qs)
-        context["entries"]["childLong"] = mergeImages(childLong[lastEntry:firstEntry])
+        context["entries"]["childLong"] = mergeImages(childLong.qs[lastEntry:firstEntry])
     if request.POST.get("jobVisible", "0") == "1" or request.GET.get("jobVisible") == "True" or not currentFilter:
         numEntries += len(job.qs)
         context["entries"]['job'] = mergeImages(job.qs[lastEntry:firstEntry])
     if request.POST.get("buerocraticVisible", "0") == "1"or request.GET.get("buerocraticVisible") == "True" or not currentFilter:
         numEntries += len(buerocratic.qs)
-        context["entries"]["buerocratic"] = mergeImages(buerocratic[lastEntry:firstEntry])
+        context["entries"]["buerocratic"] = mergeImages(buerocratic.qs[lastEntry:firstEntry])
     if request.POST.get("welfareVisible", "0") == "1"or request.GET.get("welfareVisible") == "True" or not currentFilter:
         numEntries += len(welfare.qs)
-        context["entries"]["welfare"] = mergeImages(welfare[lastEntry:firstEntry])
+        context["entries"]["welfare"] = mergeImages(welfare.qs[lastEntry:firstEntry])
     if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
         numEntries += len(manpower)
-        context["entries"]["manpower"] = mergeImages(manpower[lastEntry:firstEntry])
+        context["entries"]["manpower"] = mergeImages(manpower.qs[lastEntry:firstEntry])
     if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
         numEntries += len(transportation.qs)
         context["entries"]["transportation"] = mergeImages(transportation.qs[lastEntry:firstEntry])
@@ -480,6 +476,8 @@ def filter(request):
     if maxPage > 1:
         context["pagination"] = True
     context["ResultCount"] = numEntries
+    logger.warning("Request was: "+str(dict(request.POST)))
+    logger.warning("Sending: "+str(context))
     return  context
 
 def handle_filter(request):
@@ -573,10 +571,8 @@ def create(request):
         context["detailForm"] = getFormForOfferType(request.GET.get("type"))
         if request.GET.get("type") == "AC":
             context["imageForm"] = ImageForm()
-        logger.warning("Returning: "+str(context))
         return render(request, 'offers/create.html', context)
 def save(request):
-    logger.warning("SAVING")
     # Fill all empty fields with placeholder values ? 
     form = GenericForm(request.POST)
     for entry in form.errors.as_data():
@@ -584,12 +580,10 @@ def save(request):
     logger.warning(str(form.errors.as_data()))
 
 def update(request, offer_id, newly_created = False):
-    logger.warning("REQUEST: "+str(request.POST))
     form = GenericForm(request.POST)
        # form.image = request.FILES
     if form.is_valid():
         currentForm = form.cleaned_data
-        logger.warning("FORM TYPE: "+currentForm.get("offerType"))
         g = updateGenericModel(currentForm, offer_id, request.user.id)
         if request.FILES.get("image") != None:
             counter = 0
@@ -598,7 +592,6 @@ def update(request, offer_id, newly_created = False):
                 counter = counter + 1
                 image = ImageClass(image=image, offerId = g)
                 image.save()
-            logger.warning("added Images:"+str(counter))
         if g is not None:
             if currentForm.get("offerType") == "MP": # Special case since we have no particular fields in this type.
                 buForm = ManpowerForm(request.POST)
@@ -606,10 +599,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = buForm.cleaned_data
                     a = updateManpowerModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(buForm.errors))
             if currentForm.get("offerType") == "DO": # Special case since we have no particular fields in this type.
                 buForm = DonationForm(request.POST)
@@ -617,10 +608,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = buForm.cleaned_data
                     a = updateDonationModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(buForm.errors))
             if currentForm.get("offerType") == "WE": # Special case since we have no particular fields in this type.
                 weForm = WelfareForm(request.POST)
@@ -628,10 +617,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = weForm.cleaned_data
                     a = updateWelfareModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(weForm.errors))
             if currentForm.get("offerType") == "JO": # Special case since we have no particular fields in this type.
                 joForm = JobForm(request.POST)
@@ -639,10 +626,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = joForm.cleaned_data
                     a = updateJobModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(joForm.errors))
             if currentForm.get("offerType") == "BA": # Special case since we have no particular fields in this type.
                 baForm = ChildcareFormShortterm(request.POST)
@@ -650,10 +635,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = baForm.cleaned_data
                     a = updateChildcareShortTermModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(baForm.errors))
             if currentForm.get("offerType") == "CL": # Special case since we have no particular fields in this type.
                 clForm = ChildcareFormLongterm(request.POST)
@@ -661,10 +644,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = clForm.cleaned_data
                     a = updateChildcareLongTermModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(clForm.errors))
             if currentForm.get("offerType") == "BU": # Special case since we have no particular fields in this type.
                 buForm = BuerocraticForm(request.POST)
@@ -672,10 +653,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = buForm.cleaned_data
                     a = updateBuerocraticModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(buForm.errors))
             elif currentForm.get("offerType") == "AC":
                 acForm = AccommodationForm(request.POST)
@@ -683,10 +662,8 @@ def update(request, offer_id, newly_created = False):
                     currentForm = acForm.cleaned_data
                     a = updateAccommodationModel(g, currentForm, offer_id)
                     offer_id = a.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(acForm.errors))
             elif currentForm.get("offerType") == "TR":
                 trForm = TransportationForm(request.POST)
@@ -694,11 +671,9 @@ def update(request, offer_id, newly_created = False):
                     currentForm = trForm.cleaned_data
                     t = updateTransportationModel(g, currentForm, offer_id)
                     offer_id = t.genericOffer.id
-                    logger.warning("Offer ID: "+str(offer_id))
                     
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(trForm.errors))
             if currentForm.get("offerType") == "TL":
                 tlForm = TranslationForm(request.POST)
@@ -709,14 +684,11 @@ def update(request, offer_id, newly_created = False):
                     offer_id = t.genericOffer.id
                     return detail(request, offer_id, newly_created=newly_created)
                 else:
-                    logger.warning("Object empty")
                     return HttpResponse(str(tlForm.errors))
         else:
-            logger.warning("No USER")
             return HttpResponse("Wrong User")
     
     else:
-        logger.warning("TEST")
         return HttpResponse(str(form.errors))
 def getLocationFromOffer(offer):
     reverse_geocode_result = gmaps.reverse_geocode((offer.lat, offer.lng))
@@ -791,7 +763,6 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationForm(model_to_dict(detail))
-        logger.warning("Detail: "+str(detailForm["latEnd"]))
         return {'offerType': "Transportation", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
