@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django_select2 import forms as s2forms
 import logging
+from django.utils.translation import gettext_lazy as _
 from match4crisis.constants.countries import countries
 from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer,TranslationOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 from apps.accounts.models import Languages
@@ -14,40 +15,39 @@ def validate_plz(value):
             _('%(value)s is not a valid postcode'),
             params={'value': value},
         )
-OFFERTYPE = "Angebotstyp"
-OFFERDESCRIPTION = "Beschreibung"
-COUNTRY = "Land"
-PRICE = "Preis"
-PASSENGER_COUNT="Anzahl der freien Plätze"
-FIRSTLANGUAGE="Übersetze von"
-SECONDLANGUAGE="Übersetze nach"
-INHABITANTS_ADULTS="Anzahl der Erwachsenen"
-INHABITANTS_CHILDREN="Anzahl der Kinder"
-INHABITANTS_PETS="Anzahl der Haustiere"
-DIGITAL="Digital verfügbar"
-ACTIVE="Aktives Angebot"
-RESIDENCE="Art der Unterbringung"
-HELPTYPE="Art der Hilfe"
-HELPTYPE_MP="Art der Hilfe"
-GENDER="Geschlecht"
-REGULAR_CHILDCARE="Regelmäßiges Angebot"
-AMOUNT_OF_CHILDREN="Anzahl der Kinder"
-JOBTYPE="Art des Jobs"
-JOBREQS = "Anforderungen"
-JOBTITLE= "Jobtitel"
-HELPTYPE_WE="Art der medizinischen Hilfe"
-BANKACCOUNT="Bankdaten"
-STARTDATE= "Startdatum"
-ENDDATE = "Endddatum"
-DONATION_TITLE="Titel"
-DEPARTUREDATE="Abfahrtsdatum"
-NUMBERADULTS="Anzahl der Erwachsenen"
-NUMBERPETS = "Anzahl der Haustiere"
-IMAGE = "Bild hochladen"
-OFFERTITLE = "Titel"
-LOCATION="Ort"
-LOCATIONEND="Ziel"
-logger = logging.getLogger("django")
+OFFERTYPE =_("Angebotstyp")
+OFFERDESCRIPTION =_("Beschreibung")
+COUNTRY =_("Land")
+PRICE =_("Preis")
+PASSENGER_COUNT=_("Anzahl der freien Plätze")
+FIRSTLANGUAGE=_("Übersetze von")
+SECONDLANGUAGE=_("Übersetze nach")
+INHABITANTS_ADULTS=_("Anzahl der Erwachsenen")
+INHABITANTS_CHILDREN=_("Anzahl der Kinder")
+INHABITANTS_PETS=_("Anzahl der Haustiere")
+DIGITAL=_("Digital verfügbar")
+ACTIVE=_("Aktives Angebot")
+RESIDENCE=_("Art der Unterbringung")
+HELPTYPE=_("Art der Hilfe")
+HELPTYPE_MP=_("Art der Hilfe")
+GENDER=_("Geschlecht")
+REGULAR_CHILDCARE=_("Regelmäßiges Angebot")
+AMOUNT_OF_CHILDREN=_("Anzahl der Kinder")
+JOBTYPE=_("Art des Jobs")
+JOBREQS = _("Anforderungen")
+JOBTITLE= _("Jobtitel")
+HELPTYPE_WE=_("Art der medizinischen Hilfe")
+BANKACCOUNT=_("Bankdaten")
+STARTDATE= _("Startdatum")
+ENDDATE = _("Endddatum")
+DONATION_TITLE=_("Titel")
+DEPARTUREDATE=_("Abfahrtsdatum")
+NUMBERADULTS=_("Anzahl der Erwachsenen")
+NUMBERPETS = _("Anzahl der Haustiere")
+IMAGE = _("Bild hochladen")
+OFFERTITLE = _("Titel")
+LOCATION=_("Ort")
+LOCATIONEND=_("Ziel")
 class GenericForm(forms.ModelForm):
     class Meta:
         attrs = { "class": "form-control"}
