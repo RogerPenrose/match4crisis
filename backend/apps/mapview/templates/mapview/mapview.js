@@ -399,9 +399,9 @@ mapViewPage = {
             mapViewPage.setGetParameter([[e.target.name, mapViewPage.offers[index].show]])
  
             // is not all are selected anymore
-            /* if (mapViewPage.offers.findIndex(el => !el.show) !== -1 && mapViewPage.offers[8].show){
+            if (!mapViewPage.offers[index].show && mapViewPage.offers[8].show){
                 mapViewPage.offers[8].el.click()
-            }*/
+            }
         }
         mapViewPage.updateViewAsListBtn();
     },
