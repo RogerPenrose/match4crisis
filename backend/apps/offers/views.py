@@ -749,43 +749,43 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "AC":
         detail = get_object_or_404(AccommodationOffer, pk=generic.id)
         detailForm = AccommodationForm(model_to_dict(detail))
-        return {'offerType': "Accommodation", 'generic': genericForm, 'detail': detailForm, "location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'detail': detailForm, "location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))
-        return {'offerType': "Medical Assistance", 'generic': genericForm, 'detail': detailForm,"location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'detail': detailForm,"location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return {'offerType': "Translation","location": location,'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(),"location": location,'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationForm(model_to_dict(detail))
-        return {'offerType': "Transportation", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerForm(model_to_dict(detail))
-        return {'offerType': "Manpower", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "DO":
         detail = get_object_or_404(DonationOffer, pk=generic.id)
         detailForm = DonationForm(model_to_dict(detail))
-        return {'offerType': "Donations", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
         detailForm = ChildcareFormShortterm(model_to_dict(detail))
-        return {'offerType': "Babysitting","location": location, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(),"location": location, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "CL":
         detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
         detailForm = ChildcareFormLongterm(model_to_dict(detail))
-        return {'offerType': "Childcare Longterm", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "JO":
         detail = get_object_or_404(JobOffer, pk=generic.id)
         detailForm = JobForm(model_to_dict(detail))
-        return {'offerType': "Job", 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
         detailForm = BuerocraticForm(model_to_dict(detail))
-        return {'offerType': "Buerocratic", 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
 def detail(request, offer_id, edit_active = False,  newly_created = False) :
     context = getOfferDetails(request, offer_id)
