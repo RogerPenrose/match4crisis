@@ -275,7 +275,6 @@ def contact(request, offer_id):
             offer = GenericOffer.objects.get(pk=offer_id)
             refugee = Refugee.objects.get(user=request.user)
             refugee.addRecentlyContactedOffer(offer)
-
         return HttpResponseRedirect(request.path[:-len("/contact")])
     else:
         details = getOfferDetails(request,offer_id)
@@ -792,7 +791,7 @@ def detail(request, offer_id, edit_active = False,  newly_created = False) :
     offer = GenericOffer.objects.get(pk=offer_id)
     logger.warning("created: "+str(offer.created_at))
     context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
-    context["username"] = request.user.first_name
+    context["username"] = offer.userId.first_name
     if edit_active:
         context["edit_active"] = edit_active
     if newly_created:
