@@ -64,7 +64,6 @@ def updateGenericModel( form, offer_id=0, userId=None):
             g.save()
             return g
         else:
-            logger.warning("Not allowed to update")
             return None
 
 def updateChildcareShortTermModel(g, form, offer_id=0):
@@ -237,7 +236,6 @@ def getCityBbFromLocation(locationData):
         if 'locality' in x["types"]:
             returnVal["city"] = x["long_name"]
     
-    logger.warning(str(returnVal))
     
     return returnVal
 
@@ -306,7 +304,6 @@ def search(request):
         latMax = locationData["latMax"]+kmInLat(rangeKm)
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    logger.warning("LNG:"+str(lngMin)+"-"+str(lngMax)+"LAT:"+str(latMin)+"-"+str(latMax))
     accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
     translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
     transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
@@ -402,7 +399,6 @@ def filter(request):
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
         filters = {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
     pageCount = int(request.POST.get("page", 0))
-    logger.warning(str(filters))
     ids = []
     mapparameter = ""
     currentFilter = dict(request.POST)
@@ -428,7 +424,6 @@ def filter(request):
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
-    logger.warning("First : "+str(firstEntry)+" Last: "+str(lastEntry)+" N_ENTRIES"+str(N_ENTRIES)+" Categories: "+str(categoryCounter))
     childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
     childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
     
@@ -483,8 +478,6 @@ def filter(request):
     if maxPage > 1:
         context["pagination"] = True
     context["ResultCount"] = numEntries
-    logger.warning("Request was: "+str(dict(request.POST)))
-    logger.warning("Sending: "+str(context))
     return  context
 
 def handle_filter(request):
@@ -574,7 +567,6 @@ def save(request):
     form = GenericForm(request.POST)
     for entry in form.errors.as_data():
         form[entry] = "-"
-    logger.warning(str(form.errors.as_data()))
 
 def update(request, offer_id, newly_created = False):
     form = GenericForm(request.POST)
@@ -716,11 +708,9 @@ def user_is_allowed(request, target_id):
     allowed = False
     if user is not None:
         if request.user.id == target_id or user.is_superuser:
-            logger.warning("User is super user: "+str(user.is_superuser))
             allowed = True
         else: 
-            logger.warning("User is not authenticated ? "+str(request.user.id)+" VS "+str(target_id))
-    return allowed
+            return allowed
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     if user_is_allowed(request, generic.userId.id):
@@ -789,7 +779,6 @@ def getOfferDetails(request, offer_id):
 def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
     context = getOfferDetails(request, offer_id)
     offer = GenericOffer.objects.get(pk=offer_id)
-    logger.warning("created: "+str(offer.created_at))
     context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
     context["username"] = offer.userId.first_name
     if edit_active:
