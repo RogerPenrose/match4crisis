@@ -275,6 +275,7 @@ def contact(request, offer_id):
             offer = GenericOffer.objects.get(pk=offer_id)
             refugee = Refugee.objects.get(user=request.user)
             refugee.addRecentlyContactedOffer(offer)
+            logger.warning("Added to recently Contacted...")
         return HttpResponseRedirect(request.path[:-len("/contact")])
     else:
         details = getOfferDetails(request,offer_id)
