@@ -275,8 +275,7 @@ def contact(request, offer_id):
             offer = GenericOffer.objects.get(pk=offer_id)
             refugee = Refugee.objects.get(user=request.user)
             refugee.addRecentlyContactedOffer(offer)
-            logger.warning("Added to recently Contacted...")
-        return HttpResponseRedirect(request.path[:-len("/contact")])
+        return detail(request, offer_id, contacted = True)
     else:
         details = getOfferDetails(request,offer_id)
         return render(request, 'offers/contact.html', details)
@@ -787,7 +786,7 @@ def getOfferDetails(request, offer_id):
         detailForm = BuerocraticForm(model_to_dict(detail))
         return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
-def detail(request, offer_id, edit_active = False,  newly_created = False) :
+def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
     context = getOfferDetails(request, offer_id)
     offer = GenericOffer.objects.get(pk=offer_id)
     logger.warning("created: "+str(offer.created_at))
@@ -797,6 +796,8 @@ def detail(request, offer_id, edit_active = False,  newly_created = False) :
         context["edit_active"] = edit_active
     if newly_created:
         context["newly_created"] = newly_created
+    if contacted:
+        context["contacted"] = contacted
     if request.user.is_authenticated and request.user.isRefugee:
         # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
         context["favourited"] = offer.favouritedBy.filter(user=request.user)

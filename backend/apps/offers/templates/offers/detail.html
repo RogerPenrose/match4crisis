@@ -90,7 +90,8 @@ navigator.share({
   <div style="height:40px; "></div>
   {% if  newly_created == True and generic.active.value == True %} <div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Danke für dein Hilfsangebot, es ist jetzt für alle sichtbar.{%endblocktrans%}</p></div>
   {% elif newly_created == True and generic.active.value == False %} <div style="background-color: rgb(255, 218, 148) " class="confirmation"><p>{% blocktrans %}Danke für dein Hilfsangebot, es wurde zur späteren Bearbeitung gespeichert.{%endblocktrans%}</p></div>
-
+  {%endif%}
+  {% if contacted == True %}<div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Der Inserent wurde kontaktiert und wird sich bald bei dir melden.{%endblocktrans%}</p></div>
   {%endif%}
   <div class="row align-self-center align-items-center top-menu">
 <div class="col-6 left">
