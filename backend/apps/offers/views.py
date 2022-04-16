@@ -789,13 +789,16 @@ def getOfferDetails(request, offer_id):
 
 def detail(request, offer_id, edit_active = False,  newly_created = False) :
     context = getOfferDetails(request, offer_id)
+    offer = GenericOffer.objects.get(pk=offer_id)
+    logger.warning("created: "+str(offer.created_at))
+    context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
+    context["username"] = request.user.first_name
     if edit_active:
         context["edit_active"] = edit_active
     if newly_created:
         context["newly_created"] = newly_created
     if request.user.is_authenticated and request.user.isRefugee:
         # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
-        offer = GenericOffer.objects.get(pk=offer_id)
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
         refugee = Refugee.objects.get(user=request.user)
         refugee.addRecentlyViewedOffer(offer)
