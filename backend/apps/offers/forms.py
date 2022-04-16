@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django_select2 import forms as s2forms
 import logging
 from match4crisis.constants.countries import countries
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer,TranslationOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 from apps.accounts.models import Languages
 
 def validate_plz(value):
@@ -111,11 +111,13 @@ class TransportationForm(forms.Form):
     latEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     lngEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     bbEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-class TranslationForm(forms.Form):
-# Translation Fields
-#queryset=Languages.objects.all(), 
-    firstLanguage =   forms.ChoiceField(widget=s2forms.ModelSelect2Widget(model=Languages, search_fields=["englishName__icontains", "nativeName__icontains"]))#"englishName__icontains", "nativeName__icontains"]))
-    secondLanguage =  forms.ChoiceField( widget=s2forms.ModelSelect2Widget(model=Languages, search_fields=["englishName__icontains", "nativeName__icontains"]))
+class TranslationForm(forms.ModelForm):
+    class Meta:
+        model = TranslationOffer
+        fields = ["firstLanguage", "secondLanguage"]
+        labels = {"firstLanguage": FIRSTLANGUAGE, "secondLanguage": SECONDLANGUAGE}
+        widgets = {"firstLanguage": s2forms.ModelSelect2Widget( search_fields=["englishName__icontains", "nativeName__icontains"]), 
+        "secondLanguage": s2forms.ModelSelect2Widget(  search_fields=["englishName__icontains", "nativeName__icontains"])}
       
 class AccommodationForm(forms.Form):
    

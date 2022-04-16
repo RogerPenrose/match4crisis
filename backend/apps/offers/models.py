@@ -152,8 +152,8 @@ class TransportationOffer(models.Model):
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    firstLanguage = models.ForeignKey(Languages,related_name='firstLanguage', on_delete=models.CASCADE, default="de")
-    secondLanguage = models.ForeignKey(Languages,related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
+    firstLanguage = models.ForeignKey(Languages,verbose_name=_("Erste Sprache"), related_name='firstLanguage', on_delete=models.CASCADE, default="de")
+    secondLanguage = models.ForeignKey(Languages,verbose_name=_("Zweite Sprache"),related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer,
