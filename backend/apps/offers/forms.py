@@ -1,9 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from django_select2 import forms as s2forms
 import logging
 from match4crisis.constants.countries import countries
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 from apps.accounts.models import Languages
 
 def validate_plz(value):
@@ -14,41 +15,48 @@ def validate_plz(value):
             _('%(value)s is not a valid postcode'),
             params={'value': value},
         )
-OFFERTYPE = "Angebotstyp"
-OFFERDESCRIPTION = "Beschreibung"
-COUNTRY = "Land"
-PRICE = "Preis"
-PASSENGER_COUNT="Anzahl der freien Plätze"
-FIRSTLANGUAGE="Übersetze von"
-SECONDLANGUAGE="Übersetze nach"
-INHABITANTS_ADULTS="Anzahl der Erwachsenen"
-INHABITANTS_CHILDREN="Anzahl der Kinder"
-INHABITANTS_PETS="Anzahl der Haustiere"
-DIGITAL="Digital verfügbar"
-ACTIVE="Aktives Angebot"
-RESIDENCE="Art der Unterbringung"
-HELPTYPE="Art der Hilfe"
-HELPTYPE_MP="Art der Hilfe"
-GENDER="Geschlecht"
-REGULAR_CHILDCARE="Regelmäßiges Angebot"
-AMOUNT_OF_CHILDREN="Anzahl der Kinder"
-JOBTYPE="Art des Jobs"
-JOBREQS = "Anforderungen"
-JOBTITLE= "Jobtitel"
-HELPTYPE_WE="Art der medizinischen Hilfe"
-BANKACCOUNT="Bankdaten"
-STARTDATE= "Startdatum"
-ENDDATE = "Endddatum"
-DONATION_TITLE="Titel"
-DEPARTUREDATE="Abfahrtsdatum"
-NUMBERADULTS="Anzahl der Erwachsenen"
-NUMBERPETS = "Anzahl der Haustiere"
-IMAGE = "Bild hochladen"
-OFFERTITLE = "Titel"
-LOCATION="Ort"
-LOCATIONEND="Ziel"
+OFFERTYPE = _("Angebotstyp")
+OFFERDESCRIPTION = _("Beschreibung")
+COUNTRY = _("Land")
+PRICE = _("Preis")
+PASSENGER_COUNT=_("Anzahl der freien Plätze")
+FIRSTLANGUAGE=_("Übersetze von")
+SECONDLANGUAGE=_("Übersetze nach")
+INHABITANTS_ADULTS=_("Anzahl der Erwachsenen")
+INHABITANTS_CHILDREN=_("Anzahl der Kinder")
+INHABITANTS_PETS=_("Anzahl der Haustiere")
+DIGITAL=_("Digital verfügbar")
+ACTIVE=_("Aktives Angebot")
+RESIDENCE=_("Art der Unterbringung")
+HELPTYPE=_("Art der Hilfe")
+HELPTYPE_MP=_("Art der Hilfe")
+GENDER=_("Geschlecht")
+REGULAR_CHILDCARE=_("Regelmäßiges Angebot")
+AMOUNT_OF_CHILDREN=_("Anzahl der Kinder")
+JOBTYPE=_("Art des Jobs")
+JOBREQS = _("Anforderungen")
+JOBTITLE= _("Jobtitel")
+HELPTYPE_WE=_("Art der medizinischen Hilfe")
+BANKACCOUNT=_("Bankdaten")
+STARTDATE= _("Startdatum")
+ENDDATE = _("Endddatum")
+DONATION_TITLE=_("Titel")
+DEPARTUREDATE=_("Abfahrtsdatum")
+NUMBERADULTS=_("Anzahl der Erwachsenen")
+NUMBERPETS = _("Anzahl der Haustiere")
+IMAGE = _("Bild hochladen")
+OFFERTITLE = _("Titel")
+LOCATION=_("Ort")
+LOCATIONEND=_("Ziel")
 logger = logging.getLogger("django")
-class GenericForm(forms.ModelForm):
+
+class OfferForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
+class GenericForm(OfferForm):
     class Meta:
         attrs = { "class": "form-control"}
         model = GenericOffer
@@ -63,28 +71,43 @@ class GenericForm(forms.ModelForm):
             "active": ACTIVE,
             "offerTitle": OFFERTITLE
         }
+
         widgets = {
             'location': forms.TextInput(attrs={ 'class': 'form-control'}),
-            'lat': forms.TextInput(attrs={'class': 'form-control'}),
-            'lng': forms.TextInput(attrs={'class': 'form-control'}),
-            'bb': forms.TextInput(attrs={'class': 'form-control'}),
-            'offerTitle': forms.TextInput(attrs={'class': 'form-control'}),
-        'offerType':  forms.Select(attrs={'class': 'form-control'}),
-        'offerDescription': forms.Textarea(attrs={'class': 'form-control'}),
-        'cost': forms.TextInput(attrs={'class': 'form-control'}),
-        'isDigital': forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
-        'active': forms.CheckboxInput(attrs={'class': 'custom-control-input'})
         }
-class DonationForm(forms.Form):
-    account= forms.CharField(label=BANKACCOUNT, max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))  
-    donationTitle= forms.CharField(label=DONATION_TITLE,widget=forms.TextInput(attrs={'class': 'form-control'}))  
 
-class ChildcareFormLongterm(forms.Form):
-    gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
-class ChildcareFormShortterm(forms.Form):
-    gender = forms.CharField(label=GENDER, max_length=2, widget=forms.Select(choices=ChildcareOfferLongterm.GENDER_CHOICES, attrs={'class': 'form-control'}))
-    isRegular = forms.BooleanField(label=REGULAR_CHILDCARE, widget=forms.CheckboxInput( attrs={'class': 'custom-control-input'}))
-    numberOfChildrenToCare = forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
+class DonationForm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = DonationOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "account" : BANKACCOUNT,
+            "donationTitle" : DONATION_TITLE,
+        }
+
+class ChildcareFormLongterm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = ChildcareOfferLongterm
+        exclude = ("genericOffer",)
+
+        labels = {
+            "gender_longterm" : GENDER,
+        }
+    
+class ChildcareFormShortterm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = ChildcareOfferShortterm
+        exclude = ("genericOffer",)
+
+        labels = {
+            "gender_shortterm" : GENDER,
+            "numberOfChildrenToCare" : AMOUNT_OF_CHILDREN,
+            "isRegular" : REGULAR_CHILDCARE,
+        }
 
 class ImageForm(forms.Form):
     
@@ -93,36 +116,108 @@ class ImageForm(forms.Form):
     image_id = forms.IntegerField(widget = forms.HiddenInput(),required=False)
 
  
-class JobForm(forms.Form):
-    jobType= forms.CharField(label=JOBTYPE, max_length=3, widget=forms.Select(choices=JobOffer.JOB_CHOICES, attrs={'class': 'form-control'}))  
-    jobTitle= forms.CharField(label=JOBTITLE, max_length=128, widget=forms.TextInput(attrs={'class': 'form-control'}))  
-    requirements= forms.CharField(label=JOBREQS,widget=forms.Textarea(attrs={'class': 'form-control'}))  
-class ManpowerForm(forms.Form):
-    helpType_manpower= forms.CharField(label=HELPTYPE_MP, max_length=2, widget=forms.Select(choices=ManpowerOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
+class JobForm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = JobOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "jobType" : JOBTYPE,
+            "jobTitle" : JOBTITLE,
+            "requirements" : JOBREQS,
+        }
+
+class ManpowerForm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = ManpowerOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "helpType_manpower" : HELPTYPE_MP,
+        }
+
 class WelfareForm(forms.Form):
-    helpType_welfare= forms.CharField(label=HELPTYPE_WE, max_length=2, widget=forms.Select(choices=WelfareOffer.WELFARE_CHOICES, attrs={'class': 'form-control'}))
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = WelfareOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "helpType_welfare" : HELPTYPE_WE,
+        }
       
-class BuerocraticForm(forms.Form):
-    helpType_buerocratic= forms.CharField(label=HELPTYPE, max_length=2, widget=forms.Select(choices=BuerocraticOffer.HELP_CHOICES, attrs={'class': 'form-control'}))
-class TransportationForm(forms.Form):
-    date=forms.DateField(label=DEPARTUREDATE,widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
-    numberOfPassengers = forms.IntegerField(label=PASSENGER_COUNT, widget=forms.NumberInput(attrs={'class': 'form-control'}) )
-    locationEnd = forms.CharField( max_length=300, label=LOCATIONEND, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    latEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    lngEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    bbEnd = forms.CharField(max_length=200, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
-class TranslationForm(forms.Form):
+class BuerocraticForm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = BuerocraticOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "helpType_buerocratic" : HELPTYPE,
+        }
+
+class TransportationForm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = TransportationOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "date" : DEPARTUREDATE,
+            "numberOfPassengers" : PASSENGER_COUNT,
+            "locationEnd" : LOCATIONEND,
+        }
+
+class TranslationForm(forms.ModelForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = TranslationOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "firstLanguage" : FIRSTLANGUAGE,
+            "secondLanguage" : SECONDLANGUAGE,
+        }
+
+        widgets = {
+            "firstLanguage" : s2forms.Select2Widget(),
+            "secondLanguage" : s2forms.Select2Widget(),
+        }
 # Translation Fields
 #queryset=Languages.objects.all(), 
-    firstLanguage =   forms.ChoiceField(widget=s2forms.ModelSelect2Widget(model=Languages, search_fields=["englishName__icontains", "nativeName__icontains"]))#"englishName__icontains", "nativeName__icontains"]))
-    secondLanguage =  forms.ChoiceField( widget=s2forms.ModelSelect2Widget(model=Languages, search_fields=["englishName__icontains", "nativeName__icontains"]))
+    #firstLanguage =   forms.ChoiceField(widget=s2forms.ModelSelect2Widget(model=Languages, search_fields=["englishName__icontains", "nativeName__icontains"]))#"englishName__icontains", "nativeName__icontains"]))
+    #secondLanguage =  forms.ChoiceField( widget=s2forms.ModelSelect2Widget(model=Languages, search_fields=["englishName__icontains", "nativeName__icontains"]))
       
-class AccommodationForm(forms.Form):
-   
-    startDateAccommodation=   forms.DateField(label=STARTDATE, widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
-    endDateAccommodation=  forms.DateField(label=ENDDATE, widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
-    numberOfAdults= forms.IntegerField(label=NUMBERADULTS,  widget=forms.NumberInput(attrs={'class':'form-control'}))
-    numberOfChildren= forms.IntegerField(label=AMOUNT_OF_CHILDREN, widget=forms.NumberInput(attrs={'class':'form-control'}))
-    numberOfPets= forms.IntegerField(label=NUMBERPETS, widget=forms.NumberInput(attrs={'class':'form-control'}))
-    typeOfResidence =  forms.CharField(max_length=2, label=RESIDENCE,widget=forms.Select(choices=AccommodationOffer.ACCOMMODATIONCHOICES, attrs={'class':'form-control'}))
-   
+class AccommodationForm(OfferForm):
+
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = TranslationOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "startDateAccommodation" : STARTDATE,
+            "endDateAccommodation" : ENDDATE,
+            "numberOfAdults" : NUMBERADULTS,
+            "numberOfChildren" : AMOUNT_OF_CHILDREN,
+            "numberOfPets" : NUMBERPETS,
+            "typeOfResidence" : RESIDENCE,
+        }
+
+      
+# TODO when adding new offer types this needs to be updated
+OFFER_FORMS = {
+    'AC' : AccommodationForm,
+    'TL' : TranslationForm,
+    'TR' : TransportationForm,
+    'BU' : BuerocraticForm,
+    'BA' : ChildcareFormShortterm,
+    'CL' : ChildcareFormLongterm,
+    'WE' : WelfareForm,
+    'MP' : ManpowerForm,
+    'JO' : JobForm,
+    'DO' : DonationForm,
+
+}
