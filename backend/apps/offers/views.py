@@ -440,7 +440,6 @@ def filter(request):
     job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**filters))
     buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter(**filters))
     welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
-    donation = DonationOffer.objects.filter(**filters)
     manpower = ManpowerOffer.objects.filter(**filters)
     
     childLongEntries = mergeImages(childLong.qs[lastEntry:firstEntry])
@@ -468,7 +467,7 @@ def filter(request):
         context["entries"]["welfare"] = mergeImages(welfare.qs[lastEntry:firstEntry])
     if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
         numEntries += len(manpower)
-        context["entries"]["manpower"] = mergeImages(manpower.qs[lastEntry:firstEntry])
+        context["entries"]["manpower"] = mergeImages(manpower[lastEntry:firstEntry])
     if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
         numEntries += len(transportation.qs)
         context["entries"]["transportation"] = mergeImages(transportation.qs[lastEntry:firstEntry])
@@ -493,17 +492,6 @@ def handle_filter(request):
     #if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
     context = filter(request)
     return render(request, 'offers/index.html', context)
-    '''else :
-        logger.warning("trying for mapview!?")
-        query = ""
-        for entry in OFFERTYPESOBJ:
-            if request.POST.get(entry) == "True":
-                query +=entry+"=True&"
-            else:
-                query += entry+"=False&"
-        if request.POST.get("city"):
-            query +="city="+request.POST.get("city")+"&"
-        return redirect("/mapview/?"+query)'''
   
 def mergeImages(offers):
     resultOffers = []
