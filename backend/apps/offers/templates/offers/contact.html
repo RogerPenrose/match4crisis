@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-    {% blocktrans %}Get in touch!{% endblocktrans %}
+    {% blocktrans %}In Kontakt treten{% endblocktrans %}
 {% endblock %}
 {% block header %}
 <style>
@@ -29,22 +29,25 @@
         <div class="col-md-8" style="margin: 0 auto; ">
   	<div style="height:40px"></div>
 
-<h3 style="margin-bottom: 35px;">Get in touch now</h3>
+<h3 style="margin-bottom: 35px;">
+    {% blocktrans %}In Kontakt treten{% endblocktrans %}</h3>
 
-<p><b>Predefinded messages:</b></p>
-<form>
+<form action="/offers/{{id}}/contact" method="POST">
+    {% csrf_token %}
+    {% if genericForm.offerType.value == "AC" %}
+    <p><b>{%blocktrans%}Vorgefertigte Nachrichten:{%endblocktrans%}</b></p>
 <input type="radio" id="available" name="fav_language" value="available">
-<label for="available">Is this place still available?</label><br>
+<label for="available">{%blocktrans%}Ist das Inserat noch aktuell?{%endblocktrans%}</label><br>
 <input type="radio" id="visit" name="fav_language" value="visit">
-<label for="visit">Is it possible to visit?</label><br>
+<label for="visit">{%blocktrans%}Ist eine Besichtigung möglich ? {%endblocktrans%}</label><br>
 <input type="radio" id="call" name="fav_language" value="call">
-<label for="call">Can you call me back?</label>
-<br><br>
-<label><b>Your message:</b></label>
-<p><textarea class="form-control" rows="4" cols="50">Please write your message here ...</textarea></p>
-<p style="font-size:13px;">Note: Personal data (E-Mail and Name) will be attached automatically and displayed to the recipient.</p>
+<label for="call">{%blocktrans%}Können Sie mich zurückrufen?{%endblocktrans%}</label>
+<br><br>{% endif%}
+<label><b>{%blocktrans%}Eigene Nachricht:{%endblocktrans%}</b></label>
+<p><textarea class="form-control" rows="4" cols="50" placeholder="{%blocktrans%}Bitte geben Sie ihre Nachricht ein{%endblocktrans%}"></textarea></p>
+<p style="font-size:13px;">{%blocktrans%}<b>Achtung:</b> Deine persönlichen und Kontaktdaten (E-Mail und Name) werden automatisch mit dem Inserenten geteilt!{%endblocktrans%}</p>
 
-<input class="btn" type="submit">
+<input class="btn" type="submit"value="{%blocktrans%}Absenden{%endblocktrans%}">
 </form>
 </div>
 </div>
