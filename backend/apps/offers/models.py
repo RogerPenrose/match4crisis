@@ -102,7 +102,7 @@ class DonationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
-    HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Andere')]
+    HELP_CHOICES= [('AM', 'Begleitung'), ('LE', 'Juristische Hilfe'), ('OT', 'Andere')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 class ImageClass(models.Model):
