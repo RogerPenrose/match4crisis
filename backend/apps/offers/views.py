@@ -4,8 +4,12 @@ import logging
 from os.path import dirname, abspath, join
 import json
 import googlemaps
+from django.conf import settings
 import math
 import base64
+from django.template.loader import get_template
+from django.utils.translation import gettext_lazy as _
+from django.core.mail import send_mail
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
@@ -270,6 +274,22 @@ def contact(request, offer_id):
 
         # If the current user is a Refugee: Add this offer to their recently contacted offers
         if request.user.is_authenticated and request.user.isRefugee:
+            subject = _("Anfrage zu deinem Hilfsangebot")
+            
+            message = request.POST.get("message")
+            plaintext = get_template('offers/contact_email.txt')
+            htmly     = get_template('offers/contact_email.html')
+            contactData = _("E-Mail : ")+request.user.email+ " "
+            if request.user.sharePhoneNumber and request.user.phoneNumber is not None:
+                contactData += _("Telefon : ")+request.user.phoneNumber
+            recipientUser = GenericOffer.objects.get(pk=offer_id).userId
+            recipient = recipientUser.email
+            logger.warning("Trying to send: "+message+" To: "+recipient)
+            d = { "message": message, "contact": contactData,'sender': request.user.first_name+" "+request.user.last_name, 'recipient': recipientUser.first_name, 'message':message, "link":"http://match4crisis.org/offers/"+str(offer_id)+"/"}
+            text_content = plaintext.render(d)
+            html_content = htmly.render(d)
+            send_mail(subject, message,
+                      settings.DEFAULT_FROM_EMAIL, [recipient], html_message=html_content)
             offer = GenericOffer.objects.get(pk=offer_id)
             refugee = Refugee.objects.get(user=request.user)
             refugee.addRecentlyContactedOffer(offer)
