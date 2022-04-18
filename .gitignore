@@ -1,3 +1,5 @@
 __pycache__/
 database.prod.env
 backend.prod.env
+.gitignore
+notes.md

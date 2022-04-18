@@ -106,12 +106,13 @@ mapViewPage = {
 
         let mapOptions;
         
-        if (typeof getParamUrlCenter[0] === "number" && typeof getParamUrlCenter[1] === "number") {
+        if (!isNaN(getParamUrlCenter[0]) && !isNaN(getParamUrlCenter[1])) {
             mapOptions = {
                 center: getParamUrlCenter,
                 zoom: this.options.zoom
             }
         } else {
+            this.setGetParameter([["lng", this.options.startPosition[0]], ["lat", this.options.startPosition[1]]])
             mapOptions = {
                 center: this.options.startPosition,
                 zoom: this.options.zoom
@@ -128,7 +129,7 @@ mapViewPage = {
             preferCanvas: true
           }
     
-        this.mapObject = L.map(this.options.mapViewContainerId,mapOptions);
+        this.mapObject = L.map(this.options.mapViewContainerId, mapOptions);
 
         const bb = urlParams.get('bb')
         if (bb){
@@ -574,7 +575,6 @@ function handleNumber(name, state){
 }
 
 document.addEventListener("DOMContentLoaded", function domReady() {
-
     mapViewPage.initializeMap()
     mapViewPage.loadMapMarkers()
     mapViewPage.registerEventHandlers(document, window)
