@@ -571,7 +571,7 @@ def getFormForOfferType(offerType):
         return JobForm()
 @login_required
 def create(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and user_is_allowed(request, 0):
         return update(request, 0, newly_created=True)
     elif request.method == 'GET':
         context = {}
@@ -591,6 +591,9 @@ def save(request):
 def update(request, offer_id, newly_created = False):
     form = GenericForm(request.POST)
        # form.image = request.FILES
+    targetUser = GenericOffer.objects.get(pk=offer_id).userId.id
+    if not user_is_allowed(request,targetUser ):
+        return HttpResponse(str("Nope!"))
     if form.is_valid():
         currentForm = form.cleaned_data
         g = updateGenericModel(currentForm, offer_id, request.user.id)
@@ -727,10 +730,11 @@ def user_is_allowed(request, target_id):
         user = None
     allowed = False
     if user is not None:
-        if request.user.id == target_id or user.is_superuser:
+        if request.user.id == target_id or user.is_superuser or target_id == 0:
             allowed = True
         else: 
             return allowed
+    return allowed
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     if user_is_allowed(request, generic.userId.id):
