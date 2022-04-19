@@ -4,8 +4,12 @@ import logging
 from os.path import dirname, abspath, join
 import json
 import googlemaps
+from django.conf import settings
 import math
 import base64
+from django.template.loader import get_template
+from django.utils.translation import gettext_lazy as _
+from django.core.mail import send_mail
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
@@ -43,7 +47,6 @@ def getCityBbFromLocation(locationData):
         if 'locality' in x["types"]:
             returnVal["city"] = x["long_name"]
     
-    logger.warning(str(returnVal))
     
     return returnVal
 
@@ -78,11 +81,26 @@ def contact(request, offer_id):
 
         # If the current user is a Refugee: Add this offer to their recently contacted offers
         if request.user.is_authenticated and request.user.isRefugee:
+            subject = _("Anfrage zu deinem Hilfsangebot")
+            
+            message = request.POST.get("message")
+            plaintext = get_template('offers/contact_email.txt')
+            htmly     = get_template('offers/contact_email.html')
+            contactData = _("E-Mail : ")+request.user.email+ " "
+            if request.user.sharePhoneNumber and request.user.phoneNumber is not None:
+                contactData += _("Telefon : ")+request.user.phoneNumber
+            recipientUser = GenericOffer.objects.get(pk=offer_id).userId
+            recipient = recipientUser.email
+            logger.warning("Trying to send: "+message+" To: "+recipient)
+            d = { "message": message, "contact": contactData,'sender': request.user.first_name+" "+request.user.last_name, 'recipient': recipientUser.first_name, 'message':message, "link":"http://match4crisis.org/offers/"+str(offer_id)+"/"}
+            text_content = plaintext.render(d)
+            html_content = htmly.render(d)
+            send_mail(subject, message,
+                      settings.DEFAULT_FROM_EMAIL, [recipient], html_message=html_content)
             offer = GenericOffer.objects.get(pk=offer_id)
             refugee = Refugee.objects.get(user=request.user)
             refugee.addRecentlyContactedOffer(offer)
-
-        return HttpResponseRedirect(request.path[:-len("/contact")])
+        return detail(request, offer_id, contacted = True)
     else:
         details = getOfferDetails(request,offer_id)
         return render(request, 'offers/contact.html', details)
@@ -113,7 +131,6 @@ def search(request):
         latMax = locationData["latMax"]+kmInLat(rangeKm)
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    logger.warning("LNG:"+str(lngMin)+"-"+str(lngMax)+"LAT:"+str(latMin)+"-"+str(latMax))
     accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
     translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
     transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
@@ -209,7 +226,6 @@ def filter(request):
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
         filters = {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
     pageCount = int(request.POST.get("page", 0))
-    logger.warning(str(filters))
     ids = []
     mapparameter = ""
     currentFilter = dict(request.POST)
@@ -235,7 +251,6 @@ def filter(request):
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
-    logger.warning("First : "+str(firstEntry)+" Last: "+str(lastEntry)+" N_ENTRIES"+str(N_ENTRIES)+" Categories: "+str(categoryCounter))
     childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
     childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
     
@@ -246,7 +261,6 @@ def filter(request):
     job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**filters))
     buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter(**filters))
     welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
-    donation = DonationOffer.objects.filter(**filters)
     manpower = ManpowerOffer.objects.filter(**filters)
     
     childLongEntries = mergeImages(childLong.qs[lastEntry:firstEntry])
@@ -274,7 +288,7 @@ def filter(request):
         context["entries"]["welfare"] = mergeImages(welfare.qs[lastEntry:firstEntry])
     if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
         numEntries += len(manpower)
-        context["entries"]["manpower"] = mergeImages(manpower.qs[lastEntry:firstEntry])
+        context["entries"]["manpower"] = mergeImages(manpower[lastEntry:firstEntry])
     if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
         numEntries += len(transportation.qs)
         context["entries"]["transportation"] = mergeImages(transportation.qs[lastEntry:firstEntry])
@@ -291,25 +305,12 @@ def filter(request):
     if maxPage > 1:
         context["pagination"] = True
     context["ResultCount"] = numEntries
-    logger.warning("Request was: "+str(dict(request.POST)))
-    logger.warning("Sending: "+str(context))
     return  context
 
 def handle_filter(request):
     #if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
     context = filter(request)
     return render(request, 'offers/index.html', context)
-    '''else :
-        logger.warning("trying for mapview!?")
-        query = ""
-        for entry in OFFERTYPESOBJ:
-            if request.POST.get(entry) == "True":
-                query +=entry+"=True&"
-            else:
-                query += entry+"=False&"
-        if request.POST.get("city"):
-            query +="city="+request.POST.get("city")+"&"
-        return redirect("/mapview/?"+query)'''
   
 def mergeImages(offers):
     resultOffers = []
@@ -457,12 +458,12 @@ def user_is_allowed(request, target_id):
         user = None
     allowed = False
     if user is not None:
-        if request.user.id == target_id or user.is_superuser:
+        if request.user.id == target_id or user.is_superuser or target_id == 0:
             allowed = True
             if(user.is_superuser):
                 logger.warning("User is super user: "+str(user.is_superuser))
         else: 
-            logger.warning("User is not authenticated ? "+str(request.user.id)+" VS "+str(target_id))
+            return allowed
     return allowed
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
@@ -491,53 +492,57 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "AC":
         detail = get_object_or_404(AccommodationOffer, pk=generic.id)
         detailForm = AccommodationForm(model_to_dict(detail))
-        return {'offerType': "Accommodation", 'generic': genericForm, 'detail': detailForm, "location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'detail': detailForm, "location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))
-        return {'offerType': "Medical Assistance", 'generic': genericForm, 'detail': detailForm,"location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'detail': detailForm,"location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return {'offerType': "Translation","location": location,'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(),"location": location,'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationForm(model_to_dict(detail))
-        return {'offerType': "Transportation", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerForm(model_to_dict(detail))
-        return {'offerType': "Manpower", 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "DO":
         detail = get_object_or_404(DonationOffer, pk=generic.id)
         detailForm = DonationForm(model_to_dict(detail))
-        return {'offerType': "Donations", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
         detailForm = ChildcareFormShortterm(model_to_dict(detail))
-        return {'offerType': "Babysitting","location": location, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(),"location": location, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "CL":
         detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
         detailForm = ChildcareFormLongterm(model_to_dict(detail))
-        return {'offerType': "Childcare Longterm", "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "JO":
         detail = get_object_or_404(JobOffer, pk=generic.id)
         detailForm = JobForm(model_to_dict(detail))
-        return {'offerType': "Job", 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
         detailForm = BuerocraticForm(model_to_dict(detail))
-        return {'offerType': "Buerocratic", 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
+        return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
 
-def detail(request, offer_id, edit_active = False,  newly_created = False) :
+def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
     context = getOfferDetails(request, offer_id)
+    offer = GenericOffer.objects.get(pk=offer_id)
+    context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
+    context["username"] = offer.userId.first_name
     if edit_active:
         context["edit_active"] = edit_active
     if newly_created:
         context["newly_created"] = newly_created
+    if contacted:
+        context["contacted"] = contacted
     if request.user.is_authenticated and request.user.isRefugee:
         # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
-        offer = GenericOffer.objects.get(pk=offer_id)
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
         refugee = Refugee.objects.get(user=request.user)
         refugee.addRecentlyViewedOffer(offer)

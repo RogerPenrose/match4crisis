@@ -18,16 +18,16 @@ def validate_plz(value):
 
 class GenericOffer(models.Model):
     OFFER_CHOICES = [
-    ('AC', 'Unterbringung'),
-    ('TL', 'Übersetzung'),
-    ('TR', 'Logistik'),
-    ('BU', 'Bürokratie'),
-    ('MP', 'Manneskraft'),
-    ('CL', 'Kinderbetreuung Langzeit'),
-    ('BA', 'Babysitting'),
-    ('WE', 'Medizinische Hilfe'),
-    ('JO', 'Jobangebot'),
-    ('DO', 'Spende')
+    ('AC', _('Unterbringung')),
+    ('TL', _('Übersetzung')),
+    ('TR', _('Logistik')),
+    ('BU', _('Bürokratie')),
+    ('MP', _('Manneskraft')),
+    ('CL', _('Kinderbetreuung Langzeit')),
+    ('BA', _('Babysitting')),
+    ('WE', _('Medizinische Hilfe')),
+    ('JO', _('Jobangebot')),
+    ('DO', _('Spende'))
     ]
     offerTitle = models.TextField(max_length=100, default="")
     location = models.TextField(max_length=300, default="")
@@ -52,46 +52,46 @@ class GenericOffer(models.Model):
 class ChildcareOfferLongterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     GENDER_CHOICES = [
-        ('NO', "Keine Angabe"),
-        ('FE', "Weiblich"),
-        ('MA', "Männlich"),
-        ('OT', "Andere"),
+        ('NO', _("Keine Angabe")),
+        ('FE', _("Weiblich")),
+        ('MA', _("Männlich")),
+        ('OT', _("Andere")),
     ]
     gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 class ChildcareOfferShortterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     GENDER_CHOICES = [
-        ('NO', "Keine Angabe"),
-        ('FE', "Weiblich"),
-        ('MA', "Männlich"),
-        ('OT', "Andere"),
+        ('NO', _("Keine Angabe")),
+        ('FE', _("Weiblich")),
+        ('MA', _("Männlich")),
+        ('OT', _("Andere")),
     ]
     gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
     numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)
 class JobOffer(models.Model):
     JOB_CHOICES = [
-        ("ACA","Akademische Hilfe"),
-        ("ADM","Administration"),
-        ("ADV","Fortbildung"),
-        ("CON","Konferenzen und Events"),
-        ("FAC","Anlagenbetrieb"),
-        ("FIN","Finance und Buchhaltung"),
-        ("GEN","Allgemeine Verwaltung"),
-        ("HEA","Gesundheitsservices"),
-        ("HUM","Personalwesen"),
-        ("INF","IT"),
-        ("INT","International Program and Services"),
-        ("LEG","Jura"),
-        ("LIB","BÜchereiverwaltung"),
-        ("MAR","Marketing"),
-        ("OFF","Büro / Verwaltung"),
-        ("PER","Kunst und Museumsverwaltung"),
-        ("PUB","Öffentliche Sicherheit"),
-        ("RES","Forschung und Forschungsadministration"),
-        ("SPO","Sport"),
-        ("STU","Studentische Dienstleistungen"),
-        ("HAN","Handwerk")]
+        ("ACA",_("Akademische Hilfe,")),
+        ("ADM",_("Administration,")),
+        ("ADV",_("Fortbildung,")),
+        ("CON",_("Konferenzen und Events,")),
+        ("FAC",_("Anlagenbetrieb,")),
+        ("FIN",_("Finance und Buchhaltung,")),
+        ("GEN",_("Allgemeine Verwaltung,")),
+        ("HEA",_("Gesundheitsservices,")),
+        ("HUM",_("Personalwesen,")),
+        ("INF",_("IT,")),
+        ("INT",_("International Program and Services,")),
+        ("LEG",_("Jura,")),
+        ("LIB",_("BÜchereiverwaltung,")),
+        ("MAR",_("Marketing,")),
+        ("OFF",_("Büro / Verwaltung,")),
+        ("PER",_("Kunst und Museumsverwaltung,")),
+        ("PUB",_("Öffentliche Sicherheit,")),
+        ("RES",_("Forschung und Forschungsadministration,")),
+        ("SPO",_("Sport,")),
+        ("STU",_("Studentische Dienstleistungen,")),
+        ("HAN",_("Handwerk"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
@@ -102,7 +102,7 @@ class DonationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
-    HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Andere')]
+    HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 class ImageClass(models.Model):
@@ -110,16 +110,16 @@ class ImageClass(models.Model):
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
 class ManpowerOffer(models.Model):
-    HELP_CHOICES= [('ON', 'Online'), ('OS', 'On-site')]
+    HELP_CHOICES= [('ON', _('Online')), ('OS', _('Vor Ort'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_manpower = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
 
 class AccommodationOffer(models.Model):
 
     ACCOMMODATIONCHOICES = {
-        ('SO', 'Sofa / Bed'),
-        ('RO', 'Eigener Raum'),
-        ('HO', 'Gesamte Wohnung / Haus')
+        ('SO', _('Sofa / Bed')),
+        ('RO', _('Eigener Raum')),
+        ('HO', _('Gesamte Wohnung / Haus'))
     }
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
@@ -134,7 +134,7 @@ class AccommodationOffer(models.Model):
         return self.typeOfResidence
 
 class WelfareOffer(models.Model):
-    WELFARE_CHOICES = [("ELD", "Altenpflege"),("DIS", "Behindertenpflege"), ("PSY", "Psychologische Hilfe")]
+    WELFARE_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
     helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
@@ -152,8 +152,8 @@ class TransportationOffer(models.Model):
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    firstLanguage = models.ForeignKey(Languages,related_name='firstLanguage', on_delete=models.CASCADE, default="de")
-    secondLanguage = models.ForeignKey(Languages,related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
+    firstLanguage = models.ForeignKey(Languages,verbose_name=_("Erste Sprache"), related_name='firstLanguage', on_delete=models.CASCADE, default="de")
+    secondLanguage = models.ForeignKey(Languages,verbose_name=_("Zweite Sprache"),related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer,

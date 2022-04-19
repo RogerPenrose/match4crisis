@@ -6,8 +6,6 @@ from apps.ineedhelp.models import Refugee
 from apps.offers.models import getSpecificOffers
 from apps.offers.views import mergeImages
 from apps.accounts.decorator import refugeeRequired
-
-
 def thx(request):
     return render(request, "thanks.html")
 

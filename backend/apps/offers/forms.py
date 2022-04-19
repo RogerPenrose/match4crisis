@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_select2 import forms as s2forms
 import logging
+from django.utils.translation import gettext_lazy as _
 from match4crisis.constants.countries import countries
 from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 from apps.accounts.models import Languages
@@ -108,6 +109,10 @@ class ChildcareFormShortterm(OfferForm):
             "numberOfChildrenToCare" : AMOUNT_OF_CHILDREN,
             "isRegular" : REGULAR_CHILDCARE,
         }
+        
+        widgets = {
+            "isRegular" : forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
+        }
 
 class ImageForm(forms.Form):
     
@@ -198,7 +203,7 @@ class AccommodationForm(OfferForm):
 
     class Meta:
         attrs = { "class": "form-control"}
-        model = TranslationOffer
+        model = AccommodationOffer
         exclude = ("genericOffer",)
 
         labels = {

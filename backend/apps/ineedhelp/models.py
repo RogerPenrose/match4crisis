@@ -2,7 +2,6 @@ from django.db import models
 from django.http import HttpResponse
 from django.utils import timezone
 import uuid
-
 from apps.accounts.models import User
 from apps.offers.models import GenericOffer
 
@@ -57,8 +56,9 @@ class Refugee(models.Model):
             existingEntry.dateContacted = timezone.now()
             existingEntry.save()
         except RecentlyContactedIntermediary.DoesNotExist:
-            self.recentlyViewedOffers.add(offer, through_defaults={'dateContacted': timezone.now()})
-            if(self.recentlyViewedOffers.all().count() > self.MAX_RECENTLY_VIEWED):
+            self.recentlyContactedOffers.add(offer, through_defaults={'dateContacted': timezone.now()})
+
+            if(self.recentlyContactedOffers.all().count() > self.MAX_RECENTLY_VIEWED):
                 RecentlyContactedIntermediary.objects.filter(refugee=self).earliest('dateContacted').delete()
 
 
