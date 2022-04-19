@@ -126,8 +126,6 @@ class AccommodationOffer(models.Model):
     numberOfChildren = models.IntegerField(default=0, blank=True)
     numberOfPets = models.IntegerField(default=0, blank=True)
     typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
-    streetName = models.CharField(max_length=200, blank=True)
-    streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     startDateAccommodation = models.DateField(default=timezone.now)
     endDateAccommodation = models.DateField(blank =True, null=True)
     def __str__(self):

@@ -215,6 +215,11 @@ class AccommodationForm(OfferForm):
             "typeOfResidence" : RESIDENCE,
         }
 
+        widgets = {
+            "startDateAccommodation" : forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}),
+            "endDateAccommodation" : forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}),
+        }
+
       
 # TODO when adding new offer types this needs to be updated
 OFFER_FORMS = {
