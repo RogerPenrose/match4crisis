@@ -119,7 +119,8 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
         <tbody id="detailTable">
             {% for field in detailForm.visible_fields %}
             <tr>        
-                <td id="{{ field.name }}">{{ field.label_tag }} {{ field }}</td>   
+                <td id="{{ field.name }}" style="    display: flex;
+                flex-direction: column-reverse;">{{ field }} {{ field.label_tag }} </td>   
             </tr>
             {% endfor %}
         </tbody>
@@ -130,7 +131,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
 </form>
 </div></div></div>
 
-<script type="text/javascript" src="create_js"></script>
+<script type="text/javascript" src="{% url 'create_js' %}"></script>
 {% if request.GET.type == "TL" %}
 {{ detailForm.media.js }}
 {% endif %}

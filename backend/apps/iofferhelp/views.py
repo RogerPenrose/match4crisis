@@ -71,7 +71,7 @@ def paused_offers(request):
 @helperRequired
 def incomplete_offers(request):
     userOffers = GenericOffer.objects.filter(userId=request.user.id)
-    incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
+    incompleteOffers = getSpecificOffers(userOffers.filter(incomplete=True))
     context = {"offers": incompleteOffers}
     return render(request, "incomplete_offers.html", context)
 

@@ -97,7 +97,7 @@ function validateForm(){
         document.getElementById("thisForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
             at_least_one_filled = at_least_one_filled || r.checked;
         })
-        return (allAreFilled = allAreFilled && at_least_one_filled);
+        allAreFilled = allAreFilled && at_least_one_filled;
       } else {
         allAreFilled = allAreFilled && i.value;
       }
@@ -109,7 +109,12 @@ function save_without_active(){
     var checkbox= document.getElementById("id_active")
     checkbox.checked = false
     var form = document.getElementById("thisForm");
-    form.action = "/offers/save"
+    var pathArray = window.location.pathname.split('/');
+    if(pathArray[pathArray.length - 1] === "edit"){
+        form.action = "/offers/" + pathArray[pathArray.length - 2] + "/save";
+    }else{
+        form.action = "/offers/save";
+    }
     form.submit();
 }
 
@@ -117,10 +122,13 @@ function save_with_active(){
     var checkbox= document.getElementById("id_active")
     checkbox.checked = true
     var form = document.getElementById("thisForm");
-    validate = validateForm()
-    if (!validate){
-        alert('Fill all the fields');
-        return
+    var pathArray = window.location.pathname.split('/');
+    if(pathArray[pathArray.length - 1] === "edit"){
+        form.action = "/offers/" + pathArray[pathArray.length - 2] + "/edit";
+    }else{
+        form.action = "/offers/createOffer";
     }
-    form.submit();
+    // if(validateForm()){
+    //     form.submit();
+    // }
 }

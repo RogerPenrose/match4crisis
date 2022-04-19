@@ -9,13 +9,13 @@ import base64
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
-from apps.accounts.decorator import refugeeRequired
+from apps.accounts.decorator import helperRequired, refugeeRequired
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildCareFilterLongterm, ChildCareFilterShortterm, WelfareFilter, JobFilter
-from .models import GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
-from .forms import AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
+from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
+from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
 from django.contrib.auth.decorators import login_required
 
 gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
@@ -30,201 +30,7 @@ OFFERTYPESOBJ = { "accommodation": { "title": "Accommodation", "requestName": "a
                 "welfare" : { "title" : "Medical Assistance", "requestName": "welfare", "modelName": "WelfareOffer", "offersName": "WelfareOffers"},
                 "donation" : { "title" : "Donations", "requestName": "donation", "modelName": "DonationOffer", "offersName": "DonationOffers"}}
 logger = logging.getLogger("django")
-def updateGenericModel( form, offer_id=0, userId=None):
-    user = User.objects.get(pk=userId) 
-    if offer_id== 0:
-        #create an Object..
-        g = GenericOffer(userId=user, \
-                offerType=form.get("offerType"),  \
-                offerTitle = form.get("offerTitle"), \
-                created_at=timezone.now(), \
-                offerDescription=form.get("offerDescription"), \
-                isDigital=form.get("isDigital"),  \
-                active=form.get("active"),  \
-                lat=form.get("lat"), \
-                lng=form.get("lng"), \
-                bb=form.get("bb"), \
-                cost=form.get("cost"), \
-                )
-        g.save()
-        return g
-    else:
-        g = GenericOffer.objects.get(pk=offer_id)
-        if g.userId.id == userId or user.is_superuser :# If the same user is there to edit OR the user is a superuser...
-            g.offerType=form.get("offerType")
-            g.offerTitle=form.get("offerTitle")
-            g.created_at=timezone.now()
-            g.offerDescription=form.get("offerDescription")
-            g.isDigital=form.get("isDigital")
-            g.active=form.get("active")
-            g.lat=form.get("lat")
-            g.lng=form.get("lng")
-            g.bb=form.get("bb")
-            g.cost=form.get("cost")
-            g.save()
-            return g
-        else:
-            logger.warning("Not allowed to update")
-            return None
 
-def updateChildcareShortTermModel(g, form, offer_id=0):
-    if offer_id == 0:
-        a = ChildcareOfferShortterm(genericOffer=g, \
-            numberOfChildrenToCare=form.get("numberOfChildrenToCare"), \
-            gender_shortterm=form.get("gender_shortterm"), \
-            isRegular=form.get("isRegular"))
-        a.save()
-        return a
-    else:
-        a = ChildcareOfferShortterm.objects.get(pk=offer_id)
-        a.genericOffer=g
-        a.numberOfChildrenToCare=form.get("numberOfChildrenToCare")
-        a.gender_shortterm=form.get("gender_shortterm")
-        a.isRegular=form.get("isRegular")
-        a.save()
-        return a
-    
-def updateChildcareLongTermModel(g, form, offer_id=0):
-    if offer_id == 0:
-        a = ChildcareOfferLongterm(genericOffer=g, \
-            gender_longterm=form.get("gender_longterm"))
-        a.save()
-        return a
-    else:
-        a = ChildcareOfferLongterm.objects.get(pk=offer_id)
-        a.genericOffer=g
-        a.gender=form.get("gender_longterm")
-        a.save()
-        return a
-
-def updateAccommodationModel(g, form, offer_id=0):
-    if offer_id == 0:
-        a = AccommodationOffer(genericOffer=g, \
-            numberOfAdults=form.get("numberOfAdults"), \
-            numberOfChildren=form.get("numberOfChildren"), \
-            typeOfResidence=form.get("typeOfResidence"), \
-            numberOfPets=form.get("numberOfPets"), \
-            startDateAccommodation= form.get("startDateAccommodation") ,\
-            endDateAccommodation= form.get("endDateAccommodation"))
-        a.save()
-        return a
-    else:
-        a = AccommodationOffer.objects.get(pk=offer_id)
-        a.genericOffer=g
-        a.numberOfAdults=form.get("numberOfAdults")
-        a.numberOfChildren=form.get("numberOfChildren")
-        a.typeOfResidence=form.get("typeOfResidence")
-        a.numberOfPets=form.get("numberOfPets")
-        a.startDateAccommodation= form.get("startDateAccommodation") 
-        a.endDateAccommodation= form.get("endDateAccommodation")
-        a.save()
-        return a
-
-def updateJobModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = JobOffer(genericOffer=g, \
-            jobType=form.get("jobType"))
-        t.save()
-        return t
-    else:
-        t = JobOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.jobType=form.get("jobType")
-        t.requirements=form.get("requirements")
-        t.jobTitle=form.get("jobTitle")
-        t.save()
-        return t
-def updateWelfareModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = WelfareOffer(genericOffer=g, \
-            helpType_welfare=form.get("helpType_welfare"))
-        t.save()
-        return t
-    else:
-        t = WelfareOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.helpType_welfare=form.get("helpType_welfare")
-        t.save()
-        return t
-
-def updateDonationModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = DonationOffer(genericOffer=g, \
-            donationTitle=form.get("donationTitle"),\
-            account=form.get("account"))
-        t.save()
-        return t
-    else:
-        t = DonationOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.donationTitle=form.get("donationTitle")
-        t.account=form.get("account")
-        t.save()
-        return t
-
-def updateManpowerModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = ManpowerOffer(genericOffer=g, \
-            helpType_manpower=form.get("helpType_manpower"))
-        t.save()
-        return t
-    else:
-        t = ManpowerOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.helpType_manpower=form.get("helpType_manpower")
-        t.save()
-        return t
-        
-def updateBuerocraticModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = BuerocraticOffer(genericOffer=g, \
-            helpType_buerocratic=form.get("helpType_buerocratic"))
-        t.save()
-        return t
-    else:
-        t = BuerocraticOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.helpType_buerocratic=form.get("helpType_buerocratic")
-        t.save()
-        return t
-    
-def updateTransportationModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = TransportationOffer(genericOffer=g, \
-            locationEnd=form.get("locationEnd"), \
-            latEnd=form.get("latEnd"),\
-            lngEnd = form.get("lngEnd"),\
-            bbEnd = form.get("bbEnd"),\
-            date = form.get("date"), \
-            numberOfPassengers=form.get("numberOfPassengers"))
-        t.save()
-        return t
-    else:
-        t = TransportationOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.locationEnd=form.get("locationEnd")
-        t.latEnd=form.get("latEnd")
-        t.lngEnd = form.get("lngEnd")
-        t.bbEnd = form.get("bbEnd")
-        t.date = form.get("date")
-        t.numberOfPassengers=form.get("numberOfPassengers")
-        t.save()
-        return t
-    
-def updateTranslationModel(g, form, offer_id=0):
-    if offer_id == 0:
-        t = TranslationOffer(genericOffer=g, \
-                        firstLanguage=form.get("firstLanguage"), \
-                        secondLanguage=form.get("secondLanguage"))
-        t.save()
-        return t
-    else:
-        t = TranslationOffer.objects.get(pk=offer_id)
-        t.genericOffer=g
-        t.firstLanguage=form.get("firstLanguage")
-        t.secondLanguage=form.get("secondLanguage")
-        t.save()
-        return t
 def getCityBbFromLocation(locationData):
     reverse_geocode_result = gmaps.geocode(locationData)
     returnVal = {
@@ -550,176 +356,98 @@ def selectOfferType(request):
     for entry in GenericOffer.OFFER_CHOICES[:-1]:
         context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
     return render(request, 'offers/selectOfferType.html', context)
-def getFormForOfferType(offerType):
-    if offerType == "AC":
-        return AccommodationForm()
-    elif offerType == "TL":
-        return TranslationForm()
-    elif offerType == "TR":
-        return TransportationForm()
-    elif offerType == "BU":
-        return BuerocraticForm()
-    elif offerType == "MP":
-        return ManpowerForm()
-    elif offerType == "CL":
-        return ChildcareFormLongterm()
-    elif offerType == "BA":
-        return ChildcareFormShortterm()
-    elif offerType == "WE":
-        return WelfareForm()
-    elif offerType == "JO":
-        return JobForm()
+
+
 @login_required
+@helperRequired
 def create(request):
     if request.method == 'POST':
-        return update(request, 0, newly_created=True)
+        return update(request, newly_created=True)
     elif request.method == 'GET':
         context = {}
         offerType = request.GET.get("type")
         newOffer = GenericOffer(offerType=offerType)
         context["genericForm"]  = GenericForm(instance=newOffer)
-        context["detailForm"] = getFormForOfferType(request.GET.get("type"))
+        context["detailForm"] = OFFER_FORMS[request.GET.get("type")]()
         if request.GET.get("type") == "AC":
             context["imageForm"] = ImageForm()
         return render(request, 'offers/create.html', context)
-def save(request):
-    # Fill all empty fields with placeholder values ? 
-    form = GenericForm(request.POST)
-    for entry in form.errors.as_data():
-        form.fields[entry] = "-"
-    logger.warning(str(form.errors.as_data()))
+
+@login_required
+def save(request, offer_id=None):
+    """
+    Saves the offer in its current state and marks it as incomplete
+    """
+    if request.method == 'POST':
+        if offer_id is None:
+            genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
+            specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
+        else:
+            genOffer = GenericOffer.objects.get(id=offer_id)
+            if(not user_is_allowed(request, genOffer.userId.id)):
+                return HttpResponseForbidden("You're not allowed to edit other users' offers.")
+            specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
+        genOffer.incomplete=True
+        genForm = GenericForm(request.POST, instance=genOffer)
+        specForm = OFFER_FORMS[request.POST["offerType"]](request.POST, instance=specOffer)
+        for field in genForm.fields:
+            genForm.fields[field].required = False
+        for field in specForm.fields:
+            specForm.fields[field].required = False
+        genForm.save()
+        specForm.save()
+
     return HttpResponseRedirect("/iofferhelp/helper_dashboard")
 
-def update(request, offer_id, newly_created = False):
-    form = GenericForm(request.POST)
-       # form.image = request.FILES
-    if form.is_valid():
-        currentForm = form.cleaned_data
-        g = updateGenericModel(currentForm, offer_id, request.user.id)
-        if request.FILES.get("image") != None:
-            counter = 0
-            images = request.FILES.getlist('image')
-            for image in images:
-                counter = counter + 1
-                image = ImageClass(image=image, offerId = g)
-                image.save()
-        if g is not None:
-            if currentForm.get("offerType") == "MP": # Special case since we have no particular fields in this type.
-                buForm = ManpowerForm(request.POST)
-                if buForm.is_valid():
-                    currentForm = buForm.cleaned_data
-                    a = updateManpowerModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(buForm.errors))
-            if currentForm.get("offerType") == "DO": # Special case since we have no particular fields in this type.
-                buForm = DonationForm(request.POST)
-                if buForm.is_valid():
-                    currentForm = buForm.cleaned_data
-                    a = updateDonationModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(buForm.errors))
-            if currentForm.get("offerType") == "WE": # Special case since we have no particular fields in this type.
-                weForm = WelfareForm(request.POST)
-                if weForm.is_valid():
-                    currentForm = weForm.cleaned_data
-                    a = updateWelfareModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(weForm.errors))
-            if currentForm.get("offerType") == "JO": # Special case since we have no particular fields in this type.
-                joForm = JobForm(request.POST)
-                if joForm.is_valid():
-                    currentForm = joForm.cleaned_data
-                    a = updateJobModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(joForm.errors))
-            if currentForm.get("offerType") == "BA": # Special case since we have no particular fields in this type.
-                baForm = ChildcareFormShortterm(request.POST)
-                if baForm.is_valid():
-                    currentForm = baForm.cleaned_data
-                    a = updateChildcareShortTermModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(baForm.errors))
-            if currentForm.get("offerType") == "CL": # Special case since we have no particular fields in this type.
-                clForm = ChildcareFormLongterm(request.POST)
-                if clForm.is_valid():
-                    currentForm = clForm.cleaned_data
-                    a = updateChildcareLongTermModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(clForm.errors))
-            if currentForm.get("offerType") == "BU": # Special case since we have no particular fields in this type.
-                buForm = BuerocraticForm(request.POST)
-                if buForm.is_valid():
-                    currentForm = buForm.cleaned_data
-                    a = updateBuerocraticModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(buForm.errors))
-            elif currentForm.get("offerType") == "AC":
-                acForm = AccommodationForm(request.POST)
-                if acForm.is_valid():
-                    currentForm = acForm.cleaned_data
-                    a = updateAccommodationModel(g, currentForm, offer_id)
-                    offer_id = a.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(acForm.errors))
-            elif currentForm.get("offerType") == "TR":
-                trForm = TransportationForm(request.POST)
-                if trForm.is_valid():
-                    currentForm = trForm.cleaned_data
-                    t = updateTransportationModel(g, currentForm, offer_id)
-                    offer_id = t.genericOffer.id
-                    
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(trForm.errors))
-            if currentForm.get("offerType") == "TL":
-                tlForm = TranslationForm(request.POST)
-                if tlForm.is_valid():
-                    currentForm = tlForm.cleaned_data
-                    t = updateTranslationModel(g, currentForm,offer_id)
-                    
-                    offer_id = t.genericOffer.id
-                    return detail(request, offer_id, newly_created=newly_created)
-                else:
-                    return HttpResponse(str(tlForm.errors))
-        else:
-            return HttpResponse("Wrong User")
-    
+@login_required
+def update(request, offer_id = None, newly_created = False):
+    if offer_id is None:
+        genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
+        specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     else:
-        return HttpResponse(str(form.errors))
-def getLocationFromOffer(offer):
-    reverse_geocode_result = gmaps.reverse_geocode((offer.lat, offer.lng))
-    returnVal = {"lat": str(offer.lat), "lng": str(offer.lng)}
-    for x in reverse_geocode_result[0]['address_components']:
-        if 'country' in x["types"]:
-            returnVal["country"] = x["short_name"]
-        if 'locality' in x["types"]:
-            returnVal["city"] = x["long_name"]
-        if 'postal_code' in x["types"]:
-            returnVal["plz"] = x["long_name"]
-        if 'sublocality_level_1' in x["types"]:
-            returnVal["quarter"] = x["long_name"]
-        if 'street_number' in x["types"]:
-            returnVal["streetnumber"] = x["long_name"]
-        if 'route' in x["types"]:
-            returnVal["streetname"] = x["long_name"]
+        genOffer = GenericOffer.objects.get(pk=offer_id)
+        if(not user_is_allowed(request, genOffer.userId.id)):
+            return HttpResponseForbidden("You're not allowed to edit other users' entries.")
+        specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
+    genOffer.incomplete=False
+    genOffer.active=True
+    genForm = GenericForm(request.POST, instance=genOffer)
+    specForm = OFFER_FORMS[request.POST["offerType"]](request.POST, instance=specOffer)
+    genForm.save()
+    specForm.save()
+
+    if request.FILES.get("image") != None:
+        counter = 0
+        images = request.FILES.getlist('image')
+        for image in images:
+            counter = counter + 1
+            image = ImageClass(image=image, offerId = genOffer)
+            image.save()
+
+    return detail(request, genOffer.id, newly_created=newly_created)
+    #return HttpResponseRedirect("detail")
     
-    returnVal["string"] = reverse_geocode_result[0]["formatted_address"]
-    return returnVal
+def getLocationFromOffer(offer):
+    if(offer.lat is not None and offer.lng is not None):
+        reverse_geocode_result = gmaps.reverse_geocode((offer.lat, offer.lng))
+        returnVal = {"lat": str(offer.lat), "lng": str(offer.lng)}
+        for x in reverse_geocode_result[0]['address_components']:
+            if 'country' in x["types"]:
+                returnVal["country"] = x["short_name"]
+            if 'locality' in x["types"]:
+                returnVal["city"] = x["long_name"]
+            if 'postal_code' in x["types"]:
+                returnVal["plz"] = x["long_name"]
+            if 'sublocality_level_1' in x["types"]:
+                returnVal["quarter"] = x["long_name"]
+            if 'street_number' in x["types"]:
+                returnVal["streetnumber"] = x["long_name"]
+            if 'route' in x["types"]:
+                returnVal["streetname"] = x["long_name"]
+        
+        returnVal["string"] = reverse_geocode_result[0]["formatted_address"]
+        return returnVal
+    return None
 
 
 def user_is_allowed(request, target_id):
@@ -730,8 +458,9 @@ def user_is_allowed(request, target_id):
     allowed = False
     if user is not None:
         if request.user.id == target_id or user.is_superuser:
-            logger.warning("User is super user: "+str(user.is_superuser))
             allowed = True
+            if(user.is_superuser):
+                logger.warning("User is super user: "+str(user.is_superuser))
         else: 
             logger.warning("User is not authenticated ? "+str(request.user.id)+" VS "+str(target_id))
     return allowed
@@ -813,6 +542,22 @@ def detail(request, offer_id, edit_active = False,  newly_created = False) :
         refugee = Refugee.objects.get(user=request.user)
         refugee.addRecentlyViewedOffer(offer)
     return render(request, 'offers/detail.html', context)
+
+def edit(request, offer_id):
+    if request.method == 'POST':
+        return update(request, offer_id, newly_created=True)
+    else:
+        genOffer = GenericOffer.objects.get(id=offer_id)
+        offerType = genOffer.offerType
+        specOffer = OFFER_MODELS[offerType](genericOffer=genOffer)
+
+        context = {}
+        context["genericForm"]  = GenericForm(instance=genOffer)
+        context["detailForm"] = OFFER_FORMS[offerType](instance=specOffer)
+        if offerType == "AC":
+            context["imageForm"] = ImageForm()
+        return render(request, 'offers/create.html', context)
+    #return detail(request, offer_id, edit_active=True)
 
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."
