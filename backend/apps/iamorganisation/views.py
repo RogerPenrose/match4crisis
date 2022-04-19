@@ -3,7 +3,7 @@ from functools import lru_cache
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
@@ -98,6 +98,16 @@ def thx(request):
 @method_decorator(organisationRequired, name='dispatch')
 class OrganisationDashboardView(DashboardView):
     template_name = "organisation_dashboard.html"
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+
+        organisation = Organisation.objects.get(user = request.user)
+
+        context = {
+            "organisation" : organisation
+        }
+
+        return self.render_to_response(context)
 
 @login_required
 @organisationRequired
