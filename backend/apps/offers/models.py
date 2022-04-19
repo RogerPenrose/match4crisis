@@ -26,20 +26,20 @@ class GenericOffer(models.Model):
     ('CL', 'Kinderbetreuung Langzeit'),
     ('BA', 'Babysitting'),
     ('WE', 'Medizinische Hilfe'),
-    ('JO', 'Job'),
+    ('JO', 'Jobangebot'),
     ('DO', 'Spende')
     ]
-    offerTitle = models.TextField(max_length=100)
-    location = models.TextField(max_length=300)
-    lat = models.FloatField()
-    lng = models.FloatField()
-    bb = models.CharField(max_length=300)
+    offerTitle = models.TextField(max_length=100, default="")
+    location = models.TextField(max_length=300, default="")
+    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
+    bb = models.CharField(max_length=300, default="")
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
-    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=0)
     #image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
     # TODO maybe this should be Helper instead of User?
     userId = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)# Can be blank for shell testing...
-    offerDescription = models.TextField()
+    offerDescription = models.TextField(default="")
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published', default=timezone.now)
@@ -141,11 +141,11 @@ class WelfareOffer(models.Model):
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    country = models.CharField(max_length=200) # Do this as a select ? 
+    #country = models.CharField(max_length=200) # Do this as a select ? 
     
     locationEnd = models.TextField(max_length=300)
-    latEnd = models.FloatField()
-    lngEnd = models.FloatField()
+    latEnd = models.FloatField(null=True)
+    lngEnd = models.FloatField(null=True)
     bbEnd =  models.CharField(max_length=300)
     date=models.DateField(default=timezone.now)
     numberOfPassengers = models.IntegerField(default=2)

@@ -138,7 +138,7 @@ class ManpowerForm(OfferForm):
             "helpType_manpower" : HELPTYPE_MP,
         }
 
-class WelfareForm(forms.Form):
+class WelfareForm(OfferForm):
     class Meta:
         attrs = { "class": "form-control"}
         model = WelfareOffer
@@ -168,6 +168,10 @@ class TransportationForm(OfferForm):
             "date" : DEPARTUREDATE,
             "numberOfPassengers" : PASSENGER_COUNT,
             "locationEnd" : LOCATIONEND,
+        }
+
+        widgets = {
+            'locationEnd': forms.TextInput(attrs={ 'class': 'form-control'}),
         }
 
 class TranslationForm(forms.ModelForm):
