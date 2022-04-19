@@ -398,6 +398,14 @@ def save(request, offer_id=None):
         genForm.save()
         specForm.save()
 
+        if request.FILES.get("image") != None:
+            counter = 0
+            images = request.FILES.getlist('image')
+            for image in images:
+                counter = counter + 1
+                image = ImageClass(image=image, offerId = genOffer)
+                image.save()
+
     return HttpResponseRedirect("/iofferhelp/helper_dashboard")
 
 @login_required
@@ -413,7 +421,7 @@ def update(request, offer_id = None, newly_created = False):
     genOffer.incomplete=False
     genOffer.active=True
     genForm = GenericForm(request.POST, instance=genOffer)
-    specForm = OFFER_FORMS[request.POST["offerType"]](request.POST, instance=specOffer)
+    specForm = OFFER_FORMS[genOffer.offerType](request.POST, instance=specOffer)
     genForm.save()
     specForm.save()
 
@@ -425,8 +433,7 @@ def update(request, offer_id = None, newly_created = False):
             image = ImageClass(image=image, offerId = genOffer)
             image.save()
 
-    return detail(request, genOffer.id, newly_created=newly_created)
-    #return HttpResponseRedirect("detail")
+    return HttpResponseRedirect(str(genOffer.id))
     
 def getLocationFromOffer(offer):
     if(offer.lat is not None and offer.lng is not None):
