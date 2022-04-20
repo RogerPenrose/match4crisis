@@ -23,12 +23,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
 
         parser.add_argument(
-            "--delete",
-            action="store_true",
-            help='Delete all users with an email ending in "%s"' % FAKE_MAIL,
-        )
-
-        parser.add_argument(
             "--add-refugees", nargs=1, help="Add [N] new refugees to the poll",
         )
 
@@ -45,9 +39,9 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        
         if (
-            not options["delete"]
-            and options["add_refugees"] is None
+            options["add_refugees"] is None
             and options["add_organisations"] is None
             and options["add_helpers"] is None
         ):
@@ -56,37 +50,12 @@ class Command(BaseCommand):
 
         self.all_yes = options["no_input"]
 
-        if options["delete"]:
-            self.delete_all_fakes()
         if options["add_organisations"] is not None:
             self.add_fake_organisations(int(options["add_organisations"][0]))
         if options["add_helpers"] is not None:
             self.add_fake_helpers(int(options["add_helpers"][0]))
         if options["add_refugees"] is not None:
             self.add_fake_refugees(int(options["add_refugees"][0]))
-
-    def delete_all_fakes(self):
-        qs = User.objects.filter(email__contains=FAKE_MAIL)
-
-        n = qs.count()
-        if n == 0:
-            self.stdout.write(self.style.SUCCESS("No fake users detected."))
-            return
-
-        is_sure = (
-            input(
-                'You are about to delete %s users with emails including "%s". '
-                "Are you sure you want to delete them? [y/n]" % (n, FAKE_MAIL)
-            )
-            if not self.all_yes
-            else "y"
-        )
-        if is_sure != "y":
-            self.stdout.write(self.style.WARNING("Users NOT deleted."))
-            return
-
-        qs.delete()
-        self.stdout.write(self.style.SUCCESS("Successfully deleted these %s fake users." % n))
 
     def add_fake_helpers(self, n):
 
@@ -111,6 +80,7 @@ class Command(BaseCommand):
 
     def add_fake_organisations(self, n):
         n_users = User.objects.all().count()
+        n_orgs = Organisation.objects.all().count()
         for i in range(n):
             m = new_mail(i + n_users)
             u = User.objects.create(
@@ -123,8 +93,9 @@ class Command(BaseCommand):
             u.save()
             Organisation.objects.create(
                 user=u,
-                contactPerson="Jon Skeet",
-                isApproved=np.random.choice([True, False], p=[0.7, 0.3]),
+                organisationName = f"Org No. %s" % (n_orgs + i),
+                contactPerson="Douglas Adams",
+                isApproved=np.random.choice([True, False], p=[0.5, 0.5]),
             )
 
         self.stdout.write(self.style.SUCCESS("Created %s organisations." % n))

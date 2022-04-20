@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{% blocktrans %}Verwalte Hilfesuchende (Admin){% endblocktrans %}
+{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% load render_table from django_tables2 %}
+
+
+{% block content %}
+<hr>
+
+<div class="container" style="margin-bottom:30px; max-width: 1500px">
+   {% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+{% endfor %}
+    <p style="margin-top:30px;">
+    {% blocktrans %}
+    <h1>Liebes Staff-Mitglied,</h1></p>
+    <p>Hier kannst du Organisationen, die sich angemeldet haben,
+        <mark>die Berechtigung geben, Helfende anzusehen und zu kontaktieren</mark>
+        wenn alles gut aussieht, auf der ersten Tabelle. Wenn sie Mist machen, kannst du ihnen in der zweiten Tabelle
+        die
+        <mark>Berechtigung wieder entziehen</mark>
+        .
+    </p>
+    {% endblocktrans %}
+
+    <div class="card border-info" style="margin-top:30px;">
+        <div class="card-header">
+            {% blocktrans %}Diese Organisationen warten auf deine Genehmigung{% endblocktrans %}
+        </div>
+        <div class="card-body">
+            {% render_table table_unapproved %}
+        </div>
+    </div>
+
+    
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel2">{% blocktrans %} Organisation löschen {% endblocktrans %}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            {% blocktrans %}
+            Möchten Sie diese Organisation wirklich löschen?
+            (Diese Aktion kann nicht rückgängig gemacht werden)
+            {% endblocktrans %}
+        </div>
+        <div class=""modal-footer>
+            <a id="delete-button" class="btn btn-sm btn-danger" href="/staff/delete_organisation/{{uuid}}">{% blocktrans %}Löschen{% endblocktrans %}</a>
+            <a class="btn btn-info btn-sm" class="close" data-dismiss="modal" aria-label="Close">{% blocktrans %}Abbrechen{% endblocktrans %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <hr>
+    <div class="card ">
+        <div class="card-header">
+            {% blocktrans %}Diese Organisationen wurden schon genehmigt, du kannst ihnen aber jederzeit die Berechtigung
+            entziehen. {% endblocktrans %}
+        </div>
+        <div class="card-body">
+            {% render_table table_approved %}
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+  $(".delete-button").on("click", function(){
+    uuid = $(this).attr("uuid")
+    $("#delete-button").attr("href", "/staff/delete_organisation/" + uuid);
+  })
+</script>
+
+{% endblock %}

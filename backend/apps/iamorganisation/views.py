@@ -36,7 +36,7 @@ def organisation_overview(request):
 @lru_cache(maxsize=1)
 def prepare_organisations(ttl_hash=None):
     organisations = Organisation.objects.filter(
-        user__validated_email=True, is_approved=True, appears_in_map=True
+        user__validated_email=True, isApproved=True, appears_in_map=True
     )
     locations_and_number = {}
     for organisation in organisations:
@@ -74,7 +74,7 @@ def organisation_list(request, countrycode, plz):
 
     table = OrganisationTable(
         Organisation.objects.filter(
-            user__validated_email=True, is_approved=True, plz=plz, appears_in_map=True
+            user__validated_email=True, isApproved=True, plz=plz, appears_in_map=True
         )
     )
     table.paginate(page=request.GET.get("page", 1), per_page=25)

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "apps.iofferhelp",
     "apps.ineedhelp",
     "apps.iamorganisation",
+    "apps.staff",
     "apps.offers",
     "apps.accounts",
     "apps.use_statistics",
@@ -86,7 +87,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 WSGI_APPLICATION = "match4crisis.wsgi.application"
 
-MAX_EMAILS_PER_HOSPITAL_PER_DAY = 200
+MAX_EMAILS_PER_ORGANISATION_PER_DAY = 200
 NEWSLETTER_REQUIRED_APPROVERS = 2
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -110,7 +111,7 @@ USE_I18N = True
 
 AUTH_USER_MODEL = "accounts.User"
 
-AUTHENTICATION_BACKENDS = ['apps.accounts.backends.EmailBackend']
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 USE_L10N = True
 
