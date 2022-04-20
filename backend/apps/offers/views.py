@@ -433,6 +433,7 @@ def update(request, offer_id = None, newly_created = False):
             image = ImageClass(image=image, offerId = genOffer)
             image.save()
 
+    request.session['offer_newly_created'] = newly_created
     return HttpResponseRedirect("/offers/%s" % genOffer.id)
     
 def getLocationFromOffer(offer):
@@ -542,6 +543,10 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
     offer = GenericOffer.objects.get(pk=offer_id)
     context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
     context["username"] = offer.userId.first_name
+
+    if 'offer_newly_created' in request.session:
+        newly_created = request.session['offer_newly_created']
+        del request.session['offer_newly_created']
     if edit_active:
         context["edit_active"] = edit_active
     if newly_created:
