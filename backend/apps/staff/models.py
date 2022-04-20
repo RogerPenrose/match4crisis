@@ -64,6 +64,9 @@ class Newsletter(models.Model):
         choices=VALIDATION_CHOICES, default=ONLY_VALIDATED, blank=False
     )
 
+    def __str__(self) -> str:
+        return 'Newsletter: %s' % self.subject
+
     def sending_state(self):
         if self.was_sent:
             return NewsletterState.SENT
