@@ -45,10 +45,10 @@ class CustomUserManager(BaseUserManager):
 
 class Languages(models.Model):
     """ Database containing numerous languages. The ISO 639-1 Code is the Primary Key"""
-    isoCode = models.CharField(max_length=2, primary_key=True)
-    englishName = models.CharField(max_length=128)
-    nativeName = models.CharField(max_length=128)
-    country = models.CharField(max_length=2)
+    isoCode = models.CharField(max_length=2, primary_key=True, verbose_name=_('ISO 639-1 Code'))
+    englishName = models.CharField(max_length=128, verbose_name=_('English Name'))
+    nativeName = models.CharField(max_length=128, verbose_name=_("Native Name"))
+    country = models.CharField(max_length=2, verbose_name=_("Affiliated Country"))
 
     def __str__(self) -> str:
         return "%s (%s)" % (self.englishName, self.nativeName)

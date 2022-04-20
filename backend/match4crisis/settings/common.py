@@ -111,7 +111,7 @@ USE_I18N = True
 
 AUTH_USER_MODEL = "accounts.User"
 
-AUTHENTICATION_BACKENDS = ['apps.accounts.backends.EmailBackend']
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 USE_L10N = True
 
