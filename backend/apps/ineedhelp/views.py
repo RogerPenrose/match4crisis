@@ -28,11 +28,13 @@ def favouriteOffers(request):
     offers = getSpecificOffers(refugee.favouriteOffers.all())
     return render(request, "favourite_offers.html", {"offers" : mergeImages(offers)})
         
+@refugeeRequired
 def recentlyViewedOffers(request):
     refugee : Refugee = Refugee.objects.get(user=request.user)
     offers = getSpecificOffers(refugee.recentlyViewedOffers.all().order_by('-recentlyviewedintermediary__dateViewed'))
     return render(request, "recently_viewed.html", {"offers" : mergeImages(offers)})
 
+@refugeeRequired
 def recentlyContactedOffers(request):
     refugee : Refugee = Refugee.objects.get(user=request.user)
     offers = getSpecificOffers(refugee.recentlyContactedOffers.all().order_by('-recentlycontactedintermediary__dateContacted'))

@@ -1,7 +1,7 @@
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 
-def refugeeRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="login"):
+def refugeeRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="refugee_login"):
     """
     Redirect unauthenticated refugees to login page.
 
@@ -17,7 +17,7 @@ def refugeeRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, logi
         return actual_decorator(function)
     return actual_decorator
 
-def helperRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="login"):
+def helperRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="helper_login"):
     """
     Redirect unauthenticated helpers to login page.
 
@@ -34,7 +34,7 @@ def helperRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login
     return actual_decorator
 
 
-def organisationRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="login"):
+def organisationRequired(function=None, redirect_field_name=REDIRECT_FIELD_NAME, login_url="organisation_login"):
     """
     Redirect unauthenticated organisations to login page.
 

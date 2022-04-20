@@ -290,20 +290,65 @@ class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
 
     def post(self, request, *args, **kwargs):
-        print("Login Attempt", request.POST["email"])
         logger.info("Login Attempt (%s)", request.POST["email"])
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        print("Login successful", form.cleaned_data["email"])
         logger.info("Login successful (%s)", form.cleaned_data["email"])
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Login failure", getattr(form.data, "email", ""))
         logger.warning("Login failure (%s)", getattr(form.data, "email", ""))
         return super().form_invalid(form)
 
+    def get_usertype_data(self, request, *args, **kwargs):
+        context = super(CustomLoginView, self).get_context_data(**kwargs)
+        if request.user.is_authenticated:
+            if request.user.isHelper:
+                context['userType'] = _("Helfer*in")
+            elif request.user.isRefugee:
+                context['userType'] = _("Hilfesuchende*r")
+            elif request.user.isOrganisation:
+                context['userType'] = _("Organisation")
+            elif request.user.is_superuser:
+                context['userType'] = _("Admin")
+            elif request.user.is_staff:
+                context['userType'] = _("Staff-User")
+        if "requiredUserType" in request.session:
+            context["requiredUserType"] = request.session["requiredUserType"]
+        return context
+
+    def get(self, request, *args, **kwargs) -> HttpResponse:
+        return self.render_to_response(self.get_usertype_data(request, *args, **kwargs))
+
+    def post(self, request, *args, **kwargs) -> HttpResponse:
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.render_to_response(self.get_usertype_data(request, form=form))
+
+
+
+
+
+def helper_login(request):
+    request.session["requiredUserType"] = _("Helfer*in")
+    resp =  HttpResponseRedirect("login")
+    resp["Location"] += "?next="+request.GET['next']
+    return resp
+
+def refugee_login(request):
+    request.session["requiredUserType"] = _("Hilfesuchende*r")
+    resp =  HttpResponseRedirect("login")
+    resp["Location"] += "?next="+request.GET['next']
+    return resp
+
+def organisation_login(request):
+    request.session["requiredUserType"] = _("Organisation")
+    resp =  HttpResponseRedirect("login")
+    resp["Location"] += "?next="+request.GET['next']
+    return resp
 
 @login_required
 @helperRequired

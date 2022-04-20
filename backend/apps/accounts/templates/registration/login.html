@@ -76,6 +76,15 @@
         <div class="col-lg-6 col-md-10 col-sm-12 col-12" style="margin: 0 auto;">
             <div class="card login-card">
 
+                {% if user.is_authenticated %}
+                <p class="errornote">
+                  {% blocktrans %}
+                      Du bist als {{userType}} eingeloggt. Diese Seite kann allerdings nur als {{requiredUserType}} eingesehen werden.
+                      Bitte melde dich mit einem Account an, der als {{requiredUserType}} registriert ist.
+                  {% endblocktrans %}
+                  </p>
+                {% endif %}
+
                 <h2 class="title" style="margin-bottom: 20px;">{% blocktrans %}Login{% endblocktrans %}</h2>
                 <form method="post" novalidate>
                     {% csrf_token %}
