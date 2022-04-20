@@ -24,7 +24,6 @@ function offer_autocomplete(){
     ]
     const inputs = getInputs(inputIDList)
     for(var i = 0; i < inputs.length; i++){
-        console.log("Hit")
         const input = inputs[i].input;
         const latNames = inputs[i].latNames;
         const bbNames = inputs[i].bbNames;
