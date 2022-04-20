@@ -433,7 +433,7 @@ def update(request, offer_id = None, newly_created = False):
             image = ImageClass(image=image, offerId = genOffer)
             image.save()
 
-    return HttpResponseRedirect(str(genOffer.id))
+    return HttpResponseRedirect("/offers/%s" % genOffer.id)
     
 def getLocationFromOffer(offer):
     if(offer.lat is not None and offer.lng is not None):
