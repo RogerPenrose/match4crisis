@@ -65,7 +65,7 @@
             {% endblocktrans %}
         </div>
         <div class=""modal-footer>
-            <a class="btn btn-sm btn-danger" href="/staff/delete_organisation/{{request.session.delete_organisation_uuid}}">{% blocktrans %}Löschen{% endblocktrans %}</a>
+            <a id="delete-button" class="btn btn-sm btn-danger" href="/staff/delete_organisation/{{uuid}}">{% blocktrans %}Löschen{% endblocktrans %}</a>
             <a class="btn btn-info btn-sm" class="close" data-dismiss="modal" aria-label="Close">{% blocktrans %}Abbrechen{% endblocktrans %}</a>
         </div>
       </div>
@@ -84,5 +84,11 @@
     </div>
 
 </div>
+<script type="text/javascript">
+  $(".delete-button").on("click", function(){
+    uuid = $(this).attr("uuid")
+    $("#delete-button").attr("href", "/staff/delete_organisation/" + uuid);
+  })
+</script>
 
 {% endblock %}

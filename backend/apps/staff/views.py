@@ -66,25 +66,21 @@ def change_organisation_approval(request, uuid):
     return HttpResponseRedirect("/staff/approve_organisations")
 
 
-def delete_organisation(request, uuid=None):
-    return HttpResponse(str(request.session))
-    h = Organisation.objects.get(uuid=uuid)
+def delete_organisation(request, uuid):
+    org = Organisation.objects.get(uuid=uuid)
     logger.info(
         "Delete Organisation %s by %s", uuid, request.user, extra={"request": request},
     )
-    name = h.user
-    h.delete()
-    text = format_lazy(_("Du hast die Institution mit user '{name}' gelöscht."), name=name)
+    org.delete()
+    text = format_lazy(_("Du hast die Organisation namens '{orgName}' gelöscht."), orgName=org.organisationName)
     messages.add_message(request, messages.INFO, text)
     return HttpResponseRedirect("/staff/approve_organisations")
 
 def confirm_delete(request, uuid):
     request.session['delete_organisation_uuid'] = uuid
-    resp = HttpResponseRedirect("#exampleModal1", headers = {})
+    resp = HttpResponseRedirect("#exampleModal1", content = {"uuid" : uuid})
     resp.request = request
     return resp
-
-
 
 def switch_newsletter(nl, user, request, post=None, get=None):
     nl_state = nl.sending_state()
