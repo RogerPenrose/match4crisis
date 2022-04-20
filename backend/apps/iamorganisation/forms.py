@@ -15,6 +15,7 @@ from .models import HelpRequest, Organisation
 
 class OrganisationFormO(ModelForm):
     phoneNumber = PhoneNumberField(label='',widget=forms.TextInput(attrs={'placeholder': _("Telefonnummer")}))
+    acceptTerms = forms.BooleanField(required=True, label=_('Ich habe die <a target="_blank" href="/dataprotection/">Datenschutzerklärung</a> gelesen und bin damit einverstanden'))
     error_messages = {
         "password_mismatch": _("The two password fields didn’t match."),
     }
@@ -34,31 +35,28 @@ class OrganisationFormO(ModelForm):
 
         fields=(
             "postalCode",
+            "city",
             "country",
             "organisationName",
             "contactPerson",
-            "appearsInMap", # do we need this?
-            "clubNumber",
             "streetNameAndNumber",           
         )
 
         labels = {
             "postalCode": '',
             "country": '',
+            "city": '',
             "organisationName": '',
             "contactPerson": '',
-            "appearsInMap": '',
-            "clubNumber": '',
             "streetNameAndNumber": '',            
         }
         
         widgets = {
             'postalCode': forms.TextInput(attrs={'placeholder': _("Postleitzahl")}),
-            'country': forms.TextInput(attrs={'placeholder': _("Land")}),
+            'city': forms.TextInput(attrs={'placeholder': _("Stadt")}),
+            #'country': forms.ChoiceWidget(attrs={'placeholder': _("Land")}),
             'organisationName': forms.TextInput(attrs={'placeholder': _("Offizieller Name Ihrer Organisation")}),
             'contactPerson': forms.TextInput(attrs={'placeholder': _("Name der Kontaktperson")}),
-            'appearsInMap': forms.TextInput(attrs={'placeholder': _("Auf der Karte sichtbar und kontaktierbar für Helfende sein")}),
-            'clubNumber': forms.TextInput(attrs={'placeholder': _("Vereinsnummer")}),
             'streetNameAndNumber': forms.TextInput(attrs={'placeholder': _("Straße und Hausnummer")}),
         }
         
@@ -70,20 +68,17 @@ class OrganisationFormO(ModelForm):
         self.helper.form_method = "post"
         self.helper.form_action = "submit_survey"
 
+        self.fields['country'].empty_label = _("Land")
+        self.fields['country'].widget.attrs['class'] = 'main'
+
 
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
             Row(Column("phoneNumber"), Column("email")),
-            Row(Column("clubNumber"), Column("country")),
-            Row(Column("postalCode"), Column("streetNameAndNumber")),
+            Row( Column("country"), Column("postalCode")),
+            Row(Column("city"), Column("streetNameAndNumber")),
             Row(Column("password1"), Column("password2")),
-            HTML(
-                '<div class="registration_disclaimer">{}</div>'.format(
-                    _(
-                        'Hiermit bestätige ich die <a target="_blank" href="/dataprotection/">Datenschutzbedingungen</a>.'
-                    )
-                )
-            ),
+            Row("acceptTerms"),
         )
     
     def clean_password2(self):
@@ -121,26 +116,20 @@ class OrganisationPreferencesForm(SpecialPreferencesForm):
         model = Organisation
         fields=(
             "postalCode",
+            "city",
             "country",
             "organisationName",
             "contactPerson",
-            "appearsInMap", # do we need this?
-            "clubNumber",
             "streetNameAndNumber",     
-            "generalInfo",      
         )
 
         labels = {
             "streetNameAndNumber": _("Straße und Hausnummer"),
             "postalCode": _("Postleitzahl"),
+            "city": _("Stadt"),
             "country": _("Land"),
-            "generalInfo": _(
-                "Text Ihrer Suchanzeige. Wird nur öffentlich gezeigt wenn Sie auf der Karte sichtbar sind und kontaktbierbar sein möchten. Hier können Sie genau beschreiben, für welche Rollen Sie Unterstützung brauchen, welche Qualifikationen dafür notwendig sind, und unter welchen Bedingungen (z.B. Bezahlung) gesucht wird."
-            ),
             "organisationName": _("Offizieller Name Ihrer Institution"),
             "contactPerson": _("Name der Kontaktperson"),
-            "appearsInMap": _("Auf der Karte sichtbar und kontaktierbar für Helfende sein"),
-            "clubNumber": _("Vereinsnummer")
         }
 
     def __init__(self, *args, **kwargs):
@@ -164,33 +153,6 @@ class OrganisationFormInfoSignUp(OrganisationFormO):
 class OrganisationFormInfoCreate(OrganisationFormO):
     # Used internally to bypass duplicate email validation
     email = forms.EmailField()
-
-class PostingForm(forms.ModelForm):
-    class Meta:
-        model = Organisation
-        labels = {
-            "appearsInMap": _("Anzeige soll angezeigt werden"),
-            "generalInfo": _("Anzeigetext"),
-        }
-        fields = ["appearsInMap", "generalInfo"]
-
-    def __init__(self, *args, **kwargs):
-        super(PostingForm, self).__init__(*args, **kwargs)
-        self.fields["generalInfo"].required = False
-        self.helper = FormHelper()
-        self.helper.form_method = "post"
-        self.helper.layout = Layout(
-            HTML(
-                '<script type="text/javascript" src="{}"></script>'.format(
-                    static("js/PostingForm.js")
-                )
-            ),
-            "appearsInMap",
-            "generalInfo",
-        )
-        self.helper.add_input(
-            Submit("submit", _("Anzeige aktualisieren"), css_class="btn blue text-white btn-md",)
-        )
 
 class RequestHelpForm(forms.ModelForm):
     # TODO also allow digital offers?

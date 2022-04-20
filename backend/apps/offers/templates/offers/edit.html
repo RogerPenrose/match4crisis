@@ -16,7 +16,7 @@
 <table> 
     {% for image in images%}
     <tr>
-        <td> Image : </td><td><img style="max-width:400px" src="{{image.url}}"></td>
+        <td> {% blocktrans %}Bild{% endblocktrans %}: </td><td><img style="max-width:400px" src="{{image.url}}"></td>
         {% if edit_allowed %}<td><input type="button" value="delete" onclick="window.location.href = '/offers/{{id}}/delete_image/{{image.id}}';"></td>{% endif %}
     </tr>
     {% endfor %}

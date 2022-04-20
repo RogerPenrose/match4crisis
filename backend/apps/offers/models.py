@@ -17,31 +17,29 @@ def validate_plz(value):
         )
 
 class GenericOffer(models.Model):
-
-
     OFFER_CHOICES = [
-    ('AC', 'Accommodation'),
-    ('TL', 'Translation'),
-    ('TR', 'Transportation'),
-    ('BU', 'Buerocratic'),
-    ('MP', 'Manpower'),
-    ('CL', 'Childcare Permanent'),
-    ('BA', 'Babysitting'),
-    ('WE', 'Medical Assistance'),
-    ('JO', 'Job'),
-    ('DO', 'Donation')
+    ('AC', _('Unterbringung')),
+    ('TL', _('Übersetzung')),
+    ('TR', _('Logistik')),
+    ('BU', _('Bürokratie')),
+    ('MP', _('Manneskraft')),
+    ('CL', _('Kinderbetreuung Langzeit')),
+    ('BA', _('Babysitting')),
+    ('WE', _('Medizinische Hilfe')),
+    ('JO', _('Jobangebot')),
+    ('DO', _('Spende'))
     ]
-
+    offerTitle = models.TextField(max_length=100, default="")
+    location = models.TextField(max_length=300, default="")
+    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
+    bb = models.CharField(max_length=300, default="")
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
-    postCode = models.CharField(max_length=5, validators=[validate_plz])
-    streetName = models.CharField(max_length=200,blank=True)
-    streetNumber = models.CharField(max_length=10,blank=True)#Edge case of number+Letter forces us to use a character field here...
-    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=0)
     #image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
-    country = models.CharField(max_length=2, choices=countries, default="DE") # Do this as a select ? 
     # TODO maybe this should be Helper instead of User?
-    userId = models.ForeignKey(User, on_delete=models.PROTECT, blank=True)# Can be blank for shell testing...
-    offerDescription = models.TextField()
+    userId = models.ForeignKey(User, on_delete=models.CASCADE, blank=True)# Can be blank for shell testing...
+    offerDescription = models.TextField(default="")
     isDigital = models.BooleanField(default=False)
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published', default=timezone.now)
@@ -54,44 +52,46 @@ class GenericOffer(models.Model):
 class ChildcareOfferLongterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     GENDER_CHOICES = [
-        ('NO', "Don't want to disclose"),
-        ('FE', "Female"),
-        ('MA', "Male"),
+        ('NO', _("Keine Angabe")),
+        ('FE', _("Weiblich")),
+        ('MA', _("Männlich")),
+        ('OT', _("Andere")),
     ]
     gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 class ChildcareOfferShortterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     GENDER_CHOICES = [
-        ('NO', "Don't want to disclose"),
-        ('FE', "Female"),
-        ('MA', "Male"),
+        ('NO', _("Keine Angabe")),
+        ('FE', _("Weiblich")),
+        ('MA', _("Männlich")),
+        ('OT', _("Andere")),
     ]
     gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
     numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)
 class JobOffer(models.Model):
     JOB_CHOICES = [
-        ( "ACA","Academic Support"),
-        ( "ADM","Administration"),
-        ("ADV","Advancement"),
-        ("CON","Conference and Events"),
-        ("FAC","Facility Operations"),
-        ("FIN","Finance and Accounting"),
-        ("GEN","General Administration"),
-        ("HEA","Health Services"),
-        ( "HUM","Human Resources"),
-        ("INF","Information Technology"),
-        ("INT","International Program and Services"),
-        ("LEG","Legal"),
-        ("LIB","Library Administration"),
-        ("MAR","Marketing, Communication and External Affairs"),
-        ("OFF","Office and Admin Support"),
-        ("PER","Performing Arts and Museum Administration"),
-        ("PUB","Public Safety"),
-        ("RES","Research and Program Admin"),
-        ( "SPO","Sports and Recreation"),
-        ( "STU","Student Services"),
-        ("HAN","Handicraft profession")]
+        ("ACA",_("Akademische Hilfe,")),
+        ("ADM",_("Administration,")),
+        ("ADV",_("Fortbildung,")),
+        ("CON",_("Konferenzen und Events,")),
+        ("FAC",_("Anlagenbetrieb,")),
+        ("FIN",_("Finance und Buchhaltung,")),
+        ("GEN",_("Allgemeine Verwaltung,")),
+        ("HEA",_("Gesundheitsservices,")),
+        ("HUM",_("Personalwesen,")),
+        ("INF",_("IT,")),
+        ("INT",_("International Program and Services,")),
+        ("LEG",_("Jura,")),
+        ("LIB",_("BÜchereiverwaltung,")),
+        ("MAR",_("Marketing,")),
+        ("OFF",_("Büro / Verwaltung,")),
+        ("PER",_("Kunst und Museumsverwaltung,")),
+        ("PUB",_("Öffentliche Sicherheit,")),
+        ("RES",_("Forschung und Forschungsadministration,")),
+        ("SPO",_("Sport,")),
+        ("STU",_("Studentische Dienstleistungen,")),
+        ("HAN",_("Handwerk"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
@@ -102,7 +102,7 @@ class DonationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
-    HELP_CHOICES= [('AM', 'Accompaniment'), ('LE', 'Legal'), ('OT', 'Other')]
+    HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 class ImageClass(models.Model):
@@ -110,50 +110,48 @@ class ImageClass(models.Model):
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
 class ManpowerOffer(models.Model):
-    HELP_CHOICES= [('ON', 'Online'), ('OS', 'On-site')]
+    HELP_CHOICES= [('ON', _('Online')), ('OS', _('Vor Ort'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_manpower = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
 
 class AccommodationOffer(models.Model):
 
     ACCOMMODATIONCHOICES = {
-        ('SO', 'Sofa / Bed'),
-        ('RO', 'Private Room'),
-        ('HO', 'Whole Flat / House')
+        ('SO', _('Sofa / Bed')),
+        ('RO', _('Eigener Raum')),
+        ('HO', _('Gesamte Wohnung / Haus'))
     }
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
     numberOfChildren = models.IntegerField(default=0, blank=True)
     numberOfPets = models.IntegerField(default=0, blank=True)
     typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
-    streetName = models.CharField(max_length=200, blank=True)
-    streetNumber = models.CharField(max_length=4, blank=True)#Edge case of number+Letter forces us to use a character field here...
     startDateAccommodation = models.DateField(default=timezone.now)
     endDateAccommodation = models.DateField(blank =True, null=True)
     def __str__(self):
         return self.typeOfResidence
 
 class WelfareOffer(models.Model):
-    WELFARE_CHOICES = [("ELD", "Elderly Care"),("DIS", "Care for handicapped People"), ("PSY", "Psychological Aid")]
+    WELFARE_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
     helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    country = models.CharField(max_length=200) # Do this as a select ? 
+    #country = models.CharField(max_length=200) # Do this as a select ? 
     
-    postCodeEnd = models.CharField(max_length=5, validators=[validate_plz])
-    streetNameEnd = models.CharField(max_length=200)
-    streetNumberEnd = models.CharField(max_length=4)#Edge case of number+Letter forces us to use a character field here...
- 
+    locationEnd = models.TextField(max_length=300)
+    latEnd = models.FloatField(null=True)
+    lngEnd = models.FloatField(null=True)
+    bbEnd =  models.CharField(max_length=300)
     date=models.DateField(default=timezone.now)
     numberOfPassengers = models.IntegerField(default=2)
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    firstLanguage = models.ForeignKey(Languages,related_name='firstLanguage', on_delete=models.CASCADE)
-    secondLanguage = models.ForeignKey(Languages,related_name='secondLanguage', on_delete=models.CASCADE)
+    firstLanguage = models.ForeignKey(Languages,verbose_name=_("Erste Sprache"), related_name='firstLanguage', on_delete=models.CASCADE, default="de")
+    secondLanguage = models.ForeignKey(Languages,verbose_name=_("Zweite Sprache"),related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer,

@@ -96,7 +96,6 @@ class Command(BaseCommand):
                 organisationName = f"Org No. %s" % (n_orgs + i),
                 contactPerson="Douglas Adams",
                 isApproved=np.random.choice([True, False], p=[0.5, 0.5]),
-                appearsInMap=np.random.choice([True, False], p=[0.8, 0.2]),
             )
 
         self.stdout.write(self.style.SUCCESS("Created %s organisations." % n))

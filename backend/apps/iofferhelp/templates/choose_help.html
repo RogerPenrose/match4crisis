@@ -10,64 +10,48 @@
 
 <style>
 
+  .blueForms { margin-left: -10px; margin-right: -10px;}
+      @media only screen and (min-width: 768px) {
+.custom-control { width: 33%; float: left;}
+      }
 
+      @media only screen and (max-width: 767px) {
+.custom-control { width: 50%; float: left;}
+      }
+
+      @media only screen and (max-width: 440px) {
+.custom-control { width: 100%;}
+      }
+
+.custom-control * { cursor: pointer;}
+.form-group .btn {     clear: both;
+    width: 100%; }
     label.custom-control-label { position: relative;
+      text-align:center;
   display: inline-block;
  margin-right: .5rem;
   border-radius: 23px;
   vertical-align: text-bottom;
   transition: all 0.3s linear;
 margin-bottom: 0px;
-box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+background: #f4f4f4;
     border-radius: 25px;
+    color: #28445b;
     width: 100%;
-    padding: 10px 10px 10px 70px;
+    padding:40px 10px;
     font-weight: 600;
 }
-
-.custom-checkbox .custom-control-label::before {
-content: "";
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  width: 42px;
-  height: 22px;
-  background-color: #fff;
-  border-radius: 11px;
-  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
-  transition: all 0.25s linear; 
-  box-shadow: 0 0 0px 2px #e6e6e6;
-}
-
-.custom-control-label::after {
-  content: "";
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  width: 22px;
-  height: 22px;
-  background-color: #fff;
-  border-radius: 11px;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
-  transform: translate3d(2px, 2px, 0);
-  transition: all 0.2s ease-in-out;
-}
-
-.custom-control-label:active .custom-control-label::after {
-  width: 28px;
-  transform: translate3d(2px, 2px, 0);
-}
+.custom-checkbox .custom-control-label::before { display: none;}
 
 .custom-control input { display: none; }
 
-.custom-control-input:checked~.custom-control-label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+.custom-control-input:checked~.custom-control-label {  background-color: #ed0061; color: #fff;}
 
-.custom-control-input:checked~.custom-control-label::after { transform: translate3d(22px, 2px, 0); }
+.custom-control-input:checked~.custom-control-label svg { fill: #fff; }
 
-.custom-control { padding-left: 0px; }
+.custom-control { padding: 10px; }
 
 
-.custom-control-label::before { border: 0px;}
 
 .btn {     background-color: #32bd69;
     font-size: 1rem;
@@ -79,6 +63,13 @@ content: "";
 margin-top: 20px; }
 
     .btn:hover { background-color: #1eb159; }
+
+    .form-group svg { fill: #28445b; width: 30px; height: auto; display:block; margin: 0 auto; margin-bottom: 10px; -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;}
+
 </style>
 
 {% endblock %}
@@ -89,9 +80,9 @@ margin-top: 20px; }
 <div style="height:40px"></div>
 <div class="container">
     <div class="row align-self-center">
-        <div class="col-md-8" style="margin: 0 auto; ">
-      <h2 class="title">Where do you want to help?</h2>
-      <p style="margin-bottom: 35px;">You can choose multiple categories</p>
+        <div class="col-lg-8" style="margin: 0 auto; ">
+      <h2 class="title">{% blocktrans %}Schön, dass du helfen möchtest{% endblocktrans %}</h2>
+      <p style="margin-bottom: 35px;">{% blocktrans %}Wähle die Kategorien, in denen du Hilfe/Unterstützung leisten kannst.{% endblocktrans %}</p>
                {% crispy form form.helper %}
 
         </div>

@@ -21,12 +21,13 @@ class HelperDashboardView(DashboardView):
         pausedOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=False, incomplete=False).count()
         incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
         runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
-
+        firstname = request.user.first_name
 
         context = {
             "pausedOffersCount": pausedOffersCount,
             "incompleteOffersCount": incompleteOffersCount,
             "runningOffersCount": runningOffersCount,
+            "firstname": firstname
         }
 
         return self.render_to_response(context)
@@ -70,7 +71,7 @@ def paused_offers(request):
 @helperRequired
 def incomplete_offers(request):
     userOffers = GenericOffer.objects.filter(userId=request.user.id)
-    incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
+    incompleteOffers = getSpecificOffers(userOffers.filter(incomplete=True))
     context = {"offers": incompleteOffers}
     return render(request, "incomplete_offers.html", context)
 

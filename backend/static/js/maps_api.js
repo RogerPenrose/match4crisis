@@ -1,6 +1,8 @@
 function initMapsAutocomplete(){
-    const input = document.getElementById("location");
-
+    let input = document.getElementById("location");
+    if (input == null || input.nodeName !== "INPUT"){
+        input = document.getElementById("id_location")
+    }
     if (input !== null) {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -57,6 +59,7 @@ function initMapsAutocomplete(){
 
 function init_google_maps() {
     if (typeof initMap === "function") initMap() // we are at mapview
-    else if (typeof initList === "function") initList() // we are at /offers
+    else if (typeof mapViewPage === "object") mapViewPage.initAutocomplete() // we are at /offers
+    else if (typeof offer_autocomplete === "function") offer_autocomplete() // we are at /offers/createOffer
     else initMapsAutocomplete();
 }

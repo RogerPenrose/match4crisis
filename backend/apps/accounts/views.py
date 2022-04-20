@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
 from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
-from apps.accounts.forms import CommonPreferencesForm, CustomAuthenticationForm
+from apps.accounts.forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm
 from rest_framework.views import APIView
 
 from apps.accounts.utils import send_password_set_email
@@ -114,6 +114,8 @@ def signup_organisation(request):
     form_info.helper.form_tag = False
     return render(request, "signup_organisation.html", {"form_info": form_info})
 
+def signup_complete(request):
+    return render(request, "signup_complete.html")
 
 @transaction.atomic
 def register_organisation_in_db(request, formData):
@@ -210,13 +212,9 @@ def edit_organisation_profile(request):
 def delete_me(request):
     user = request.user
     logout(request)
+    logger.info("Delete User with email %s", user.email, extra={"request": request})
     user.delete()
     return render(request, "deleted_user.html")
-
-
-@login_required
-def delete_me_ask(request):
-    return render(request, "deleted_user_ask.html")
 
 
 @login_required
@@ -227,6 +225,35 @@ def validate_email(request):
         request.user.save()
     return HttpResponseRedirect("login_redirect")
 
+@login_required
+def change_email(request):
+    if request.method == "POST":
+        logger.info("E-Mail change request", extra={"request": request})
+        form = ChangeEmailForm(request.POST)
+
+        if form.is_valid():
+            user = request.user
+            user.email = form.cleaned_data["email"]
+            user.validatedEmail = False
+            user.emailValidationDate = None
+            user.save()
+            logout(request)
+            # TODO send verification email
+            return HttpResponseRedirect("change_email_done")
+    else:
+        form = ChangeEmailForm()
+
+    return render(request, "change_email.html", {"form":form})
+
+def change_email_done(request):
+    return render(request, "change_email_done.html")
+
+@login_required
+def change_email_complete(request):
+    """The Page that opens when the user clicks on the confirmation link in the email."""
+    validate_email(request)
+    return render(request, "change_email_complete.html")
+    
 
 def resend_validation_email(request, email):
     if request.user.is_anonymous:

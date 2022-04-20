@@ -66,6 +66,8 @@
 {% block content %}
 
 <div class="container">
+    <div class="row align-self-center">
+        <div class="col-md-8" style="margin: 0 auto; ">
   	<div style="height:40px"></div>
     {% if user.is_authenticated %}
 
@@ -79,19 +81,16 @@
         <a  href="/accounts/login_redirect">Login</a>.
     <hr><br>
 	{% endif %}
-    <h2 class="title">  {% blocktrans %}Registration{% endblocktrans %}  </h2>
-	<p>{% blocktrans %}Create an account to look for help.{% endblocktrans %}</p>
-</div>
+    <h2 class="title">  {% blocktrans %}Registrierung{% endblocktrans %}  </h2>
+	<p>{% blocktrans %}Erstelle einen Account, um nach Hilfe zu suchen.{% endblocktrans %}</p>
 
 
-<div class="container">
-     <div class="row" style="margin-top:30px; margin-bottom:55px;">
-                <div class="col-lg-10 col-sm-12 col-12">
+
+
 
                 {% crispy form form.helper %}
-
-		 </div>
-	</div>
+          
+</div>
 </div>
 
 <script type="text/javascript">

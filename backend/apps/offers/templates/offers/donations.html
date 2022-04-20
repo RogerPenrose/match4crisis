@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load display_value %}
+{% block title %}
+{% blocktrans %}Listenansicht Angebote{% endblocktrans %}{% endblock %}
+
+{% block header %}
+<style>
+  .modal-content { border:0px; border-radius: 25px;}
+  .modal-header span { font-size: 50px;}
+  .modal-header .close {padding: .5rem 1rem 0rem 1rem }
+  div.description { padding: 10px; position: relative; }
+  div.description:after { content:url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>"); position: absolute; top: 45%; right: 15px;}
+.filter-title { font-weight: 700;}
+  .custom-control { margin-bottom: 0px;}
+
+  label.custom-control-label { position: relative;
+  display: inline-block;
+ margin-right: .5rem;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  transition: all 0.3s linear;
+margin-bottom: 0px;
+    width: 100%;
+    padding: 10px 10px 10px 70px;
+    font-weight: 600;
+}
+input :not(.back)  { width: 100%; display: inline-block;
+  font-weight: 300 !important;
+line-height: 1.5 !important;
+color: #495057;
+background-color: #fff;
+border: 0px !important;
+border-radius: .75rem !important;
+box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
+padding: .275rem .75rem; }
+.custom-checkbox .custom-control-label::before {
+content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 42px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+  transition: all 0.25s linear; 
+  box-shadow: 0 0 0px 2px #e6e6e6;
+}
+
+.custom-control-label::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+  transform: translate3d(2px, 2px, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-control-label:active .custom-control-label::after {
+  width: 28px;
+  transform: translate3d(2px, 2px, 0);
+}
+
+.custom-control input { display: none; }
+
+.custom-control-input:checked~.custom-control-label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+
+.custom-control-input:checked~.custom-control-label::after { transform: translate3d(22px, 2px, 0); }
+
+.custom-control { padding-left: 0px; }
+
+
+.custom-control-label::before { border: 0px;}
+select {
+  width:100%;
+}
+.btn {     background-color: #32bd69;
+    font-size: 1rem;
+    color: #fff;
+    padding: .8rem 2.5rem;
+    border-radius: 15px;
+    border: 0px;
+    font-weight: bold;
+margin-top: 20px; }
+
+    .btn:hover { background-color: #1eb159; }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div style="height:40px"></div>
+    <div class="row align-self-center align-items-center top-menu">
+<div class="col-4 left">
+ <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+      </svg> <input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" /> </p></div>
+      <div class="col-12 text-center" ><h2>{% blocktrans %} {{ ResultCount }} Spendenaufrufe {% endblocktrans %}</h2></div>
+        <div class="row align-self-center align-items-center">
+
+    <div class="row align-self-center align-items-center" style="margin-top:35px;">
+ 
+        <div class="container cards">
+    
+
+
+      {% for entry in DonationOffers %}
+      <a href="/offers/{{ entry.genericOffer.id }}/">        
+      <div class="col-12 col-lg-6 offer-card"> 
+
+          <div class="row align-self-center align-items-center">
+          <div class="col-5 col-sm-4">
+        
+              <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
+            </div>
+          <div class="description col-7 col-sm-8">
+<h3>{{ entry.genericOffer.get_offerType_display }}  </h3>
+<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-text" viewBox="0 0 16 16">
+  <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
+  <path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
+</svg> {% blocktrans %}Beschreibung{% endblocktrans %}: {{entry.genericOffer.offerDescription}} </p>
+<p> {% blocktrans %}Kontoinformationen{% endblocktrans %}: {{entry.account}} </p>
+<p> {% blocktrans %}Beschreibung/Details{% endblocktrans %}: {{entry.donationTitle}} </p>
+</div>
+          </div>
+
+      </div>   
+      </a>  
+      {% endfor %}
+  </div>
+</div>
+</div>
+</div>
+{% endblock %}

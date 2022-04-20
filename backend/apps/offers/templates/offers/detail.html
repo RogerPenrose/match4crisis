@@ -13,6 +13,9 @@ p.map { margin: 20px 0;}
 @media only screen and (max-width: 767px) {
 .contact { text-align: center; }
 }
+
+.confirmation { border-radius: 10px; padding: 20px 10px; text-align:center; margin-bottom: 35px;}
+.confirmation p { margin-bottom: 0px;}
 </style>
 
 <script>
@@ -73,7 +76,7 @@ function share_this(){
 navigator.share({
   title:"{%blocktrans%}match4crisis.org{%endblocktrans%}", 
   url:document.URL, 
-  text:'{% blocktrans %}Ich habe dieses {{ generic.OfferType }} gefunden, schau mal{% endblocktrans %}'})
+  text:'{% blocktrans %}Ich habe dieses {{ generic.offerType.value }} gefunden, schau mal{% endblocktrans %}'})
 }
 </script>
 
@@ -84,12 +87,17 @@ navigator.share({
 {% block content %}
 
 <div class="container">
-    <div style="height:40px"></div>
-    <div class="row align-self-center align-items-center top-menu">
+  <div style="height:40px; "></div>
+  {% if  newly_created == True and generic.active.value == True %} <div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Danke für dein Hilfsangebot, es ist jetzt für alle sichtbar.{%endblocktrans%}</p></div>
+  {% elif newly_created == True and generic.active.value == False %} <div style="background-color: rgb(255, 218, 148) " class="confirmation"><p>{% blocktrans %}Danke für dein Hilfsangebot, es wurde zur späteren Bearbeitung gespeichert.{%endblocktrans%}</p></div>
+  {%endif%}
+  {% if contacted == True %}<div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Der Inserent wurde kontaktiert und wird sich bald bei dir melden.{%endblocktrans%}</p></div>
+  {%endif%}
+  <div class="row align-self-center align-items-center top-menu">
 <div class="col-6 left">
  <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-      </svg> <a href="#">Back</a> </p></div>
+      </svg> <input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" /> </p></div>
     <div class="col-6" style="text-align:right;">
         <p><a class="star-link"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="{% if favourited %}#FAC903{% else %}currentColor{% endif %}" class="bi bi-star" viewBox="0 0 18 18">
           <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
@@ -109,21 +117,53 @@ navigator.share({
 
     <div class="col-sm-12 col-lg-4 title-image" style="text-decoration: underline; margin-top:15px;" >
       
-    <form action="/offers/{{id}}/update" method="post" enctype="multipart/form-data">
-      <div name="invisible" style="display:none">{{ generic.offerType }} {{generic.postCode }} {{generic.country }}</div>
-       {% if generic.offerType.value != "TL" %} <p> <div name="non_edit"> {% if images.0.url|length > 0 %}
-           <img src="{{ images.0.url }}">
-            {% else %}
-            <img src="{% static 'img/offers/no-acc-img.jpg' %}">
-            {%endif%}</p></div><div name="edit" style="display:none">
-              {% for image in images%}
-    
-        <p> <img style="max-width:400px" src="{{image.url}}"><button type="button" value="delete" onclick="window.location.href = '/offers/{{id}}/delete_image/{{image.id}}';"><svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
-          <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
-        </svg></button></p>
-        {% endfor %}{{ imageForm }}</div>{% else%} <p> <div name="non_edit"><img src="/offers/translation/{{firstLanguage|default:"not"}}_{{secondLanguage|default:"not"}}"></div></p>{%endif%}</div>
-            <div class="col-sm-12 col-lg-8 description">
+    <form action="/offers/{{id}}/update" method="post" id="thisForm" enctype="multipart/form-data">
+      <div name="invisible" style="display:none">{{ generic.offerType.value }} {{generic.postCode }} {{generic.country }}</div>
+      {% if generic.offerType.value == "AC" %} <div name="non_edit"> {% if images.0.url|length > 0 %}
+
+
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">{% for entry in images %}
+          <li data-target="#carouselExampleIndicators" data-slide-to="{{forloop.counter0}}" {% if forloop.counter0 == 0 %}  class="active"{%endif%}></li>{% endfor %}
+        </ol>
+        <div class="carousel-inner">{% for entry in images %}
+          <div class="carousel-item {% if forloop.counter0 == 0 %} active{%endif%}">
+            <img class="d-block w-100" src="{{entry.url}}" alt="{{ forloop.counter }}">
+          </div>{% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+      {% else %}
+        <img src="{% static 'img/offers/no-acc-img.jpg' %}">
+      {%endif%}</div>
+      
+      <div name="edit" style="display:none">
+        
+        {% for image in images%}
+            <p><img style="max-width:400px" src="{{image.url}}"><button type="button" value="delete" onclick="window.location.href = '/offers/{{id}}/delete_image/{{image.id}}';"><svg  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+              <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
+            </svg></button></p>
+        {% endfor %}
+          
+        {{ imageForm }}
+      </div>
+      
+      {% elif generic.offerType.value == "TL" %}
+        <p> <div name="non_edit"><img src="/offers/translation/{{firstLanguage|default:"not"}}_{{secondLanguage|default:"not"}}"></div></p>
+      {%endif%}
+      
+      </div>
+      
+      <div class="col-sm-12 col-lg-8 description">
               
       {% csrf_token %}
               <h2 class="title">{{ offerType }} {% if edit_allowed %}<button class="btn" type="button"  onClick="allowEdit()"><svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
@@ -132,82 +172,104 @@ navigator.share({
                 <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
                 <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
               </svg></button>
-              <button type="submit" class="btn" name="edit" style="display:none" onclick="allowEdit()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16">
+              <button type="button" class="btn" name="edit" style="display:none" onclick="save()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save" viewBox="0 0 16 16">
                 <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
               </svg>Save</button>{% endif %}</h2>
                 <p><div name="non_edit">{{ generic.offerDescription.value }}</div><div name="edit" style="display:none">{{generic.offerDescription }}</div> </p>
                 <hr>
           
-              {% if offerType == "Accommodation" %}
+              {% if generic.offerType.value == "AC" %}
                 <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit"> {{detail.numberOfAdults.value}} Adults | {{detail.numberOfChildren.value}} Children | {{detail.numberOfPets.value }} Pets</span><span name="edit" style="display:none" >{{detail.numberOfAdults}} | {{ detail.numberOfChildren}} | {{detail.numberOfAnimals}}</span></p>
+                  </svg> <span name="non_edit"> {{detail.numberOfAdults.value}} {% blocktrans %}Erwachsene{% endblocktrans %} | {{detail.numberOfChildren.value}} {% blocktrans %}Kinder{% endblocktrans %} | {{detail.numberOfPets.value }} {% blocktrans %}Haustiere{% endblocktrans %}</span><span name="edit" style="display:none" >{{detail.numberOfAdults}} | {{ detail.numberOfChildren}} | {{detail.numberOfPets}}</span></p>
                 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                  </svg><span name="non_edit">  From {{detail.startDateAccommodation.value}} until {{detail.endDateAccommodation.value}} </span><span name="edit" style="display:none" >{{detail.startDateAccommodation}} to {{ detail.endDateAccommodation }}</span></p>
+                  </svg><span name="non_edit">  {% blocktrans %}von{% endblocktrans %} {{detail.startDateAccommodation.value}} {%if detail.endDateAccommodation.value %}{% blocktrans %}bis{% endblocktrans %} {{detail.endDateAccommodation.value}} {% endif %} </span><span name="edit" style="display:none" >{{detail.startDateAccommodation}} {%if detail.endDateAccommodation.value %}{% blocktrans %}bis{% endblocktrans %} {{ detail.endDateAccommodation }}{% endif %}</span></p>
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
                     <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
                   </svg> {{ detail.typeOfResidence|display }}<span name="edit" style="display:none" >{{detail.typeOfResidence}}</span></p>
                 <hr>
-                  {% elif offerType == "Transportation" %}
+
+                  {% elif generic.offerType.value == "TR" %}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit"> {{detail.numberOfPassengers.value}} People</span><span name="edit" style="display:none" >{{detail.numberOfPassengers}} </span></p>
+                  </svg> <span name="non_edit"> {{detail.numberOfPassengers.value}} {%blocktrans%}Passagiere {%endblocktrans%}</span><span name="edit" style="display:none" >{{detail.numberOfPassengers}} </span></p>
                 <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                  </svg><span name="non_edit">  Departure {{detail.date.value}}  </span><span name="edit" style="display:none" >{{detail.date}} </span></p>
+                  </svg><span name="non_edit">  {%blocktrans %} Abfahrt am: {% endblocktrans%} {{detail.date.value}}  </span><span name="edit" style="display:none" >{{detail.date}} </span></p>
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
                     <path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-                  </svg> From {{ generic.postCode.value}}, {{ generic.streetName.value }} {{generic.streetNumber.value }} to {{detail.postCodeEnd.value }}, {{detail.streetNameEnd.value }} {{detail.streetNumberEnd.value }}<span name="edit" style="display:none" >{{detail.postCodeEnd}}{{detail.streetNameEnd}}{{detail.streetNumberEnd}}</span></p>
-                  {% elif offerType == "Translation" %}
+                  </svg> {%blocktrans%}Von: {%endblocktrans%} {{location.country}}-{{ location.plz }} {{location.city}} {{ location.streetname }} {{location.streetnumber}}{% blocktrans %} nach:{% endblocktrans %} {{detail.locationEnd.value }}<span name="edit" style="display:none" >{{detail.locationEnd}}<div style="display:none">{{detail.latEnd}}{{detail.lngEnd}}{{detail.bbEnd}}</div></span></p>
+                  {% elif generic.offerType.value == "TL" %}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Translating from {{detail.firstLanguage|display}} to {{ detail.secondLanguage|display }}</span><span name="edit" style="display:none" >{{detail.firstLanguage}} {{ detail.secondLanguage}} </span></p>
+                  </svg> <span name="non_edit">  {% blocktrans %}Übersetzung von{% endblocktrans %} {{detail.firstLanguage|display}} {% blocktrans %}zu{% endblocktrans %} {{ detail.secondLanguage|display }}</span><span name="edit" style="display:none" >{{detail.firstLanguage}} {{ detail.secondLanguage}} </span></p>
              
-                  {% elif offerType == "Buerocratic"  or offerType == "Medical Assistance" or offerType == "Manpower" %}
+                  {% elif generic.offerType.value == "BU" %}  or 
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Offering {{detail.helpType|display}} </span><span name="edit" style="display:none" >{{detail.helpType}} </span></p>
-                
-                  {% elif offerType == "Job" %}
-                  <p><span name="non_edit">Type of Job: {{ detail.jobType|display}}</span><span name="edit" style="display:none">{{detail.jobType}}</span></p>
+                  </svg> <span name="non_edit">  Offering {{detail.helpType_buerocratic|display}} </span><span name="edit" style="display:none" >{{detail.helpType_buerocratic}} </span></p>
+                  {% elif generic.offerType.value == "MA"%}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Searching: {{detail.jobTitle.value}} </span><span name="edit" style="display:none" >{{detail.jobTitle}} </span></p>
-                  <p><span name="non_edit">Requirements: {{ detail.requirements.value }}</span><span name="edit" style="display:none">{{detail.requirements}}</span></p>
-                  {% elif offerType == "Babysitting" or offerType == "Childcare Longterm" %}
-                  <p><span name="non_edit">Gender of Caretaker: {{ detail.gender|display}}</span><span name="edit" style="display:none">{{detail.gender}}</span></p>
-                  {% if offerType == "Babysitting"%}
+                  </svg> <span name="non_edit">  Offering {{detail.helpType_welfare|display }}  </span><span name="edit" style="display:none" >{{detail.helpType_welfare}} </span></p>
+                  {% elif generic.offerType.value == "MP" %}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Number of Children: {{detail.numberOfChildrenToCare.value}} </span><span name="edit" style="display:none" >{{detail.numberOfChildrenToCare}} </span></p>
-                  <p><span name="non_edit"> {% if detail.isRegular == True %} Reoccuring {% else %} One Time {%endif%}</span><span name="edit" style="display:none">Is this a regular occurence ?  {{detail.isRegular}}</span></p>
+                  </svg> <span name="non_edit">  Offering {{detail.helpType_manpower|display}} </span><span name="edit" style="display:none" >{{detail.helpType_manpower}} </span></p>
+                  {% elif generic.offerType.value == "JO" %}
+                  <p><span name="non_edit">{% blocktrans %}Art des Jobs{% endblocktrans %}: {{ detail.jobType|display}}</span><span name="edit" style="display:none">{{detail.jobType}}</span></p>
+                  <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                  </svg> <span name="non_edit">  {% blocktrans %}Suche{% endblocktrans %}: {{detail.jobTitle.value}} </span><span name="edit" style="display:none" >{{detail.jobTitle}} </span></p>
+                  <p><span name="non_edit">{% blocktrans %}Anforderungen:{% endblocktrans %} {{ detail.requirements.value }}</span><span name="edit" style="display:none">{{detail.requirements}}</span></p>
+                  {% elif generic.offerType.value == "BA" %}
+                  <p><span name="non_edit">{% blocktrans %}Geschlecht{% endblocktrans %}: {{ detail.gender_shortterm|display}}</span><span name="edit" style="display:none">{{detail.gender_shortterm}}</span></p>
+                  {% elif generic.offerType.value == "CL" %}
+                  <p><span name="non_edit">{% blocktrans %}Geschlecht{% endblocktrans %}: {{ detail.gender_longterm|display}}</span><span name="edit" style="display:none">{{detail.gender_longterm}}</span></p>
+                 
+                  {% if generic.offerType.value == "BA"%}
+                  <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                  </svg> <span name="non_edit">  {% blocktrans %}Anzahl der Kinder{% endblocktrans %}: {{detail.numberOfChildrenToCare.value}} </span><span name="edit" style="display:none" >{{detail.numberOfChildrenToCare}} </span></p>
+                  <p><span name="non_edit"> {% if detail.isRegular == True %} {% blocktrans %}Regelmäßig{% endblocktrans %} {% else %} {% blocktrans %}Einmalig{% endblocktrans %} {%endif%}</span><span name="edit" style="display:none">{% blocktrans %}Handelt es sich um eine regeläßige Tätigkeit?{% endblocktrans %}  {{detail.isRegular}}</span></p>
                   {%endif%}
-                  {% elif offerType == "Donations" %}
-                  <p><span name="non_edit">Purpose: {{ detail.donationTitle.value}}</span><span name="edit" style="display:none">{{detail.donationTitle}}</span></p>
-                  <p><span name="non_edit">Account: {{ detail.account.value}}</span><span name="edit" style="display:none">{{detail.account}}</span></p>
+                  {% elif generic.offerType.value == "DO" %}
+                  <p><span name="non_edit">{% blocktrans %}Grund{% endblocktrans %}: {{ detail.donationTitle.value}}</span><span name="edit" style="display:none">{{detail.donationTitle}}</span></p>
+                  <p><span name="non_edit">{% blocktrans %}Kontodaten{% endblocktrans %} {{ detail.account.value}}</span><span name="edit" style="display:none">{{detail.account}}</span></p>
                   {%endif%}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-piggy-bank" viewBox="0 0 16 16">
                     <path d="M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm1.138-1.496A6.613 6.613 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.602 7.602 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962z"/>
                     <path fill-rule="evenodd" d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069c0-.145-.007-.29-.02-.431.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a.95.95 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.735.735 0 0 0-.375.562c-.024.243.082.48.32.654a2.112 2.112 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595zM2.516 6.26c.455-2.066 2.667-3.733 5.448-3.733 3.146 0 5.536 2.114 5.536 4.542 0 1.254-.624 2.41-1.67 3.248a.5.5 0 0 0-.165.535l.66 2.175h-.985l-.59-1.487a.5.5 0 0 0-.629-.288c-.661.23-1.39.359-2.157.359a6.558 6.558 0 0 1-2.157-.359.5.5 0 0 0-.635.304l-.525 1.471h-.979l.633-2.15a.5.5 0 0 0-.17-.534 4.649 4.649 0 0 1-1.284-1.541.5.5 0 0 0-.446-.275h-.56a.5.5 0 0 1-.492-.414l-.254-1.46h.933a.5.5 0 0 0 .488-.393zm12.621-.857a.565.565 0 0 1-.098.21.704.704 0 0 1-.044-.025c-.146-.09-.157-.175-.152-.223a.236.236 0 0 1 .117-.173c.049-.027.08-.021.113.012a.202.202 0 0 1 .064.199z"/>
-                  </svg> <span name="non_edit">  {{generic.cost.value}} €</span><span name="edit" style="display:none" >{{generic.cost}}</span></p>
-                  </form>
-            <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                  </svg> <span name="non_edit">  {{generic.cost.value| default:"0"}} €</span><span name="edit" style="display:none" >{{generic.cost}}</span></p>
+          
+         {% if generic.offerType.value != "TR"%}   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
                 <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
                 <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-              </svg> {{ generic.postCode.value }} {{ city }}</p>
+              </svg> {{location.country}}-{{ location.plz }} {{location.city}} {{ location.streetname }} {{location.streetnumber}}</p> {%endif%}
             <p>
 
-            </p>
+              <div name="edit" style="display:none">
+                <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                    <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                    <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                  </svg>
+                  <input type="test" id="location" name="location" value="{{ location.string }}"/>
+                  <input type="hidden" name="lng"/>
+                  <input type="hidden" name="lat"/>
+                  <input type="hidden" name="bb"/>
+                </p>
+              </div>
               <p class="map">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d310846.4201238783!2d13.144555050047117!3d52.50651327389272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47a84e373f035901%3A0x42120465b5e3b70!2sBerlin%2C%20Germany!5e0!3m2!1sen!2sat!4v1648469369362!5m2!1sen!2sat" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-</p>
-<hr>
+              {% if generic.offerType.value != "TR" %}<iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location.string }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              {% else%}<iframe src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&origin={{location.lat}},{{location.lng}}&destination={{detail.latEnd.value|safe}},{{detail.lngEnd.value|safe}}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              {%endif%}
+            </p>          
+            <p>ein Angebot von {{ username|default:"Anonym" }}, erstellt am {{createdAt }}</p>
               <p style="margin-top: 25px;" class="contact">
-              <a href="/offers/{{id}}/contact" class="btn btn-green" role="button" aria-pressed="true"
-              >{% if  user.is_authenticated != True %} Register and get in contact {% else %} Get in contact {%endif %}   
+              <a href="/offers/{{id}}/contact" class="btn btn-green" role="button" aria-pressed="true">{% if  user.is_authenticated != True %} {% blocktrans %}Registrieren und Kontakt aufnehmen{% endblocktrans %} {% else %} {% blocktrans %}Jetzt kontaktieren{% endblocktrans %} {%endif %}   
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20"
@@ -225,8 +287,15 @@ navigator.share({
             </a><a href="/offers/{{id}}/delete_offer" role="button" name="edit" class="btn btn-red" style="display:none"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
               <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-            </svg>Delete</a></p>
+            </svg>{% blocktrans %}Löschen{% endblocktrans %}</a>
+            <div name="edit" style="display:none"  > <input onclick="switchActive()" {% if generic.active.value %} checked {%endif %} type="checkbox" style="display:none" value="True" name="active" id="activateBtn" >
+              <label id="activateBtnLbl" class="btn{% if generic.active.value %} btn-yellow{% else %} btn-green {% endif%}" for="activateBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+            </svg>{% if generic.active.value %}{% blocktrans %}Deaktivieren{% endblocktrans %}{% else %}{% blocktrans %} Aktivieren {% endblocktrans %}{% endif %}</label></div></p>
             </div>
+        </form>
         </div>
         </div>
 
@@ -270,8 +339,32 @@ navigator.share({
       }
       {%if  edit_active %}
       allowEdit()
-      
       {%endif%}
-    
+      function switchActive(){
+        
+    var cb = document.getElementById('activateBtn');
+        if (!cb.checked){
+          console.log("would be inactive")
+          var label = document.getElementById("activateBtnLbl")
+          label.classList.add("btn-green")
+          label.classList.remove( "btn-yellow")
+          var text = label.innerHTML 
+          label.innerHTML = text.replace("Deaktivieren", "Aktivieren")
+        }
+        else {
+          
+          console.log("would be active")
+          var label = document.getElementById("activateBtnLbl")
+          label.classList.add("btn-green")
+          label.classList.remove( "btn-yellow")
+          var text = label.innerHTML 
+          label.innerHTML = text.replace("Aktivieren", "Deaktivieren")
+        }
+      }
+      function save(){
+        var form = document.getElementById("thisForm");
+        allowEdit()
+        form.submit();
+      }
     </script>
 {% endblock %}

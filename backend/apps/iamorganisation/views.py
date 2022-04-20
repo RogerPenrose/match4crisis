@@ -3,7 +3,7 @@ from functools import lru_cache
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
@@ -18,7 +18,7 @@ from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
 
-from .forms import PostingForm, RequestHelpForm
+from .forms import RequestHelpForm
 
 
 #organisation_overview (mapview)
@@ -92,31 +92,22 @@ class OrganisationTable(tables.Table):
         fields = ["organisationName", "contactPerson"]
         exclude = ["id"]
 
-#Anzeige der Organisation
-@login_required
-@organisationRequired
-def change_posting(request):
-    if request.method == "POST":
-        anzeige_form = PostingForm(request.POST, instance=request.user.organisation)
-
-        if anzeige_form.is_valid():
-            anzeige_form.save()
-            messages.add_message(
-                request, messages.INFO, _("Deine Anzeige wurde erfolgreich aktualisiert."),
-            )
-
-    else:
-        anzeige_form = PostingForm(instance=request.user.organisation)
-
-    context = {"anzeige_form": anzeige_form}
-    return render(request, "change_posting.html", context)
-
 def thx(request):
     return render(request, "thanks_organisation.html")
 
 @method_decorator(organisationRequired, name='dispatch')
 class OrganisationDashboardView(DashboardView):
     template_name = "organisation_dashboard.html"
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+
+        organisation = Organisation.objects.get(user = request.user)
+
+        context = {
+            "organisation" : organisation
+        }
+
+        return self.render_to_response(context)
 
 @login_required
 @organisationRequired

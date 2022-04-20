@@ -25,20 +25,6 @@ from . import views
         name="password_change_form",
     ),
     path(
-        "password_reset/",
-        auth_views.PasswordResetView.as_view(
-            template_name="registration/password_reset_form_.html", from_email=settings.NOREPLY_MAIL
-        ),
-        name="password_reset_form",
-    ),
-    path(
-        "password_reset/done/",
-        auth_views.PasswordResetDoneView.as_view(
-            template_name="registration/password_reset_done_.html"
-        ),
-        name="password_reset_done",
-    ),
-    path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
             template_name="registration/password_reset_complete_.html"
@@ -61,20 +47,36 @@ urlpatterns = [
         name="resend_validation_email",
     ),
     path(
+        "password_reset/",
+        auth_views.PasswordResetView.as_view(
+            template_name="registration/password_reset_form_.html", from_email=settings.NOREPLY_MAIL
+        ),
+        name="password_reset_form",
+    ),
+    path(
+        "password_reset/done/",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="registration/password_reset_done_.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
         "login/",
         views.CustomLoginView.as_view(template_name="registration/login.html"),
         name="login",
     ),
     path("", include("django.contrib.auth.urls")),
     path("validate_email", views.validate_email, name="validate_email"),
+    path("change_email", views.change_email, name="change_email"),
+    path("change_email_done", views.change_email_done, name="change_email_done"),
+    path("change_email_complete", views.change_email_complete, name="change_email_complete"),
     path("login_redirect", views.login_redirect, name="login_redirect"),
-    path("delete_me_ask", views.delete_me_ask, name="delete_me_ask"),
-    path("delete_me", views.delete_me, name="delete_me"),
     path("signup_refugee", views.signup_refugee, name="signup_refugee"),
     path("signup_helper", views.signup_helper, name="signup_helper"),
     path("signup_organisation", views.signup_organisation, name="signup_organisation"),
+    path("signup_complete", views.signup_complete, name="signup_complete"),
     path("preferences", views.preferences, name="preferences"),
-    #path("count", views.UserCountView.as_view(), name="count"),
+    path("deleted_user", views.delete_me, name="deleted_user"),
     path("change_activation", views.change_activation_ask, name="activate_helper_ask"),
     path("change_activation_confirm", views.change_activation, name="activate_helper"),
     path("i18n/", include("django.conf.urls.i18n")),

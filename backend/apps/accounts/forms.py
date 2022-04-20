@@ -20,19 +20,24 @@ class PhoneNumberField(forms.CharField):
 
 class CustomUserCreationForm(UserCreationForm):
     """Custom form for creating both Refugees and Helpers (Organisations have a more complex form)"""
+    acceptTerms = forms.BooleanField(required=True, label=_('Ich habe die <a target="_blank" href="/dataprotection/">Datenschutzerklärung</a> gelesen und bin damit einverstanden'))
+
     class Meta:
         model = User
         fields = (
-            "fullName",
+            "first_name",
+            "last_name",
             "email",
         )
         labels={
-            "fullName": "",
+            "first_name": "",
+            "last_name": "",
             "email": "",
         }
 
         widgets = {
-            "fullName": forms.TextInput(attrs={"placeholder": _("Vor- und Nachname(n)")}),
+            "first_name": forms.TextInput(attrs={"placeholder": _("Vorname(n)")}),
+            "last_name": forms.TextInput(attrs={"placeholder": _("Nachname(n)")}),
             "email": forms.TextInput(attrs={"placeholder": _("E-Mail")}),
         }
 
@@ -98,7 +103,8 @@ class CommonPreferencesForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            "fullName",
+            "first_name",
+            "last_name",
             "spokenLanguages", # TODO By default a manytomany model field will be displayed as a MultipleChoiceField. Instead one should be able to search&add langs
             "phoneNumber",
             "sharePhoneNumber",
@@ -119,7 +125,8 @@ class CommonPreferencesForm(forms.ModelForm):
 
         if 'instance' in kwargs:
             if kwargs['instance'].isOrganisation:
-                del self.fields["fullName"]
+                del self.fields["first_name"]
+                del self.fields["last_name"]
                 
 class SpecialPreferencesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -130,6 +137,9 @@ class SpecialPreferencesForm(forms.ModelForm):
         self.helper.form_method = "post"
         self.helper.form_action = "preferences"
         self.helper.form_tag = False
+
+        for f in self.fields:
+            self.fields[f].required = False
 
         self.helper.add_input(Submit("submit", _("Speichern")))
     
@@ -222,4 +232,21 @@ class CustomAuthenticationForm(forms.Form):
             params={"email": self.email_field.verbose_name},
         )
 
-# Newsletter form was removed since we might want to restructure this logic. But it can be found in M4H
+def check_unique_email(value):
+    if User.objects.filter(email=value).exists():
+        raise ValidationError(_("Ein Benutzer mit dieser E-Mail-Adresse existiert bereits"))
+    return value
+
+class ChangeEmailForm(forms.Form):
+    email = forms.EmailField(label=_("Neue E-Mail-Adresse"), validators=[check_unique_email])
+
+    def __init__(self, *args, **kwargs):
+        super(ChangeEmailForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-changeEmailForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "change_email"
+
+        self.helper.add_input(Submit("submit", _("E-Mail-Adresse ändern")))
+

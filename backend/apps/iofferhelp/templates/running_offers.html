@@ -6,15 +6,22 @@
 {% blocktrans %}Laufende Angebote{% endblocktrans %}
 {% endblock %}
 
+{% block header %}
+<style>
+  div.description { padding: 10px; position: relative; }
+  div.description:after { content:url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>"); position: absolute; top: 45%; right: 15px;}
+</style>
+{% endblock %}
 {% block content %}
 <div class="container">
-    <div style="height:40px"></div>
-
-{% for entry in offers %}
-<a href="/offers/{{ entry.offer.genericOffer.id }}/">        
+  <div style="height:40px"></div>
+  <h3>{% blocktrans %}Aktive Angebote{% endblocktrans %}</h3>
+  </div>
     <div class="container cards">
-
-
+{% if offers %}
+{% for entry in offers %}
+<a href="/offers/{{ entry.offer.genericOffer.id }}/">    
+  <div class="col-12 col-lg-6 offer-card">
     <div class="row align-self-center align-items-center">
     <div class="col-5 col-sm-4">
       {% if entry.image.url|length > 0 %}
@@ -46,10 +53,14 @@
 
 
     </div>
-
-</div>   
+  </div>
 </a>  
 {% endfor %}
+{% else %}
+{% blocktrans %}
+Du hast keine aktiven Angebote. Erstelle jetzt eins über dein Dashboard.
+{% endblocktrans %}
+{% endif %}
 </div>
 
 
