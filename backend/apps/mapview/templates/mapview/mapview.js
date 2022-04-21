@@ -344,7 +344,7 @@ mapViewPage = {
                     this.offers[i].show = true; // because it gets flipped in next line
                     this.offers[i].el.click();
                 } else {
-                    this.setGetParameter([[this.offers[i].type, "True"]])
+                    this.setGetParameter([[this.offers[i].type+"Visible", "True"]])
                 }
             } else {
                 this.offers[i].el = offersCheckboxParents[i].childNodes[0].childNodes[0]
@@ -353,7 +353,7 @@ mapViewPage = {
                     this.offers[i].show = true; // because it gets flipped in next line
                     this.offers[i].el.click();
                 } else {
-                    this.setGetParameter([[this.offers[i].type, "True"]])
+                    this.setGetParameter([[this.offers[i].type+"Visible", "True"]])
                 }
                 this.offers[i].el.addEventListener("change", e => this.handleCheckBoxClick(e));
                 if (this.offers.findIndex((el) => el.show) == 8){

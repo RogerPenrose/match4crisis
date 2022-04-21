@@ -24,15 +24,6 @@ from django.contrib.auth.decorators import login_required
 
 gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
-OFFERTYPESOBJ = { "accommodation": { "title": "Accommodation", "requestName": "accommodation", "modelName" : "AccommodationOffer", "offersName": "AccommodationOffers"}, 
-                "transportation": { "title": "Transportation", "requestName": "transportation", "modelName": "TransportationOffer", "offersName": "TransportationOffers"},
-                "manpower": { "title": "Manpower", "requestName": "manpower", "modelName": "ManpowerOffer", "offersName": "ManpowerOffers"},
-                "buerocratic": { "title" :  "Buerocratic Aide", "requestName": "buerocratic", "modelName": "BuerocraticOffer", "offersName": "BuerocraticOffers"}, 
-                "childcareshortterm" : { "title" : "Childcare / Babysitting", "requestName": "childcareshortterm", "modelName": "ChildcareOfferShortterm", "offersName": "ChildcareOffersShortterm"}, 
-                "childcarelongterm" : { "title" : "Childcare (Longterm)", "requestName": "childcarelongterm", "modelName": "ChildcareOfferLongterm", "offersName": "ChildcareOffersLongterm"}, 
-                "job" : { "title" : "Job", "requestName": "job", "modelName": "JobOffer", "offersName": "JobOffers"}, 
-                "welfare" : { "title" : "Medical Assistance", "requestName": "welfare", "modelName": "WelfareOffer", "offersName": "WelfareOffers"},
-                "donation" : { "title" : "Donations", "requestName": "donation", "modelName": "DonationOffer", "offersName": "DonationOffers"}}
 logger = logging.getLogger("django")
 
 def getCityBbFromLocation(locationData):
@@ -177,39 +168,6 @@ def getTranslationImage(request, firstLanguage, secondLanguage):
     context = {"firstLanguage" : firstData.decode("utf-8")
 , "secondLanguage" : secondLanguage.decode("utf-8")}
     return render(request, 'offers/drawing.svg', context=context,content_type="image/svg+xml")
-def by_city(request, city):
-    # Ideally: Associate Postcode with city here...
-    #Get list of all PostCodes within the City: 
-    postCodes = scrapePostCodeJson(city)
-    #Dummy data:
-    accommodations= 0
-    translations = 0 
-    transportations = 0
-    buerocratic = 0
-    welfare = 0
-    childcareShortterm = 0
-    for postCode in postCodes:
-        accommodations += GenericOffer.objects.filter(active=True,offerType="AC", postCode=postCode).count()
-        translations += GenericOffer.objects.filter(active=True,offerType="TL", postCode=postCode).count()
-        transportations += GenericOffer.objects.filter(active=True,offerType="TR", postCode=postCode).count()
-        accompaniments += GenericOffer.objects.filter(active=True,offerType="AP", postCode=postCode).count()
-        buerocratic += GenericOffer.objects.filter(active=True,offerType="BU", postCode=postCode).count()
-        childcareShortterm += GenericOffer.objects.filter(active=True,offerType="BA", postCode=postCode).count()
-        welfare += GenericOffer.objects.filter(active=True,offerType="WE", postCode=postCode).count()
-        jobs += GenericOffer.objects.filter(active=True,offerType="JO", postCode=postCode).count()
-    totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(active=True,offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(active=True,offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
-    context = {
-        'local' : {'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
-        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
-    }
-    return render(request, 'offers/list.html', context)
 def padByRange(locationData, rangeKm):
 
     locationData["lngMax"] +=kmInLng(rangeKm, locationData["latMax"])
@@ -228,26 +186,28 @@ def filter(request):
     pageCount = int(request.POST.get("page", 0))
     ids = []
     mapparameter = ""
-    currentFilter = dict(request.POST)
+    currentFilter = request.POST.dict()
     if not currentFilter:
-        currentFilter = dict(request.GET)
+        currentFilter = request.GET.dict()
+    logger.warning("current Filter: "+str(currentFilter))
     categoryCounter = 1
     for key in request.POST:
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
             if "child" in key:
-                mapparameter= "childcare"+"=True"
+                mapparameter+= "childcare"+"=True&"
             else:
-                mapparameter = key.replace("Visible","")+"=True"
+                mapparameter += key.replace("Visible","")+"=True&"
     for key in request.GET:
-        if "Visible" in key:
+        if "city" not in key:
             categoryCounter = categoryCounter +1 
             if "child" in key:
-                mapparameter= "childcare"+"=True"
+                mapparameter+= "childcare"+"=True&"
             else:
-                mapparameter = key.replace("Visible","")+"=True"
+                mapparameter += key.replace("Visible","")+"=True&"
     if not currentFilter and categoryCount == 1:
         categoryCounter = 11
+    mapparameter = mapparameter[:-1]
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES
