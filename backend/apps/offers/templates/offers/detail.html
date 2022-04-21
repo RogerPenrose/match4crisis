@@ -99,9 +99,11 @@ navigator.share({
         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
       </svg> <input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" /> </p></div>
     <div class="col-6" style="text-align:right;">
+      {% if user.isRefugee%}
         <p><a class="star-link"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="{% if favourited %}#FAC903{% else %}currentColor{% endif %}" class="bi bi-star" viewBox="0 0 18 18">
           <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
         </svg>
+      {% endif %}
         
        
         </a> <a href="#" onclick="share_this()"style="margin-left:5px;"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-share" viewBox="0 0 20 18">
