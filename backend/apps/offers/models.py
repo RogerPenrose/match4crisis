@@ -116,11 +116,11 @@ class ManpowerOffer(models.Model):
 
 class AccommodationOffer(models.Model):
 
-    ACCOMMODATIONCHOICES = {
+    ACCOMMODATIONCHOICES = [
         ('SO', _('Sofa / Bed')),
         ('RO', _('Eigener Raum')),
         ('HO', _('Gesamte Wohnung / Haus'))
-    }
+    ]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
     numberOfChildren = models.IntegerField(default=0, blank=True)
