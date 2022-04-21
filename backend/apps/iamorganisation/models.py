@@ -15,6 +15,9 @@ class Organisation(models.Model):
     postalCode = models.CharField(max_length=15)
     city = models.CharField(max_length=128, default="")
     streetNameAndNumber = models.CharField(max_length=50)
+
+    about = models.TextField(max_length=500000, verbose_name=_("Über uns"), default="")
+    logo = models.ImageField(upload_to="organisation_logos/", null = True, blank=True)
     
     isApproved = models.BooleanField(default=False)
     approvalDate = models.DateTimeField(null=True)

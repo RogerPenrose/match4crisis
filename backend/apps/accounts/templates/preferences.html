@@ -102,7 +102,7 @@ padding: .1rem .75rem;
         <div class="col-md-8" style="margin: 0 auto; ">
       <h2 class="title">{% blocktrans %} Profil-Einstellungen {% endblocktrans %}</h2>
       <p style="margin-bottom: 35px;">{% blocktrans %} Hier kannst du deine persönlichen Daten ändern. {% endblocktrans %}</p>
-      <form action="{% url 'preferences' %}" class="blueForms" method="post">
+      <form action="{% url 'preferences' %}" class="blueForms" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {% crispy comPrefForm comPrefForm.helper %}
         {% crispy specPrefForm specPrefForm.helper %}

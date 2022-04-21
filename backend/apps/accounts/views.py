@@ -407,8 +407,7 @@ def preferences(request):
         if request.method == "POST":
             logger.info("Preferences edit request", extra={"request": request})
             comPrefForm = CommonPreferencesForm(request.POST, instance=user)
-            specPrefForm = userTypeForm(request.POST, instance = specificAccount)
-
+            specPrefForm = userTypeForm(request.POST, request.FILES, instance = specificAccount)
             if comPrefForm.is_valid() and specPrefForm.is_valid():
                 user = comPrefForm.save()
                 specificAccount = specPrefForm.save()

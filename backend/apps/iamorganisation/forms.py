@@ -115,12 +115,14 @@ class OrganisationPreferencesForm(SpecialPreferencesForm):
     class Meta:
         model = Organisation
         fields=(
-            "postalCode",
-            "city",
-            "country",
             "organisationName",
             "contactPerson",
-            "streetNameAndNumber",     
+            "logo",
+            "country",
+            "postalCode",
+            "city",
+            "streetNameAndNumber",  
+            "about",   
         )
 
         labels = {
@@ -130,6 +132,8 @@ class OrganisationPreferencesForm(SpecialPreferencesForm):
             "country": _("Land"),
             "organisationName": _("Offizieller Name Ihrer Institution"),
             "contactPerson": _("Name der Kontaktperson"),
+            "logo": _("Logo Ihrer Organisation"),
+            "about": _("Über Ihre Institution")
         }
 
     def __init__(self, *args, **kwargs):
