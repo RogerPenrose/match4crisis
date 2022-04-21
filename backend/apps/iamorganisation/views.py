@@ -141,4 +141,9 @@ def sent_requests(request):
     context = {"helpRequests" : requests}
     return render(request, "sent_requests.html", context)
 
-
+def organisation_overview(request):
+    orgs = Organisation.objects.filter(isApproved=True)
+    context = {
+        "organisations" : orgs,
+    }
+    return render(request, "organisation_overview.html", context)

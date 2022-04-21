@@ -1,0 +1,40 @@
+
+{% load static %}
+{% load i18n %}
+{% load display_value %}
+<div class="col-12 organisation-card"> 
+<div class="row align-self-center align-items-center">
+    
+    {% if entry.logo %}
+        <div class="col-5 col-sm-4">
+        <div class="background-photo" style="background-image: url({{ entry.logo.url }})"></div>
+        </div>  
+    {% else %}
+        <!-- Default logo ?-->
+    {%endif%}
+    
+    <div class="description col-7 col-sm-8">
+        <h2>{{ entry.organisationName }}</h2>
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 100 100">
+           <path d="M50.096,58.555c14.782,0,26.805-12.025,26.805-26.806c0-14.78-12.023-26.805-26.805-26.805
+               c-14.78,0-26.804,12.025-26.804,26.805C23.292,46.53,35.316,58.555,50.096,58.555z M50.096,10.928
+               c11.481,0,20.823,9.34,20.823,20.821c0,11.481-9.342,20.823-20.823,20.823c-11.48,0-20.82-9.342-20.82-20.823
+               C29.276,20.269,38.616,10.928,50.096,10.928z"/>
+           <path d="M64.751,64H35.249C18.07,64,4.094,79,4.094,95h5.985c0-13,11.056-25,25.169-25h29.502C78.63,70,89.92,82,89.92,95h5.985
+               C95.905,79,81.93,64,64.751,64z"/>
+        </svg>
+        {% blocktrans %}Kontaktperson: {% endblocktrans %} {{entry.contactPerson}}</p>
+        <p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/> 
+            </svg>
+            {% blocktrans %}Adresse: {% endblocktrans %} {{entry.streetNameAndNumber}}, {{entry.postCode}} {{entry.city}}, {{entry.get_country_display}}
+        </p>
+        <hr>
+        <h5>{% blocktrans %}Über diese Organisation:{% endblocktrans %}</h5>
+        <p>{{entry.about}}</p>
+    </div>
+
+</div>
+</div>   

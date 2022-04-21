@@ -13,4 +13,5 @@ urlpatterns = [
     path("request_help", views.request_help, name="request_help"),
     path("sent_requests", views.sent_requests, name="sent_requests"),
     #path("organisation_view/<str:uuid>/", views.organisation_view, name="organisation_view"),
+    path("organisation_overview", views.organisation_overview, name="organisation_overview"),
 ]
