@@ -71,20 +71,20 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 <div class="col-6 left">
  <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-      </svg> <a href="/offers/search?city={{city}}&range={{range}}">{%blocktrans%} Zurück {% endblocktrans%}</a><!--<input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" />-->  </p></div>
+      </svg> <a href="/offers/search{% if city != "" %}?city={{city}}&range={{range}}{%endif%}">{%blocktrans%} Zurück {% endblocktrans%}</a><!--<input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" />-->  </p></div>
 
         </div>
 
         <div class="row align-self-center align-items-center" style="margin-bottom: 55px;">
 </div> 
 
-<div style="{% if  city == None or city == ""%} display:none{%endif%} ">
+<div >
     <div class="row align-self-center align-items-center" style="margin-top:75px;">
  <div class="col-12" >
     <h2 class="title" ><img src="{% static 'img/step-2.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2></div>
         </div>
         </div>
-        <div class="container cards" style="{% if  city == None or city == "" %} display:none{%endif%} ">
+        <div class="container cards" >
             <a onclick="search_offers(['accommodation']);" class="pointer">        
             <div class="col-12 col-lg-6 offer-card"> 
 

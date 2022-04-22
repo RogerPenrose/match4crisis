@@ -97,37 +97,42 @@ def contact(request, offer_id):
         return render(request, 'offers/contact.html', details)
 def select_category(request):
     city = ""
-    lngMax = 0
-    lngMin = 0
-    latMax = 0
-    latMin = 0
-    locationData={"latMin": 0, "lngMin":0, "lngMax":0, "latMax":0}
+    lngMax = 360
+    lngMin = -360
+    latMax =90
+    latMin = -90
+    locationData={"latMin": latMin, "lngMin":lngMin, "lngMax":lngMax, "latMax":latMax}
     rangeKm = request.GET.get("range")
+    filters ={"active": True}
     logger.warning("Request get: "+str(request.GET.dict()))
-    if request.GET.get("lat") is not None: 
-        bb = json.loads(request.GET.get("bb"))
-        locationData = { "city": request.GET.get("location"), "lngMax": bb["east"], "lngMin": bb["west"], "latMax": bb["north"], "latMin": bb["south"]}
-        city = locationData["city"]
-        locationData = padByRange(locationData,rangeKm)
-    elif  request.GET.get("location")  is not None: 
-        locationData = getCityBbFromLocation(request.GET.get("location"))
-        logger.warning("Getting BB from City?!")
-        locationData = padByRange(locationData,rangeKm)
-        city = locationData["city"]
+    if request.GET.get("location") != "-1":
+        if request.GET.get("lat") is not None: 
+            bb = json.loads(request.GET.get("bb"))
+            locationData = { "city": request.GET.get("location"), "lngMax": bb["east"], "lngMin": bb["west"], "latMax": bb["north"], "latMin": bb["south"]}
+            city = locationData["city"]
+            locationData = padByRange(locationData,rangeKm)
+        elif  request.GET.get("location")  is not None: 
+            locationData = getCityBbFromLocation(request.GET.get("location"))
+            logger.warning("Getting BB from City?!")
+            locationData = padByRange(locationData,rangeKm)
+            city = locationData["city"]
+        
+        filters["lat__range"] = (locationData["latMin"], locationData["latMax"])
+        filters["lng__range"] = (locationData["lngMin"], locationData["lngMax"])
+
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    logger.warning(str(locationData))
-    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    accommodations = GenericOffer.objects.filter(offerType="AC",**filters).count()
+    translations = GenericOffer.objects.filter(offerType="TL",**filters).count()
+    transportations = GenericOffer.objects.filter(offerType="TR",**filters).count()
+    accompaniments = GenericOffer.objects.filter(offerType="AP",**filters).count()
+    buerocratic = GenericOffer.objects.filter(offerType="BU",**filters).count()
+    childcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters).count()
     welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
     psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    jobs = GenericOffer.objects.filter(active=True,offerType="JO",  lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL",  lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    manpower = GenericOffer.objects.filter(active=True,offerType="MP",  lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    jobs = GenericOffer.objects.filter(offerType="JO", **filters).count()
+    childcareLongterm = GenericOffer.objects.filter(offerType="CL", **filters).count()
+    manpower = GenericOffer.objects.filter(offerType="MP", **filters).count()
     totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
@@ -143,6 +148,7 @@ def select_category(request):
         'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
+    logger.warning(str(context))
     return render(request, 'offers/category_select.html', context)
     
 def search(request):
