@@ -73,11 +73,11 @@ def contact(request, offer_id):
         # If the current user is a Refugee: Add this offer to their recently contacted offers
         if request.user.is_authenticated and request.user.isRefugee:
             subject = _("Anfrage zu deinem Hilfsangebot: ")
-            if request.POST.get("predefined") == "available"
+            if request.POST.get("predefined") == "available":
                 subject += _("Ist das Angebot noch aktuell?")
-            if request.POST.get("predefined") == "further_info"
+            if request.POST.get("predefined") == "further_info":
                 subject += _("Weitere Informationen gewünscht")
-            if request.POST.get("predefined") == "call"
+            if request.POST.get("predefined") == "call":
                 subject += _("Anruf erbeten")
             plaintext = get_template('offers/contact_email.txt')
             htmly     = get_template('offers/contact_email.html')
