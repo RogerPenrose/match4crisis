@@ -1,12 +1,20 @@
 from django.http import HttpResponse
 from django.template import loader
 
+from django.shortcuts import  redirect
 
 def home(request):
     context = {}
     template = loader.get_template("home.html")
+    if request.user.is_authenticated and request.user.isRefugee :
+        return redirect('/ineedhelp/refugee_dashboard' )
+    elif request.user.is_authenticated and request.user.isHelper :
+        return redirect('/iofferhelp/helper_dashboard' )
+    elif request.user.is_authenticated and request.user.isOrganisation :
+        return redirect('/iamorganisation/organisation_dashboard' )
+    else :
+        return HttpResponse(template.render(context, request))
 
-    return HttpResponse(template.render(context, request))
 
 
 def about(request):
