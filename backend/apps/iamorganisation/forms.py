@@ -75,7 +75,7 @@ class OrganisationFormO(ModelForm):
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
             Row(Column("phoneNumber"), Column("email")),
-            Row( Column("country"), Column("postalCode")),
+            Row(Column("country"), Column("postalCode")),
             Row(Column("city"), Column("streetNameAndNumber")),
             Row(Column("password1"), Column("password2")),
             Row("acceptTerms"),
@@ -101,15 +101,6 @@ class OrganisationFormO(ModelForm):
                 password_validation.validate_password(password, self.instance)
             except ValidationError as error:
                 self.add_error("password2", error)
-
-
-class OrganisationFormExtra(OrganisationFormO):
-    def __init__(self, *args, **kwargs):
-        super(OrganisationFormExtra, self).__init__(*args, **kwargs)
-        # !!! namen der knöpe dürfen nicht verändert werden, sonst geht code woanders kaputt
-        self.helper.add_input(Submit("submit", _("Schicke Mails")))
-        self.helper.add_input(Submit("submit", _("Schicke Mails + Erstelle Anzeige")))
-
 
 class OrganisationPreferencesForm(SpecialPreferencesForm):
     class Meta:
@@ -146,14 +137,11 @@ def check_unique_email(value):
         raise ValidationError(_("Diese Email ist bereits vergeben"))
     return value
 
-
 class OrganisationFormInfoSignUp(OrganisationFormO):
     email = forms.EmailField(
         validators=[check_unique_email], label='', widget=forms.EmailInput(attrs={'placeholder':_("Offizielle E-Mail-Adresse der Kontaktperson")}) 
     )
    
-
-
 class OrganisationFormInfoCreate(OrganisationFormO):
     # Used internally to bypass duplicate email validation
     email = forms.EmailField()

@@ -100,14 +100,6 @@ def signup_organisation(request):
                 subject_template="registration/password_reset_email_subject.txt",
             )
             return HttpResponseRedirect("/iamorganisation/thanks_organisation")
-        #else: raise Exception(form_info.errors)
-
-            # plz = form_info.cleaned_data['plz']
-            # countrycode = form_info.cleaned_data['countrycode']
-            # distance = 0
-            # login(request, user)
-            # return HttpResponseRedirect('/iamorganisation/helpers/%s/%s/%s'%(countrycode,plz,distance))
-
     else:
         form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
@@ -124,12 +116,10 @@ def register_organisation_in_db(request, formData):
     user = User.objects.create(email=formData["email"], isOrganisation=True)
     user.set_password(pwd)
     user.phoneNumber = formData["phoneNumber"]
-    print("Saving User")
     user.save()
 
     organisation = Organisation.objects.create(user=user)
     organisation = OrganisationFormInfoCreate(request.POST, instance=organisation)
-    print("Saving Organisation")
     organisation.save()
     return user, organisation
 
