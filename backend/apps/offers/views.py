@@ -95,10 +95,7 @@ def contact(request, offer_id):
     else:
         details = getOfferDetails(request,offer_id)
         return render(request, 'offers/contact.html', details)
-
-def search(request):
-    # Ideally: Associate Postcode with city here...
-    #Get list of all PostCodes within the City: 
+def select_category(request):
     city = ""
     lngMax = 0
     lngMin = 0
@@ -106,15 +103,17 @@ def search(request):
     latMin = 0
     locationData={"latMin": 0, "lngMin":0, "lngMax":0, "latMax":0}
     rangeKm = request.GET.get("range")
-    if request.GET.get("lat") == "" and request.GET.get("location")  is not None: 
-        locationData = getCityBbFromLocation(request.GET.get("location"))
-        locationData = padByRange(rlocationData,angeKm)
-        city = locationData["city"]
-    elif request.GET.get("lat") is not None: 
+    logger.warning("Request get: "+str(request.GET.dict()))
+    if request.GET.get("lat") is not None: 
         bb = json.loads(request.GET.get("bb"))
         locationData = { "city": request.GET.get("location"), "lngMax": bb["east"], "lngMin": bb["west"], "latMax": bb["north"], "latMin": bb["south"]}
         city = locationData["city"]
         locationData = padByRange(locationData,rangeKm)
+    elif  request.GET.get("location")  is not None: 
+        locationData = getCityBbFromLocation(request.GET.get("location"))
+        logger.warning("Getting BB from City?!")
+        locationData = padByRange(locationData,rangeKm)
+        city = locationData["city"]
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
     logger.warning(str(locationData))
@@ -144,7 +143,12 @@ def search(request):
         'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
-    return render(request, 'offers/search.html', context)
+    return render(request, 'offers/category_select.html', context)
+    
+def search(request):
+    # Ideally: Associate Postcode with city here...
+    #Get list of all PostCodes within the City: 
+    return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
