@@ -34,15 +34,14 @@
 
 <form action="/offers/{{id}}/contact" method="POST">
     {% csrf_token %}
-    {% if genericForm.offerType.value == "AC" %}
     <p><b>{%blocktrans%}Vorgefertigte Nachrichten:{%endblocktrans%}</b></p>
-<input type="radio" id="available" name="fav_language" value="available">
+<input type="radio" id="available" name="predefined" value="available">
 <label for="available">{%blocktrans%}Ist das Inserat noch aktuell?{%endblocktrans%}</label><br>
-<input type="radio" id="visit" name="fav_language" value="visit">
-<label for="visit">{%blocktrans%}Ist eine Besichtigung möglich ? {%endblocktrans%}</label><br>
-<input type="radio" id="call" name="fav_language" value="call">
+<input type="radio" id="visit" name="predefined" value="further_info">
+<label for="visit">{%blocktrans%}Ich wünsche weitere Informationen {%endblocktrans%}</label><br>
+<input type="radio" id="call" name="predefined" value="call">
 <label for="call">{%blocktrans%}Können Sie mich zurückrufen?{%endblocktrans%}</label>
-<br><br>{% endif%}
+<br><br>
 <label><b>{%blocktrans%}Eigene Nachricht:{%endblocktrans%}</b></label>
 <p><textarea class="form-control" rows="4" name="message" cols="50" placeholder="{%blocktrans%}Bitte geben Sie ihre Nachricht ein{%endblocktrans%}"></textarea></p>
 <p style="font-size:13px;">{%blocktrans%}<b>Achtung:</b> Deine persönlichen und Kontaktdaten (E-Mail und Name) werden automatisch mit dem Inserenten geteilt!{%endblocktrans%}</p>
