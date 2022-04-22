@@ -127,7 +127,6 @@ class AccommodationOffer(models.Model):
     numberOfPets = models.IntegerField(default=0, blank=True)
     typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
     startDateAccommodation = models.DateField(default=timezone.now)
-    endDateAccommodation = models.DateField(blank =True, null=True)
     def __str__(self):
         return self.typeOfResidence
 
