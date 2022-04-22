@@ -104,35 +104,31 @@ def search(request):
     lngMin = 0
     latMax = 0
     latMin = 0
+    locationData={"latMin": 0, "lngMin":0, "lngMax":0, "latMax":0}
     rangeKm = request.GET.get("range")
     if request.GET.get("lat") == "" and request.GET.get("location")  is not None: 
         locationData = getCityBbFromLocation(request.GET.get("location"))
+        locationData = padByRange(rlocationData,angeKm)
         city = locationData["city"]
-        lngMax = float(locationData["lngMax"])+kmInLng(rangeKm, locationData["latMax"])
-        latMin = float(locationData["latMin"])-kmInLat(rangeKm)
-        lngMin = float(locationData["lngMin"])-kmInLng(rangeKm,  locationData["latMax"])
-        latMax = locationData["latMax"]+kmInLat(rangeKm )
     elif request.GET.get("lat") is not None: 
         bb = json.loads(request.GET.get("bb"))
         locationData = { "city": request.GET.get("location"), "lngMax": bb["east"], "lngMin": bb["west"], "latMax": bb["north"], "latMin": bb["south"]}
         city = locationData["city"]
-        lngMax = locationData["lngMax"]+kmInLng(rangeKm, locationData["latMax"])
-        latMin = locationData["latMin"]-kmInLat(rangeKm)
-        lngMin = locationData["lngMin"]-kmInLng(rangeKm, locationData["latMax"])
-        latMax = locationData["latMax"]+kmInLat(rangeKm)
+        locationData = padByRange(locationData,rangeKm)
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(latMin, latMax), genericOffer__lng__range=(lngMin, lngMax)).count()
-    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(latMin, latMax), genericOffer__lng__range=(lngMin, lngMax)).count()
-    jobs = GenericOffer.objects.filter(active=True,offerType="JO",  lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL",  lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    manpower = GenericOffer.objects.filter(active=True,offerType="MP",  lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
+    logger.warning(str(locationData))
+    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    jobs = GenericOffer.objects.filter(active=True,offerType="JO",  lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL",  lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    manpower = GenericOffer.objects.filter(active=True,offerType="MP",  lat__range=(locationData["latMin"], locationData["latMax"]), lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
     totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
@@ -182,7 +178,7 @@ def filter(request):
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
-        filters = {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
+        filters = {"genericOffer__active": "True", "genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
     pageCount = int(request.POST.get("page", 0))
     ids = []
     mapparameter = ""
