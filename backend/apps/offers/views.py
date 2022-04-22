@@ -24,15 +24,6 @@ from django.contrib.auth.decorators import login_required
 
 gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
-OFFERTYPESOBJ = { "accommodation": { "title": "Accommodation", "requestName": "accommodation", "modelName" : "AccommodationOffer", "offersName": "AccommodationOffers"}, 
-                "transportation": { "title": "Transportation", "requestName": "transportation", "modelName": "TransportationOffer", "offersName": "TransportationOffers"},
-                "manpower": { "title": "Manpower", "requestName": "manpower", "modelName": "ManpowerOffer", "offersName": "ManpowerOffers"},
-                "buerocratic": { "title" :  "Buerocratic Aide", "requestName": "buerocratic", "modelName": "BuerocraticOffer", "offersName": "BuerocraticOffers"}, 
-                "childcareshortterm" : { "title" : "Childcare / Babysitting", "requestName": "childcareshortterm", "modelName": "ChildcareOfferShortterm", "offersName": "ChildcareOffersShortterm"}, 
-                "childcarelongterm" : { "title" : "Childcare (Longterm)", "requestName": "childcarelongterm", "modelName": "ChildcareOfferLongterm", "offersName": "ChildcareOffersLongterm"}, 
-                "job" : { "title" : "Job", "requestName": "job", "modelName": "JobOffer", "offersName": "JobOffers"}, 
-                "welfare" : { "title" : "Medical Assistance", "requestName": "welfare", "modelName": "WelfareOffer", "offersName": "WelfareOffers"},
-                "donation" : { "title" : "Donations", "requestName": "donation", "modelName": "DonationOffer", "offersName": "DonationOffers"}}
 logger = logging.getLogger("django")
 
 def getCityBbFromLocation(locationData):
@@ -81,9 +72,13 @@ def contact(request, offer_id):
 
         # If the current user is a Refugee: Add this offer to their recently contacted offers
         if request.user.is_authenticated and request.user.isRefugee:
-            subject = _("Anfrage zu deinem Hilfsangebot")
-            
-            message = request.POST.get("message")
+            subject = _("Anfrage zu deinem Hilfsangebot: ")
+            if request.POST.get("predefined") == "available":
+                subject += _("Ist das Angebot noch aktuell?")
+            if request.POST.get("predefined") == "further_info":
+                subject += _("Weitere Informationen gewünscht")
+            if request.POST.get("predefined") == "call":
+                subject += _("Anruf erbeten")
             plaintext = get_template('offers/contact_email.txt')
             htmly     = get_template('offers/contact_email.html')
             contactData = _("E-Mail : ")+request.user.email+ " "
@@ -104,44 +99,44 @@ def contact(request, offer_id):
     else:
         details = getOfferDetails(request,offer_id)
         return render(request, 'offers/contact.html', details)
-
-def search(request):
-    # Ideally: Associate Postcode with city here...
-    #Get list of all PostCodes within the City: 
+def select_category(request):
     city = ""
-    lngMax = 0
-    lngMin = 0
-    latMax = 0
-    latMin = 0
+    lngMax = 360
+    lngMin = -360
+    latMax =90
+    latMin = -90
+    locationData={"latMin": latMin, "lngMin":lngMin, "lngMax":lngMax, "latMax":latMax}
     rangeKm = request.GET.get("range")
-    if request.GET.get("lat") == "" and request.GET.get("location")  is not None: 
-        locationData = getCityBbFromLocation(request.GET.get("location"))
-        city = locationData["city"]
-        lngMax = float(locationData["lngMax"])+kmInLng(rangeKm, locationData["latMax"])
-        latMin = float(locationData["latMin"])-kmInLat(rangeKm)
-        lngMin = float(locationData["lngMin"])-kmInLng(rangeKm,  locationData["latMax"])
-        latMax = locationData["latMax"]+kmInLat(rangeKm )
-    elif request.GET.get("lat") is not None: 
-        bb = json.loads(request.GET.get("bb"))
-        locationData = { "city": request.GET.get("location"), "lngMax": bb["east"], "lngMin": bb["west"], "latMax": bb["north"], "latMin": bb["south"]}
-        city = locationData["city"]
-        lngMax = locationData["lngMax"]+kmInLng(rangeKm, locationData["latMax"])
-        latMin = locationData["latMin"]-kmInLat(rangeKm)
-        lngMin = locationData["lngMin"]-kmInLng(rangeKm, locationData["latMax"])
-        latMax = locationData["latMax"]+kmInLat(rangeKm)
+    filters ={"active": True}
+    logger.warning("Request get: "+str(request.GET.dict()))
+    if request.GET.get("location") != "-1":
+        if request.GET.get("lat") is not None: 
+            bb = json.loads(request.GET.get("bb"))
+            locationData = { "city": request.GET.get("location"), "lngMax": bb["east"], "lngMin": bb["west"], "latMax": bb["north"], "latMin": bb["south"]}
+            city = locationData["city"]
+            locationData = padByRange(locationData,rangeKm)
+        elif  request.GET.get("location")  is not None: 
+            locationData = getCityBbFromLocation(request.GET.get("location"))
+            logger.warning("Getting BB from City?!")
+            locationData = padByRange(locationData,rangeKm)
+            city = locationData["city"]
+        
+        filters["lat__range"] = (locationData["latMin"], locationData["latMax"])
+        filters["lng__range"] = (locationData["lngMin"], locationData["lngMax"])
+
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
-    accommodations = GenericOffer.objects.filter(active=True,offerType="AC", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    translations = GenericOffer.objects.filter(active=True,offerType="TL", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    transportations = GenericOffer.objects.filter(active=True,offerType="TR", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    accompaniments = GenericOffer.objects.filter(active=True,offerType="AP", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    buerocratic = GenericOffer.objects.filter(active=True,offerType="BU", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    childcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA", lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(latMin, latMax), genericOffer__lng__range=(lngMin, lngMax)).count()
-    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(latMin, latMax), genericOffer__lng__range=(lngMin, lngMax)).count()
-    jobs = GenericOffer.objects.filter(active=True,offerType="JO",  lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    childcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL",  lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
-    manpower = GenericOffer.objects.filter(active=True,offerType="MP",  lat__range=(latMin, latMax), lng__range=(lngMin, lngMax)).count()
+    accommodations = GenericOffer.objects.filter(offerType="AC",**filters).count()
+    translations = GenericOffer.objects.filter(offerType="TL",**filters).count()
+    transportations = GenericOffer.objects.filter(offerType="TR",**filters).count()
+    accompaniments = GenericOffer.objects.filter(offerType="AP",**filters).count()
+    buerocratic = GenericOffer.objects.filter(offerType="BU",**filters).count()
+    childcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters).count()
+    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    jobs = GenericOffer.objects.filter(offerType="JO", **filters).count()
+    childcareLongterm = GenericOffer.objects.filter(offerType="CL", **filters).count()
+    manpower = GenericOffer.objects.filter(offerType="MP", **filters).count()
     totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
     totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
     totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
@@ -157,7 +152,13 @@ def search(request):
         'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
-    return render(request, 'offers/search.html', context)
+    logger.warning(str(context))
+    return render(request, 'offers/category_select.html', context)
+    
+def search(request):
+    # Ideally: Associate Postcode with city here...
+    #Get list of all PostCodes within the City: 
+    return render(request, 'offers/search.html')
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
@@ -177,39 +178,6 @@ def getTranslationImage(request, firstLanguage, secondLanguage):
     context = {"firstLanguage" : firstData.decode("utf-8")
 , "secondLanguage" : secondLanguage.decode("utf-8")}
     return render(request, 'offers/drawing.svg', context=context,content_type="image/svg+xml")
-def by_city(request, city):
-    # Ideally: Associate Postcode with city here...
-    #Get list of all PostCodes within the City: 
-    postCodes = scrapePostCodeJson(city)
-    #Dummy data:
-    accommodations= 0
-    translations = 0 
-    transportations = 0
-    buerocratic = 0
-    welfare = 0
-    childcareShortterm = 0
-    for postCode in postCodes:
-        accommodations += GenericOffer.objects.filter(active=True,offerType="AC", postCode=postCode).count()
-        translations += GenericOffer.objects.filter(active=True,offerType="TL", postCode=postCode).count()
-        transportations += GenericOffer.objects.filter(active=True,offerType="TR", postCode=postCode).count()
-        accompaniments += GenericOffer.objects.filter(active=True,offerType="AP", postCode=postCode).count()
-        buerocratic += GenericOffer.objects.filter(active=True,offerType="BU", postCode=postCode).count()
-        childcareShortterm += GenericOffer.objects.filter(active=True,offerType="BA", postCode=postCode).count()
-        welfare += GenericOffer.objects.filter(active=True,offerType="WE", postCode=postCode).count()
-        jobs += GenericOffer.objects.filter(active=True,offerType="JO", postCode=postCode).count()
-    totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(active=True,offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(active=True,offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
-    context = {
-        'local' : {'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterms": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm},
-        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
-    }
-    return render(request, 'offers/list.html', context)
 def padByRange(locationData, rangeKm):
 
     locationData["lngMax"] +=kmInLng(rangeKm, locationData["latMax"])
@@ -224,30 +192,32 @@ def filter(request):
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
-        filters = {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
+        filters = {"genericOffer__active": "True", "genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
     pageCount = int(request.POST.get("page", 0))
     ids = []
     mapparameter = ""
-    currentFilter = dict(request.POST)
+    currentFilter = request.POST.dict()
     if not currentFilter:
-        currentFilter = dict(request.GET)
+        currentFilter = request.GET.dict()
+    logger.warning("current Filter: "+str(currentFilter))
     categoryCounter = 1
     for key in request.POST:
         if "Visible" in key:
             categoryCounter = categoryCounter +1 
             if "child" in key:
-                mapparameter= "childcare"+"=True"
+                mapparameter+= "childcare"+"=True&"
             else:
-                mapparameter = key.replace("Visible","")+"=True"
+                mapparameter += key.replace("Visible","")+"=True&"
     for key in request.GET:
-        if "Visible" in key:
+        if "city" not in key:
             categoryCounter = categoryCounter +1 
             if "child" in key:
-                mapparameter= "childcare"+"=True"
+                mapparameter+= "childcare"+"=True&"
             else:
-                mapparameter = key.replace("Visible","")+"=True"
+                mapparameter += key.replace("Visible","")+"=True&"
     if not currentFilter and categoryCount == 1:
         categoryCounter = 11
+    mapparameter = mapparameter[:-1]
     N_ENTRIES = int(50 / categoryCounter)
     firstEntry = (pageCount+1)* N_ENTRIES
     lastEntry = pageCount * N_ENTRIES

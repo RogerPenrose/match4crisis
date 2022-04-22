@@ -81,7 +81,6 @@ def accommodationOffersJSON(request):
         "numberOfPets": e.numberOfPets,
         "type": e.get_typeOfResidence_display(),
         "startDate": str(e.startDateAccommodation),
-        "endDate": str(e.endDateAccommodation),
         "lng": e.genericOffer.lng,
         "title": e.genericOffer.offerTitle,
         "location": e.genericOffer.location,

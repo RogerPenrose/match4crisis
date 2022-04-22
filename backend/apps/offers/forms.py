@@ -208,7 +208,6 @@ class AccommodationForm(OfferForm):
 
         labels = {
             "startDateAccommodation" : STARTDATE,
-            "endDateAccommodation" : ENDDATE,
             "numberOfAdults" : NUMBERADULTS,
             "numberOfChildren" : AMOUNT_OF_CHILDREN,
             "numberOfPets" : NUMBERPETS,
@@ -217,7 +216,6 @@ class AccommodationForm(OfferForm):
 
         widgets = {
             "startDateAccommodation" : forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}),
-            "endDateAccommodation" : forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}),
         }
 
       
