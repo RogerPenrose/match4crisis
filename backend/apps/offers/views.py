@@ -107,7 +107,11 @@ def select_category(request):
     latMin = -90
     locationData={"latMin": latMin, "lngMin":lngMin, "lngMax":lngMax, "latMax":latMax}
     rangeKm = request.GET.get("range")
-    filters ={"active": True, "isRequestForHelp": False}
+    filters ={"active": True, "requestForHelp": False}
+    filters_generic = {"genericOffer__active": True, "genericOffer__requestForHelp": False}
+    if request.GET.get("requests") == "1":
+        filters["requestForHelp"] = True
+        filters_generic["genericOffer__requestForHelp"]= True
     logger.warning("Request get: "+str(request.GET.dict()))
     if request.GET.get("location") != "-1":
         if request.GET.get("lat") is not None: 
@@ -123,7 +127,9 @@ def select_category(request):
         
         filters["lat__range"] = (locationData["latMin"], locationData["latMax"])
         filters["lng__range"] = (locationData["lngMin"], locationData["lngMax"])
-
+        filters_generic["genericOffer__lat__range"] = (locationData["latMin"], locationData["latMax"])
+        filters_generic["genericOffer__lng__range"] = (locationData["lngMin"], locationData["lngMax"])
+    filters_noLocation = { "active": filters["active"], "requestForHelp": filters["requestForHelp"]}
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
     accommodations = GenericOffer.objects.filter(offerType="AC",**filters).count()
@@ -132,23 +138,24 @@ def select_category(request):
     accompaniments = GenericOffer.objects.filter(offerType="AP",**filters).count()
     buerocratic = GenericOffer.objects.filter(offerType="BU",**filters).count()
     childcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters).count()
-    welfare = WelfareOffer.objects.filter(genericOffer__active=True, genericOffer__requestForHelp = False,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    psych = WelfareOffer.objects.filter(genericOffer__active=True,genericOffer__requestForHelp = False,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    welfare = WelfareOffer.objects.filter(helpType_welfare__in=["ELD","DIS"], **filters_generic).count()
+    psych = WelfareOffer.objects.filter(helpType_welfare="PSY",**filters_generic).count()
     jobs = GenericOffer.objects.filter(offerType="JO", **filters).count()
     childcareLongterm = GenericOffer.objects.filter(offerType="CL", **filters).count()
     manpower = GenericOffer.objects.filter(offerType="MP", **filters).count()
-    totalAccommodations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="JO").count()
-    totalDonations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="DO").count()
+    totalAccommodations = GenericOffer.objects.filter(offerType="AC",**filters_noLocation).count()
+    totalTransportations = GenericOffer.objects.filter(offerType="TR",**filters_noLocation).count()
+    totalTranslations = GenericOffer.objects.filter(offerType="TL",**filters_noLocation).count()
+    totalBuerocratic = GenericOffer.objects.filter(offerType="BU",**filters_noLocation).count()
+    totalWelfare = GenericOffer.objects.filter(offerType="WE",**filters_noLocation).count()
+    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters_noLocation).count()
+    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL",**filters_noLocation).count()
+    totalJobs = GenericOffer.objects.filter(offerType="JO",**filters_noLocation).count()
+    totalDonations = GenericOffer.objects.filter(offerType="DO",**filters_noLocation).count()
     context = {
         'city' : city,
         'range': rangeKm,
+        'requestForHelp': True,
         'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
@@ -158,7 +165,10 @@ def select_category(request):
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
-    return render(request, 'offers/search.html')
+    context ={"searchRequests": False}
+    if request.GET.get("requests", "False") == "true":
+        context["searchRequests"] = True
+    return render(request, 'offers/search.html', context)
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
@@ -188,11 +198,16 @@ def padByRange(locationData, rangeKm):
 
 def filter(request):
     N_ENTRIES = 5
+    isRequestForHelp = False
     filters = {"genericOffer__active": True, "genericOffer__requestForHelp": False} 
+    if request.POST.get("requests", "False") == "True":
+        filters["genericOffer__requestForHelp"] = True
+        isRequestForHelp = True
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
-        filters = {"genericOffer__active": "True", "genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
+        filterlocation= {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
+        filters.update(filterlocation)
     pageCount = int(request.POST.get("page", 0))
     ids = []
     mapparameter = ""
@@ -238,7 +253,7 @@ def filter(request):
     maxPage = 0
     numEntries = 0
     context = {'currentFilter': currentFilter, "mapparameter": mapparameter,"ResultCount": 0,"location": request.POST.get("city"), "range": request.POST.get("range"),
-    'entries': {},
+    'entries': {}, 'requestForHelp': isRequestForHelp,
     'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
     
     if request.POST.get("childShortVisible", "0") == "1" or request.GET.get("childShortVisible") == "True" or not currentFilter :
