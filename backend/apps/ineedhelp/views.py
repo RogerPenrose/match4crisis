@@ -15,9 +15,10 @@ class RefugeeDashboardView(DashboardView):
 
     def get(self, request, *args, **kwargs):
         firstname = request.user.first_name
-
+        hasRequests = GenericOffer.objects.filter(userId=request.user).count() > 0
         context = {
-            "firstname": firstname
+            "firstname": firstname,
+            "hasRequests": hasRequests
         }
 
         return self.render_to_response(context)
@@ -46,3 +47,15 @@ def running_requests(request):
     runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
     context = {"offers": runningOffers}
     return render(request, "running_offers.html", context)
+@refugeeRequired 
+def paused_requests(request):
+    userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
+    context = {"offers": runningOffers}
+    return render(request, "paused_offers.html", context)
+@refugeeRequired 
+def incomplete_requests(request):
+    userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=True)))
+    context = {"offers": runningOffers}
+    return render(request, "incomplete_offers.html", context)

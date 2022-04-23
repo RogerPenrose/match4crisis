@@ -3,7 +3,13 @@
 {% load i18n %}
 
 {% block title %}
+{%if offers.0.offer.genericOffer.requestForHelp == False %}
 {% blocktrans %}Unvollständige Angebote{% endblocktrans %}
+{%else%}
+{% blocktrans %}
+Unvollständige Gesuche
+{% endblocktrans %}
+{%endif%}
 {% endblock %}
 {% block header %}
 <style>
@@ -13,9 +19,13 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-    <div style="height:40px"></div>
-    <h3>{% blocktrans %}Unvollständige Angebote{% endblocktrans %}</h3>
-    </div>
+  <div style="height:40px"></div>
+  {%if offers.0.offer.genericOffer.requestForHelp == False %}
+  <h3>{% blocktrans %}Unvollständige Angebote{% endblocktrans %}</h3>
+  {%else%}
+  <h3>{% blocktrans %}Unvollständige Gesuche{% endblocktrans %}</h3>
+  {%endif%}
+  </div>
     <div class="container cards">
 
       {% if offers %}
@@ -41,9 +51,16 @@
       {%endif%}
       {% endfor %}
       {% else %}
-{% blocktrans %}
-Du hast keine unvollständigen Angebote
-{% endblocktrans %}
+      {%if offers.0.offer.genericOffer.requestForHelp == False %}
+      {% blocktrans %}
+      Du hast keine Unvollständigen Angebote.
+      {% endblocktrans %}
+      {%else%}
+      {% blocktrans %}
+      Du hast keine Unvollständigen Gesuche.
+      {% endblocktrans %}
+      {%endif%}
+      {% endif %}
 {% endif %}
 
 </div>

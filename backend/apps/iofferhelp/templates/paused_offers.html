@@ -3,7 +3,14 @@
 {% load i18n %}
 
 {% block title %}
+
+{%if offers.0.offer.genericOffer.requestForHelp == False %}
 {% blocktrans %}Pausierte Angebote{% endblocktrans %}
+{%else%}
+{% blocktrans %}
+Pausierte Gesuche
+{% endblocktrans %}
+{%endif%}
 {% endblock %}
 {% block header %}
 <style>
@@ -14,7 +21,11 @@
 {% block content %}
 <div class="container">
     <div style="height:40px"></div>
+    {%if offers.0.offer.genericOffer.requestForHelp == False %}
     <h3>{% blocktrans %}Pausierte Angebote{% endblocktrans %}</h3>
+    {%else%}
+    <h3>{% blocktrans %}Pausierte Gesuche{% endblocktrans %}</h3>
+    {%endif%}
     </div>
     <div class="container cards">
       
@@ -41,9 +52,15 @@
 {%endif%}
 {% endfor %}
 {% else %}
+{%if offers.0.offer.genericOffer.requestForHelp == False %}
 {% blocktrans %}
 Du hast keine pausierten Angebote.
 {% endblocktrans %}
+{%else%}
+{% blocktrans %}
+Du hast keine pausierten Gesuche.
+{% endblocktrans %}
+{%endif%}
 {% endif %}
 </div>
 

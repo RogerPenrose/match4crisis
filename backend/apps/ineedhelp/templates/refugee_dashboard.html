@@ -205,17 +205,35 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                     </div>
                 </a>
                 </div>      
-
+</div>{%if hasRequests == True%}
+<hr>
+<div class="buttons row">
                 <div class="col-12 col-md-6 col-xl-6">
     
                   <a href="{% url 'running_requests'%}">
                   <div class="row align-self-center align-items-center">
-                      <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/recent.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Aktive Gesuche{% endblocktrans %}</h3><p>{% blocktrans %}Deine veröffentlichten Hilfegesuche.{% endblocktrans %}</p></div>
+                      <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/recent.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Aktive Gesuche{% endblocktrans %}</h3><p>{% blocktrans %}Deine veröffentlichten Hilfsgesuche.{% endblocktrans %}</p></div>
                       </div>
                   </a>
                   </div>      
+                   <div class="col-12 col-md-6 col-xl-6">
+    
+                    <a href="{% url 'paused_requests'%}">
+                    <div class="row align-self-center align-items-center">
+                        <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/pause.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Pausierte Gesuche{% endblocktrans %}</h3><p>{% blocktrans %}Deine pausierten Hilfsgesuche.{% endblocktrans %}</p></div>
+                        </div>
+                    </a>
+                    </div>     
+                    <div class="col-12 col-md-6 col-xl-6">
+    
+                      <a href="{% url 'incomplete_requests'%}">
+                      <div class="row align-self-center align-items-center">
+                          <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/incomplete.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Unvollständige Gesuche{% endblocktrans %}</h3><p>{% blocktrans %}Deine unvollständigen Hilfsgesuche.{% endblocktrans %}</p></div>
+                          </div>
+                      </a>
+                      </div>     
         </div>
 
         </div>
-  </div>
+  </div>{% endif%}
 {% endblock %}
