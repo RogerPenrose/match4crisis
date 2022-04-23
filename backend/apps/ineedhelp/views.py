@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 
 from apps.accounts.views import DashboardView
 from apps.ineedhelp.models import Refugee
-from apps.offers.models import getSpecificOffers
+from apps.offers.models import getSpecificOffers, GenericOffer
 from apps.offers.views import mergeImages
 from apps.accounts.decorator import refugeeRequired
 def thx(request):
@@ -39,3 +39,10 @@ def recentlyContactedOffers(request):
     refugee : Refugee = Refugee.objects.get(user=request.user)
     offers = getSpecificOffers(refugee.recentlyContactedOffers.all().order_by('-recentlycontactedintermediary__dateContacted'))
     return render(request, "recently_contacted.html", {"offers" : mergeImages(offers)})
+
+@refugeeRequired 
+def running_requests(request):
+    userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
+    context = {"offers": runningOffers}
+    return render(request, "running_offers.html", context)
