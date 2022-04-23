@@ -15,4 +15,5 @@ urlpatterns = [
     path("sent_requests", views.sent_requests, name="sent_requests"),
     #path("organisation_view/<str:uuid>/", views.organisation_view, name="organisation_view"),
     path("organisation_overview", views.organisation_overview, name="organisation_overview"),
+    path("donation_detail/<donation_request_id>", views.donation_detail, name="donation_detail"),
 ]

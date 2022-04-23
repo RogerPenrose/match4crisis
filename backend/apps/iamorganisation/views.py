@@ -13,7 +13,7 @@ import django_tables2 as tables
 from django.utils.decorators import method_decorator
 
 from apps.accounts.decorator import organisationRequired
-from apps.iamorganisation.models import HelpRequest, Image, Organisation
+from apps.iamorganisation.models import DonationRequest, HelpRequest, Image, Organisation
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
@@ -185,3 +185,14 @@ def organisation_overview(request):
         "organisations" : orgs,
     }
     return render(request, "organisation_overview.html", context)
+
+def donation_detail(request, donation_request_id):
+    donationRequest = DonationRequest.objects.get(pk=donation_request_id)
+    organisation = donationRequest.organisation
+    images = Image.objects.filter(request=donationRequest)
+    context = {
+        "donationRequest" : donationRequest, 
+        "organisation" : organisation, 
+        "images" : images if images.count() > 0 else None
+    }
+    return render(request, "donation_detail.html", context)
