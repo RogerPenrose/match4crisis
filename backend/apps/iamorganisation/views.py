@@ -13,12 +13,12 @@ import django_tables2 as tables
 from django.utils.decorators import method_decorator
 
 from apps.accounts.decorator import organisationRequired
-from apps.iamorganisation.models import HelpRequest, Organisation
+from apps.iamorganisation.models import HelpRequest, Image, Organisation
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
 
-from .forms import RequestHelpForm
+from .forms import DonationRequestForm, HelpRequestForm
 
 
 #organisation_overview (mapview)
@@ -113,25 +113,63 @@ class OrganisationDashboardView(DashboardView):
 @organisationRequired
 def request_help(request):
     if request.method == "POST":
-        form = RequestHelpForm(request.POST)
+        form = HelpRequestForm(request.POST)
 
         if form.is_valid():
             # TODO add logic for actually sending out emails
             recipientCount = 42 # TODO how many helpers were contacted
 
-            requestHelpEntry = form.save(commit=False)
-            requestHelpEntry.organisation = Organisation.objects.get(user=request.user)
-            requestHelpEntry.recipientCount = recipientCount
-            requestHelpEntry.save()
+            helpRequestEntry = form.save(commit=False)
+            helpRequestEntry.organisation = Organisation.objects.get(user=request.user)
+            helpRequestEntry.recipientCount = recipientCount
+            helpRequestEntry.save()
+
+            if request.FILES.get("images") is not None:
+                counter = 0
+                images = request.FILES.getlist('images')
+                for image in images:
+                    counter = counter + 1
+                    image = Image(image=image, request = helpRequestEntry)
+                    image.save()
+
             context = {"recipientCount" : recipientCount} 
             return render(request, "request_sent.html", context)
 
     else:
-        form = RequestHelpForm()
+        form = HelpRequestForm()
 
     context = {"form" : form}
     return render(request, "request_help.html", context)
 
+
+@login_required
+@organisationRequired
+def create_donation_request(request):
+    if request.method == "POST":
+        form = DonationRequestForm(request.POST)
+
+        if form.is_valid():
+
+            donationRequestEntry = form.save(commit=False)
+            donationRequestEntry.organisation = Organisation.objects.get(user=request.user)
+            donationRequestEntry.save()
+
+            if request.FILES.get("images") is not None:
+                counter = 0
+                images = request.FILES.getlist('images')
+                for image in images:
+                    counter = counter + 1
+                    image = Image(image=image, request = donationRequestEntry)
+                    image.save()
+
+            context = {}
+            return render(request, "donation_request_created.html", context)
+
+    else:
+        form = DonationRequestForm()
+
+    context = {"form" : form}
+    return render(request, "request_donations.html", context)
 
 
 @login_required

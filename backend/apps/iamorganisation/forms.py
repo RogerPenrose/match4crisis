@@ -10,7 +10,7 @@ from django.contrib.auth import password_validation
 
 from apps.accounts.models import User
 from apps.accounts.forms import PhoneNumberField, SpecialPreferencesForm
-from .models import HelpRequest, Organisation
+from .models import DonationRequest, HelpRequest, Organisation
 
 
 class OrganisationFormO(ModelForm):
@@ -146,7 +146,7 @@ class OrganisationFormInfoCreate(OrganisationFormO):
     # Used internally to bypass duplicate email validation
     email = forms.EmailField()
 
-class RequestHelpForm(forms.ModelForm):
+class HelpRequestForm(forms.ModelForm):
     # TODO also allow digital offers?
     RADIUS_CHOICES = [
         ('', _('Radius')),
@@ -155,6 +155,9 @@ class RequestHelpForm(forms.ModelForm):
         (20, "<20km"),
         (50, "<50km"),
     ]
+
+    images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)
+
     class Meta:
         model = HelpRequest
         fields = (
@@ -172,13 +175,44 @@ class RequestHelpForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(RequestHelpForm, self).__init__(*args, **kwargs)
+        super(HelpRequestForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = "id-requestHelpForm"
+        self.helper.form_id = "id-helpRequestForm"
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
         self.helper.form_action = "request_help"
 
         self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='')
+
+        self.helper.add_input(Submit("submit", _("Senden")))
+
+class DonationRequestForm(forms.ModelForm):
+
+    images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)
+
+    class Meta:
+        model = DonationRequest
+        fields = (
+            'title',
+            'description',
+            'donationGoal',
+        )
+        labels = {
+            'title' : '',
+            'description' : '',
+            'donationGoal' : _('Spendenziel (optional)')
+        }
+        widgets = {
+            'title' : forms.TextInput(attrs={"placeholder": _("Betreff")}),
+            'description' : forms.Textarea(attrs={"placeholder": _("Beschreibung")}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DonationRequestForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-donationRequestForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "request_donations"
 
         self.helper.add_input(Submit("submit", _("Senden")))

@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}Hilfe anfordern{% endblocktrans %}
+{% blocktrans %}Spendenaufruf erstellen{% endblocktrans %}
 {% endblock %}
 
 {% load crispy_forms_tags %}
@@ -12,7 +12,7 @@
 <div class="container">
     <div class="row" style="margin-top:200px; margin-bottom:55px;">
                <div class="col-lg-10 col-sm-12 col-12">
-                   <h2>Hilfe anfordern</h2>
+                   <h2>Spendenaufruf erstellen</h2>
                 {% csrf_token %}
                {% crispy form form.helper %}
 

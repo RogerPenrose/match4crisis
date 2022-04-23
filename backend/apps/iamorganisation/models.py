@@ -32,14 +32,25 @@ class Organisation(models.Model):
 
     @property
     def address(self):
-        return '{0}, {1}, {2}'.format(self.streetNameAndNumber, self.postalCode, self.country)
+        return '{0}, {1} {2}, {3}'.format(self.streetNameAndNumber, self.postalCode, self.city, self.get_country_display())
 
     def __str__(self):
         return self.organisationName
 
-class HelpRequest(models.Model):
+class Request(models.Model):
+    # The maximum number of images a request can have attached
+    MAX_IMAGES = 10
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=False, related_name="requests")
-    radius = models.IntegerField(default=5)
     title = models.CharField(max_length=256, default="")
     description = models.TextField(max_length=100000, default="")
+
+class HelpRequest(Request):
+    radius = models.IntegerField(default=5)
     recipientCount = models.IntegerField(default=0)
+
+class DonationRequest(Request):
+    donationGoal = models.IntegerField(null=True, blank=True)
+
+class Image(models.Model):
+    request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to='requests/%Y/%m/%d/', blank=False)
