@@ -195,16 +195,15 @@ class DonationRequestForm(forms.ModelForm):
         fields = (
             'title',
             'description',
+            'beneficiary',
+            'iban',
+            'reason',
             'donationGoal',
         )
         labels = {
-            'title' : '',
-            'description' : '',
+            'title' : _("Titel"),
+            'description' : _("Beschreibung"),
             'donationGoal' : _('Spendenziel (optional)')
-        }
-        widgets = {
-            'title' : forms.TextInput(attrs={"placeholder": _("Betreff")}),
-            'description' : forms.Textarea(attrs={"placeholder": _("Beschreibung")}),
         }
 
     def __init__(self, *args, **kwargs):

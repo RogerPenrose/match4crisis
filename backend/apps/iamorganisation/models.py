@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 import uuid
 
+from localflavor.generic.models import IBANField
+
 from match4crisis.constants.countries import countries
 from apps.accounts.models import User
 
@@ -50,6 +52,9 @@ class HelpRequest(Request):
 
 class DonationRequest(Request):
     donationGoal = models.IntegerField(null=True, blank=True)
+    beneficiary = models.CharField(max_length=70, verbose_name=_("Begünstigte/r"))
+    iban = IBANField(verbose_name=_("IBAN"))
+    reason = models.CharField(max_length=140, verbose_name=_("Spendenstichwort"))
 
 class Image(models.Model):
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="images")
