@@ -44,6 +44,7 @@ class GenericOffer(models.Model):
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published', default=timezone.now)
     incomplete = models.BooleanField(default=False)
+    requestForHelp = models.BooleanField(default=False, editable=False)
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
         super().save(*args, **kwargs)

@@ -107,7 +107,7 @@ def select_category(request):
     latMin = -90
     locationData={"latMin": latMin, "lngMin":lngMin, "lngMax":lngMax, "latMax":latMax}
     rangeKm = request.GET.get("range")
-    filters ={"active": True}
+    filters ={"active": True, "isRequestForHelp": False}
     logger.warning("Request get: "+str(request.GET.dict()))
     if request.GET.get("location") != "-1":
         if request.GET.get("lat") is not None: 
@@ -132,20 +132,20 @@ def select_category(request):
     accompaniments = GenericOffer.objects.filter(offerType="AP",**filters).count()
     buerocratic = GenericOffer.objects.filter(offerType="BU",**filters).count()
     childcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters).count()
-    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    welfare = WelfareOffer.objects.filter(genericOffer__active=True, genericOffer__requestForHelp = False,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    psych = WelfareOffer.objects.filter(genericOffer__active=True,genericOffer__requestForHelp = False,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
     jobs = GenericOffer.objects.filter(offerType="JO", **filters).count()
     childcareLongterm = GenericOffer.objects.filter(offerType="CL", **filters).count()
     manpower = GenericOffer.objects.filter(offerType="MP", **filters).count()
-    totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(active=True,offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(active=True,offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
-    totalDonations = GenericOffer.objects.filter(active=True,offerType="DO").count()
+    totalAccommodations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="AC").count()
+    totalTransportations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="TR").count()
+    totalTranslations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="TL").count()
+    totalBuerocratic = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="BU").count()
+    totalWelfare = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="WE").count()
+    totalChildcareShortterm = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="BA").count()
+    totalChildcareLongterm = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="CL").count()
+    totalJobs = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="JO").count()
+    totalDonations = GenericOffer.objects.filter(active=True,requestForHelp = False,offerType="DO").count()
     context = {
         'city' : city,
         'range': rangeKm,
@@ -188,7 +188,7 @@ def padByRange(locationData, rangeKm):
 
 def filter(request):
     N_ENTRIES = 5
-    filters = {"genericOffer__active": True} 
+    filters = {"genericOffer__active": True, "genericOffer__requestForHelp": False} 
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
@@ -310,7 +310,7 @@ def index(request):
     
     return render(request, 'offers/index.html', context)
 def donations(request):
-    donation = DonationOffer.objects.filter(genericOffer__active=True)
+    donation = DonationOffer.objects.filter(genericOffer__active=True, genericOffer__requestForHelp=False)
     context = {"ResultCount": donation.count(), "DonationOffers": donation }
     return render(request, 'offers/donations.html', context)
 @login_required
@@ -326,11 +326,12 @@ def selectOfferType(request):
     context= {"entries": []}
     for entry in GenericOffer.OFFER_CHOICES[:-1]:
         context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
+    if request.GET.get("rfh", "False") == "True":
+        context["requestForHelp"] = True
     return render(request, 'offers/selectOfferType.html', context)
 
 
 @login_required
-@helperRequired
 def create(request):
     if request.method == 'POST':
         return update(request, newly_created=True)
@@ -338,6 +339,8 @@ def create(request):
         context = {}
         offerType = request.GET.get("type")
         newOffer = GenericOffer(offerType=offerType)
+        if request.GET.get("rfh", "False") == "True":
+            context["requestForHelp"] = True
         context["genericForm"]  = GenericForm(instance=newOffer)
         context["detailForm"] = OFFER_FORMS[request.GET.get("type")]()
         if request.GET.get("type") == "AC":
@@ -382,6 +385,8 @@ def save(request, offer_id=None):
 def update(request, offer_id = None, newly_created = False):
     if offer_id is None:
         genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
+        if request.user.isRefugee:
+            genOffer.requestForHelp = True
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     else:
         genOffer = GenericOffer.objects.get(pk=offer_id)
@@ -513,7 +518,7 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
     offer = GenericOffer.objects.get(pk=offer_id)
     context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
     context["username"] = offer.userId.first_name
-
+    logger.warning("context: "+str(offer.requestForHelp))
     if 'offer_newly_created' in request.session:
         newly_created = request.session['offer_newly_created']
         del request.session['offer_newly_created']
@@ -523,7 +528,7 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
         context["newly_created"] = newly_created
     if contacted:
         context["contacted"] = contacted
-    if request.user.is_authenticated and request.user.isRefugee:
+    if request.user.is_authenticated and request.user.isRefugee and request.user.id != offer.userId.id:
         # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
         refugee = Refugee.objects.get(user=request.user)
