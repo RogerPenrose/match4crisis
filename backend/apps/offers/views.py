@@ -10,6 +10,7 @@ import base64
 from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
+from django.core.exceptions import PermissionDenied
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
@@ -316,11 +317,9 @@ def donations(request):
 @login_required
 def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
-    if user_is_allowed(request, generic.userId.id):
-        generic.delete()
-        return index(request )
-    else :
-        return HttpResponse("Wrong User")
+    check_user_is_allowed(request, generic.userId.id)
+    generic.delete()
+    return index(request)
 @login_required
 def selectOfferType(request):
     context= {"entries": []}
@@ -355,8 +354,7 @@ def save(request, offer_id=None):
             specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
         else:
             genOffer = GenericOffer.objects.get(id=offer_id)
-            if(not user_is_allowed(request, genOffer.userId.id)):
-                return HttpResponseForbidden("You're not allowed to edit other users' offers.")
+            check_user_is_allowed(request, genOffer.userId.id)
             specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
         genOffer.incomplete=True
         genForm = GenericForm(request.POST, instance=genOffer)
@@ -385,8 +383,7 @@ def update(request, offer_id = None, newly_created = False):
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     else:
         genOffer = GenericOffer.objects.get(pk=offer_id)
-        if(not user_is_allowed(request, genOffer.userId.id)):
-            return HttpResponseForbidden("You're not allowed to edit other users' entries.")
+        check_user_is_allowed(request, genOffer.userId.id)
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     genOffer.incomplete=False
     genOffer.active=True
@@ -429,27 +426,22 @@ def getLocationFromOffer(offer):
     return None
 
 
-def user_is_allowed(request, target_id):
-    try:
-        user = User.objects.get(pk=request.user.id)
-    except User.DoesNotExist:
-        user = None
-    allowed = False
-    if user is not None:
-        if request.user.id == target_id or user.is_superuser or target_id == 0:
-            allowed = True
-            if(user.is_superuser):
-                logger.warning("User is super user: "+str(user.is_superuser))
-        else: 
-            return allowed
-    return allowed
+def check_user_is_allowed(request, target_id, raise_permission_denied = True):
+    user = request.user
+    if user.is_superuser:
+        logger.warning("User is super user", extra={"request" : request})
+        return True
+    if user.id == target_id or target_id == 0:
+        return True
+    if raise_permission_denied:
+        raise PermissionDenied
+    return False
+
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
-    if user_is_allowed(request, generic.userId.id):
-        ImageClass.objects.filter(image_id=image_id).delete()
-        return detail(request, offer_id, edit_active=True)
-    else :
-        return HttpResponse("Wrong User")
+    check_user_is_allowed(request, generic.userId.id)
+    ImageClass.objects.filter(image_id=image_id).delete()
+    return detail(request, offer_id, edit_active=True)
 def getOfferDetails(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     genericForm = GenericForm(instance = generic)
@@ -464,7 +456,7 @@ def getOfferDetails(request, offer_id):
         imageForm.url = image.image.url
         imageForm.id = image.image_id
         images.append(imageForm)
-    allowed = user_is_allowed(request, generic.userId.id)
+    allowed = check_user_is_allowed(request, generic.userId.id, raise_permission_denied = False)
     location = getLocationFromOffer(generic)
 
     if generic.offerType == "AC":
@@ -530,11 +522,14 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
         refugee.addRecentlyViewedOffer(offer)
     return render(request, 'offers/detail.html', context)
 
+@helperRequired
 def edit(request, offer_id):
+    genOffer = GenericOffer.objects.get(id=offer_id)
+    check_user_is_allowed(request, genOffer.userId.id)
+
     if request.method == 'POST':
         return update(request, offer_id, newly_created=True)
     else:
-        genOffer = GenericOffer.objects.get(id=offer_id)
         offerType = genOffer.offerType
         specOffer = OFFER_MODELS[offerType](genericOffer=genOffer)
 
