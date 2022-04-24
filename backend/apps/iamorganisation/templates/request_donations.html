@@ -11,12 +11,18 @@
 {% block content %}
 <div class="container">
     <div class="row" style="margin-top:200px; margin-bottom:55px;">
-               <div class="col-lg-10 col-sm-12 col-12">
-                   <h2>Spendenaufruf erstellen</h2>
-                {% csrf_token %}
-               {% crispy form form.helper %}
+        <div class="col-lg-10 col-sm-12 col-12">
+            <h2>
+                {%if edit %}
+                {% blocktrans %}Spendenaufruf bearbeiten{% endblocktrans %}
+                {% else %}
+                {% blocktrans %}Spendenaufruf bearbeiten{% endblocktrans %}
+                {% endif %}
+            </h2>
+            {% csrf_token %}
+            {% crispy form form.helper %}
 
         </div>
-   </div>
+    </div>
 </div>
 {% endblock %}

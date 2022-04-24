@@ -184,7 +184,7 @@ class HelpRequestForm(forms.ModelForm):
 
         self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='')
 
-        self.helper.add_input(Submit("submit", _("Senden")))
+        self.helper.add_input(Submit("submit", _("Speichern")))
 
 class DonationRequestForm(forms.ModelForm):
 
@@ -214,4 +214,4 @@ class DonationRequestForm(forms.ModelForm):
         self.helper.form_method = "post"
         self.helper.form_action = "request_donations"
 
-        self.helper.add_input(Submit("submit", _("Senden")))
+        self.helper.add_input(Submit("submit", _("Speichern")))

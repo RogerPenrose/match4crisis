@@ -1,10 +1,10 @@
 from functools import lru_cache
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.gzip import gzip_page
@@ -103,8 +103,15 @@ class OrganisationDashboardView(DashboardView):
 
         organisation = Organisation.objects.get(user = request.user)
 
+        donationRequests = DonationRequest.objects.filter(organisation=organisation)
+        helpRequests = HelpRequest.objects.filter(organisation=organisation)
+
+
         context = {
-            "organisation" : organisation
+            "organisation" : organisation,
+            "donationRequests" : donationRequests,
+            "helpRequests" : helpRequests,
+            "editAllowed" : True,
         }
 
         return self.render_to_response(context)
@@ -168,9 +175,38 @@ def create_donation_request(request):
     else:
         form = DonationRequestForm()
 
-    context = {"form" : form}
+    context = {"form" : form, "edit" : True}
     return render(request, "request_donations.html", context)
 
+
+@login_required
+@organisationRequired
+def edit_donation_request(request, donation_request_id):
+    donationRequest = get_object_or_404(DonationRequest, pk=donation_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if donationRequest.organisation != organisation:
+        raise PermissionDenied
+
+    if request.method == "POST":
+        form = DonationRequestForm(request.POST, instance=donationRequest)
+
+        if form.is_valid():
+            form.save()
+
+            if request.FILES.get("images") is not None:
+                counter = 0
+                images = request.FILES.getlist('images')
+                for image in images:
+                    counter = counter + 1
+                    image = Image(image=image, request = donationRequest)
+                    image.save()
+
+            return redirect('donation_detail', donation_request_id = donation_request_id)
+
+    form = DonationRequestForm(instance=donationRequest)
+    form.helper.form_action = "edit"
+    context = {"form" : form, "edit" : True}
+    return render(request, "request_donations.html", context)
 
 @login_required
 @organisationRequired
@@ -198,9 +234,12 @@ def donation_detail(request, donation_request_id):
     donationRequest = DonationRequest.objects.get(pk=donation_request_id)
     organisation = donationRequest.organisation
     images = Image.objects.filter(request=donationRequest)
+    editAllowed = request.user.is_authenticated and donationRequest.organisation == Organisation.objects.get(user = request.user)
+
     context = {
         "donationRequest" : donationRequest, 
         "organisation" : organisation, 
-        "images" : images if images.count() > 0 else None
+        "images" : images if images.count() > 0 else None,
+        "editAllowed" : editAllowed,
     }
     return render(request, "donation_detail.html", context)
