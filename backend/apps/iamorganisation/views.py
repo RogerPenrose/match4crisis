@@ -186,6 +186,14 @@ def organisation_overview(request):
     }
     return render(request, "organisation_overview.html", context)
 
+def donation_overview(request):
+    donationRequests = DonationRequest.objects.filter(organisation__isApproved = True)
+    context = {
+        "donationRequests" : donationRequests,
+        "donationsCount" : donationRequests.count(),
+    }
+    return render(request, "donations.html", context)
+
 def donation_detail(request, donation_request_id):
     donationRequest = DonationRequest.objects.get(pk=donation_request_id)
     organisation = donationRequest.organisation
