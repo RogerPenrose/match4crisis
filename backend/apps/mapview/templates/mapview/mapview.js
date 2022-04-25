@@ -27,35 +27,35 @@ mapViewPage = {
         {
             type: "childcare",
             amt: Number("{{ entryCount.childcare }}"),
-            show: "{{ childcare|default:False }}".toLowerCase() == "true"
+            show: "{{ childcareOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "manpower",
             amt: Number("{{ entryCount.manpower }}"),
-            show: "{{ manpower|default:False }}".toLowerCase() == "true"
+            show: "{{ manpowerOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "job",
             amt: Number("{{ entryCount.job }}"),
-            show: "{{ job|default:False }}".toLowerCase() == "true"
+            show: "{{ jobOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "buerocratic",
             amt: Number("{{ entryCount.buerocratic }}"),
-            show: "{{ buerocratic|default:False }}".toLowerCase() == "true"
+            show: "{{ buerocraticOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "medical",
             amt: Number("{{ entryCount.medical }}"),
-            show: "{{ medical|default:False }}".toLowerCase() == "true"
+            show: "{{ medicalOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "translation",
             amt: Number("{{ entryCount.translation }}"),
-            show: "{{ translation|default:False }}".toLowerCase() == "true"
+            show: "{{ translationOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "transportation",
             amt: Number("{{ entryCount.transportation }}"),
-            show: "{{ transportation|default:False }}".toLowerCase() == "true"
+            show: "{{ transportationOffers|default:False }}".toLowerCase() == "true"
         },{
             type: "accommodation",
             amt: Number("{{ entryCount.accommodation }}"),
-            show: "{{ accommodation|default:False }}".toLowerCase() == "true"
+            show: "{{ accommodationOffers|default:False }}".toLowerCase() == "true"
         }
     ],
     requests: [
@@ -468,11 +468,10 @@ mapViewPage = {
         offersCheckboxParents[0].childNodes[0].addEventListener("change", e => this.handleCheckBoxClick(e));
         requestsCheckboxParents[0].childNodes[0].setAttribute("name", "allRequests");
         requestsCheckboxParents[0].childNodes[0].addEventListener("change", e => this.handleCheckBoxClick(e));
+        console.log(JSON.stringify(this.offers))
         for (const i in this.offers){
             var index = Number(i) + 1
-            console.log(index)
                 this.offers[i].el = offersCheckboxParents[index].childNodes[0]
-                console.log(this.offers[i].el.classList)
 
                 this.offers[i].el.setAttribute("name", this.offers[i].type);
                 this.offers[i].el.addEventListener("change", e => this.handleCheckBoxClick(e));
@@ -480,11 +479,11 @@ mapViewPage = {
                     this.offers[i].show = true; // because it gets flipped in next line
                     this.offers[i].el.click();
                 } else {
+                    console.log("Show Offer: "+this.offers[i].el.name)
                     this.setGetParameter([[this.offers[i].type+"OffersVisible", "True"]])
                 }
         }for (const i in this.requests){
             var index = Number(i) + 1
-            console.log(index)
                 this.requests[i].el = requestsCheckboxParents[index].childNodes[0]
 
                 this.requests[i].el.setAttribute("name", this.requests[i].type);
@@ -493,13 +492,13 @@ mapViewPage = {
                     this.requests[i].show = true; // because it gets flipped in next line
                     this.requests[i].el.click();
                 } else {
+                    console.log("Show Request: "+this.requests[i].el.name)
                     this.setGetParameter([[this.requests[i].type+"RequestsVisible", "True"]])
                 }
         }
     },
 
     handleCheckBoxClick: (e, isOffer=true) => {
-        console.log(e.target.name)
         if (e.target.name == "allOffers"){
             for (var i = 0; i < mapViewPage.offers.length; i++){
                 var entry = mapViewPage.offers[i]

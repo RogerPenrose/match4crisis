@@ -56,7 +56,6 @@
   
 </style>
 <script type="text/javascript">
-  console.log("In html: {{startPosition}}")
   pageOptions = {
     mapViewContainerId: 'mapContainer',
     accommodationOfferURL     : "{% url 'accommodationOffersJSON' %}",
@@ -169,7 +168,7 @@
   
 </script>
 <!--<script type="text/javascript" src="mapview/?accommodation=False&translation=False&transportation=False&generic=True"></script> -->
-<script type="text/javascript" src="mapview/?accommodation={{ accommodation }}&translation={{ translation }}&transportation={{ transportation }}&generic={{ generic }}&childcare={{ childcare }}&buerocratic={{ buerocratic }}&manpower={{manpower}}&job={{job}}&medical={{medical}}"></script> 
+<script type="text/javascript" src="mapview/?{{get_params}}"></script> 
   
 
 {% endblock %}

@@ -51,7 +51,7 @@ def mapviewjs(request):
     "buerocraticRequests": buerocraticRequestCount,"manpowerRequests": manpowerRequestCount, "accommodationRequests": accommodationRequestCount, "transportationRequests": transportationRequestCount, "translationRequests": translationRequestCount, "childcareRequests": childcareRequestCount, "medicalRequests": medicalRequestCount, "jobRequests": jobRequestCount }}
     #"accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
     context.update(request.GET.dict())
-    logger.warning("rendering mapview JS ? "+str(context))
+    logger.warning("rendering mapview JS ? "+str(request.GET.dict()))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
 # Should be safe against BREACH attack because we don't have user input in reponse body
@@ -59,6 +59,9 @@ logger = logging.getLogger("django")
 def index(request):
     startPosition =  [51.13, 10.018]
     zoom = 6
+    getString = ""
+    for key in request.GET.dict():
+        getString += key+"="+request.GET.get(key)+"&"
     logger.warning("Received Request in Mapview: "+str(request.GET))
     if request.GET.get("city"):
         startPosition = getCenterOfCity(request.GET.get("city"))
@@ -68,16 +71,9 @@ def index(request):
     "startPosition":  startPosition,
     "zoom": zoom,
     "mapbox_token": settings.MAPBOX_TOKEN,
-    "transportation": request.GET.get("transportation", "False"),  
-    "accommodation" : request.GET.get("accommodation", "False"),
-    "manpower" : request.GET.get("manpower", "False"),
-    "medical": request.GET.get("medical", "False"), 
-    "buerocratic": request.GET.get("buerocratic", "False"),   
-    "childcare": request.GET.get("childcare", "False"),  
-    "job": request.GET.get("job", "False"),  
-    "translation": request.GET.get("translation", "False"),  
-    "generic": request.GET.get("generic", "False")
+    "get_params": getString[:-1]
     }
+    context.update(request.GET.dict())
     return render(request, "mapview/map.html", context )
 def generalInformationJSON(request):
     returnVal = {
