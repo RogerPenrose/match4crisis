@@ -80,9 +80,6 @@
 
     <div class="col-sm-12 col-lg-8 description">
       <h1 class="title">{{ donationRequest.title }}</h1>
-      {% if donationRequest.donationGoal %}
-      <p>{% blocktrans %}Spendenziel:{% endblocktrans%} {{ donationRequest.donationGoal }}</p>
-      {% endif %}
       <p>{% blocktrans %}Begünstigte*r:{% endblocktrans%} {{ donationRequest.beneficiary }}</p>
       <p>{% blocktrans %}IBAN:{% endblocktrans%} {{ donationRequest.iban }}</p>
       <p>{% blocktrans %}Spendenstichwort:{% endblocktrans%} {{ donationRequest.reason }}</p>

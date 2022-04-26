@@ -198,12 +198,10 @@ class DonationRequestForm(forms.ModelForm):
             'beneficiary',
             'iban',
             'reason',
-            'donationGoal',
         )
         labels = {
             'title' : _("Titel"),
             'description' : _("Beschreibung"),
-            'donationGoal' : _('Spendenziel (optional)')
         }
 
     def __init__(self, *args, **kwargs):

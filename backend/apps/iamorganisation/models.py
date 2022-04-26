@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.utils import timezone
+
 import uuid
 
 from localflavor.generic.models import IBANField
@@ -45,13 +47,13 @@ class Request(models.Model):
     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE, null=False, related_name="requests")
     title = models.CharField(max_length=256, default="")
     description = models.TextField(max_length=100000, default="")
+    createdAt = models.DateTimeField(verbose_name=_("Erstellt am"), default=timezone.now)
 
 class HelpRequest(Request):
     radius = models.IntegerField(default=5)
     recipientCount = models.IntegerField(default=0)
 
 class DonationRequest(Request):
-    donationGoal = models.IntegerField(null=True, blank=True)
     beneficiary = models.CharField(max_length=70, verbose_name=_("Begünstigte/r"))
     iban = IBANField(verbose_name=_("IBAN"))
     reason = models.CharField(max_length=140, verbose_name=_("Spendenstichwort"))
