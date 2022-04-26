@@ -94,9 +94,8 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 <div class="container">
     <div class="row" style=" margin-bottom:55px;">
                <div class="col-12 col-lg-6" style="margin: 0 auto">
-
-                {% if not requestForHelp %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
-                {% else %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo benötigst du helfen?{% endblocktrans %}</h2>
+                {% if  requestForHelp == False %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
+                {% else %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo benötigst du Hilfe?{% endblocktrans %}</h2>
                 {% endif %}
 
 <form id="thisForm" action="/offers/createOffer" method="POST" enctype="multipart/form-data">
@@ -153,6 +152,10 @@ toggleTransport()
 document.getElementById("id_helpType_childcare").addEventListener("change", toggleChildcareTimes);
 document.getElementById("id_hasExperience").addEventListener("change", toggleChildcareCredentials);
 document.getElementById("id_hasSpace").addEventListener("change", toggleHasSpace);
+{%endif%}
+{% if genericForm.offerType.value == "MP"%}
+document.getElementById("id_hasMedicalExperience").addEventListener("change", toggleMedicalExperience);
+document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "none"
 {%endif%}
     }
 })

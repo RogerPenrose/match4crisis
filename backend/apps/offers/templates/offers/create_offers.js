@@ -86,6 +86,15 @@ function offer_autocomplete(){
     }
     return autocompletes
 }
+
+function toggleMedicalExperience(){
+    if(document.getElementById("id_hasMedicalExperience").checked != true){
+        document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "none"
+    }
+    else{
+        document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "table-row"
+    }
+    }
 function toggleChildcareCredentials(){
 if(document.getElementById("id_hasExperience").checked == true){
     document.getElementById("id_hasEducation").parentElement.parentElement.style.display = "table-row"

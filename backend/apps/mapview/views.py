@@ -257,7 +257,7 @@ def manpowerOffersJSON(request):
     requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     facilities = {"offers":[{
         "lat": e.genericOffer.lat,
-        "type": e.get_helpType_manpower_display(),
+        "type": e.get_distanceChoices_display(),
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
@@ -267,7 +267,7 @@ def manpowerOffersJSON(request):
     } for e in offers],
     "requests":[{
         "lat": e.genericOffer.lat,
-        "type": e.get_helpType_manpower_display(),
+        "type": e.get_distanceChoices_display(),
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,

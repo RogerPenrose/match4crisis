@@ -112,9 +112,15 @@ class ImageClass(models.Model):
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
 class ManpowerOffer(models.Model):
-    HELP_CHOICES= [('ON', _('Online')), ('OS', _('Vor Ort'))]
+    DISTANCE_CHOICES=[('0', _('0-100km')),('1', _('100-200km')), ('2', _('200-400km')), ('3', _('400-600km')), ('4', 'Komplett Flexibel')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    helpType_manpower = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
+    distanceChoices = models.CharField(max_length=1, choices=DISTANCE_CHOICES, default="0")
+    canGoforeign = models.BooleanField(default=False)
+    hasExperience_crisis = models.BooleanField(default=False)
+    hasDriverslicense = models.BooleanField(default=False)
+    hasMedicalExperience = models.BooleanField(default=False)
+    describeMedicalExperience = models.TextField(default="")
+
 
 class AccommodationOffer(models.Model):
 
@@ -135,7 +141,9 @@ class WelfareOffer(models.Model):
     WELFARE_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
+    helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") 
+    hasEducation_welfare = models.BooleanField(default=False)
+    typeOfEducation = models.TextField(default="")
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)

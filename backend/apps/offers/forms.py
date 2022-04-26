@@ -135,6 +135,13 @@ class ManpowerForm(OfferForm):
 
         labels = {
             "helpType_manpower" : HELPTYPE_MP,
+            "distanceChoices" : _("Umkreis des Einsatzortes"),
+            "canGoforeign": _("Auslandseinsatz ist denkbar"),
+            "hasExperience_crisis": _("Habe Erfahrung im Krisenmanagement"),
+            "hasMedicalExperience": _("Habe eine Medizinische Ausbildung"),
+            "describeMedicalExperience": _("Meine Medizinische Erfahrung umfasst"),
+            "hasDriverslicense": _("Habe einen Führerschein")
+
         }
 
 class WelfareForm(OfferForm):
@@ -145,6 +152,8 @@ class WelfareForm(OfferForm):
 
         labels = {
             "helpType_welfare" : HELPTYPE_WE,
+            "hasEducation_welfare": _("Ich habe Vorerfahrung"),
+            "typeOfEducation": _("Ausbildung / Erfahrung")
         }
       
 class BuerocraticForm(OfferForm):

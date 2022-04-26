@@ -29,7 +29,7 @@ class BuerocraticFilter(django_filters.FilterSet):
 class ManpowerFilter(django_filters.FilterSet):
     class Meta:
         model = ManpowerOffer
-        fields = ['helpType_manpower']
+        fields = ['distanceChoices', 'canGoforeign', 'hasDriverslicense', 'hasMedicalExperience', 'hasExperience_crisis']
 class AccommodationFilter(django_filters.FilterSet):
     
     startDateAccommodation = django_filters.DateFilter(widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
@@ -40,7 +40,7 @@ class AccommodationFilter(django_filters.FilterSet):
 class WelfareFilter(django_filters.FilterSet):
     class Meta:
         model = WelfareOffer
-        fields = ['helpType_welfare']
+        fields = ['helpType_welfare', 'hasEducation_welfare']
 class TransportationFilter(django_filters.FilterSet):
     date = django_filters.DateFilter(widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
     class Meta:

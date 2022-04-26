@@ -208,43 +208,83 @@ navigator.share({
                   {%endif%}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
                     <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                  </svg><span name="non_edit">  {%blocktrans %} Umkreis: {% endblocktrans%} {{detail.distance.value}}  KM </span><span name="edit" style="display:none" >{{detail.distance}} </span></p>
-                  
+                  </svg><span name="non_edit">  {%blocktrans %} Umkreis: {% endblocktrans%} {{detail.distance.value}}km </span><span name="edit" style="display:none" >{{detail.distance}} </span></p>
+                  <!-- HAVE TO DO WE-->
                  
                   {% elif generic.offerType.value == "TL" %}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
                   </svg> <span name="non_edit">  {% blocktrans %}Übersetzung von{% endblocktrans %} {{detail.firstLanguage|display}} {% blocktrans %}zu{% endblocktrans %} {{ detail.secondLanguage|display }}</span><span name="edit" style="display:none" >{{detail.firstLanguage}} {{ detail.secondLanguage}} </span></p>
-             
-                  {% elif generic.offerType.value == "BU" %}  or 
+                  
+                  
+                  
+                  
+                  {% elif generic.offerType.value == "CL"%}
+                  <p><span name="non_edit">{%blocktrans%}Art der Kinderbetreuung: {%endblocktrans%}{{ detail.helpType_childcare|display}}</span> </p>  
+                  <p><span name="edit" style="display:none" >{{ detail.helpType_childcare}}</span> </p> 
+                  <p>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                      </svg><span name="non_edit">{%blocktrans%}Anzahl an Kindern: {%endblocktrans%}{{ detail.numberOfChildren.value }}</span><p><span name="edit" style="display:none" >{{ detail.numberOfChildren}} </span></p>
+                    </p>
+                 {% if detail.helpType_childcare.value != "GT"%} <p><span name="non_edit">{{ detail.timeOfDay|display }}</span><span name="edit" style="display:none" >{{ detail.timeOfDay }}</span></p>{%endif%}
+                 {% if detail.hasExperience.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                </svg><span name="non_edit">{%blocktrans%} Habe Erfahrung {%endblocktrans%}</span></p>{%endif%}<p><span name="edit" style="display:none" >{{detail.hasExperience}} </span></p>
+                {% if detail.hasEducation.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                </svg><span name="non_edit">{%blocktrans%} Habe eine spezielle Ausbildung {%endblocktrans%}</span></p>{%endif%}<p><span name="edit" style="display:none" >{{detail.hasEducation}} </span></p>
+                {% if detail.isRegular.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                </svg><span name="non_edit">{%blocktrans%} Regelmäßige Betreuung möglich {%endblocktrans%}</span></p>{%endif%}<p><span name="edit" style="display:none" >{{detail.isRegular}} </span></p>
+                
+                {% if detail.hasSpace.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                </svg><span name="non_edit">{%blocktrans%} Habe Platz bei mir {%endblocktrans%}</span></p>
+                {% else %}
+                <span name="non_edit">{%blocktrans%} Bin mobil im Umkreis von {%endblocktrans%}{{detail.distance.value}}km</span>
+                {%endif%}<p><span name="edit" style="display:none" >{{detail.hasSpace}} </span></p><p><span name="edit" style="display:none" >{{detail.distance}} </span></p>
+                
+                 {% elif generic.offerType.value == "BU" %}   
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Offering {{detail.helpType_buerocratic|display}} </span><span name="edit" style="display:none" >{{detail.helpType_buerocratic}} </span></p>
-                  {% elif generic.offerType.value == "MA"%}
+                  </svg> <span name="non_edit">  {%blocktrans%} Art der Unterstützung: {%endblocktrans%} {{detail.helpType_buerocratic|display}} </span><span name="edit" style="display:none" >{{detail.helpType_buerocratic}} </span></p>
+                  
+                  {% elif generic.offerType.value == "WE"%}
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Offering {{detail.helpType_welfare|display }}  </span><span name="edit" style="display:none" >{{detail.helpType_welfare}} </span></p>
+                  </svg> <span name="non_edit">  {%blocktrans%} Art der Unterstützung: {%endblocktrans%} {{detail.helpType_welfare|display }}  </span><span name="edit" style="display:none" >{{detail.helpType_welfare}} </span></p>
+                  {% if detail.hasEducation_welfare.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                  </svg><span name="non_edit">{%blocktrans%} Ausbildung vorhanden {%endblocktrans%}</span></p><p>{{detail.typeOfEducation.value}}</p>{%endif%}<p><span name="edit" style="display:none" >{{detail.hasEducation}} </span></p><p><span name="edit" style="display:none" >{{detail.typeOfEducation}} </span></p>
+                  
+                  
+                  
                   {% elif generic.offerType.value == "MP" %}
-                  <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
-                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  Offering {{detail.helpType_manpower|display}} </span><span name="edit" style="display:none" >{{detail.helpType_manpower}} </span></p>
+                  <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                  </svg><span name="non_edit">  {%blocktrans %} Umkreis: {% endblocktrans%} {{detail.distanceChoices|display }}  </span><span name="edit" style="display:none" >{{detail.distanceChoices}} </span></p>
+                  {% if detail.hasExperience_crisis.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                  </svg><span name="non_edit">{%blocktrans%} Krisenerfahrung {%endblocktrans%}</span></p>{%endif%}<p><span name="edit" style="display:none" >{{detail.hasExperience_crisis}} </span></p>
+                  {% if detail.hasMedicalExperience.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                  </svg><span name="non_edit">{%blocktrans%} Medizinische Ausbildung {%endblocktrans%}</span></p><p>{{detail.describeMedicalExperience.value}}</p>{%endif%}<p><span name="edit" style="display:none" >{{ detail.hasMedicalExperience}} </span></p>
+                  {% if detail.hasDriverslicense.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                  </svg><span name="non_edit">{%blocktrans%} Führerschein {%endblocktrans%}</span></p>{%endif%}<p><span name="edit" style="display:none" >{{ detail.hasDriverslicense}} </span></p>
+                  {% if detail.canGoforeign.value == True %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
+                  </svg>{%blocktrans%} Auslandseinsatz ist denkbar {%endblocktrans%}</p>{%endif%}<p><span name="edit" style="display:none" >{{ detail.canGoforeign}} </span></p>
+                  
+                  
                   {% elif generic.offerType.value == "JO" %}
                   <p><span name="non_edit">{% blocktrans %}Art des Jobs{% endblocktrans %}: {{ detail.jobType|display}}</span><span name="edit" style="display:none">{{detail.jobType}}</span></p>
                   <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
                     <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
                   </svg> <span name="non_edit">  {% blocktrans %}Suche{% endblocktrans %}: {{detail.jobTitle.value}} </span><span name="edit" style="display:none" >{{detail.jobTitle}} </span></p>
                   <p><span name="non_edit">{% blocktrans %}Anforderungen:{% endblocktrans %} {{ detail.requirements.value }}</span><span name="edit" style="display:none">{{detail.requirements}}</span></p>
-                  {% elif generic.offerType.value == "BA" %}
-                  <p><span name="non_edit">{% blocktrans %}Geschlecht{% endblocktrans %}: {{ detail.gender_shortterm|display}}</span><span name="edit" style="display:none">{{detail.gender_shortterm}}</span></p>
-                  {% elif generic.offerType.value == "CL" %}
-                  <p><span name="non_edit">{% blocktrans %}Geschlecht{% endblocktrans %}: {{ detail.gender_longterm|display}}</span><span name="edit" style="display:none">{{detail.gender_longterm}}</span></p>
-                 
-                  {% if generic.offerType.value == "BA"%}
-                  <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
-                    <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
-                  </svg> <span name="non_edit">  {% blocktrans %}Anzahl der Kinder{% endblocktrans %}: {{detail.numberOfChildrenToCare.value}} </span><span name="edit" style="display:none" >{{detail.numberOfChildrenToCare}} </span></p>
-                  <p><span name="non_edit"> {% if detail.isRegular == True %} {% blocktrans %}Regelmäßig{% endblocktrans %} {% else %} {% blocktrans %}Einmalig{% endblocktrans %} {%endif%}</span><span name="edit" style="display:none">{% blocktrans %}Handelt es sich um eine regeläßige Tätigkeit?{% endblocktrans %}  {{detail.isRegular}}</span></p>
-                  {%endif%}
+                  
                   {% elif generic.offerType.value == "DO" %}
                   <p><span name="non_edit">{% blocktrans %}Grund{% endblocktrans %}: {{ detail.donationTitle.value}}</span><span name="edit" style="display:none">{{detail.donationTitle}}</span></p>
                   <p><span name="non_edit">{% blocktrans %}Kontodaten{% endblocktrans %} {{ detail.account.value}}</span><span name="edit" style="display:none">{{detail.account}}</span></p>

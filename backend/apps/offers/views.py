@@ -414,11 +414,12 @@ def delete_offer(request, offer_id):
     return index(request)
 @login_required
 def selectOfferType(request):
-    context= {"entries": []}
+    context= {"entries": [], "requestForHelp": False}
     for entry in GenericOffer.OFFER_CHOICES[:-1]:
         context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
     if request.GET.get("rfh", "False") == "True":
         context["requestForHelp"] = True
+    logger.warning("RFH: "+str(context["requestForHelp"]))
     return render(request, 'offers/selectOfferType.html', context)
 
 
@@ -429,6 +430,7 @@ def create(request):
     elif request.method == 'GET':
         context = {}
         offerType = request.GET.get("type")
+        context["requestForHelp"] = False
         newOffer = GenericOffer(offerType=offerType)
         if request.GET.get("rfh", "False") == "True":
             context["requestForHelp"] = True
