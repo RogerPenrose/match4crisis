@@ -22,6 +22,12 @@
       </div>
       <div class="description col-7 col-sm-8">
         <h2>{{ entry.title }} </h2>
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-organisation" viewBox="0 0 1600 1600">
+            <path
+              d="M40 462V352L800 24l760 328v110h-100c0 15-5 28-16 38-10 10-24 16-38 16H200c-15 0-28-5-38-16-10-10-16-24-16-38M40 1447c0-15 5-28 16-38 10-10 24-16 38-16h1413c15 0 28 5 38 16 10 10 16 24 16 38v110H40v-110m100-110v-55c0-15 5-28 16-38 10-10 24-16 38-16h46V570h210v657h100V570h203v657h102V570h205v657h100V570h203v657h47c15 0 28 5 38 16 10 10 16 24 16 38v55H140" />
+            </svg>
+          {% blocktrans %}Organisation{% endblocktrans %}: {{entry.organisation}}
+        </p>
         <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-text"
             viewBox="0 0 16 16">
             <path

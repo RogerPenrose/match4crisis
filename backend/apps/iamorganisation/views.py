@@ -17,6 +17,7 @@ from apps.iamorganisation.models import DonationRequest, HelpRequest, Image, Org
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
+from .filters import DonationRequestFilter
 
 from .forms import DonationRequestForm, HelpRequestForm
 
@@ -224,9 +225,11 @@ def organisation_overview(request):
 
 def donation_overview(request):
     donationRequests = DonationRequest.objects.filter(organisation__isApproved = True)
+    filter = DonationRequestFilter(request.GET, queryset=donationRequests)
     context = {
-        "donationRequests" : donationRequests,
-        "donationsCount" : donationRequests.count(),
+        "donationRequests" : filter.qs,
+        "donationsCount" : filter.qs.count(),
+        "filter" : filter,
     }
     return render(request, "donations.html", context)
 
@@ -234,7 +237,7 @@ def donation_detail(request, donation_request_id):
     donationRequest = DonationRequest.objects.get(pk=donation_request_id)
     organisation = donationRequest.organisation
     images = Image.objects.filter(request=donationRequest)
-    editAllowed = request.user.is_authenticated and donationRequest.organisation == Organisation.objects.get(user = request.user)
+    editAllowed = request.user.is_authenticated and request.user.isOrganisation and donationRequest.organisation == Organisation.objects.get(user = request.user)
 
     context = {
         "donationRequest" : donationRequest, 

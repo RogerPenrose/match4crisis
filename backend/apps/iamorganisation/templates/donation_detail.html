@@ -80,9 +80,10 @@
 
     <div class="col-sm-12 col-lg-8 description">
       <h1 class="title">{{ donationRequest.title }}</h1>
-      <p>{% blocktrans %}Begünstigte*r:{% endblocktrans%} {{ donationRequest.beneficiary }}</p>
-      <p>{% blocktrans %}IBAN:{% endblocktrans%} {{ donationRequest.iban }}</p>
-      <p>{% blocktrans %}Spendenstichwort:{% endblocktrans%} {{ donationRequest.reason }}</p>
+      <p>{% blocktrans %}Organisation{% endblocktrans%}: {{ donationRequest.organisation }}</p>
+      <p>{% blocktrans %}Begünstigte*r{% endblocktrans%}: {{ donationRequest.beneficiary }}</p>
+      <p>{% blocktrans %}IBAN{% endblocktrans%}: {{ donationRequest.iban }}</p>
+      <p>{% blocktrans %}Spendenstichwort{% endblocktrans%}: {{ donationRequest.reason }}</p>
       <h5>{% blocktrans %}Beschreibung{% endblocktrans%}</h5>
       <p>{{ donationRequest.description|linebreaks }}</p>
       <hr>
