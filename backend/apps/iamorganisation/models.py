@@ -52,6 +52,10 @@ class Request(models.Model):
 class HelpRequest(Request):
     radius = models.IntegerField(default=5)
     recipientCount = models.IntegerField(default=0)
+    location = models.CharField(max_length=1000, default="")
+    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
+    bb = models.CharField(max_length=300, default="")
 
 class DonationRequest(Request):
     beneficiary = models.CharField(max_length=70, verbose_name=_("Begünstigte/r"))

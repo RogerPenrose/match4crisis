@@ -164,14 +164,22 @@ class HelpRequestForm(forms.ModelForm):
             'radius',
             'title',
             'description',
+            'location',
+            'lat',
+            'lng',
+            'bb',
         )
         labels = {
             'title' : '',
             'description' : '',
+            'location' : _('Ort')
         }
         widgets = {
             'title' : forms.TextInput(attrs={"placeholder": _("Betreff")}),
             'description' : forms.Textarea(attrs={"placeholder": _("Beschreibung")}),
+            'lat' : forms.HiddenInput(),
+            'lng' : forms.HiddenInput(),
+            'bb' : forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
