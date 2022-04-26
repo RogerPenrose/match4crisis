@@ -28,6 +28,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         
+    
         JOB_CHOICES = ["ACA","ADM","ADV","CON","FAC","FIN","GEN","HEA", "HUM","INF","INT","LEG","LIB","MAR","OFF","PER","PUB","RES", "SPO", "STU","HAN"]
         HELP_CHOICES_CL = ['GT', 'HT', 'WE']
         TIME_CHOICES_CL = ['VM', 'NM', 'AB']
@@ -101,7 +102,12 @@ class Command(BaseCommand):
 
                     g.offerType = "MP"
                     g.save()
-                    b = ManpowerOffer(genericOffer=g, helpType_manpower=HELP_CHOICES_MP[np.random.randint(0,len(HELP_CHOICES_MP)-1)])
+                    b = ManpowerOffer(genericOffer=g,\
+                     distanceChoices=str(np.random.randint(0,4)),\
+                     canGoforeign=bool(np.random.randint(0, 1)),\
+                     hasExperience_crisis=bool(np.random.randint(0, 1)),\
+                     describeMedicalExperience="Dies und das und jenes",\
+                     hasMedicalExperience=bool(np.random.randint(0, 1)))
                     b.save()
                 if counter == 5: # Transportation
                     g.offerType = "CL"
@@ -119,7 +125,7 @@ class Command(BaseCommand):
                 if counter == 6: # Transportation
                     g.offerType = "WE"
                     g.save()
-                    b = WelfareOffer(genericOffer=g, helpType_welfare=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
+                    b = WelfareOffer(genericOffer=g,typeOfEducation="Dr. Feelgood", hasEducation_welfare=bool(np.random.randint(0, 1)), helpType_welfare=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
                     b.save()
                 if counter == 7: # Transportation
                     g.offerType = "JO"
