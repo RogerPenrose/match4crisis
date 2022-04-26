@@ -265,58 +265,40 @@ margin-top: 20px; }
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="/mapview/?{% if city %}city={{ city }}&%}{%endif%}{{mapparameter}} ">{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}</a></p></div>
+        <p><a href="/mapview/?{% if city %}city={{ city }}&%}{%endif%}{{mapparameter}}{% if requestForHelp == True %}&showRequests=true{%endif%} ">{% if requestForHelp == "Offer" %}{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}{% elif requestForHelp == "Request" %}  {{ResultCount}} Gesuche auf Karte anzeigen {% else %}  {{ResultCount}} Inserate auf Karte anzeigen {%endif%}</a></p></div>
         </div>
         </div>
         {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page|add:"1"  }} {% blocktrans %}von{% endblocktrans %} {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
           </div>{% endif %}
         </form>
         <div class="container cards">
-      {% if currentFilter.accommodationVisible  %}  
         {% for entry in  entries.accommodation %}
           {% include 'offers/accommodation-card.html' %}
         {% endfor %}
-      {% endif %}      
-      {% if currentFilter.translationVisible  %}
         {% for entry in entries.translation %}  
           {% include 'offers/translation-card.html' %}
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.transportationVisible  %}
           {% for entry in entries.transportation %}  
           {% include 'offers/transportation-card.html' %} 
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.buerocraticVisible  %}
         {% for entry in entries.buerocratic %}
           {% include 'offers/buerocratic-card.html' %}
         {% endfor %}
-      {% endif %}
-      {% if currentFilter.manpowerVisible  %}
         {% for entry in entries.manpower %}
           {% include 'offers/manpower-card.html' %}
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.childLongVIsible  %}
         {% for entry in entries.childLong %}
           {% include 'offers/childcareLong-card.html' %}
-        {% endfor %}     
-      {%endif%}     
-      {% if currentFilter.childShortVisible  %}
+        {% endfor %}  
         {% for entry in entries.childShort %}
           {% include 'offers/childcareShort-card.html' %}
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.welfareVisible  %}
         {% for entry in entries.welfare %}
           {% include 'offers/welfare-card.html' %}
         {% endfor %}
-      {% endif%}
-      {% if currentFilter.jobVisible  %}
         {% for entry in entries.job %}  
           {% include 'offers/job-card.html' %}
         {% endfor %}
-      {%endif%}
   </div>
 </div>
 {% endblock %}

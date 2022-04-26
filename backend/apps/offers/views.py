@@ -22,6 +22,7 @@ from .filters import GenericFilter, AccommodationFilter, TranslationFilter, Tran
 from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, WelfareOffer, JobOffer, DonationOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareFormLongterm, ChildcareFormShortterm, WelfareForm, JobForm, DonationForm
 from django.contrib.auth.decorators import login_required
+import re
 
 gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
@@ -108,7 +109,11 @@ def select_category(request):
     latMin = -90
     locationData={"latMin": latMin, "lngMin":lngMin, "lngMax":lngMax, "latMax":latMax}
     rangeKm = request.GET.get("range")
-    filters ={"active": True}
+    filters ={"active": True, "requestForHelp": False}
+    filters_generic = {"genericOffer__active": True, "genericOffer__requestForHelp": False}
+    if request.GET.get("requests") == "1":
+        filters["requestForHelp"] = True
+        filters_generic["genericOffer__requestForHelp"]= True
     logger.warning("Request get: "+str(request.GET.dict()))
     if request.GET.get("location") != "-1":
         if request.GET.get("lat") is not None: 
@@ -124,7 +129,9 @@ def select_category(request):
         
         filters["lat__range"] = (locationData["latMin"], locationData["latMax"])
         filters["lng__range"] = (locationData["lngMin"], locationData["lngMax"])
-
+        filters_generic["genericOffer__lat__range"] = (locationData["latMin"], locationData["latMax"])
+        filters_generic["genericOffer__lng__range"] = (locationData["lngMin"], locationData["lngMax"])
+    filters_noLocation = { "active": filters["active"], "requestForHelp": filters["requestForHelp"]}
     #location = getCityBbFromLocation(locationData)
     #Dummy data:
     accommodations = GenericOffer.objects.filter(offerType="AC",**filters).count()
@@ -133,23 +140,24 @@ def select_category(request):
     accompaniments = GenericOffer.objects.filter(offerType="AP",**filters).count()
     buerocratic = GenericOffer.objects.filter(offerType="BU",**filters).count()
     childcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters).count()
-    welfare = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare__in=["ELD","DIS"], genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
-    psych = WelfareOffer.objects.filter(genericOffer__active=True,helpType_welfare="PSY", genericOffer__lat__range=(locationData["latMin"], locationData["latMax"]), genericOffer__lng__range=(locationData["lngMin"], locationData["lngMax"])).count()
+    welfare = WelfareOffer.objects.filter(helpType_welfare__in=["ELD","DIS"], **filters_generic).count()
+    psych = WelfareOffer.objects.filter(helpType_welfare="PSY",**filters_generic).count()
     jobs = GenericOffer.objects.filter(offerType="JO", **filters).count()
     childcareLongterm = GenericOffer.objects.filter(offerType="CL", **filters).count()
     manpower = GenericOffer.objects.filter(offerType="MP", **filters).count()
-    totalAccommodations = GenericOffer.objects.filter(active=True,offerType="AC").count()
-    totalTransportations = GenericOffer.objects.filter(active=True,offerType="TR").count()
-    totalTranslations = GenericOffer.objects.filter(active=True,offerType="TL").count()
-    totalBuerocratic = GenericOffer.objects.filter(active=True,offerType="BU").count()
-    totalWelfare = GenericOffer.objects.filter(active=True,offerType="WE").count()
-    totalChildcareShortterm = GenericOffer.objects.filter(active=True,offerType="BA").count()
-    totalChildcareLongterm = GenericOffer.objects.filter(active=True,offerType="CL").count()
-    totalJobs = GenericOffer.objects.filter(active=True,offerType="JO").count()
-    totalDonations = GenericOffer.objects.filter(active=True,offerType="DO").count()
+    totalAccommodations = GenericOffer.objects.filter(offerType="AC",**filters_noLocation).count()
+    totalTransportations = GenericOffer.objects.filter(offerType="TR",**filters_noLocation).count()
+    totalTranslations = GenericOffer.objects.filter(offerType="TL",**filters_noLocation).count()
+    totalBuerocratic = GenericOffer.objects.filter(offerType="BU",**filters_noLocation).count()
+    totalWelfare = GenericOffer.objects.filter(offerType="WE",**filters_noLocation).count()
+    totalChildcareShortterm = GenericOffer.objects.filter(offerType="BA",**filters_noLocation).count()
+    totalChildcareLongterm = GenericOffer.objects.filter(offerType="CL",**filters_noLocation).count()
+    totalJobs = GenericOffer.objects.filter(offerType="JO",**filters_noLocation).count()
+    totalDonations = GenericOffer.objects.filter(offerType="DO",**filters_noLocation).count()
     context = {
         'city' : city,
         'range': rangeKm,
+        'requestForHelp': True,
         'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOfferShortterm": childcareShortterm,"ChildcareOfferLongterms": childcareLongterm, "ManpowerOffers": manpower},
         'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOfferShortterm': totalChildcareShortterm, 'ChildcareOfferLongterm': totalChildcareLongterm},
     }
@@ -159,7 +167,10 @@ def select_category(request):
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
-    return render(request, 'offers/search.html')
+    context ={"searchRequests": False}
+    if request.GET.get("requests", "False") == "true":
+        context["searchRequests"] = True
+    return render(request, 'offers/search.html', context)
 def getTranslationImage(request, firstLanguage, secondLanguage):
     # first load flag from file:
     firstData = ""
@@ -186,96 +197,192 @@ def padByRange(locationData, rangeKm):
     locationData["lngMin"]-=kmInLng(rangeKm,  locationData["latMax"])
     locationData["latMax"]+=kmInLat(rangeKm )
     return locationData
-
+def filter_get(request):
+    filters = {}
+    context = {"entries": {}, "currentFilter": {},"filter": {}}
+    pageCount = int(request.POST.get("page", 0))
+    currentFilter = request.GET.dict()
+    categoryCounter = 0
+    maxPage = 0
+    numEntries = 0
+    mapparameter = ""
+    rep = {"Visible": "", "Requests": "", "Offers": ""}
+    isRequestForHelp = "Offer"
+    rep = dict((re.escape(k), v) for k, v in rep.items()) 
+    pattern = re.compile("|".join(rep.keys()))
+    keys = []
+    for key in request.GET.dict():
+        if "childcare" in key:
+            keys.append(key.replace("childcare","childcareShort"))
+            keys.append(key.replace("childcare","childcareLong"))
+        keys.append(key)
+    for key in keys:
+        category = pattern.sub(lambda m: rep[re.escape(m.group(0))], key)
+        if "Visible" in key and request.GET.get(key, "false") == "true":
+            categoryCounter += 1
+            mapparameter += key.replace("Visible","")+"=True&"
+            logger.warning("Ping")
+            if "Requests" in key:
+                isRequestForHelp = "Request"
+                filters[category] = {"genericOffer__active": True, "genericOffer__requestForHelp": True}
+            else:
+                if isRequestForHelp == "Request":
+                    isRequestForHelp = "Mixed"
+                filters[category] = {"genericOffer__active": True, "genericOffer__requestForHelp": False}
+    if  categoryCounter == 0:
+        categoryCounter = 11
+    N_ENTRIES = int(50 / categoryCounter)
+    firstEntry = (pageCount+1)* N_ENTRIES
+    lastEntry = pageCount * N_ENTRIES
+    logger.warning("First : "+str(firstEntry)+" Last:"+str(lastEntry)+" Category: "+str(categoryCounter))
+    logger.warning(str(filters))
+    for key, value in filters.items():
+        if key == "childcareShort":
+            childShort = ChildCareFilterShortterm(request.GET, queryset=ChildcareOfferShortterm.objects.filter(**value))
+            context["entries"]["childShort"] =  mergeImages(childShort.qs[lastEntry:firstEntry])
+            context["filter"]["childShort"]  = childShort
+            numEntries += len(childShort.qs)
+        if key == "childcareLong":
+            childLong = ChildCareFilterLongterm(request.GET, queryset=ChildcareOfferLongterm.objects.filter(**value))
+            context["entries"]["childLong"] =  mergeImages(childLong.qs[lastEntry:firstEntry])
+            context["filter"]["childLong"]  = childLong
+            numEntries += len(childLong.qs)
+        if key == "accommodation":
+            accommodation = AccommodationFilter(request.GET, queryset=AccommodationOffer.objects.filter(**value))
+            context["entries"]["accommodation"] =  mergeImages(accommodation.qs[lastEntry:firstEntry])
+            context["filter"]["accommodation"]  = accommodation
+            numEntries += len(accommodation.qs)
+        if key == "translation":
+            translation = TranslationFilter(request.GET, queryset=TranslationOffer.objects.filter(**value))
+            context["entries"]["translation"] =  mergeImages(translation.qs[lastEntry:firstEntry])
+            context["filter"]["translation"]  = translation
+            numEntries += len(translation.qs)
+        if key == "transportation":
+            transportation = TransportationFilter(request.GET, queryset=TransportationOffer.objects.filter(**value))
+            context["entries"]["transportation"] =  mergeImages(transportation.qs[lastEntry:firstEntry])
+            context["filter"]["transportation"]  = transportation
+            numEntries += len(transportation.qs)
+        if key == "job":
+            job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**value))
+            context["entries"]["job"] =  mergeImages(job.qs[lastEntry:firstEntry])
+            context["filter"]["job"]  = job
+            numEntries += len(job.qs)
+        if key == "buerocratic":
+            buerocratic = BuerocraticFilter(request.GET, queryset=BuerocraticOffer.objects.filter(**value))
+            context["entries"]["buerocratic"] =  mergeImages(buerocratic.qs[lastEntry:firstEntry])
+            context["filter"]["buerocratic"]  = buerocratic
+            numEntries += len(buerocratic.qs)
+        if key == "welfare":
+            welfare = WelfareFilter(request.GET, queryset=WelfareOffer.objects.filter(**value))
+            context["entries"]["welfare"] =  mergeImages(welfare.qs[lastEntry:firstEntry])
+            context["filter"]["welfare"]  = welfare
+            numEntries += len(welfare.qs)
+        if key == "manpower":
+            manpower = ManpowerOffer.objects.filter(**value)
+            context["entries"]["manpower"] =  mergeImages(manpower[lastEntry:firstEntry])
+            context["filter"]["manpower"]  = manpower
+            logger.warning(str(context["entries"]["manpower"]))
+            numEntries += len(manpower)
+    maxPage = int(numEntries/(N_ENTRIES))
+    context["maxPage"] = maxPage
+    context["page"] = pageCount
+    context["mapparameter"] = mapparameter[:-1]
+    if maxPage > 1:
+        context["pagination"] = True
+    context["requestForHelp"] = isRequestForHelp
+    context["ResultCount"] = numEntries
+    return context
 def filter(request):
     N_ENTRIES = 5
-    filters = {"genericOffer__active": True} 
+    isRequestForHelp = "Offer"
+    filters = {"genericOffer__active": True, "genericOffer__requestForHelp": False} 
+    if request.POST.get("requests", "False") == "True":
+        filters["genericOffer__requestForHelp"] = True
+        isRequestForHelp = "Request"
     if request.POST.get("city"):
         locationData = getCityBbFromLocation(request.POST.get("city"))
         locationData = padByRange(locationData, request.POST.get("range")) #Already padding before...
-        filters = {"genericOffer__active": "True", "genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
+        filterlocation= {"genericOffer__lat__range": (locationData["latMin"], locationData["latMax"]),"genericOffer__lng__range": (locationData["lngMin"], locationData["lngMax"]) }
+        filters.update(filterlocation)
     pageCount = int(request.POST.get("page", 0))
     ids = []
     mapparameter = ""
     currentFilter = request.POST.dict()
     if not currentFilter:
-        currentFilter = request.GET.dict()
-    logger.warning("current Filter: "+str(currentFilter))
-    categoryCounter = 1
-    for key in request.POST:
-        if "Visible" in key:
-            categoryCounter = categoryCounter +1 
-            if "child" in key:
-                mapparameter+= "childcare"+"=True&"
-            else:
-                mapparameter += key.replace("Visible","")+"=True&"
-    for key in request.GET:
-        if "city" not in key:
-            categoryCounter = categoryCounter +1 
-            if "child" in key:
-                mapparameter+= "childcare"+"=True&"
-            else:
-                mapparameter += key.replace("Visible","")+"=True&"
-    if not currentFilter and categoryCount == 1:
-        categoryCounter = 11
-    mapparameter = mapparameter[:-1]
-    N_ENTRIES = int(50 / categoryCounter)
-    firstEntry = (pageCount+1)* N_ENTRIES
-    lastEntry = pageCount * N_ENTRIES
-    childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
-    childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
-    
-    childLong = ChildCareFilterLongterm(request.POST, queryset=ChildcareOfferLongterm.objects.filter(**filters))
-    accommodation = AccommodationFilter(request.POST, queryset=AccommodationOffer.objects.filter(**filters))
-    translation = TranslationFilter(request.POST, queryset=TranslationOffer.objects.filter(**filters))
-    transportation = TransportationFilter(request.POST, queryset=TransportationOffer.objects.filter(**filters))
-    job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**filters))
-    buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter(**filters))
-    welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
-    manpower = ManpowerOffer.objects.filter(**filters)
-    
-    childLongEntries = mergeImages(childLong.qs[lastEntry:firstEntry])
-    welfareEntries = mergeImages(welfare.qs[lastEntry:firstEntry])
-    maxPage = 0
-    numEntries = 0
-    context = {'currentFilter': currentFilter, "mapparameter": mapparameter,"ResultCount": 0,"location": request.POST.get("city"), "range": request.POST.get("range"),
-    'entries': {},
-    'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
-    
-    if request.POST.get("childShortVisible", "0") == "1" or request.GET.get("childShortVisible") == "True" or not currentFilter :
-        numEntries += len(childShort.qs)
-        context["entries"]["childShort"] = mergeImages(childShort.qs[lastEntry:firstEntry])
-    if request.POST.get("childLongVisible", "0") == "1" or request.GET.get("childLongVisible") == "True"or not currentFilter:
-        numEntries += len(childLong.qs)
-        context["entries"]["childLong"] = mergeImages(childLong.qs[lastEntry:firstEntry])
-    if request.POST.get("jobVisible", "0") == "1" or request.GET.get("jobVisible") == "True" or not currentFilter:
-        numEntries += len(job.qs)
-        context["entries"]['job'] = mergeImages(job.qs[lastEntry:firstEntry])
-    if request.POST.get("buerocraticVisible", "0") == "1"or request.GET.get("buerocraticVisible") == "True" or not currentFilter:
-        numEntries += len(buerocratic.qs)
-        context["entries"]["buerocratic"] = mergeImages(buerocratic.qs[lastEntry:firstEntry])
-    if request.POST.get("welfareVisible", "0") == "1"or request.GET.get("welfareVisible") == "True" or not currentFilter:
-        numEntries += len(welfare.qs)
-        context["entries"]["welfare"] = mergeImages(welfare.qs[lastEntry:firstEntry])
-    if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
-        numEntries += len(manpower)
-        context["entries"]["manpower"] = mergeImages(manpower[lastEntry:firstEntry])
-    if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
-        numEntries += len(transportation.qs)
-        context["entries"]["transportation"] = mergeImages(transportation.qs[lastEntry:firstEntry])
-    if request.POST.get("translationVisible", "0") == "1"or request.GET.get("translationVisible") == "True" or not currentFilter:
-        numEntries += len(translation.qs)
-        context["entries"]["translation"] = mergeImages(translation.qs[lastEntry:firstEntry])
-    if request.POST.get("accommodationVisible", "0") == "1" or request.GET.get("accommodationVisible") == "True"or not currentFilter:
-        numEntries += len(accommodation.qs)
-        context["entries"]["accommodation"] = mergeImages(accommodation.qs[lastEntry:firstEntry])
-    maxPage = int(numEntries/(N_ENTRIES))
-    if not currentFilter:
-        context["currentFilter"] = {"childShortVisible": "1","childLongVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
-    context["maxPage"] = maxPage
-    if maxPage > 1:
-        context["pagination"] = True
-    context["ResultCount"] = numEntries
+        context= filter_get(request)
+    else : 
+        logger.warning("current Filter: "+str(currentFilter))
+        categoryCounter = 1
+        for key in request.POST:
+            if "Visible" in key:
+                categoryCounter = categoryCounter +1 
+                suffix = "Offers"
+                if filters["genereicOffer__requestForHelp"] == True:
+                    suffix = "Requests"
+                if "child" in key:
+                    mapparameter+= "childcare"+suffix+"=True&"
+                else:
+                    mapparameter += key.replace("Visible","")+suffix+"=True&"
+        if not currentFilter and categoryCount == 1:
+            categoryCounter = 11
+        mapparameter = mapparameter[:-1]
+        N_ENTRIES = int(50 / categoryCounter)
+        firstEntry = (pageCount+1)* N_ENTRIES
+        lastEntry = pageCount * N_ENTRIES
+
+        childShort = ChildCareFilterShortterm(request.POST, queryset=ChildcareOfferShortterm.objects.filter(**filters))
+        childLong = ChildCareFilterLongterm(request.POST, queryset=ChildcareOfferLongterm.objects.filter(**filters))
+        accommodation = AccommodationFilter(request.POST, queryset=AccommodationOffer.objects.filter(**filters))
+        translation = TranslationFilter(request.POST, queryset=TranslationOffer.objects.filter(**filters))
+        transportation = TransportationFilter(request.POST, queryset=TransportationOffer.objects.filter(**filters))
+        job = JobFilter(request.POST, queryset=JobOffer.objects.filter(**filters))
+        buerocratic = BuerocraticFilter(request.POST, queryset=BuerocraticOffer.objects.filter(**filters))
+        welfare = WelfareFilter(request.POST, queryset=WelfareOffer.objects.filter(**filters))
+        manpower = ManpowerOffer.objects.filter(**filters)
+        
+        childLongEntries = mergeImages(childLong.qs[lastEntry:firstEntry])
+        welfareEntries = mergeImages(welfare.qs[lastEntry:firstEntry])
+        childShortEntries = mergeImages(childShort.qs[lastEntry:firstEntry])
+        maxPage = 0
+        numEntries = 0
+        context = {'currentFilter': currentFilter, "mapparameter": mapparameter,"ResultCount": 0,"location": request.POST.get("city"), "range": request.POST.get("range"),
+        'entries': {}, 'requestForHelp': isRequestForHelp,
+        'filter': {'childShort' : childShort, 'childLong': childLong, 'accommodation': accommodation, 'translation': translation, 'transportation': transportation, 'job': job, 'buerocratic': buerocratic, 'welfare': welfare}, 'page': pageCount, 'maxPage': maxPage}
+        
+        if request.POST.get("childShortVisible", "0") == "1" or request.GET.get("childShortVisible") == "True" or not currentFilter :
+            numEntries += len(childShort.qs)
+            context["entries"]["childShort"] = mergeImages(childShort.qs[lastEntry:firstEntry])
+        if request.POST.get("childLongVisible", "0") == "1" or request.GET.get("childLongVisible") == "True"or not currentFilter:
+            numEntries += len(childLong.qs)
+            context["entries"]["childLong"] = mergeImages(childLong.qs[lastEntry:firstEntry])
+        if request.POST.get("jobVisible", "0") == "1" or request.GET.get("jobVisible") == "True" or not currentFilter:
+            numEntries += len(job.qs)
+            context["entries"]['job'] = mergeImages(job.qs[lastEntry:firstEntry])
+        if request.POST.get("buerocraticVisible", "0") == "1"or request.GET.get("buerocraticVisible") == "True" or not currentFilter:
+            numEntries += len(buerocratic.qs)
+            context["entries"]["buerocratic"] = mergeImages(buerocratic.qs[lastEntry:firstEntry])
+        if request.POST.get("welfareVisible", "0") == "1"or request.GET.get("welfareVisible") == "True" or not currentFilter:
+            numEntries += len(welfare.qs)
+            context["entries"]["welfare"] = mergeImages(welfare.qs[lastEntry:firstEntry])
+        if request.POST.get("manpowerVisible", "0") == "1" or request.GET.get("manpowerVisible") == "True" or not currentFilter:
+            numEntries += len(manpower)
+            context["entries"]["manpower"] = mergeImages(manpower[lastEntry:firstEntry])
+        if request.POST.get("transportationVisible", "0") == "1"or request.GET.get("transportationVisible") == "True" or not currentFilter:
+            numEntries += len(transportation.qs)
+            context["entries"]["transportation"] = mergeImages(transportation.qs[lastEntry:firstEntry])
+        if request.POST.get("translationVisible", "0") == "1"or request.GET.get("translationVisible") == "True" or not currentFilter:
+            numEntries += len(translation.qs)
+            context["entries"]["translation"] = mergeImages(translation.qs[lastEntry:firstEntry])
+        if request.POST.get("accommodationVisible", "0") == "1" or request.GET.get("accommodationVisible") == "True"or not currentFilter:
+            numEntries += len(accommodation.qs)
+            context["entries"]["accommodation"] = mergeImages(accommodation.qs[lastEntry:firstEntry])
+        maxPage = int(numEntries/(N_ENTRIES))
+        if not currentFilter:
+            context["currentFilter"] = {"childShortVisible": "1","childLongVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
+        context["maxPage"] = maxPage
+        if maxPage > 1:
+            context["pagination"] = True
+        context["ResultCount"] = numEntries
     return  context
 
 def handle_filter(request):
@@ -311,7 +418,7 @@ def index(request):
     
     return render(request, 'offers/index.html', context)
 def donations(request):
-    donation = DonationOffer.objects.filter(genericOffer__active=True)
+    donation = DonationOffer.objects.filter(genericOffer__active=True, genericOffer__requestForHelp=False)
     context = {"ResultCount": donation.count(), "DonationOffers": donation }
     return render(request, 'offers/donations.html', context)
 @login_required
@@ -325,11 +432,12 @@ def selectOfferType(request):
     context= {"entries": []}
     for entry in GenericOffer.OFFER_CHOICES[:-1]:
         context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
+    if request.GET.get("rfh", "False") == "True":
+        context["requestForHelp"] = True
     return render(request, 'offers/selectOfferType.html', context)
 
 
 @login_required
-@helperRequired
 def create(request):
     if request.method == 'POST':
         return update(request, newly_created=True)
@@ -337,6 +445,8 @@ def create(request):
         context = {}
         offerType = request.GET.get("type")
         newOffer = GenericOffer(offerType=offerType)
+        if request.GET.get("rfh", "False") == "True":
+            context["requestForHelp"] = True
         context["genericForm"]  = GenericForm(instance=newOffer)
         context["detailForm"] = OFFER_FORMS[request.GET.get("type")]()
         if request.GET.get("type") == "AC":
@@ -380,6 +490,8 @@ def save(request, offer_id=None):
 def update(request, offer_id = None, newly_created = False):
     if offer_id is None:
         genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
+        if request.user.isRefugee:
+            genOffer.requestForHelp = True
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     else:
         genOffer = GenericOffer.objects.get(pk=offer_id)
@@ -458,54 +570,48 @@ def getOfferDetails(request, offer_id):
         images.append(imageForm)
     allowed = check_user_is_allowed(request, generic.userId.id, raise_permission_denied = False)
     location = getLocationFromOffer(generic)
-
+    detailForm = {}
+    genericContext = {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'location': location, 'edit_allowed': allowed, 'images': images, 'imageForm': ImageForm(), "id": generic.id, "requestForHelp": generic.requestForHelp}
     if generic.offerType == "AC":
         detail = get_object_or_404(AccommodationOffer, pk=generic.id)
         detailForm = AccommodationForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'detail': detailForm, "location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "WE":
         detail = get_object_or_404(WelfareOffer, pk=generic.id)
         detailForm = WelfareForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'detail': detailForm,"location": location, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
         detailForm = TranslationForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(),"location": location,'firstLanguage': detail.firstLanguage.country, 'secondLanguage': detail.secondLanguage.country, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
+        genericContext["firstLanguage"] = detail.firstLanguage.country
+        genericContext["secondLanguage"] = detail.secondLanguage.country
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()}
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "DO":
         detail = get_object_or_404(DonationOffer, pk=generic.id)
         detailForm = DonationForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BA":
         detail = get_object_or_404(ChildcareOfferShortterm, pk=generic.id)
         detailForm = ChildcareFormShortterm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(),"location": location, 'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "CL":
         detail = get_object_or_404(ChildcareOfferLongterm, pk=generic.id)
         detailForm = ChildcareFormLongterm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), "location": location,'generic': genericForm, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "JO":
         detail = get_object_or_404(JobOffer, pk=generic.id)
         detailForm = JobForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
     if generic.offerType == "BU":
         detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
         detailForm = BuerocraticForm(model_to_dict(detail))
-        return {'offerType': generic.get_offerType_display(), 'generic': genericForm,"location": location, 'detail': detailForm, "id": generic.id, "edit_allowed": allowed, "images": images, "imageForm": ImageForm()} 
-
+    genericContext["detail"] = detailForm
+    return genericContext
 def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
     context = getOfferDetails(request, offer_id)
     offer = GenericOffer.objects.get(pk=offer_id)
     context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
     context["username"] = offer.userId.first_name
-
+    logger.warning("context: "+str(offer.requestForHelp))
     if 'offer_newly_created' in request.session:
         newly_created = request.session['offer_newly_created']
         del request.session['offer_newly_created']
@@ -515,7 +621,7 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
         context["newly_created"] = newly_created
     if contacted:
         context["contacted"] = contacted
-    if request.user.is_authenticated and request.user.isRefugee:
+    if request.user.is_authenticated and request.user.isRefugee and request.user.id != offer.userId.id:
         # If the current user is a Refugee: Check if they have favourited this offer and add it to the recently viewed offers
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
         refugee = Refugee.objects.get(user=request.user)

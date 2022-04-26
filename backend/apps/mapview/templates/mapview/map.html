@@ -10,12 +10,14 @@
 {% block header %}
 
 <link rel="stylesheet" href="{% static 'js/leaflet-1.6.0/leaflet.css' %}" />
+<link rel="stylesheet" href="{% static 'css/leaflet.groupedlayercontrol.min.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.Default.css' %}" />
 <link rel="stylesheet" href="{% static 'css/map.css' %}">
 
 <!-- Make sure you put this AFTER Leaflet's CSS -->
 <script src="{% static 'js/leaflet-1.6.0/leaflet.js' %}" ></script>
+<script src="{% static 'js/leaflet.groupedlayercontrol.min.js' %}" ></script>
 <script src="{% static 'js/leaflet.markercluster-1.4.1/leaflet.markercluster.js' %}" ></script>
 <script src="{% static 'js/Leaflet.FeatureGroup.SubGroup-1.0.2/leaflet.featuregroup.subgroup.js' %}" ></script>
 
@@ -54,13 +56,13 @@
   
 </style>
 <script type="text/javascript">
-  console.log("In html: {{startPosition}}")
   pageOptions = {
     mapViewContainerId: 'mapContainer',
     accommodationOfferURL     : "{% url 'accommodationOffersJSON' %}",
     medicalOfferURL     : "{% url 'medicalOffersJSON' %}",
     manpowerOfferURL     : "{% url 'manpowerOffersJSON' %}",
     jobOfferURL     : "{% url 'jobOffersJSON' %}",
+    generalInformationURL: "{% url 'generalInformationJSON'%}",
     childcareOfferURL     : "{% url 'childcareOffersJSON' %}",
     buerocraticOfferURL     : "{% url 'buerocraticOffersJSON' %}",
     transportationOfferURL     : "{% url 'transportationOffersJSON' %}",
@@ -156,6 +158,8 @@
     createJobCountText: (count) => `<img src="{% static 'img/icons/icon_BU.svg' %}">{% trans "Jobangebote" %} (${count})`,
     createDigitalCountText: (count) => `<img src="{% static 'img/map/digital-marker.svg' %}">{% trans "Digitale Angebote" %} (${count})`,
     createGenericCountText: (count) => `<img src="{% static 'img/icons/icon_everything.svg' %}">{% trans "Alle anzeigen" %} (${count})`,
+    createOfferCountText: (count)  => `<img src="{% static 'img/icons/icon_everything.svg' %}">{% trans "Angebote" %} (${count})`,
+    createRequestCountText: (count)  => `<img src="{% static 'img/icons/icon_everything.svg' %}">{% trans "Gesuche" %} (${count})`,
     facilityIcon: L.icon({
       iconUrl: "{% static 'img/map/facility-marker.svg' %}",
       iconSize: [40, 40],
@@ -164,7 +168,7 @@
   
 </script>
 <!--<script type="text/javascript" src="mapview/?accommodation=False&translation=False&transportation=False&generic=True"></script> -->
-<script type="text/javascript" src="mapview/?accommodation={{ accommodation }}&translation={{ translation }}&transportation={{ transportation }}&generic={{ generic }}&childcare={{ childcare }}&buerocratic={{ buerocratic }}&manpower={{manpower}}&job={{job}}&medical={{medical}}"></script> 
+<script type="text/javascript" src="mapview/?{{get_params}}"></script> 
   
 
 {% endblock %}

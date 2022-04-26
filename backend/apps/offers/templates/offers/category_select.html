@@ -81,7 +81,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 <div >
     <div class="row align-self-center align-items-center" style="margin-top:75px;">
  <div class="col-12" >
-    <h2 class="title" ><img src="{% static 'img/step-2.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2></div>
+    <h2 class="title" ><img src="{% static 'img/step-2.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% if requestForHelp == False %}{% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}{%else%}{% blocktrans %}Welche Art von Hilfe bietest du?{% endblocktrans %}{%endif%}</h2></div>
         </div>
         </div>
         <div class="container cards" >
@@ -355,6 +355,9 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
     {
       data[visibles[i]] = "1"
     }
+    {% if requestForHelp == True %}
+    data["requests"] = "True"
+    {%endif%}
     data["city"] = "{{ city }}"
     console.log("Visibles: "+JSON.stringify(data))
     data["range"] = "{{ range }}"

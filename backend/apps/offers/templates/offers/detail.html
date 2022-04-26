@@ -88,8 +88,8 @@ navigator.share({
 
 <div class="container">
   <div style="height:40px; "></div>
-  {% if  newly_created == True and generic.active.value == True %} <div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Danke für dein Hilfsangebot, es ist jetzt für alle sichtbar.{%endblocktrans%}</p></div>
-  {% elif newly_created == True and generic.active.value == False %} <div style="background-color: rgb(255, 218, 148) " class="confirmation"><p>{% blocktrans %}Danke für dein Hilfsangebot, es wurde zur späteren Bearbeitung gespeichert.{%endblocktrans%}</p></div>
+  {% if  newly_created == True and generic.active.value == True %} <div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Danke für dein {%endblocktrans%}{%if  generic.requestForHelp == False%}Hilfsangebot{%else %}Hilfsgesuch{%endif%}{%blocktrans%}, es ist jetzt für alle sichtbar.{%endblocktrans%}</p></div>
+  {% elif newly_created == True and generic.active.value == False %} <div style="background-color: rgb(255, 218, 148) " class="confirmation"><p>{% blocktrans %}Danke für dein {%endblocktrans%}{%if  generic.requestForHelp == False%}Hilfsangebot{%else %}Hilfsgesuch{%endif%}{%blocktrans%}, es wurde zur späteren Bearbeitung gespeichert.{%endblocktrans%}</p></div>
   {%endif%}
   {% if contacted == True %}<div style="background-color: rgb(209, 255, 209)" class="confirmation"><p>{% blocktrans %}Der Inserent wurde kontaktiert und wird sich bald bei dir melden.{%endblocktrans%}</p></div>
   {%endif%}
@@ -168,7 +168,7 @@ navigator.share({
       <div class="col-sm-12 col-lg-8 description">
               
       {% csrf_token %}
-              <h2 class="title">{{ offerType }} {% if edit_allowed %}<button class="btn" type="button"  onClick="allowEdit()"><svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+              <h2 class="title">{% if requestForHelp == True %}Hilfegesuch: {%else%}Angebot: {%endif%}{{ offerType }} {% if edit_allowed %}<button class="btn" type="button"  onClick="allowEdit()"><svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
                 <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/>
               </svg><svg id="endEditButton" style="display:none"  xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
@@ -269,7 +269,7 @@ navigator.share({
               {% else%}<iframe src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&origin={{location.lat}},{{location.lng}}&destination={{detail.latEnd.value|safe}},{{detail.lngEnd.value|safe}}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
               {%endif%}
             </p>          
-            <p>ein Angebot von {{ username|default:"Anonym" }}, erstellt am {{createdAt }}</p>
+            <p>ein {%if generic.requestForHelp == False%}Angebot{%else%}Gesuch{%endif%} von {{ username|default:"Anonym" }}, erstellt am {{createdAt }}</p>
               <p style="margin-top: 25px;" class="contact">
               <a href="/offers/{{id}}/contact" class="btn btn-green" role="button" aria-pressed="true">{% if  user.is_authenticated != True %} {% blocktrans %}Registrieren und Kontakt aufnehmen{% endblocktrans %} {% else %} {% blocktrans %}Jetzt kontaktieren{% endblocktrans %} {%endif %}   
               <svg
