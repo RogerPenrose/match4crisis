@@ -317,7 +317,7 @@ def filter(request):
             if "Visible" in key:
                 categoryCounter = categoryCounter +1 
                 suffix = "Offers"
-                if filters["genereicOffer__requestForHelp"] == True:
+                if filters["genericOffer__requestForHelp"] == True:
                     suffix = "Requests"
                 if "child" in key:
                     mapparameter+= "childcare"+suffix+"=True&"
