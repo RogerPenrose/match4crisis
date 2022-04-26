@@ -6,6 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.contrib.auth.base_user import BaseUserManager
 
+from match4crisis.constants.choices import GENDER_CHOICES
+
 logger = logging.getLogger("django")
 
 # source: https://tech.serhatteker.com/post/2020-01/email-as-username-django/
@@ -78,6 +80,8 @@ class User(AbstractUser):
     phoneNumber = models.CharField(validators = [phoneNumberRegex], max_length = 16, unique = True, null=True, blank=True, verbose_name=_("Telefonnummer"))
     # Should the phone number be visible to contacts
     sharePhoneNumber = models.BooleanField(default=False, verbose_name=_("Telefonnummer teilen"))
+
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 
     isRefugee = models.BooleanField(default=False)
     isHelper = models.BooleanField(default=False)

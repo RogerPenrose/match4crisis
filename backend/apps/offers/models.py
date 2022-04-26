@@ -5,6 +5,7 @@ from django.db import models
 from apps.accounts.models import User, Languages
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from match4crisis.constants.choices import GENDER_CHOICES
 from match4crisis.constants.countries import countries
 from apps.iofferhelp.models import Helper
 def validate_plz(value):
@@ -52,21 +53,9 @@ class GenericOffer(models.Model):
         return self.offerType
 class ChildcareOfferLongterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    GENDER_CHOICES = [
-        ('NO', _("Keine Angabe")),
-        ('FE', _("Weiblich")),
-        ('MA', _("Männlich")),
-        ('OT', _("Andere")),
-    ]
     gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 class ChildcareOfferShortterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    GENDER_CHOICES = [
-        ('NO', _("Keine Angabe")),
-        ('FE', _("Weiblich")),
-        ('MA', _("Männlich")),
-        ('OT', _("Andere")),
-    ]
     gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
     numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)

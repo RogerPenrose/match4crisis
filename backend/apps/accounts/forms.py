@@ -12,6 +12,8 @@ from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 
 from django_select2 import forms as s2forms
 
+from match4crisis.constants.choices import GENDER_CHOICES
+
 from .models import User
 
 class PhoneNumberField(forms.CharField):
@@ -28,11 +30,13 @@ class CustomUserCreationForm(UserCreationForm):
             "first_name",
             "last_name",
             "email",
+            "gender",
         )
         labels={
             "first_name": "",
             "last_name": "",
             "email": "",
+            "gender": "",
         }
 
         widgets = {
@@ -43,12 +47,16 @@ class CustomUserCreationForm(UserCreationForm):
 
         field_classes = {"email": forms.EmailField}
 
+    field_order = ["first_name", "last_name", "email", "password1", "password2", "gender", "acceptTerms"]
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         if self._meta.model.USERNAME_FIELD in self.fields:
             self.fields[self._meta.model.USERNAME_FIELD].widget.attrs[
                 "autofocus"
             ] = False
+
+        self.fields["gender"] = forms.ChoiceField(label = "", choices=(('', _('Geschlecht auswählen')),) + GENDER_CHOICES, help_text='<a href="" id="genderHintAnchor" data-toggle="modal" data-target="#genderHintModal"> %s </a>' % _("Warum wir nach deinem Geschlecht fragen"))
 
         self.fields["password1"].label = ""
         self.fields["password2"].label = ""
