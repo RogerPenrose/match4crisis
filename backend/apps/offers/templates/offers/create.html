@@ -141,4 +141,20 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 {{ detailForm.media.js }}
 <script type="text/javascript" src="{% url 'create_js' %}"></script>
+<script type="text/javascript">
+document.addEventListener('readystatechange', function(event) {
+    if (document.readyState === "complete") {
+{% if  genericForm.offerType.value == "TR"%}
+document.getElementById("id_helpType_transport").addEventListener("change", toggleTransport);
+toggleTransport()
+{%elif genericForm.offerType.value == "CL"%}
+    document.getElementById("id_timeOfDay").parentElement.parentElement.style.display = "none"
+    document.getElementById("id_hasEducation").parentElement.parentElement.style.display = "none"
+document.getElementById("id_helpType_childcare").addEventListener("change", toggleChildcareTimes);
+document.getElementById("id_hasExperience").addEventListener("change", toggleChildcareCredentials);
+document.getElementById("id_hasSpace").addEventListener("change", toggleHasSpace);
+{%endif%}
+    }
+})
+</script>
 {% endblock %}

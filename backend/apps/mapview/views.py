@@ -9,8 +9,9 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
 from django.views.decorators.gzip import gzip_page
+from django.utils.translation import gettext_lazy as _
 
-from apps.offers.models import GenericOffer, AccommodationOffer, ManpowerOffer,TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOfferLongterm, ChildcareOfferShortterm
+from apps.offers.models import GenericOffer, AccommodationOffer, ManpowerOffer,TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOffer
 from apps.mapview.utils import get_plz_data, plzs
 
 
@@ -86,9 +87,8 @@ def accommodationOffersJSON(request):
     requests = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = True)
     facilities = {"offers":[{
         "lat": e.genericOffer.lat,
-        "numberOfAdults": e.numberOfAdults,
-        "numberOfChildren": e.numberOfChildren,
-        "numberOfPets": e.numberOfPets,
+        "numberOfPeople": e.numberOfPeople,
+        "petsAllowed": _("Ja") if e.petsAllowed else _("Nein"),
         "type": e.get_typeOfResidence_display(),
         "startDate": str(e.startDateAccommodation),
         "lng": e.genericOffer.lng,
@@ -100,9 +100,8 @@ def accommodationOffersJSON(request):
     } for e in offers],
     "requests":[{
         "lat": e.genericOffer.lat,
-        "numberOfAdults": e.numberOfAdults,
-        "numberOfChildren": e.numberOfChildren,
-        "numberOfPets": e.numberOfPets,
+        "numberOfPeople": e.numberOfPeople,
+        "petsAllowed": _("Ja") if e.petsAllowed else _("Nein"),
         "type": e.get_typeOfResidence_display(),
         "startDate": str(e.startDateAccommodation),
         "lng": e.genericOffer.lng,
@@ -119,24 +118,26 @@ def transportationOffersJSON(request):
     requests = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     facilities ={"offers": [{
         "lat": e.genericOffer.lat,
-        "destination": e.locationEnd or "N/A",
-        "passengers": e.numberOfPassengers,
+        "distance": e.distance or "N/A",
+        "detail": "Passagiere :" + str(e.numberOfPassengers) if e.helpType_transport == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display(),
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
         "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
+        "helpType_transport": e.get_helpType_transport_display(),
         "refer_url": str(e.genericOffer.id)
     } for e in offers],
     "requests": [{
         "lat": e.genericOffer.lat,
-        "destination": e.locationEnd or "N/A",
-        "passengers": e.numberOfPassengers,
+        "distance": e.distance or "N/A",
+        "detail": "Passagiere :" + str(e.numberOfPassengers) if e.helpType_transport == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display(),
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
         "title": e.genericOffer.offerTitle,
         "offerDescription": e.genericOffer.offerDescription,
+        "helpType_transport": e.get_helpType_transport_display(),
         "refer_url": str(e.genericOffer.id)
     } for e in requests]}
     return JsonResponse(facilities, safe=False) 
@@ -193,19 +194,16 @@ def buerocraticOffersJSON(request):
 
 
 def childcareOffersJSON(request):
-    offers = ChildcareOfferLongterm.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    shorttermPeriodicOffers = ChildcareOfferShortterm.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, isRegular = True, genericOffer__requestForHelp=False)
-    shorttermOnceOffers = ChildcareOfferShortterm.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, isRegular = False, genericOffer__requestForHelp=False)
-    requests = ChildcareOfferLongterm.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
-    shorttermPeriodicRequests = ChildcareOfferShortterm.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, isRegular = True, genericOffer__requestForHelp=True)
-    shorttermOnceRequests = ChildcareOfferShortterm.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, isRegular = False, genericOffer__requestForHelp=True)
+    offers = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    requests = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     facilities = {"offers":[{
         "lat": e.genericOffer.lat,
-        "type": "Langzeit",
+        "type": e.get_helpType_childcare_display(),
         "lng": e.genericOffer.lng,
-        "children": 1,
-        "location": e.genericOffer.location or "N/A",
-        "gender": e.get_gender_longterm_display(),
+        "children": e.numberOfChildren,
+        "location": "Hat Räumlichkeiten" if e.hasSpace else str(e.distance)+"km Umkreis",
+        "educated":"Hat eine Ausbildung" if e.hasEducation else "",
+        "experience":"Hat Erfahrung" if e.hasExperience else "",
         "title": e.genericOffer.offerTitle,
         "bb": e.genericOffer.bb,
         "offerDescription": e.genericOffer.offerDescription,
@@ -213,75 +211,18 @@ def childcareOffersJSON(request):
     } for e in offers],
     "requests":[{
         "lat": e.genericOffer.lat,
-        "type": "Langzeit",
+        "type": e.get_helpType_childcare_display(),
         "lng": e.genericOffer.lng,
-        "children": 1,
-        "location": e.genericOffer.location or "N/A",
-        "gender": e.get_gender_longterm_display(),
+        "children": e.numberOfChildren,
+        "location": "Hat Räumlichkeiten" if e.hasSpace else str(e.distance)+"km Umkreis",
+        "educated":"Hat eine Ausbildung" if e.hasEducation else "",
+        "experience":"Hat Erfahrung" if e.hasExperience else "",
         "title": e.genericOffer.offerTitle,
         "bb": e.genericOffer.bb,
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in requests]}
-    for e in shorttermPeriodicOffers:
-        facilities["offers"].append(
-            {
-            "lat": e.genericOffer.lat,
-            "type": "Kurzzeit (wiederkehrend)",
-            "lng": e.genericOffer.lng,
-            "children": e.numberOfChildrenToCare,
-            "location": e.genericOffer.location or "N/A",
-            "gender": e.get_gender_shortterm_display(),
-             "title": e.genericOffer.offerTitle,
-            "bb": e.genericOffer.bb,
-            "offerDescription": e.genericOffer.offerDescription,
-            "refer_url": str(e.genericOffer.id)
-
-            })
-    for e in shorttermOnceOffers:
-        facilities["offers"].append(
-            {
-            "lat": e.genericOffer.lat,
-            "type": "Kurzzeit (einmalig)",
-            "lng": e.genericOffer.lng,
-            "children": e.numberOfChildrenToCare,
-            "location": e.genericOffer.location or "N/A",
-            "gender": e.get_gender_shortterm_display(),
-            "title": e.genericOffer.offerTitle,
-            "bb": e.genericOffer.bb,
-            "offerDescription": e.genericOffer.offerDescription,
-            "refer_url": str(e.genericOffer.id)
-            })
-    for e in shorttermPeriodicRequests:
-        facilities["requests"].append(
-            {
-            "lat": e.genericOffer.lat,
-            "type": "Kurzzeit (wiederkehrend)",
-            "lng": e.genericOffer.lng,
-            "children": e.numberOfChildrenToCare,
-            "location": e.genericOffer.location or "N/A",
-            "gender": e.get_gender_shortterm_display(),
-             "title": e.genericOffer.offerTitle,
-            "bb": e.genericOffer.bb,
-            "offerDescription": e.genericOffer.offerDescription,
-            "refer_url": str(e.genericOffer.id)
-
-            })
-    for e in shorttermOnceRequests:
-        facilities["requests"].append(
-            {
-            "lat": e.genericOffer.lat,
-            "type": "Kurzzeit (einmalig)",
-            "lng": e.genericOffer.lng,
-            "children": e.numberOfChildrenToCare,
-            "location": e.genericOffer.location or "N/A",
-            "gender": e.get_gender_shortterm_display(),
-            "title": e.genericOffer.offerTitle,
-            "bb": e.genericOffer.bb,
-            "offerDescription": e.genericOffer.offerDescription,
-            "refer_url": str(e.genericOffer.id)
-            })
-
+    logger.warning("CHildcare: "+str(facilities))
     return JsonResponse(facilities, safe=False) 
 
 def jobOffersJSON(request):

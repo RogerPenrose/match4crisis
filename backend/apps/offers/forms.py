@@ -5,7 +5,7 @@ from django_select2 import forms as s2forms
 import logging
 from django.utils.translation import gettext_lazy as _
 from match4crisis.constants.countries import countries
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOfferLongterm, ChildcareOfferShortterm, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
 from apps.accounts.models import Languages
 
 def validate_plz(value):
@@ -23,9 +23,8 @@ PRICE = _("Preis")
 PASSENGER_COUNT=_("Anzahl der freien Plätze")
 FIRSTLANGUAGE=_("Übersetze von")
 SECONDLANGUAGE=_("Übersetze nach")
-INHABITANTS_ADULTS=_("Anzahl der Erwachsenen")
-INHABITANTS_CHILDREN=_("Anzahl der Kinder")
-INHABITANTS_PETS=_("Anzahl der Haustiere")
+NUMBEROFPEOPLE=_("Maximale anzahl der Bewohner")
+PETSALLOWED=_("Haustiere gestattet?")
 DIGITAL=_("Digital verfügbar")
 ACTIVE=_("Aktives Angebot")
 RESIDENCE=_("Art der Unterbringung")
@@ -49,7 +48,11 @@ IMAGE = _("Bild hochladen")
 OFFERTITLE = _("Titel")
 LOCATION=_("Ort")
 LOCATIONEND=_("Ziel")
+DISTANCE=_("Umkreis")
+TRANSPORT_TYPE=_("Art des Transports") 
+CAR_TYPE= _("Art des Fahrzeugs")
 logger = logging.getLogger("django")
+
 
 class OfferForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -62,12 +65,11 @@ class GenericForm(OfferForm):
         attrs = { "class": "form-control"}
         model = GenericOffer
 
-        fields = ["offerType", "offerTitle", "offerDescription","location", "lat","lng", "bb", "cost", "isDigital", "active"]
+        fields = ["offerType", "offerTitle", "offerDescription","location", "lat","lng", "bb", "cost", "active"]
         labels={
             "offerType": OFFERTYPE,
             "offerDescription": OFFERDESCRIPTION, 
             "cost": PRICE, 
-            "isDigital": DIGITAL, 
             "location": LOCATION,
             "active": ACTIVE,
             "offerTitle": OFFERTITLE
@@ -88,31 +90,6 @@ class DonationForm(OfferForm):
             "donationTitle" : DONATION_TITLE,
         }
 
-class ChildcareFormLongterm(OfferForm):
-    class Meta:
-        attrs = { "class": "form-control"}
-        model = ChildcareOfferLongterm
-        exclude = ("genericOffer",)
-
-        labels = {
-            "gender_longterm" : GENDER,
-        }
-    
-class ChildcareFormShortterm(OfferForm):
-    class Meta:
-        attrs = { "class": "form-control"}
-        model = ChildcareOfferShortterm
-        exclude = ("genericOffer",)
-
-        labels = {
-            "gender_shortterm" : GENDER,
-            "numberOfChildrenToCare" : AMOUNT_OF_CHILDREN,
-            "isRegular" : REGULAR_CHILDCARE,
-        }
-        
-        widgets = {
-            "isRegular" : forms.CheckboxInput(attrs={'class': 'custom-control-input'}),
-        }
 
 class ImageForm(forms.Form):
     
@@ -131,6 +108,23 @@ class JobForm(OfferForm):
             "jobType" : JOBTYPE,
             "jobTitle" : JOBTITLE,
             "requirements" : JOBREQS,
+        }
+
+class ChildcareForm(OfferForm):
+    class Meta:
+        attrs = { "class": "form-control"}
+        model = ChildcareOffer
+        exclude = ("genericOffer",)
+
+        labels = {
+            "helpType_childcare" : _("Betreuungsdauer"),
+            "timeOfDay": _("Betreuungszeitraum"),
+            "distance": _("Umkreis"),
+            "numberOfChildren": _("Anzahl an Kindern"),
+            "hasSpace": _("Ich habe Räumlichkeiten"),
+            "hasEducation": _("Ich habe eine spezielle Ausbildung"),
+            "hasExperience": _("Ich habe Betreuungserfahrung"),
+            "isRegular": _("Regelmäßige Betreuung möglich")
         }
 
 class ManpowerForm(OfferForm):
@@ -170,9 +164,10 @@ class TransportationForm(OfferForm):
         exclude = ("genericOffer",)
 
         labels = {
-            "date" : DEPARTUREDATE,
             "numberOfPassengers" : PASSENGER_COUNT,
-            "locationEnd" : LOCATIONEND,
+            "distance" : DISTANCE,
+            "helpType_transport": TRANSPORT_TYPE,
+            "typeOfCar": CAR_TYPE
         }
 
         widgets = {
@@ -208,9 +203,8 @@ class AccommodationForm(OfferForm):
 
         labels = {
             "startDateAccommodation" : STARTDATE,
-            "numberOfAdults" : NUMBERADULTS,
-            "numberOfChildren" : AMOUNT_OF_CHILDREN,
-            "numberOfPets" : NUMBERPETS,
+            "numberOfPeople" : NUMBEROFPEOPLE,
+            "petsAllowed": PETSALLOWED,
             "typeOfResidence" : RESIDENCE,
         }
 
@@ -225,8 +219,7 @@ OFFER_FORMS = {
     'TL' : TranslationForm,
     'TR' : TransportationForm,
     'BU' : BuerocraticForm,
-    'BA' : ChildcareFormShortterm,
-    'CL' : ChildcareFormLongterm,
+    'CL' : ChildcareForm,
     'WE' : WelfareForm,
     'MP' : ManpowerForm,
     'JO' : JobForm,

@@ -86,7 +86,41 @@ function offer_autocomplete(){
     }
     return autocompletes
 }
+function toggleChildcareCredentials(){
+if(document.getElementById("id_hasExperience").checked == true){
+    document.getElementById("id_hasEducation").parentElement.parentElement.style.display = "table-row"
+}
+else{
+    document.getElementById("id_hasEducation").parentElement.parentElement.style.display = "none"
+}
+}
+function toggleHasSpace(){
+    if(document.getElementById("id_hasSpace").checked == false){
+        document.getElementById("id_distance").parentElement.parentElement.style.display = "table-row"
+    }
+    else{
+        document.getElementById("id_distance").parentElement.parentElement.style.display = "none"
+    }
+    }
+function toggleChildcareTimes(){
+if(document.getElementById("id_helpType_childcare").value != "HT"){
+    document.getElementById("id_timeOfDay").parentElement.parentElement.style.display = "none"
+}
+else{
+    document.getElementById("id_timeOfDay").parentElement.parentElement.style.display = "table-row"
+}
+}
+function toggleTransport(){
+if(document.getElementById("id_helpType_transport").value == "GT"){
+    document.getElementById("id_typeOfCar").parentElement.parentElement.style.display = "table-row"
+    document.getElementById("id_numberOfPassengers").parentElement.parentElement.style.display ="none"
+}
+else{
+    document.getElementById("id_typeOfCar").parentElement.parentElement.style.display = "none"
+    document.getElementById("id_numberOfPassengers").parentElement.parentElement.style.display ="table-row"
 
+}
+}
 function validateForm(){
     let allAreFilled = true;
     document.getElementById("thisForm").querySelectorAll("[required]").forEach(function(i) {

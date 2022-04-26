@@ -6,12 +6,13 @@ muss in urls.py auskommentiert werden
 """
 from django.core.management.base import BaseCommand, no_translations
 from django.conf import settings
+from random import choice
 from django.http import HttpResponse
 from django.utils import timezone
 from datetime import timedelta
 import numpy as np
 from apps.accounts.models import User, Languages
-from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOfferShortterm, ChildcareOfferLongterm, WelfareOffer, JobOffer, DonationOffer
+from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOffer, WelfareOffer, JobOffer, DonationOffer
 
 
 
@@ -28,8 +29,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         JOB_CHOICES = ["ACA","ADM","ADV","CON","FAC","FIN","GEN","HEA", "HUM","INF","INT","LEG","LIB","MAR","OFF","PER","PUB","RES", "SPO", "STU","HAN"]
+        HELP_CHOICES_CL = ['GT', 'HT', 'WE']
+        TIME_CHOICES_CL = ['VM', 'NM', 'AB']
         residenceChoices = ['SO','RO', 'HO', 'LE'] 
         HELP_CHOICES_MP= ['ON',  'OS']
+        HELP_CHOICES_TR = ['GT', 'PT']
         GENDER_CHOICES = ['FE', 'MA', 'NO']
         HELP_CHOICES= ['AM', 'LE', 'OT']
         WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
@@ -51,6 +55,7 @@ class Command(BaseCommand):
                     created_at=timezone.now(), \
                     offerDescription="Automatically generated", \
                     isDigital=False,  \
+                    requestForHelp=bool(np.random.randint(0, 1)),\
                     bb = str(bbStart), \
                     lat = lat, \
                     lng = lng, \
@@ -65,10 +70,8 @@ class Command(BaseCommand):
                     g.save()
                     stayLength= np.random.randint(1, 365)
                     a = AccommodationOffer(genericOffer=g, \
-                        numberOfAdults=np.random.randint(1, 15), \
-                        numberOfChildren=np.random.randint(1, 3), \
-                        numberOfPets=np.random.randint(0, 2), \
-                        endDateAccommodation=timezone.now() + timedelta(days=stayLength) , \
+                        numberOfPeople=np.random.randint(1, 15), \
+                        petsAllowed=choice((True, False)), \
                         typeOfResidence= residenceChoices[np.random.randint(0,len(residenceChoices)-1)] )     
                     a.save()
                 if counter == 1: #Translation
@@ -87,16 +90,12 @@ class Command(BaseCommand):
                     b = BuerocraticOffer(genericOffer=g, helpType_buerocratic=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
                     b.save()
                 if counter == 3: # Transportation
-                    latEnd = 48 + 6*np.random.random()
-                    lngEnd = 6 + 9*np.random.random()
-                    bb = {"east": latEnd+0.09, "west": latEnd-0.09, "south":lngEnd-0.09, "north": lngEnd+0.09 }
                     g.offerType = "TR"
                     g.save()
                     t = TransportationOffer(genericOffer=g, \
-                        bbEnd = str(bb),\
-                        latEnd = latEnd, \
-                        lngEnd = lngEnd, \
-                        numberOfPassengers=np.random.randint(0, 10))
+                        numberOfPassengers=np.random.randint(0, 10),\
+                        helpType_transport=HELP_CHOICES_TR[np.random.randint(0, len(HELP_CHOICES_TR)-1)],\
+                        distance=np.random.randint(5,200))
                     t.save()
                 if counter == 4: # Transportation
 
@@ -107,24 +106,27 @@ class Command(BaseCommand):
                 if counter == 5: # Transportation
                     g.offerType = "CL"
                     g.save()
-                    b = ChildcareOfferLongterm(genericOffer=g, gender_longterm=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
+                    b = ChildcareOffer(genericOffer=g,\
+                        numberOfChildren=np.random.randint(0,10),\
+                        isRegular=choice((True, False)),\
+                        hasExperience=choice((True, False)),\
+                        hasSpace=choice((True, False)),\
+                        hasEducation=choice((True, False)),\
+                        distance=np.random.randint(0,200),\
+                        timeOfDay=TIME_CHOICES_CL[np.random.randint(0, len(TIME_CHOICES_CL)-1)],\
+                        helpType_childcare=HELP_CHOICES_CL[np.random.randint(0, len(HELP_CHOICES_CL)-1)])
                     b.save()
                 if counter == 6: # Transportation
-                    g.offerType = "BA"
-                    g.save()
-                    b = ChildcareOfferShortterm(genericOffer=g, isRegular=(np.random.random() < 0.7),numberOfChildrenToCare=np.random.randint(0,5),gender_shortterm=GENDER_CHOICES[np.random.randint(0,len(GENDER_CHOICES)-1)])
-                    b.save()
-                if counter == 7: # Transportation
                     g.offerType = "WE"
                     g.save()
                     b = WelfareOffer(genericOffer=g, helpType_welfare=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
                     b.save()
-                if counter == 8: # Transportation
+                if counter == 7: # Transportation
                     g.offerType = "JO"
                     g.save()
                     b = JobOffer(genericOffer=g, jobTitle="Master of awesome.", requirements="10 Year Job experience.", jobType=JOB_CHOICES[np.random.randint(0,len(JOB_CHOICES)-1)])
                     b.save()
-                if counter == 9: # Transportation
+                if counter == 8: # Transportation
                     g.offerType = "DO"
                     g.save()
                     b = DonationOffer(genericOffer=g, donationTitle="Human Fund", account="Deutsche Bank DE 12 3456 7891 07893.")
