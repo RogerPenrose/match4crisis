@@ -569,7 +569,8 @@ def getOfferDetails(request, offer_id):
         imageForm.id = image.image_id
         images.append(imageForm)
     allowed = check_user_is_allowed(request, generic.userId.id, raise_permission_denied = False)
-    location = getLocationFromOffer(generic)
+    location = generic.location 
+    #location = getLocationFromOffer(generic)
     detailForm = {}
     genericContext = {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'location': location, 'edit_allowed': allowed, 'images': images, 'imageForm': ImageForm(), "id": generic.id, "requestForHelp": generic.requestForHelp}
     if generic.offerType == "AC":
