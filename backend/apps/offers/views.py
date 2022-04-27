@@ -169,25 +169,28 @@ def search(request):
     if request.GET.get("requests", "False") == "true":
         context["searchRequests"] = True
     return render(request, 'offers/search.html', context)
-def getTranslationImage(request, firstLanguage, secondLanguage):
-    # first load flag from file:
-    firstData = ""
-    secondData = ""
-    if firstLanguage == "not":
-        firstLanguage = "no-flag"
-    if secondLanguage == "not":
-        secondLanguage = "no-flag"
-    p1 = staticfiles_storage.path('img/flags/'+firstLanguage+'.svg')
-    with open(p1, "rb") as fileHandle:
-        raw = fileHandle.read()
-        firstData = base64.b64encode(raw)
-    p2 = staticfiles_storage.path('img/flags/'+secondLanguage+'.svg')
-    with open(p2, "rb") as fileHandle:
-        raw = fileHandle.read()
-        secondLanguage = base64.b64encode(raw)
-    context = {"firstLanguage" : firstData.decode("utf-8")
-, "secondLanguage" : secondLanguage.decode("utf-8")}
-    return render(request, 'offers/drawing.svg', context=context,content_type="image/svg+xml")
+def getTranslationImage(request):
+    logger.warning("Received: "+str(request.GET.dict()))
+    rawData = []
+    for key in request.GET.dict():
+        language = "no-flag"
+        if request.GET[key] != "not":
+            language= request.GET[key]
+        fileName = staticfiles_storage.path('img/flags/'+language+".svg")
+        with open(fileName, "rb") as fileHandle:
+            raw = fileHandle.read()
+            rawData.append(base64.b64encode(raw))
+    logger.warning("Raw Length: "+str(len(rawData)))
+    if len(rawData) == 2:
+        context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8")}
+        return render(request, 'offers/2-languages.svg', context=context,content_type="image/svg+xml")
+    if len(rawData) == 3:
+        logger.warning("Three Languages")
+        context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8"), "thirdLanguage": rawData[2].decode("utf-8")}
+        return render(request, 'offers/3-languages.svg', context=context,content_type="image/svg+xml")
+    if len(rawData) == 4:
+        context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8"), "thirdLanguage": rawData[2].decode("utf-8")}
+        return render(request, 'offers/3-languages.svg', context=context,content_type="image/svg+xml")
 def padByRange(locationData, rangeKm):
 
     locationData["lngMax"] +=kmInLng(rangeKm, locationData["latMax"])
@@ -567,9 +570,11 @@ def getOfferDetails(request, offer_id):
         detailForm = WelfareForm(model_to_dict(detail))
     if generic.offerType == "TL":
         detail = get_object_or_404(TranslationOffer, pk=generic.id)
+        logger.warning(str(detail.languages.all()))
         detailForm = TranslationForm(model_to_dict(detail))
-        genericContext["firstLanguage"] = detail.firstLanguage.country
-        genericContext["secondLanguage"] = detail.secondLanguage.country
+        genericContext["languages"]= []
+        for entry in detail.languages.all() :       
+            genericContext["languages"].append({"Name": entry.englishName, "Country": entry.country})
     if generic.offerType == "TR":
         detail = get_object_or_404(TransportationOffer, pk=generic.id)
         detailForm = TransportationForm(model_to_dict(detail))

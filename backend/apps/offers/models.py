@@ -49,6 +49,8 @@ class GenericOffer(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.offerType
+
+
 class ChildcareOffer(models.Model):
     CHILDCARE_CHOICES = [
         ('GT', _('Ganztagesbetruung')),
@@ -98,6 +100,7 @@ class JobOffer(models.Model):
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
     requirements = models.TextField(blank=True)
+
 class DonationOffer(models.Model):
     account= models.CharField(max_length=350)
     donationTitle = models.CharField(max_length=128, blank=True)
@@ -107,6 +110,7 @@ class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
+
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
@@ -164,11 +168,10 @@ class TransportationOffer(models.Model):
     distance = models.IntegerField(default=100)
     numberOfPassengers = models.IntegerField(default=2)
     typeOfCar = models.CharField(max_length=2, choices=CARCHOICES, default="KW")
+
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    
-    firstLanguage = models.ForeignKey(Languages,verbose_name=_("Erste Sprache"), related_name='firstLanguage', on_delete=models.CASCADE, default="de")
-    secondLanguage = models.ForeignKey(Languages,verbose_name=_("Zweite Sprache"),related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
+    languages = models.ManyToManyField(Languages,blank=True, verbose_name=_("Sprachen"))
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer,

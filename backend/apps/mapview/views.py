@@ -282,8 +282,7 @@ def translationOffersJSON(request):
     requests = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     facilities =  {"offers":[{
         "lat": e.genericOffer.lat,
-        "firstLanguage": e.firstLanguage.englishName,
-        "secondLanguage": e.secondLanguage.englishName,
+        "languages": [language.englishName for language in e.languages.all()],
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
@@ -292,8 +291,7 @@ def translationOffersJSON(request):
         "refer_url": str(e.genericOffer.id)
     } for e in offers],"requests":[{
         "lat": e.genericOffer.lat,
-        "firstLanguage": e.firstLanguage.englishName,
-        "secondLanguage": e.secondLanguage.englishName,
+        "languages": [language.englishName for language in e.languages.all()],
         "lng": e.genericOffer.lng,
         "location": e.genericOffer.location or "N/A",
         "bb": e.genericOffer.bb,
@@ -301,6 +299,7 @@ def translationOffersJSON(request):
         "offerDescription": e.genericOffer.offerDescription,
         "refer_url": str(e.genericOffer.id)
     } for e in requests]}
+    logger.warning("Langauges: "+str(facilities["offers"][0]))
     return JsonResponse(facilities, safe=False) 
 
 def genericOffersJSON(request):

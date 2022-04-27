@@ -190,13 +190,12 @@ class TranslationForm(forms.ModelForm):
         exclude = ("genericOffer",)
 
         labels = {
-            "firstLanguage" : FIRSTLANGUAGE,
-            "secondLanguage" : SECONDLANGUAGE,
+            "languages" : _("Übersetzte Sprachen")
         }
 
         widgets = {
-            "firstLanguage" : s2forms.Select2Widget(),
-            "secondLanguage" : s2forms.Select2Widget(),
+            "languages" : s2forms.Select2MultipleWidget()
+
         }
 # Translation Fields
 #queryset=Languages.objects.all(), 

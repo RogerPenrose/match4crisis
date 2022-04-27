@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="314.0426mm"
+   height="135.77457mm"
+   viewBox="0 0 314.0426 135.77457"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="4-languags.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.5499273"
+     inkscape:cx="68.190832"
+     inkscape:cy="931.03216"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="-53.072177,137.1354"
+       orientation="0,1662.8077"
+       id="guide469" />
+    <sodipodi:guide
+       position="386.87905,137.1354"
+       orientation="511.99997,0"
+       id="guide471" />
+    <sodipodi:guide
+       position="386.87905,1.668732"
+       orientation="0,-1662.8077"
+       id="guide473" />
+    <sodipodi:guide
+       position="-53.072177,1.668732"
+       orientation="-511.99997,0"
+       id="guide475" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1409">
+      <circle
+         style="fill:#ff0000;fill-opacity:0.457831;fill-rule:evenodd;stroke-width:0.999999"
+         id="circle1411"
+         cx="258.57162"
+         cy="257.28583"
+         r="255.99998" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1409-3">
+      <circle
+         style="fill:#ff0000;fill-opacity:0.457831;fill-rule:evenodd;stroke-width:0.999999"
+         id="circle1411-7"
+         cx="258.57162"
+         cy="257.28583"
+         r="255.99998" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath1462">
+      <g
+         id="g1470"
+         clip-path="url(#clipPath1409-3)">
+        <path
+           fill="#ffce00"
+           d="M 0,341.3 H 512 V 512 H 0 Z"
+           id="path1464" />
+        <path
+           d="M 0,0 H 512 V 170.7 H 0 Z"
+           id="path1466" />
+        <path
+           fill="#dd0000"
+           d="M 0,170.7 H 512 V 341.3 H 0 Z"
+           id="path1468" />
+      </g>
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath2418">
+      <ellipse
+         style="fill:#ff0000;fill-opacity:0.457831;stroke-width:0.264583"
+         id="ellipse2420"
+         cx="-50.889797"
+         cy="68.381439"
+         rx="67.534256"
+         ry="67.73333" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath3719">
+      <circle
+         style="fill:#ff0000;fill-opacity:0.457831;stroke-width:0.264583"
+         id="circle3721"
+         cx="255.12234"
+         cy="69.369766"
+         r="67.73333" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath524">
+      <circle
+         style="fill:#ff0000;fill-rule:evenodd;stroke-width:0.264583"
+         id="circle526"
+         cx="2.689352"
+         cy="68.008934"
+         r="30.000002" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath524-1">
+      <circle
+         style="fill:#ff0000;fill-rule:evenodd;stroke-width:0.264583"
+         id="circle526-0"
+         cx="2.689352"
+         cy="68.008934"
+         r="30.000002" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath524-9">
+      <circle
+         style="fill:#ff0000;fill-rule:evenodd;stroke-width:0.264583"
+         id="circle526-06"
+         cx="2.689352"
+         cy="68.008934"
+         r="30.000002" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath524-9-2">
+      <circle
+         style="fill:#ff0000;fill-rule:evenodd;stroke-width:0.264583"
+         id="circle526-06-8"
+         cx="2.689352"
+         cy="68.008934"
+         r="30.000002" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(64.671475,-2.0089356)">
+    <image
+       preserveAspectRatio="none"
+       inkscape:svg-dpi="96"
+       width="135.06851"
+       height="135.46666"
+       href="data:image/svg+xml;base64,{{firstLanguage}}"
+       id="image2173"
+       x="-118.42406"
+       y="0.64811081"
+       clip-path="url(#clipPath2418)"
+       transform="translate(53.752578,1.3608248)" />
+    <image
+       preserveAspectRatio="none"
+       inkscape:svg-dpi="96"
+       width="135.46666"
+       height="135.46666"
+       href="data:image/svg+xml;base64,{{secondLanguage}}"
+       id="image2995"
+       x="187.38901"
+       y="1.6364318"
+       clip-path="url(#clipPath3719)"
+       transform="translate(-73.484535,0.68041233)" />
+    <image
+       preserveAspectRatio="none"
+       inkscape:svg-dpi="96"
+       width="60"
+       height="60"
+       href="data:image/svg+xml;base64,{{thirdLanguage}}"
+       id="image372"
+       x="-27.310646"
+       y="38.008938"
+       clip-path="url(#clipPath524)"
+       transform="translate(2.6391711,32.319588)" />
+    <image
+       preserveAspectRatio="none"
+       inkscape:svg-dpi="96"
+       width="60"
+       height="60"
+       href="data:image/svg+xml;base64,{{fourthLanguage}}"
+       id="image372-9"
+       x="-27.310646"
+       y="38.008938"
+       clip-path="url(#clipPath524-9)"
+       transform="translate(2.6391711,-30.000002)" />
+    
+    <g
+       style="fill:currentColor"
+       id="g765"
+       transform="matrix(2.1943574,0,0,2.1943574,72.273666,47.954077)">
+      <path
+         fill-rule="evenodd"
+         d="m 5.828,10.172 a 0.5,0.5 0 0 0 -0.707,0 L 1.025,14.268 V 11.5 a 0.5,0.5 0 0 0 -1,0 v 3.975 a 0.5,0.5 0 0 0 0.5,0.5 H 4.5 a 0.5,0.5 0 0 0 0,-1 H 1.732 l 4.096,-4.096 a 0.5,0.5 0 0 0 0,-0.707 z m 4.344,0 a 0.5,0.5 0 0 1 0.707,0 l 4.096,4.096 V 11.5 a 0.5,0.5 0 1 1 1,0 v 3.975 a 0.5,0.5 0 0 1 -0.5,0.5 H 11.5 a 0.5,0.5 0 0 1 0,-1 h 2.768 l -4.096,-4.096 a 0.5,0.5 0 0 1 0,-0.707 z m 0,-4.344 a 0.5,0.5 0 0 0 0.707,0 L 14.975,1.732 V 4.5 a 0.5,0.5 0 1 0 1,0 V 0.525 a 0.5,0.5 0 0 0 -0.5,-0.5 H 11.5 a 0.5,0.5 0 0 0 0,1 h 2.768 l -4.096,4.096 a 0.5,0.5 0 0 0 0,0.707 z m -4.344,0 a 0.5,0.5 0 0 1 -0.707,0 L 1.025,1.732 V 4.5 a 0.5,0.5 0 0 1 -1,0 V 0.525 a 0.5,0.5 0 0 1 0.5,-0.5 H 4.5 a 0.5,0.5 0 0 1 0,1 H 1.732 l 4.096,4.096 a 0.5,0.5 0 0 1 0,0.707 z"
+         id="path756" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Layer 3"
+     transform="translate(-53.072175,-1.3608248)" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     transform="translate(64.671475,-2.0089356)" />
+</svg>

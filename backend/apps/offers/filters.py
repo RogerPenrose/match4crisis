@@ -49,4 +49,4 @@ class TransportationFilter(django_filters.FilterSet):
 class TranslationFilter(django_filters.FilterSet):
     class Meta:
         model = TranslationOffer
-        fields = ['firstLanguage', 'secondLanguage']
+        fields = ['languages' ]
