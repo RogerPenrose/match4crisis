@@ -7,6 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
+from django.views.generic import ListView
 from django.views.decorators.gzip import gzip_page
 from apps.accounts.views import DashboardView
 import django_tables2 as tables
@@ -216,12 +217,11 @@ def sent_requests(request):
     context = {"helpRequests" : requests}
     return render(request, "sent_requests.html", context)
 
-def organisation_overview(request):
-    orgs = Organisation.objects.filter(isApproved=True)
-    context = {
-        "organisations" : orgs,
-    }
-    return render(request, "organisation_overview.html", context)
+class OrganisationOverview(ListView):
+    paginate_by = 10
+    model = Organisation
+    queryset = Organisation.objects.filter(isApproved=True)
+    template_name = "organisation_overview.html"
 
 def donation_overview(request):
     donationRequests = DonationRequest.objects.filter(organisation__isApproved = True)
