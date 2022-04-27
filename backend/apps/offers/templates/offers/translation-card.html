@@ -10,13 +10,13 @@
                       {% if entry.image.url|length > 0 %}
                       <div class="background-photo" style="background-image: url({{ entry.image.url }})"></div>
                       {% else %}
-                        <div class="background-photo" style=" padding: 0 0 0 0"><img src="/offers/translation/?{% for language in entry.offer.languages %}{{forloop.counter0}}={{language.country|default:"not"}}&{%endfor%}" }}_{{entry.offer.secondLanguage.country|default:"not" }}" style="height:100%; width:100%"></img></div>
+                        <div class="background-photo" style=" padding: 0 0 0 0"><img src="/offers/translation/?{% for language in entry.offer.languages.all %}{{forloop.counter0}}={{language.country|default:"not"}}&{%endfor%}" }}_{{entry.offer.secondLanguage.country|default:"not" }}" style="height:100%; width:100%"></img></div>
                       {%endif%}
                       </div>
                     <div class="description col-7 col-sm-8">
     <h3>{% if entry.offer.genericOffer.requestForHelp %}{% trans "Gesuch: " %}{%else%}{% trans "Angebot: "%}{%endif%}{{ entry.offer.genericOffer.get_offerType_display }} </h3>
-    <ul>    {% for language in entry.offer.languages %}
-    <p>{{ language.englishName }}</p>
+    <ul>    {% for language in entry.offer.languages.all %}
+    <li>{{ language.englishName }}</li>
     {% endfor %}</ul>
 
     <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">

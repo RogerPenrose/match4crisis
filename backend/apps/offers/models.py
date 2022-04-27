@@ -2,7 +2,8 @@ import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from apps.accounts.models import User, Languages
+from apps.accounts.models import User
+from apps.accounts.models import Languages
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from match4crisis.constants.countries import countries
@@ -171,7 +172,14 @@ class TransportationOffer(models.Model):
 
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    languages = models.ManyToManyField(Languages,blank=True, verbose_name=_("Sprachen"))
+    languages = models.ManyToManyField(Languages,through='LanguageOfferMap', blank=True, verbose_name=_("Sprachen"))
+
+
+
+class LanguageOfferMap(models.Model):
+    offer = models.ForeignKey(TranslationOffer, on_delete=models.CASCADE)
+    language = models.ForeignKey(Languages, on_delete=models.CASCADE)
+
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer,

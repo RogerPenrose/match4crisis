@@ -1,5 +1,4 @@
 import logging
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -53,7 +52,6 @@ class Languages(models.Model):
     def __str__(self) -> str:
         return "%s (%s)" % (self.englishName, self.nativeName)
 
-
 class User(AbstractUser):
     """ A custom User Model serving as a basis for all accounts."""
 
@@ -82,7 +80,7 @@ class User(AbstractUser):
     isRefugee = models.BooleanField(default=False)
     isHelper = models.BooleanField(default=False)
     isOrganisation = models.BooleanField(default=False)
-
+    
 class LanguageKnowledge(models.Model):
     """ The intermediary model that is used for the m:n-relation between User and Languages.\n
     Stores additional information on a user's language knowledge, e.g. the Level"""

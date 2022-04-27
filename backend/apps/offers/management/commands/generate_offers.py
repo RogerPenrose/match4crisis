@@ -13,8 +13,9 @@ from datetime import timedelta
 import numpy as np
 from apps.accounts.models import User, Languages
 from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOffer, WelfareOffer, JobOffer, DonationOffer
+import logging
 
-
+logger = logging.getLogger("django")
 
 class Command(BaseCommand):
     help = "Populates the database with fake offers." 
@@ -79,12 +80,16 @@ class Command(BaseCommand):
 
                     g.offerType = "TL"
                     g.save()
-                    n = np.random.randint(0, Languages.objects.all().count())
-                    m = np.random.randint(0, Languages.objects.all().count())
-                    t = TranslationOffer(genericOffer=g, \
-                                firstLanguage=Languages.objects.all()[n], \
-                                secondLanguage=Languages.objects.all()[m])
+                    count = np.random.randint(2,5)
+                    languages = []
+                    languageCount = []
+                    for i in range(count):
+                        languageCount.append(np.random.randint(0, Languages.objects.all().count()))
+                    for entry in languageCount:
+                        languages.append(Languages.objects.all()[entry])
+                    t = TranslationOffer(genericOffer=g)
                     t.save()
+                    t.languages.set(languages)
                 if counter == 2: # Accompaniment
                     g.offerType = "BU"
                     g.save()
