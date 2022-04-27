@@ -189,8 +189,8 @@ def getTranslationImage(request):
         context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8"), "thirdLanguage": rawData[2].decode("utf-8")}
         return render(request, 'offers/3-languages.svg', context=context,content_type="image/svg+xml")
     if len(rawData) == 4:
-        context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8"), "thirdLanguage": rawData[2].decode("utf-8")}
-        return render(request, 'offers/3-languages.svg', context=context,content_type="image/svg+xml")
+        context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8"), "thirdLanguage": rawData[2].decode("utf-8"),"fourthLanguage": rawData[3].decode("utf-8")}
+        return render(request, 'offers/4-languages.svg', context=context,content_type="image/svg+xml")
 def padByRange(locationData, rangeKm):
 
     locationData["lngMax"] +=kmInLng(rangeKm, locationData["latMax"])
