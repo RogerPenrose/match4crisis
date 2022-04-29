@@ -10,7 +10,7 @@ from django.contrib.auth import password_validation
 
 from apps.accounts.models import User
 from apps.accounts.forms import PhoneNumberField, SpecialPreferencesForm
-from .models import DonationRequest, HelpRequest, MaterialDonationRequest, Organisation
+from .models import DonationRequest, HelpRequest, Image, MaterialDonationRequest, Organisation
 
 
 class OrganisationFormO(ModelForm):
@@ -149,7 +149,7 @@ class OrganisationFormInfoCreate(OrganisationFormO):
 class HelpRequestForm(forms.ModelForm):
     # TODO also allow digital offers?
     RADIUS_CHOICES = [
-        ('', _('Radius')),
+        ('', _('Radius wählen')),
         (5, "<5km"),
         (10, "<10km"),
         (20, "<20km"),
@@ -172,7 +172,7 @@ class HelpRequestForm(forms.ModelForm):
         labels = {
             'title' : _('Titel'),
             'description' : _('Beschreibung'),
-            'location' : _('Ort')
+            'location' : _('Ort'),
         }
         widgets = {
             'lat' : forms.HiddenInput(),
@@ -188,7 +188,7 @@ class HelpRequestForm(forms.ModelForm):
         self.helper.form_method = "post"
         self.helper.form_action = "request_help"
 
-        self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='', help_text=_("Es werden E-Mails an Helfer ausgesendet, die in diesem Radius ihre Hilfe anbieten."))
+        self.fields['radius'] = forms.TypedChoiceField(label = _("Radius"), choices=self.RADIUS_CHOICES, coerce=int, help_text=_("Es werden E-Mails an Helfer ausgesendet, die in diesem Radius um den angegebenen Ort ihre Hilfe anbieten."))
 
         self.helper.add_input(Submit("submit", _("Speichern")))
 
