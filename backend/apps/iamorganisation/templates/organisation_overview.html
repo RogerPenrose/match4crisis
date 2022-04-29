@@ -32,7 +32,7 @@
         {% endif %}
 
         <span class="current">
-            {% blocktrans %}Seite {{ page_obj.number }} von {{ page_obj.paginator.num_pages }}.{% endblocktrans %}
+            {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
         </span>
 
         {% if page_obj.has_next %}

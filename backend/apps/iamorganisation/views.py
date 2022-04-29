@@ -2,8 +2,9 @@ from functools import lru_cache
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +12,7 @@ from django.views.generic import ListView
 from django.views.decorators.gzip import gzip_page
 from apps.accounts.views import DashboardView
 import django_tables2 as tables
+from django_filters.views import FilterView
 from django.utils.decorators import method_decorator
 
 from apps.accounts.decorator import organisationRequired
@@ -22,6 +24,10 @@ from .filters import DonationRequestFilter
 
 from .forms import DonationRequestForm, HelpRequestForm
 
+
+# CONSTANTS
+ORGANISATIONS_PER_PAGE = 10
+DONATIONS_PER_PAGE = 10
 
 #organisation_overview (mapview)
 @gzip_page
@@ -218,7 +224,7 @@ def sent_requests(request):
     return render(request, "sent_requests.html", context)
 
 class OrganisationOverview(ListView):
-    paginate_by = 10
+    paginate_by = ORGANISATIONS_PER_PAGE
     model = Organisation
     queryset = Organisation.objects.filter(isApproved=True)
     template_name = "organisation_overview.html"
@@ -226,8 +232,12 @@ class OrganisationOverview(ListView):
 def donation_overview(request):
     donationRequests = DonationRequest.objects.filter(organisation__isApproved = True)
     filter = DonationRequestFilter(request.GET, queryset=donationRequests)
+    paginator = Paginator(filter.qs, DONATIONS_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "donationRequests" : filter.qs,
+        "page_obj" : page_obj,
         "donationsCount" : filter.qs.count(),
         "filter" : filter,
     }

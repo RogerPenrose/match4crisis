@@ -161,13 +161,13 @@ class HelpRequestForm(forms.ModelForm):
     class Meta:
         model = HelpRequest
         fields = (
-            'radius',
             'title',
             'description',
             'location',
             'lat',
             'lng',
             'bb',
+            'radius',
         )
         labels = {
             'title' : '',
@@ -190,7 +190,7 @@ class HelpRequestForm(forms.ModelForm):
         self.helper.form_method = "post"
         self.helper.form_action = "request_help"
 
-        self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='')
+        self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='', help_text=_("Es werden E-Mails an Helfer ausgesendet, die in diesem Radius ihre Hilfe anbieten."))
 
         self.helper.add_input(Submit("submit", _("Speichern")))
 

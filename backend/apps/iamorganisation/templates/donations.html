@@ -168,7 +168,7 @@
     </div>
   </div>
   <div class="col-12 text-center">
-    <h2>{% blocktrans %} {{ donationsCount }} Spendenaufrufe {% endblocktrans %}</h2>
+    <h2>{{ donationsCount }} {% blocktrans %} Spendenaufrufe {% endblocktrans %}</h2>
   </div>
   <div class="row align-self-center align-items-center">
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
@@ -176,9 +176,26 @@
         {{ filter.form.as_p }}
         <input type="submit" value="{% blocktrans %}Filtern{% endblocktrans %}" />
       </form>
+      <div class="container pagination" style="text-align: center; margin: 0 auto; margin-top: 55px;">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
+            <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
+            {% endif %}
+    
+            <span class="current">
+              {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+            </span>
+    
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
       <div class="container cards">
 
-        {% for entry in donationRequests %}
+        {% for entry in page_obj %}
         {% include 'donation-card.html' %}
         {% endfor %}
       </div>
