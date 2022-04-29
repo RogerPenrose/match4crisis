@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{% if isMaterial %}
+    {% if edit %}
+    {% blocktrans %}Sachspendenaufruf bearbeiten{% endblocktrans %}
+    {% else %}
+    {% blocktrans %}Sachspendenaufruf erstellen{% endblocktrans %}
+    {% endif %}
+{% else %}
+    {% if edit %}
+    {% blocktrans %}Geldspendenaufruf bearbeiten{% endblocktrans %}
+    {% else %}
+    {% blocktrans %}Geldspendenaufruf erstellen{% endblocktrans %}
+    {% endif %}
+{% endif %}
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="row" style="margin-top:200px; margin-bottom:55px;">
+        <div class="col-lg-10 col-sm-12 col-12">
+            <h2>
+                {% if isMaterial %}
+                    {% if edit %}
+                    {% blocktrans %}Sachspendenaufruf bearbeiten{% endblocktrans %}
+                    {% else %}
+                    {% blocktrans %}Sachspendenaufruf erstellen{% endblocktrans %}
+                    {% endif %}
+                {% else %}
+                    {% if edit %}
+                    {% blocktrans %}Geldspendenaufruf bearbeiten{% endblocktrans %}
+                    {% else %}
+                    {% blocktrans %}Geldspendenaufruf erstellen{% endblocktrans %}
+                    {% endif %}
+                {% endif %}
+            </h2>
+            {% csrf_token %}
+            {% crispy form form.helper %}
+
+        </div>
+    </div>
+</div>
+{% endblock %}

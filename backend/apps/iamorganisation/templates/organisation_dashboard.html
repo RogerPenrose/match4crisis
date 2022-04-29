@@ -10,200 +10,339 @@ Dashboard - Organisationen
 
 {% block header %}
 <style>
-  .buttons > div > a > div { cursor: pointer;}
-.dashboard-title { background: #ed0061;}
-.dashboard-title p, .dashboard-title h1, .dashboard-title h2 { color: #fff;}
-.buttons img {     max-width: 100%; }
-    @media only screen and (min-width: 768px) {
-      .dashboard-title {
-        padding: 80px 0px 80px 0px;
-        box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
-      }
-  
-  
-      .dashboard-title h2 {
-        font-size: 20px;
-        font-weight: 300;
-      }
-      .hide-desktop { display: none;}
-      .dashboard-title { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
-    }
-  
-    @media only screen and (min-width: 992px) {
-      .dashboard-title {
-        padding: 100px 0px 100px 0px;
-      }
-    }
-  
-    @media only screen and (min-width: 1200px) {
-      .dashboard-title {
-        padding: 130px 0px 100px 0px;
-      }
-    }
-  
-    @media only screen and (max-width: 767px) {
-        .buttons { margin-left:0px; margin-right:0px;}
+  .buttons>div>a>div {
+    cursor: pointer;
+  }
 
-  
-      .dashboard-title {
-        padding: 55px 0px 55px 0px;
-        border-bottom-left-radius: 15px;
-        border-bottom-right-radius: 15px;
-        box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
-      }
+  .dashboard-title {
+    background: #ed0061;
+  }
 
-      .dashboard-title h1 {
-        font-size: 7vw;
+  .dashboard-title p,
+  .dashboard-title h1,
+  .dashboard-title h2 {
+    color: #fff;
+  }
 
-      }
-  
-      .dashboard-title h2 {
-        font-size: 4vw;
+  .buttons img {
+    max-width: 100%;
+  }
 
-        font-weight: 300;
-      }
-  
-      .home-box > div > div > a > div {
-        padding: 60px 10px 15px 30px;
-      }
-  
-      .home-box-description {
-        margin-bottom: 15px;
-      }
- 
-  
-      .hide-home {
-        display: none;
-      }
-  
-      .ml-auto {
-        margin-left: 0 !important;
-        margin-right: auto;
-      }
-    }
-  
-    @media only screen and (min-width: 768px) and (max-width: 991px) {
-      .navbar > .container {
-        width: 100%;
-        max-width: 720px !important;
-        padding-left: 15px;
-        padding-right: 0px;
-      }
-    
-    }
-  
-    @media only screen and (min-width: 768px) {
-.buttons { margin-left:10px;}
-        div.left { margin-left: -10px; margin-right: 10px;}
+  @media only screen and (min-width: 768px) {
+    .dashboard-title {
+      padding: 80px 0px 80px 0px;
+      box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
     }
 
-    #searchsubmit {
+
+    .dashboard-title h2 {
+      font-size: 20px;
+      font-weight: 300;
+    }
+
+    .hide-desktop {
       display: none;
     }
-  
-  
-    .buttons > div > a > div { border-radius: 30px; margin-bottom: 25px; 
-    border-radius: 25px;} 
-    .buttons h3 { color: #28445b; font-size: 18px;}
-    .buttons p { margin-bottom: 0px;}
-    .buttons a, .buttons a:hover { color: #28445b;}
-.btn path {      fill:#ed0061;   -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;}
-.btn:hover path { fill: #fff; }
 
-    .btn {     background-color: #fff;
-      color: #ed0061;
+    .dashboard-title {
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+    }
+  }
 
-       font-size: 1rem;
-        padding: .8rem 2.5rem;
-        border-radius: 15px;
-        border: 0px;
-        font-weight: bold;
-        margin-bottom: 20px;
+  @media only screen and (min-width: 992px) {
+    .dashboard-title {
+      padding: 100px 0px 100px 0px;
+    }
+  }
+
+  @media only screen and (min-width: 1200px) {
+    .dashboard-title {
+      padding: 130px 0px 100px 0px;
+    }
+  }
+
+  @media only screen and (max-width: 767px) {
+    .buttons {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+
+
+    .dashboard-title {
+      padding: 55px 0px 55px 0px;
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
+    }
+
+    .dashboard-title h1 {
+      font-size: 7vw;
+
+    }
+
+    .dashboard-title h2 {
+      font-size: 4vw;
+
+      font-weight: 300;
+    }
+
+    .home-box>div>div>a>div {
+      padding: 60px 10px 15px 30px;
+    }
+
+    .home-box-description {
+      margin-bottom: 15px;
+    }
+
+
+    .hide-home {
+      display: none;
+    }
+
+    .ml-auto {
+      margin-left: 0 !important;
+      margin-right: auto;
+    }
+  }
+
+  @media only screen and (min-width: 768px) and (max-width: 991px) {
+    .navbar>.container {
+      width: 100%;
+      max-width: 720px !important;
+      padding-left: 15px;
+      padding-right: 0px;
+    }
+
+  }
+
+  @media only screen and (min-width: 768px) {
+    .buttons {
+      margin-left: 10px;
+    }
+
+    div.left {
+      margin-left: -10px;
+      margin-right: 10px;
+    }
+  }
+
+  #searchsubmit {
+    display: none;
+  }
+
+
+  .buttons>div>a>div {
+    border-radius: 30px;
+    margin-bottom: 25px;
+    border-radius: 25px;
+  }
+
+  .buttons h3 {
+    color: #28445b;
+    font-size: 18px;
+  }
+
+  .buttons p {
+    margin-bottom: 0px;
+  }
+
+  .buttons a,
+  .buttons a:hover {
+    color: #28445b;
+  }
+
+  .btn path {
+    fill: #ed0061;
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
+
+  .btn:hover path {
+    fill: #fff;
+  }
+
+  .btn {
+    background-color: #fff;
+    color: #ed0061;
+
+    font-size: 1rem;
+    padding: .8rem 2.5rem;
+    border-radius: 15px;
+    border: 0px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .btn:hover {
+    color: #fff;
+    background-color: #28445b;
+  }
+
+  div.description {
+    padding: 10px;
+    position: relative;
+  }
+
+  .count {
+    text-align: right;
+  }
+
+  .count p {
+    display: inline;
+    margin-bottom: 0px !important;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background-color: #32BD69;
+    text-align: center;
+    color: #fff;
+  }
+
+  div.background-photo-search {
+    border-radius: 20px;
+    padding-top: 100%;
+    max-width: 100%;
+    background-size: cover;
+  }
+
+  .missing p {
+    background-color: #FA5103;
+  }
+
+  @media only screen and (max-width: 767px) {
+    div.background-photo-search {
+      padding-top: 80%;
+      max-width: 100%;
+    }
+  }
+
+
+  .buttons h3 {
+    color: #28445b;
+    font-size: 20px;
+    margin-bottom: 0px;
+  }
+
+  .buttons>div>a>div {
+    padding: 25px 0px;
+  }
+
+  .buttons p {
+    margin-bottom: 0px;
+  }
+
+  .buttons a,
+  .buttons a:hover {
+    color: #28445b;
+  }
+
+  .donation-card{
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 25px;
+    padding: 10px;
+    min-height: 115px;
+    margin: 30px;
 }
-    
-    .btn:hover { color: #fff; background-color:#28445b;}
-    div.description { padding: 10px; position: relative; }
-  .count { text-align: right; }
-.count p { display: inline; margin-bottom: 0px !important; padding:5px 10px; border-radius: 10px; background-color: #32BD69; text-align:center; color: #fff;  }
-div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-width: 100%; background-size: cover;}
-.missing p { background-color: #FA5103;}
-@media only screen and (max-width: 767px) { div.background-photo-search {padding-top: 80%;max-width: 100%;  }   }
-  
-  
-    .buttons h3 { color: #28445b; font-size: 20px; margin-bottom: 0px;}
-    .buttons > div > a > div { padding:25px 0px;  }
-    .buttons p { margin-bottom: 0px;}
-    .buttons a, .buttons a:hover { color: #28445b;}
-  </style>
+</style>
 {% endblock %}
 
 {% block content%}
 <div class="dashboard-title">
-    <div class="container">
-      <div class="row align-self-center align-items-center">
-        <div class="col-md-8 col-xl-7">
-          <h1>
-            {% blocktrans %}Schön, dass ihr da seid {{ organisation }}!{% endblocktrans %}
-          </h1>
-          <h2 class="font-weight-regular">
-            {% blocktrans %}Es ist Zeit, eine Aktion zu starten!{% endblocktrans %}
-          </h2>
-        </div>
+  <div class="container">
+    <div class="row align-self-center align-items-center">
+      <div class="col-md-8 col-xl-7">
+        <h1>
+          {% blocktrans %}Schön, dass ihr da seid {{ organisation }}!{% endblocktrans %}
+        </h1>
+        <h2 class="font-weight-regular">
+          {% blocktrans %}Es ist Zeit, eine Aktion zu starten!{% endblocktrans %}
+        </h2>
       </div>
     </div>
   </div>
+</div>
 
- 
-  
 
-  <div class="container" style="margin-top: 55px;">
-    <h2 style="margin-bottom: 35px;">{% blocktrans %}Dashboard für Organisationen{% endblocktrans %}</h2>
-        <div class="buttons row">
-            
-            <div class="col-12 col-md-6 col-xl-6 left">
-                <a href="#">
-            <div class="row align-self-center align-items-center">
-                <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px; text-align:center;"><img src="{% static 'img/users/recent.svg' %}" width="45px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Helfende finden{% endblocktrans %}</h3><p>{% blocktrans %}Helfer*innen in eurer Nähe anzeigen{% endblocktrans %}</p></div>
-                </div>
-            </a>
-            </div>
-        
-    
-            <div class="col-12 col-md-6 col-xl-6">
-    
-                <a href="{% url 'request_help' %}">
-                <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px; text-align:center;"><img src="{% static 'img/users/pause.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Helfende kontaktieren{% endblocktrans %}</h3><p>{% blocktrans %}Anfragen an bereite Helfer*innen aussenden{% endblocktrans %}</p></div>
-                    </div>
-                </a>
-                </div>
-    
-                <div class="col-12 col-md-6 col-xl-6 left">
-                    <a href="#">
-                <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/incomplete.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Spendenaufruf starten{% endblocktrans %}</h3><p>{% blocktrans %}Spenden von Helfer*innen sammeln{% endblocktrans %}</p></div>
-                    </div>
-                </a>
-                </div>
-            
-        
-                <div class="col-12 col-md-6 col-xl-6">
-        
-                    <a href="{% url 'preferences' %}">
-                    <div class="row align-self-center align-items-center">
-                        <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/settings.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3><p>{% blocktrans %}Ändere hier dein Profil.{% endblocktrans %}</p></div>
-                        </div>
-                    </a>
-                    </div>      
-    
-            </div>
-    
-            </div>
-      </div>
+
+
+<div class="container" style="margin-top: 55px;">
+  <h2 style="margin-bottom: 35px;">{% blocktrans %}Dashboard für Organisationen{% endblocktrans %}</h2>
+  <div class="buttons row">
+
+    <div class="col-12 col-md-6 col-xl-6 left">
+      <a href="#">
+        <div class="row align-self-center align-items-center">
+          <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px; text-align:center;"><img
+              src="{% static 'img/users/recent.svg' %}" width="45px" height="auto"></div>
+          <div class="col-9 col-sm-10">
+            <h3>{% blocktrans %}Helfende finden{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Helfer*innen in eurer Nähe anzeigen{% endblocktrans %}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-6">
+
+      <a href="{% url 'request_help' %}">
+        <div class="row align-self-center align-items-center">
+          <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px; text-align:center;"><img
+              src="{% static 'img/users/pause.svg' %}" width="45px" height="auto"></div>
+          <div class="col-9 col-sm-10">
+            <h3>{% blocktrans %}Helfende kontaktieren{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Anfragen an bereite Helfer*innen aussenden{% endblocktrans %}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-6 left">
+      <a href="{% url 'request_donations' %}">
+        <div class="row align-self-center align-items-center">
+          <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px;  text-align:center;"><img
+              src="{% static 'img/users/incomplete.svg' %}" width="45px" height="auto"></div>
+          <div class="col-9 col-sm-10">
+            <h3>{% blocktrans %}Spendenaufruf starten{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Spenden von Helfer*innen sammeln{% endblocktrans %}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+
+    <div class="col-12 col-md-6 col-xl-6">
+
+      <a href="{% url 'preferences' %}">
+        <div class="row align-self-center align-items-center">
+          <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px;  text-align:center;"><img
+              src="{% static 'img/users/settings.svg' %}" width="45px" height="auto"></div>
+          <div class="col-9 col-sm-10">
+            <h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3>
+            <p>{% blocktrans %}Ändere hier dein Profil.{% endblocktrans %}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <div class="requests">
+    <h2 class="title">{% blocktrans %}Eure Spendenaufrufe{% endblocktrans %}</h2>
+    {% for entry in donationRequests %}
+      {% include 'donation-card.html' %}
+    {% endfor %}
+
+    <h2 class="title">{% blocktrans %}Eure Hilfegesuche{% endblocktrans %}</h2>
+    {% for entry in helpRequests %}
+    {% endfor %}
+  </div>
+
+</div>
+</div>
 
 
 {% endblock %}

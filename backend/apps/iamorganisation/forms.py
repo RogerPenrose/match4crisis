@@ -10,7 +10,7 @@ from django.contrib.auth import password_validation
 
 from apps.accounts.models import User
 from apps.accounts.forms import PhoneNumberField, SpecialPreferencesForm
-from .models import HelpRequest, Organisation
+from .models import DonationRequest, HelpRequest, Image, MaterialDonationRequest, Organisation
 
 
 class OrganisationFormO(ModelForm):
@@ -75,7 +75,7 @@ class OrganisationFormO(ModelForm):
         self.helper.layout = Layout(
             Row(Column("organisationName"), Column("contactPerson")),
             Row(Column("phoneNumber"), Column("email")),
-            Row( Column("country"), Column("postalCode")),
+            Row(Column("country"), Column("postalCode")),
             Row(Column("city"), Column("streetNameAndNumber")),
             Row(Column("password1"), Column("password2")),
             Row("acceptTerms"),
@@ -102,25 +102,18 @@ class OrganisationFormO(ModelForm):
             except ValidationError as error:
                 self.add_error("password2", error)
 
-
-class OrganisationFormExtra(OrganisationFormO):
-    def __init__(self, *args, **kwargs):
-        super(OrganisationFormExtra, self).__init__(*args, **kwargs)
-        # !!! namen der knöpe dürfen nicht verändert werden, sonst geht code woanders kaputt
-        self.helper.add_input(Submit("submit", _("Schicke Mails")))
-        self.helper.add_input(Submit("submit", _("Schicke Mails + Erstelle Anzeige")))
-
-
 class OrganisationPreferencesForm(SpecialPreferencesForm):
     class Meta:
         model = Organisation
         fields=(
-            "postalCode",
-            "city",
-            "country",
             "organisationName",
             "contactPerson",
-            "streetNameAndNumber",     
+            "logo",
+            "country",
+            "postalCode",
+            "city",
+            "streetNameAndNumber",  
+            "about",   
         )
 
         labels = {
@@ -130,6 +123,8 @@ class OrganisationPreferencesForm(SpecialPreferencesForm):
             "country": _("Land"),
             "organisationName": _("Offizieller Name Ihrer Institution"),
             "contactPerson": _("Name der Kontaktperson"),
+            "logo": _("Logo Ihrer Organisation"),
+            "about": _("Über Ihre Institution")
         }
 
     def __init__(self, *args, **kwargs):
@@ -142,51 +137,122 @@ def check_unique_email(value):
         raise ValidationError(_("Diese Email ist bereits vergeben"))
     return value
 
-
 class OrganisationFormInfoSignUp(OrganisationFormO):
     email = forms.EmailField(
         validators=[check_unique_email], label='', widget=forms.EmailInput(attrs={'placeholder':_("Offizielle E-Mail-Adresse der Kontaktperson")}) 
     )
    
-
-
 class OrganisationFormInfoCreate(OrganisationFormO):
     # Used internally to bypass duplicate email validation
     email = forms.EmailField()
 
-class RequestHelpForm(forms.ModelForm):
+class HelpRequestForm(forms.ModelForm):
     # TODO also allow digital offers?
     RADIUS_CHOICES = [
-        ('', _('Radius')),
+        ('', _('Radius wählen')),
         (5, "<5km"),
         (10, "<10km"),
         (20, "<20km"),
         (50, "<50km"),
     ]
+
+    images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)
+
     class Meta:
         model = HelpRequest
         fields = (
-            'radius',
             'title',
             'description',
+            'location',
+            'lat',
+            'lng',
+            'bb',
+            'radius',
         )
         labels = {
-            'title' : '',
-            'description' : '',
+            'title' : _('Titel'),
+            'description' : _('Beschreibung'),
+            'location' : _('Ort'),
         }
         widgets = {
-            'title' : forms.TextInput(attrs={"placeholder": _("Betreff")}),
-            'description' : forms.Textarea(attrs={"placeholder": _("Beschreibung")}),
+            'lat' : forms.HiddenInput(),
+            'lng' : forms.HiddenInput(),
+            'bb' : forms.HiddenInput(),
         }
 
     def __init__(self, *args, **kwargs):
-        super(RequestHelpForm, self).__init__(*args, **kwargs)
+        super(HelpRequestForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.form_id = "id-requestHelpForm"
+        self.helper.form_id = "id-helpRequestForm"
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
         self.helper.form_action = "request_help"
 
-        self.fields['radius'] = forms.TypedChoiceField(choices=self.RADIUS_CHOICES, coerce=int, label='')
+        self.fields['radius'] = forms.TypedChoiceField(label = _("Radius"), choices=self.RADIUS_CHOICES, coerce=int, help_text=_("Es werden E-Mails an Helfer ausgesendet, die in diesem Radius um den angegebenen Ort ihre Hilfe anbieten."))
 
-        self.helper.add_input(Submit("submit", _("Senden")))
+        self.helper.add_input(Submit("submit", _("Speichern")))
+
+class DonationRequestForm(forms.ModelForm):
+
+    images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)
+
+    class Meta:
+        model = DonationRequest
+        fields = (
+            'title',
+            'description',
+            'beneficiary',
+            'iban',
+            'reason',
+        )
+        labels = {
+            'title' : _("Titel"),
+            'description' : _("Beschreibung"),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(DonationRequestForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-donationRequestForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "request_donations"
+
+        self.helper.add_input(Submit("submit", _("Speichern")))
+
+class MaterialDonationRequestForm(forms.ModelForm):
+
+    images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)
+
+    class Meta:
+        model = MaterialDonationRequest
+        fields = (
+            'title',
+            'donationType',
+            'description',
+            'location',
+            'lat',
+            'lng',
+            'bb',
+        )
+        labels = {
+            'title' : _('Titel'),
+            'donationType' : _('Art der Sachspende'),
+            'description' : _('Beschreibung'),
+            'location' : _('Ort')
+        }
+        widgets = {
+            'lat' : forms.HiddenInput(),
+            'lng' : forms.HiddenInput(),
+            'bb' : forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MaterialDonationRequestForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-materialDonationRequestForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "create_material_donation_request"
+
+        self.helper.add_input(Submit("submit", _("Speichern")))

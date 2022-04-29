@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+{% load display_value %}
+{% block title %}
+{{donationRequest.title}}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div style="height:40px; "></div>
+
+  <div class="row align-self-center align-items-center top-menu">
+    <div class="col-6 left">
+      <p class="font-weight-bold">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" style="margin-top: -2px;"
+          class="bi bi-chevron-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+        </svg>
+        <input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}"
+          onclick="window.history.back()" />
+      </p>
+    </div>
+    <div class="col-6" style="text-align:right;">
+      <p>
+      {% if editAllowed %}
+        <a href="{{donationRequest.pk}}/edit" class="btn">
+          <svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor"
+            class="bi bi-pencil-fill" viewBox="0 0 16 16">
+            <path
+              d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+          </svg>
+          {% blocktrans %}Bearbeiten{% endblocktrans %}
+        </a>
+      {% endif %}
+        <a href="#" onclick="share_this()" style="margin-left:5px;"><svg xmlns="http://www.w3.org/2000/svg" width="28"
+            height="28" fill="currentColor" class="bi bi-share" viewBox="0 0 20 18">
+            <path
+              d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
+          </svg>
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div class="row align-self-center">
+
+    <div class="col-sm-12 col-lg-4 title-image" style="text-decoration: underline; margin-top:15px;">
+
+      {% if images %}
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">{% for entry in images %}
+          <li data-target="#carouselExampleIndicators" data-slide-to="{{forloop.counter0}}"
+            {% if forloop.counter0 == 0 %} class="active" {%endif%}></li>{% endfor %}
+        </ol>
+        <div class="carousel-inner">{% for entry in images %}
+          <div class="carousel-item {% if forloop.counter0 == 0 %} active{%endif%}">
+            <img class="d-block w-100" src="{{entry.image.url}}" alt="{{ forloop.counter }}">
+          </div>{% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+      {% elif organisation.logo.url|length > 0%}
+      <img class="d-block w-100" src="{{organisation.logo.url}}">
+      {% else %}
+      <img class="d-block w-100" src="{% static 'img/icons/icon_DO.svg'%}">
+      {%endif%}
+
+    </div>
+
+    <div class="col-sm-12 col-lg-8 description">
+      <h1 class="title">{{ donationRequest.title }}</h1>
+      <h3 class="subtitle">
+        {% if isMaterial %}
+        {% blocktrans %}Sachspendenaufruf{% endblocktrans %}
+        {% else %}
+        {% blocktrans %}Geldspendenaufruf{% endblocktrans %}
+        {% endif %}
+      </h2>
+      <p>{% blocktrans %}Organisation{% endblocktrans%}: {{ donationRequest.organisation }}</p>
+      {% if isMaterial %}
+        <p>{% blocktrans %}Art der Sachspende{% endblocktrans%}: {{ donationRequest.donationType }}</p>
+        <p>{% blocktrans %}Abgabeort{% endblocktrans%}: {{ donationRequest.location }}</p>
+        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ donationRequest.location }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      {% else %}
+        <p>{% blocktrans %}Begünstigte*r{% endblocktrans%}: {{ donationRequest.beneficiary }}</p>
+        <p>{% blocktrans %}IBAN{% endblocktrans%}: {{ donationRequest.iban }}</p>
+        <p>{% blocktrans %}Spendenstichwort{% endblocktrans%}: {{ donationRequest.reason }}</p>
+      {% endif %}
+      <h5>{% blocktrans %}Beschreibung{% endblocktrans%}</h5>
+      <p>{{ donationRequest.description|linebreaks }}</p>
+      <hr>
+
+    </div>
+    {% endblock %}
