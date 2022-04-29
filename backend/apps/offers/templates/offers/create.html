@@ -95,8 +95,9 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
     <div class="row" style=" margin-bottom:55px;">
                <div class="col-12 col-lg-6" style="margin: 0 auto">
 
-                <h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
-
+                {% if not requestForHelp %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
+                {% else %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo benötigst du helfen?{% endblocktrans %}</h2>
+                {% endif %}
 
 <form id="thisForm" action="/offers/createOffer" method="POST" enctype="multipart/form-data">
     {% csrf_token %} 
@@ -123,6 +124,13 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
             </tr>
             {% endfor %}
         </tbody>
+        {%if requestForHelp %}
+            <tbody style="display:none">
+                <tr>
+                    <td ><input type="checkbox" name="requestForHelp" checked> </input></td>
+                </tr>
+            </tbody>
+        {%endif%}
        
     </table>
     <input type="submit" onclick="save_with_active()" value="{% blocktrans %}Erstellen und teilen {%endblocktrans%}" class="btn">

@@ -6,8 +6,10 @@ from . import views
 urlpatterns = [
     # ex: /polls/
     path('list', views.index, name='index'),
+    path('select_category', views.select_category, name='select_category'),
     path('handle_filter', views.handle_filter, name="filter"),
-    path('search', views.search, name='search'),
+    path('search/', views.search, name='search'),
+    path('search_requests/', views.search, name='search_requests'),
     path('createOffer', views.create, name='create'),
     path('create', views.selectOfferType, name='create'),
     path('save', views.save, name='save'),

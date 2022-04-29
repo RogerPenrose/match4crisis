@@ -8,7 +8,8 @@ from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
 from .forms import ChooseHelpForm
 from apps.accounts.decorator import helperRequired
-
+import logging
+logger = logging.getLogger("django")
 def thx(request):
     return render(request, "thanks.html")
 
@@ -79,6 +80,9 @@ def incomplete_offers(request):
 @helperRequired  
 def running_offers(request):
     userOffers = GenericOffer.objects.filter(userId=request.user.id)
+    logger.warning("Getting: "+str(userOffers.count()))
+    for offer in userOffers:
+        logger.warning("Type: "+offer.get_offerType_display())
     runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
     context = {"offers": runningOffers}
     return render(request, "running_offers.html", context)

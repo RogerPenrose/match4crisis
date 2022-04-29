@@ -49,8 +49,9 @@
                 aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="navbarsExampleDefault">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a id="nav-link_map" class="nav-link" href="/mapview/?generic=True">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
+        <li class="nav-item {% if "mapview" in request.path %}active{% endif %}"> <a id="nav-link_map" class="nav-link" href="/mapview/">{% blocktrans %}Karte{% endblocktrans %}</a> </li>
         <li class="nav-item {% if "offers/search" in request.path %}active{% endif %}"> <a id="nav-link_search" class="nav-link" href="/offers/search">{% blocktrans %}Angebote{% endblocktrans %}</a> </li>
+        <li class="nav-item {% if "offers/search_requests" in request.path %}active{% endif %}"> <a id="nav-link_search" class="nav-link" href="/offers/search_requests/?requests=true">{% blocktrans %}Gesuche{% endblocktrans %}</a> </li>
         <li class="nav-item {% if "donation_requests" in request.path %}active{% endif %}" > <a id="nav-link_donation" class="nav-link" href="/iamorganisation/donation_requests">{% blocktrans %}Spenden{% endblocktrans %}</a> </li>     
         <li class="nav-item {% if "organisation_overview" in request.path %}active{% endif %}" > <a id="nav-link_organisations" class="nav-link" href="{% url 'organisation_overview' %}">{% blocktrans %}Hilfsorganisationen{% endblocktrans %}</a> </li>     
         {% if user.is_authenticated and user.isOrganisation %}

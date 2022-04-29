@@ -30,7 +30,7 @@ class Command(BaseCommand):
         JOB_CHOICES = ["ACA","ADM","ADV","CON","FAC","FIN","GEN","HEA", "HUM","INF","INT","LEG","LIB","MAR","OFF","PER","PUB","RES", "SPO", "STU","HAN"]
         residenceChoices = ['SO','RO', 'HO', 'LE'] 
         HELP_CHOICES_MP= ['ON',  'OS']
-        GENDER_CHOICES = ['FE', 'MA', 'NO']
+        GENDER_CHOICES = ['FE', 'MA', 'NO', 'OT']
         HELP_CHOICES= ['AM', 'LE', 'OT']
         WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
         if options['user_id']:

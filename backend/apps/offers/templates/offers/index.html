@@ -156,7 +156,7 @@ margin-top: 20px; }
 <div class="col-6 left">
  <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
         <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-      </svg> <a href="/offers/search?location={{location}}&range={{range}}&back=True">{%blocktrans%} Zurück {% endblocktrans%}</a><!--<input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" />--></p></div>
+      </svg> <a href="/offers/select_category?location={{location}}&range={{range}}">{%blocktrans%} Zurück {% endblocktrans%}</a><!--<input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" />--></p></div>
     <div class="col-6 filter">
         <p><a href="#" data-toggle="modal" data-target="#exampleModal">{% blocktrans %}Filter{% endblocktrans %}</a></p></div>
         </div>
@@ -265,58 +265,40 @@ margin-top: 20px; }
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="/mapview/?{% if city %}city={{ city }}%}{%endif%}{{mapparameter}} ">{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}</a></p></div>
+        <p><a href="/mapview/?{% if city %}city={{ city }}&%}{%endif%}{{mapparameter}}{% if requestForHelp == True %}&showRequests=true{%endif%} ">{% if requestForHelp == "Offer" %}{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}{% elif requestForHelp == "Request" %}  {{ResultCount}} Gesuche auf Karte anzeigen {% else %}  {{ResultCount}} Inserate auf Karte anzeigen {%endif%}</a></p></div>
         </div>
         </div>
         {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page|add:"1"  }} {% blocktrans %}von{% endblocktrans %} {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
           </div>{% endif %}
         </form>
         <div class="container cards">
-      {% if currentFilter.accommodationVisible  %}  
         {% for entry in  entries.accommodation %}
           {% include 'offers/accommodation-card.html' %}
         {% endfor %}
-      {% endif %}      
-      {% if currentFilter.translationVisible  %}
         {% for entry in entries.translation %}  
           {% include 'offers/translation-card.html' %}
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.transportationVisible  %}
           {% for entry in entries.transportation %}  
           {% include 'offers/transportation-card.html' %} 
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.buerocraticVisible  %}
         {% for entry in entries.buerocratic %}
           {% include 'offers/buerocratic-card.html' %}
         {% endfor %}
-      {% endif %}
-      {% if currentFilter.manpowerVisible  %}
         {% for entry in entries.manpower %}
           {% include 'offers/manpower-card.html' %}
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.childLongVIsible  %}
         {% for entry in entries.childLong %}
           {% include 'offers/childcareLong-card.html' %}
-        {% endfor %}     
-      {%endif%}     
-      {% if currentFilter.childShortVisible  %}
+        {% endfor %}  
         {% for entry in entries.childShort %}
           {% include 'offers/childcareShort-card.html' %}
         {% endfor %}
-      {%endif%}
-      {% if currentFilter.welfareVisible  %}
         {% for entry in entries.welfare %}
           {% include 'offers/welfare-card.html' %}
         {% endfor %}
-      {% endif%}
-      {% if currentFilter.jobVisible  %}
         {% for entry in entries.job %}  
           {% include 'offers/job-card.html' %}
         {% endfor %}
-      {%endif%}
   </div>
 </div>
 {% endblock %}

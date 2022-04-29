@@ -50,7 +50,7 @@ class ChooseHelpForm(forms.Form):
             if abbr != "DO":
                 svg =  open('static/img/icons/icon_'+abbr+'.svg', 'r').read()
                 self.fields[abbr] = forms.BooleanField(required=False, label=str(svg)+str(offerType) ) # TODO change/remove the label
-
+        self.fields["NA"] = forms.BooleanField(required=False, label=_("Unklar"))
         self.helper.add_input(Submit("submit", _("Weiter")))
 
 

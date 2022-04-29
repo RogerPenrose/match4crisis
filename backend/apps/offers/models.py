@@ -5,6 +5,7 @@ from django.db import models
 from apps.accounts.models import User, Languages
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
+from match4crisis.constants.choices import GENDER_CHOICES
 from match4crisis.constants.countries import countries
 from apps.iofferhelp.models import Helper
 def validate_plz(value):
@@ -44,6 +45,7 @@ class GenericOffer(models.Model):
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField('date published', default=timezone.now)
     incomplete = models.BooleanField(default=False)
+    requestForHelp = models.BooleanField(default=False, editable=False)
     def save(self, *args, **kwargs):
         self.updated_at = timezone.now()
         super().save(*args, **kwargs)
@@ -51,46 +53,34 @@ class GenericOffer(models.Model):
         return self.offerType
 class ChildcareOfferLongterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    GENDER_CHOICES = [
-        ('NO', _("Keine Angabe")),
-        ('FE', _("Weiblich")),
-        ('MA', _("Männlich")),
-        ('OT', _("Andere")),
-    ]
     gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
 class ChildcareOfferShortterm(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    GENDER_CHOICES = [
-        ('NO', _("Keine Angabe")),
-        ('FE', _("Weiblich")),
-        ('MA', _("Männlich")),
-        ('OT', _("Andere")),
-    ]
     gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
     numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)
 class JobOffer(models.Model):
     JOB_CHOICES = [
-        ("ACA",_("Akademische Hilfe,")),
-        ("ADM",_("Administration,")),
-        ("ADV",_("Fortbildung,")),
-        ("CON",_("Konferenzen und Events,")),
-        ("FAC",_("Anlagenbetrieb,")),
-        ("FIN",_("Finance und Buchhaltung,")),
-        ("GEN",_("Allgemeine Verwaltung,")),
-        ("HEA",_("Gesundheitsservices,")),
-        ("HUM",_("Personalwesen,")),
-        ("INF",_("IT,")),
-        ("INT",_("International Program and Services,")),
-        ("LEG",_("Jura,")),
-        ("LIB",_("BÜchereiverwaltung,")),
-        ("MAR",_("Marketing,")),
-        ("OFF",_("Büro / Verwaltung,")),
-        ("PER",_("Kunst und Museumsverwaltung,")),
-        ("PUB",_("Öffentliche Sicherheit,")),
-        ("RES",_("Forschung und Forschungsadministration,")),
-        ("SPO",_("Sport,")),
-        ("STU",_("Studentische Dienstleistungen,")),
+        ("ACA",_("Akademische Hilfe")),
+        ("ADM",_("Administration")),
+        ("ADV",_("Fortbildung")),
+        ("CON",_("Konferenzen und Events")),
+        ("FAC",_("Anlagenbetrieb")),
+        ("FIN",_("Finance und Buchhaltung")),
+        ("GEN",_("Allgemeine Verwaltung")),
+        ("HEA",_("Gesundheitsservices")),
+        ("HUM",_("Personalwesen")),
+        ("INF",_("IT")),
+        ("INT",_("International Program and Services")),
+        ("LEG",_("Jura")),
+        ("LIB",_("BÜchereiverwaltung")),
+        ("MAR",_("Marketing")),
+        ("OFF",_("Büro / Verwaltung")),
+        ("PER",_("Kunst und Museumsverwaltung")),
+        ("PUB",_("Öffentliche Sicherheit")),
+        ("RES",_("Forschung und Forschungsadministration")),
+        ("SPO",_("Sport")),
+        ("STU",_("Studentische Dienstleistungen")),
         ("HAN",_("Handwerk"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
@@ -116,18 +106,17 @@ class ManpowerOffer(models.Model):
 
 class AccommodationOffer(models.Model):
 
-    ACCOMMODATIONCHOICES = {
+    ACCOMMODATIONCHOICES = [
         ('SO', _('Sofa / Bed')),
         ('RO', _('Eigener Raum')),
         ('HO', _('Gesamte Wohnung / Haus'))
-    }
+    ]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     numberOfAdults = models.IntegerField(default=2)
     numberOfChildren = models.IntegerField(default=0, blank=True)
     numberOfPets = models.IntegerField(default=0, blank=True)
     typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
     startDateAccommodation = models.DateField(default=timezone.now)
-    endDateAccommodation = models.DateField(blank =True, null=True)
     def __str__(self):
         return self.typeOfResidence
 

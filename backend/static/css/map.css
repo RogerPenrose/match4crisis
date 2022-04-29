@@ -172,13 +172,13 @@ a.leaflet-control-zoom-out {
   background-size: 65px 20px;
 }
 
-div.leaflet-control-layers-overlays {
+div.leaflet-control-layers-overlays, div.leaflet-control-layers-base {
   display: inline-block;
   flex-direction: column;
   font-size: 12pt;
 }
 @media only screen and (max-width: 767px) {
-  div.leaflet-control-layers-overlays {
+  div.leaflet-control-layers-overlays, div.leaflet-control-layers-base {
     display: flex;
     flex-direction: row;
     text-align: center;
@@ -193,16 +193,26 @@ div.leaflet-control-layers-overlays {
   }
 
 }
-
-.leaflet-control-layers-overlays img {
+.leaflet-control-layers-group > label {
+  padding: 10px;
+}
+.leaflet-control-layers-overlays, img {
   height: 20pt;
 }
-
-.leaflet-control-layers-overlays input[type="checkbox"] {
+.leaflet-control-layers-overlays input[type="checkbox"], input[type="radio"]{
   display: none;
 }
-
-
+.leaflet-control-layers-base input:checked + span {
+  background:#ed0061;
+  color:#fff;
+  }
+  .leaflet-control-layers-base input:checked + span img {
+  filter: invert(100%);
+  }
+  
+  
+  .leaflet-control-layers-base span {  padding: 10px 10px; border-radius: 10px; background: #fff;}
+  .leaflet-control-layers-base span img {  width: 20px; height: 20px; margin-right: 5px;} 
 
 .leaflet-control-layers-overlays input:checked + span {
 background:#ed0061;
@@ -213,8 +223,8 @@ filter: invert(100%);
 }
 
 
-.leaflet-control-layers-overlays span { padding: 10px 10px; border-radius: 10px; background: #fff;}
-.leaflet-control-layers-overlays span img {  width: 20px; height: 20px; margin-right: 5px;} 
+.leaflet-control-layers-overlays > .leaflet-control-layers-group span { padding: 10px 10px; border-radius: 10px; background: #fff;}
+.leaflet-control-layers-overlays > .leaflet-control-layers-group span img {  width: 20px; height: 20px; margin-right: 5px;} 
 
 .leaflet-control-layers-expanded { padding: 0px !important;}
 .search-input { margin-top: 15px; position: relative; z-index:999; width: 100%;     display: block;
@@ -242,7 +252,9 @@ filter: invert(100%);
   background-position: center center;
   background-repeat: no-repeat;
 }
-
+.request div{
+  background-color: #28445b !important;
+}
 .marker-cluster, .marker-cluster div {   border-radius: 30px !important; }
 
 .genericMarker { background-color: #ed0061; border-radius: 30px !important;}
@@ -258,4 +270,16 @@ filter: invert(100%);
 div.leaflet-control-layers-overlays label {
   margin: 0;
   margin-right: 20px;
+}
+
+div.leaflet-control-layers-base label {
+  margin: 0;
+  margin-right: 20px;
+}
+
+
+/* Just a crutch to debug the control menu: */
+#controlContainer > div{
+  height: 500px;
+  overflow:scroll;
 }

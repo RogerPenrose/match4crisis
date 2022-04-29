@@ -3,14 +3,13 @@
 {% load i18n %}
 
 {% block title %}
-    {% blocktrans %}Registrierung - Freiwillige{% endblocktrans %}
+{% blocktrans %}Registrierung - Freiwillige{% endblocktrans %}
 {% endblock %}
 
 {% block header %}
 <script type="text/javascript">
-
     var signUpHelper = {
-        handleQualificationInput : function handleQualificationInput(event) {
+        handleQualificationInput: function handleQualificationInput(event) {
             let sourceElement = event.srcElement;
             let qualificationSelected = event.srcElement.checked;
 
@@ -18,46 +17,55 @@
             let qualificationId = event.srcElement.closest("div.ausbildung-checkbox").id.split("-").slice(-1)
             this.setQualificationSectionVisibility(qualificationId, qualificationSelected)
         },
-        setQualificationSectionVisibility : function setQualificationSectionVisibility(id, setVisibility) {
+        setQualificationSectionVisibility: function setQualificationSectionVisibility(id, setVisibility) {
             let section = document.getElementById(`div-ausbildung-${id}`)
             if (!section) return;
             if (setVisibility) {
                 section.classList.remove('hidden')
             } else {
                 section.classList.add('hidden');
-                section.querySelectorAll("input[type='checkbox']").forEach( (checkbox) => { checkbox.checked = false })
-                section.querySelectorAll("input[type='text'], select").forEach( (textbox) => { textbox.value = '' })
+                section.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+                    checkbox.checked = false
+                })
+                section.querySelectorAll("input[type='text'], select").forEach((textbox) => {
+                    textbox.value = ''
+                })
             }
 
         },
     }
 
-    document.addEventListener("DOMContentLoaded", function(event) {
+    document.addEventListener("DOMContentLoaded", function (event) {
         let qualifikationSelectors = document.querySelectorAll("div.ausbildung-checkbox input")
         qualifikationSelectors.forEach(element => {
-            element.addEventListener("change", (event) => { signUpHelper.handleQualificationInput(event) })
+            element.addEventListener("change", (event) => {
+                signUpHelper.handleQualificationInput(event)
+            })
 
             // To handle Mozillas brilliant idea to keep state of checkboxes on refresh, trigger dummy handler for every checkbox
-            signUpHelper.handleQualificationInput({ srcElement: element });
+            signUpHelper.handleQualificationInput({
+                srcElement: element
+            });
         })
 
     });
-
 </script>
 <style>
-
-    .btn {     background-color: #32bd69;
+    .btn {
+        background-color: #32bd69;
         font-size: 1rem;
         color: #fff;
         padding: .8rem 2.5rem;
         border-radius: 15px;
         border: 0px;
         font-weight: bold;
-    margin-top: 20px; }
-    
-    .btn:hover { background-color: #1eb159; }
-    
-    </style>
+        margin-top: 20px;
+    }
+
+    .btn:hover {
+        background-color: #1eb159;
+    }
+</style>
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock %}
 
@@ -68,35 +76,62 @@
 <div class="container">
     <div class="row align-self-center">
         <div class="col-md-8" style="margin: 0 auto; ">
-  	<div style="height:40px"></div>
-    {% if user.is_authenticated %}
+            <div style="height:40px"></div>
+            {% if user.is_authenticated %}
 
-	{% blocktrans %} Sie sind bereits angemeldet. Hier geht es zum {% endblocktrans %} <a  href="logout">Logout</a>.
-	<hr><br>
+            {% blocktrans %} Sie sind bereits angemeldet. Hier geht es zum {% endblocktrans %} <a
+                href="logout">Logout</a>.
+            <hr><br>
 
-	{% else %}
-	{% blocktrans %} Schon registriert? Hier geht es zum {% endblocktrans %}
-
-
-        <a  href="/accounts/login_redirect">Login</a>.
-    <hr><br>
-	{% endif %}
-    <h2 class="title">  {% blocktrans %}Registrierung{% endblocktrans %}  </h2>
-	<p>{% blocktrans %}Erstelle einen Account, um nach Hilfe zu suchen.{% endblocktrans %}</p>
+            {% else %}
+            {% blocktrans %} Schon registriert? Hier geht es zum {% endblocktrans %}
 
 
+            <a href="/accounts/login_redirect">Login</a>.
+            <hr><br>
+            {% endif %}
+            <h2 class="title"> {% blocktrans %}Registrierung{% endblocktrans %} </h2>
+            <p>{% blocktrans %}Erstelle einen Account, um nach Hilfe zu suchen.{% endblocktrans %}</p>
 
 
 
-                {% crispy form form.helper %}
-          
-</div>
+
+
+            {% crispy form form.helper %}
+
+            <div class="modal fade" id="genderHintModal" tabindex="-1" role="dialog"
+                aria-labelledby="genderHintModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="genderHintModalLabel2">{% blocktrans %}Warum wir nach deinem Geschlecht fragen{% endblocktrans %}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% blocktrans %}
+                            Uns ist es wichtig, dass sich alle Nutzer von match4crisis wohlfühlen.
+                            Daher möchten wir Helfenden die Option geben, das Geschlecht von euch Hilfesuchenden einzusehen.
+                            Wenn du dein Geschlecht allerdings nicht angeben möchtest, kannst du im Anmeldeformular einfach
+                            die Option "Keine Angabe" auswählen.
+                            {% endblocktrans %}
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn" style="color:white" data-dismiss="modal"
+                                aria-label="close">{% blocktrans %}Ok{% endblocktrans %}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
-$( document ).ready(function() {
-    $("#id_availability_start").attr("type", "date");
-});
+    $(document).ready(function () {
+        $("#id_availability_start").attr("type", "date");
+    });
 </script>
 
 {% endblock %}

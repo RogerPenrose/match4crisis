@@ -78,8 +78,8 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         <div class="row align-self-center align-items-center" style="margin-bottom: 55px;">
 <div class="col-lg-12">
 
-  <h2 class="title" style="margin-bottom: 35px;margin-top: 35px;"><img src="{% static 'img/step-1.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% blocktrans %}Wo suchst du nach Hilfe?{% endblocktrans %}</h2>
-  <form id="searchForm" action="/offers/search">
+  <h2 class="title" style="margin-bottom: 35px;margin-top: 35px;"><img src="{% static 'img/step-1.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% if searchRequests == False %}{% blocktrans %}Wo suchst du nach Hilfe?{% endblocktrans %}{%else%}{%blocktrans%}Wo willst du helfen?{%endblocktrans%}{%endif%}</h2>
+  <form id="searchForm" action="/offers/select_category" onsubmit="doSubmit();">
     <div style="position: relative">
       <input
         type="text"
@@ -87,10 +87,12 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         name="location"
         class="input-form-search"
         placeholder="{% blocktrans %}Standort hier eingeben ...{% endblocktrans %}"
+        value=""
       >
       <input type="hidden" value="" name="lat">
       <input type="hidden" value="" name="lng">
       <input type="hidden" value="" name="bb">
+      <input type="hidden" value="0" name="requests" id="id_requests">
       <svg
         class="bi bi-search"
         style="
@@ -117,7 +119,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
         />
       </svg>
     </div>
-    <select class="form-control radius" name="range">
+    <select class="form-control radius" id="id_range" name="range">
       <option value="5" selected>{% blocktrans %}Umkreis wählen:{% endblocktrans %}</option>
       <option value="10" {% if range == "10"%}selected{%endif%}>10 km</option>
       <option value="25"{% if range == "25"%}selected{%endif%}>25 km</option>
@@ -129,252 +131,10 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
       <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"></path>
     </svg>
     </button>
+    <button  type="submit" class="btn btn-search "style="background-color:orange !important" onclick="submitWithoutLocation()">Noch unsicher</button>
   </form>
 
 </div></div> 
-
-<div style="{% if  city == None or city == ""%} display:none{%endif%} ">
-    <div class="row align-self-center align-items-center" style="margin-top:75px;">
- <div class="col-12" >
-    <h2 class="title" ><img src="{% static 'img/step-2.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}</h2></div>
-        </div>
-        </div>
-        <div class="container cards" style="{% if  city == None or city == "" %} display:none{%endif%} ">
-            <a onclick="search_offers(['accommodation']);" class="pointer">        
-            <div class="col-12 col-lg-6 offer-card"> 
-
-                <div class="row align-self-center align-items-center">
-                <div class="col-4 col-sm-2" style="padding: 5px;">
-             
-                    <div class="background-photo-search" style="background-image: url({% static 'img/offers/accommodation.jpg' %})"></div>
-
-                  </div>
-                <div class="description col-6 col-sm-8">
-<h3>{% blocktrans %}Unterkunft{% endblocktrans %}</h3>
-<p>{% blocktrans %}Suche nach einer passenden Unterkunft.{% endblocktrans %}</p>
-
-</div>
-<div class="count col-2 col-sm-2">
-
-    <p>{{ local.AccommodationOffers }}</p>
-    
-    </div>
-                </div>
-
-            </div>   
-            </a>  
-          
-
-       
-            <a onclick="search_offers(['buerocratic'])" class="pointer">        
-                <div class="col-12 col-lg-6 offer-card"> 
-    
-                    <div class="row align-self-center align-items-center">
-                    <div class="col-4 col-sm-2" style="padding: 5px;">
-                 
-                        <div class="background-photo-search" style="background-image: url({% static 'img/offers/buerocracy.jpg' %})"></div>
-    
-                      </div>
-                    <div class="description col-6 col-sm-8">
-    <h3>{% blocktrans %}Bürokratie{% endblocktrans %}</h3>
-    <p>{% blocktrans %}z.B. Unterstützung bei Behördengängen.{% endblocktrans %}</p>
-    
-    </div>
-    
-    <div class="count col-2 col-sm-2">
-    
-        <p>{{ local.BuerocraticOffers }}</p>
-        
-        </div>
-                    </div>
-    
-                </div>   
-                </a>  
-
-
-                <a onclick="search_offers(['manpower']);" class="pointer">        
-                    <div class="col-12 col-lg-6 offer-card"> 
-        
-                        <div class="row align-self-center align-items-center">
-                        <div class="col-4 col-sm-2" style="padding: 5px;">
-                     
-                            <div class="background-photo-search" style="background-image: url({% static 'img/offers/manpower.jpg' %})"></div>
-        
-                          </div>
-                        <div class="description col-6 col-sm-8">
-        <h3>{% blocktrans %}Manneskraft{% endblocktrans %}</h3>
-        <p>{% blocktrans %}z.B. online oder Hilfe vor Ort.{% endblocktrans %}</p>
-        
-        </div>
-        
-        <div class="count col-2 col-sm-2">
-        
-            <p>{{ local.ManpowerOffers }}</p>
-            
-            </div>
-                        </div>
-        
-                    </div>   
-                    </a>  
-
-               
-
-         
-                    <a onclick="search_offers(['childShort', 'childLong']);" class="pointer">      
-                        <div class="col-12 col-lg-6 offer-card"> 
-            
-                            <div class="row align-self-center align-items-center">
-                            <div class="col-4 col-sm-2" style="padding: 5px;">
-                         
-                                <div class="background-photo-search" style="background-image: url({% static 'img/offers/childcare.jpg' %})"></div>
-            
-                              </div>
-                            <div class="description col-6 col-sm-8">
-            <h3>{% blocktrans %}Kinderfürsorge{% endblocktrans %}</h3>
-            <p>{% blocktrans %}z.B. Babysitting{% endblocktrans %}</p>
-            
-            </div>
-            
-            <div class="count col-2 col-sm-2">
-            
-                <p>{{ local.ChildcareOfferShortterm }}</p>
-                
-                </div>
-                            </div>
-            
-                        </div>   
-                        </a>  
-
-
-                        <a onclick="search_offers(['welfare']);" class="pointer">       
-                        <div class="col-12 col-lg-6 offer-card"> 
-            
-                            <div class="row align-self-center align-items-center">
-                            <div class="col-4 col-sm-2" style="padding: 5px;">
-                         
-                                <div class="background-photo-search" style="background-image: url({% static 'img/offers/medical.jpg' %})"></div>
-            
-                              </div>
-                            <div class="description col-6 col-sm-8">
-            <h3>{% blocktrans %}Medizinische Unterstützung{% endblocktrans %}</h3>
-            <p>{% blocktrans %}z.B. für ältere Personen oder Personen mit Behinderungen.{% endblocktrans %}</p>
-            
-            </div>
-            
-            <div class="count col-2 col-sm-2">
-            
-                <p>{{ local.WelfareOffers }}</p>
-                
-                </div>
-                            </div>
-            
-                        </div>   
-                        </a>  
-
-
-
-                        <a onclick="search_offers(['job']);" class="pointer">         
-                        <div class="col-12 col-lg-6 offer-card"> 
-            
-                            <div class="row align-self-center align-items-center">
-                            <div class="col-4 col-sm-2" style="padding: 5px;">
-                         
-                                <div class="background-photo-search" style="background-image: url({% static 'img/offers/jobs.jpg' %})"></div>
-            
-                              </div>
-                            <div class="description col-6 col-sm-8">
-            <h3>{% blocktrans %}Jobs{% endblocktrans %}</h3>
-            <p>{% blocktrans %}Finde einen passenden Job.{% endblocktrans %}</p>
-            
-            </div>
-            
-            <div class="count col-2 col-sm-2">
-            
-                <p>{{ local.JobOffers }}</p>
-                
-                </div>
-                            </div>
-            
-                        </div>   
-                        </a>  
-
-
-                        <a onclick="search_offers(['transportation']);" class="pointer">             
-                          <div class="col-12 col-lg-6 offer-card"> 
-      
-                            <div class="row align-self-center align-items-center">
-                            <div class="col-4 col-sm-2" style="padding: 5px;">
-      
-                                <div class="background-photo-search" style="background-image: url({% static 'img/offers/psychological.jpg' %})"></div>
-      
-                              </div>
-                            <div class="description col-6 col-sm-8">
-                            <h3>{% blocktrans %}Mitfahrgelegenheiten{% endblocktrans %}</h3>
-                            <p>{% blocktrans %}Ausgehend von {{city}}{% endblocktrans %}</p>
-      
-                            </div>
-      
-      
-                            <div class="count col-2 col-sm-2">
-      
-                            <p>{{ local.TransportationOffers }}</p>
-      
-                            </div>
-                          </div>
-      
-                          </div>   
-                        </a>  
-
-                  <a onclick="search_offers(['welfare']);" class="pointer">             
-                    <div class="col-12 col-lg-6 offer-card"> 
-
-                      <div class="row align-self-center align-items-center">
-                      <div class="col-4 col-sm-2" style="padding: 5px;">
-
-                          <div class="background-photo-search" style="background-image: url({% static 'img/offers/psychological.jpg' %})"></div>
-
-                        </div>
-                      <div class="description col-6 col-sm-8">
-                      <h3>{% blocktrans %}Psychologische Unterstützung{% endblocktrans %}</h3>
-                      <p>{% blocktrans %}Online oder persönlich.{% endblocktrans %}</p>
-
-                      </div>
-
-
-                      <div class="count col-2 col-sm-2">
-
-                      <p>{{ local.PsychologicalOffers }}</p>
-
-                      </div>
-                    </div>
-
-                    </div>   
-                  </a>  
-
-                        <a onclick="search_offers(['donations']);" class="pointer">      
-                        <div class="col-12 col-lg-6 offer-card"> 
-            
-                            <div class="row align-self-center align-items-center">
-                            <div class="col-4 col-sm-2" style="padding: 5px;">
-                         
-                                <div class="background-photo-search" style="background-image: url({% static 'img/offers/donations.jpg' %})"></div>
-            
-                              </div>
-                            <div class="description col-6 col-sm-8">
-            <h3>{% blocktrans %}Spenden{% endblocktrans %}</h3>
-            <p>{% blocktrans %}Spende an Hilfsorganisationen{% endblocktrans %}</p>
-            
-            </div>
-            
-            <div class="count col-2 col-sm-2">
-            
-                <p>{{ total.DonationOffers }}</p>
-                
-                </div>
-                            </div>
-            
-                        </div>   
-                        </a>  
 
 
 </div>
@@ -383,6 +143,28 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 </div>
 
 <script>
+  var unsure = false
+  function doSubmit(){
+    console.log("submitting")
+    {% if searchRequests == True%}
+    console.log("Searching requests. ")
+    document.getElementById("id_requests").value = 1
+    {%endif%}
+    if (unsure)
+    {
+      console.log("Unsure !")
+      document.getElementById("id_location").value= -1
+      document.getElementsByName("lat")[0].value= -1
+      document.getElementsByName("lng")[0].value= -1
+      document.getElementsByName("bb")[0].value= -1
+      range.value = -1
+
+    }
+  }
+  function submitWithoutLocation(){
+    unsure = true
+    document.getElementById("searchForm").submit()
+  }
   function findGetParameters() {
     var result = {},
         tmp = [];
@@ -398,54 +180,15 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
   window.onload=function(){
     console.log("Onload")
     results = findGetParameters()
-    if ("location" in results && "range" in results && "back" in results)
+    if ("city" in results)
       {
-        console.log("Clicking...")
-        var form = document.getElementById("searchForm")
-        form.submit()
-        
+        document.getElementById("id_location").value = results.city
       }
-  }
-  function search_offers(types){
-    visibles = []
-    for (var i = 0; i < types.length; i++)
-    {
-      visibles.push(types[i]+"Visible")
-    }
-    data = {}
-    for (var i = 0; i < visibles.length; i++)
-    {
-      data[visibles[i]] = "1"
-    }
-    data["city"] = "{{ city }}"
-    console.log("Visibles: "+JSON.stringify(data))
-    data["range"] = "{{ range }}"
-    data["show_list"] = "True"
-    var csrfmiddlewaretoken = '{{ csrf_token }}'
-    data.show_list = "True"
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "handle_filter", true);
-    xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("charset", "utf-8");
-    var formBody = [];
-    for (var property in data) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(data[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        document.open();
-        document.write(xhr.responseText);
-        document.close();
-      } 
-    }
-    console.log("sending: "+JSON.stringify(data))
-    xhr.send(formBody);
-  
-  
+    if ("range" in results)
+      {
+        range = results.range
+        document.getElementById("id_range").value = range
+      }
   }
   function selectFirstOnEnter(input) {  // store the original event binding function
     console.log(input)
