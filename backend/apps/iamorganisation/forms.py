@@ -10,7 +10,7 @@ from django.contrib.auth import password_validation
 
 from apps.accounts.models import User
 from apps.accounts.forms import PhoneNumberField, SpecialPreferencesForm
-from .models import DonationRequest, HelpRequest, Organisation
+from .models import DonationRequest, HelpRequest, MaterialDonationRequest, Organisation
 
 
 class OrganisationFormO(ModelForm):
@@ -170,13 +170,11 @@ class HelpRequestForm(forms.ModelForm):
             'radius',
         )
         labels = {
-            'title' : '',
-            'description' : '',
+            'title' : _('Titel'),
+            'description' : _('Beschreibung'),
             'location' : _('Ort')
         }
         widgets = {
-            'title' : forms.TextInput(attrs={"placeholder": _("Betreff")}),
-            'description' : forms.Textarea(attrs={"placeholder": _("Beschreibung")}),
             'lat' : forms.HiddenInput(),
             'lng' : forms.HiddenInput(),
             'bb' : forms.HiddenInput(),
@@ -219,5 +217,42 @@ class DonationRequestForm(forms.ModelForm):
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
         self.helper.form_action = "request_donations"
+
+        self.helper.add_input(Submit("submit", _("Speichern")))
+
+class MaterialDonationRequestForm(forms.ModelForm):
+
+    images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)
+
+    class Meta:
+        model = MaterialDonationRequest
+        fields = (
+            'title',
+            'donationType',
+            'description',
+            'location',
+            'lat',
+            'lng',
+            'bb',
+        )
+        labels = {
+            'title' : _('Titel'),
+            'donationType' : _('Art der Sachspende'),
+            'description' : _('Beschreibung'),
+            'location' : _('Ort')
+        }
+        widgets = {
+            'lat' : forms.HiddenInput(),
+            'lng' : forms.HiddenInput(),
+            'bb' : forms.HiddenInput(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(MaterialDonationRequestForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-materialDonationRequestForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "create_material_donation_request"
 
         self.helper.add_input(Submit("submit", _("Speichern")))

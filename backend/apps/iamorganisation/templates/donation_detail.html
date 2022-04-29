@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load display_value %}
 {% block title %}
-{% blocktrans %}{{donationRequest.title}}{% endblocktrans %}
+{{donationRequest.title}}
 {% endblock %}
 
 {% block content %}
@@ -80,10 +80,23 @@
 
     <div class="col-sm-12 col-lg-8 description">
       <h1 class="title">{{ donationRequest.title }}</h1>
+      <h3 class="subtitle">
+        {% if isMaterial %}
+        {% blocktrans %}Sachspendenaufruf{% endblocktrans %}
+        {% else %}
+        {% blocktrans %}Geldspendenaufruf{% endblocktrans %}
+        {% endif %}
+      </h2>
       <p>{% blocktrans %}Organisation{% endblocktrans%}: {{ donationRequest.organisation }}</p>
-      <p>{% blocktrans %}Begünstigte*r{% endblocktrans%}: {{ donationRequest.beneficiary }}</p>
-      <p>{% blocktrans %}IBAN{% endblocktrans%}: {{ donationRequest.iban }}</p>
-      <p>{% blocktrans %}Spendenstichwort{% endblocktrans%}: {{ donationRequest.reason }}</p>
+      {% if isMaterial %}
+        <p>{% blocktrans %}Art der Sachspende{% endblocktrans%}: {{ donationRequest.donationType }}</p>
+        <p>{% blocktrans %}Abgabeort{% endblocktrans%}: {{ donationRequest.location }}</p>
+        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ donationRequest.location }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      {% else %}
+        <p>{% blocktrans %}Begünstigte*r{% endblocktrans%}: {{ donationRequest.beneficiary }}</p>
+        <p>{% blocktrans %}IBAN{% endblocktrans%}: {{ donationRequest.iban }}</p>
+        <p>{% blocktrans %}Spendenstichwort{% endblocktrans%}: {{ donationRequest.reason }}</p>
+      {% endif %}
       <h5>{% blocktrans %}Beschreibung{% endblocktrans%}</h5>
       <p>{{ donationRequest.description|linebreaks }}</p>
       <hr>

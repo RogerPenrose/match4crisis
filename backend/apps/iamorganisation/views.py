@@ -1,4 +1,5 @@
 from functools import lru_cache
+from itertools import chain
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -16,13 +17,13 @@ from django_filters.views import FilterView
 from django.utils.decorators import method_decorator
 
 from apps.accounts.decorator import organisationRequired
-from apps.iamorganisation.models import DonationRequest, HelpRequest, Image, Organisation
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
 from apps.accounts.decorator import organisationRequired
-from .filters import DonationRequestFilter
 
-from .forms import DonationRequestForm, HelpRequestForm
+from .models import DonationRequest, HelpRequest, Image, MaterialDonationRequest, Organisation
+from .forms import DonationRequestForm, HelpRequestForm, MaterialDonationRequestForm
+from .filters import DonationRequestFilter
 
 
 # CONSTANTS
@@ -111,7 +112,7 @@ class OrganisationDashboardView(DashboardView):
 
         organisation = Organisation.objects.get(user = request.user)
 
-        donationRequests = DonationRequest.objects.filter(organisation=organisation)
+        donationRequests = list(chain(DonationRequest.objects.filter(organisation=organisation), MaterialDonationRequest.objects.filter(organisation=organisation)))
         helpRequests = HelpRequest.objects.filter(organisation=organisation)
 
 
@@ -156,6 +157,10 @@ def request_help(request):
     context = {"form" : form}
     return render(request, "request_help.html", context)
 
+@login_required
+@organisationRequired
+def request_donations(request):
+    return render(request, "select_donation_type.html")
 
 @login_required
 @organisationRequired
@@ -183,14 +188,14 @@ def create_donation_request(request):
     else:
         form = DonationRequestForm()
 
-    context = {"form" : form, "edit" : True}
+    context = {"form" : form, "edit" : False, "isMaterial" : False}
     return render(request, "request_donations.html", context)
 
 
 @login_required
 @organisationRequired
-def edit_donation_request(request, donation_request_id):
-    donationRequest = get_object_or_404(DonationRequest, pk=donation_request_id)
+def edit_donation_request(request, donationRequest):
+    #donationRequest = get_object_or_404(DonationRequest, pk=donation_request_id)
     organisation = Organisation.objects.get(user=request.user)
     if donationRequest.organisation != organisation:
         raise PermissionDenied
@@ -209,12 +214,82 @@ def edit_donation_request(request, donation_request_id):
                     image = Image(image=image, request = donationRequest)
                     image.save()
 
-            return redirect('donation_detail', donation_request_id = donation_request_id)
+            return redirect('donation_detail', donation_request_id = donationRequest.pk)
 
     form = DonationRequestForm(instance=donationRequest)
     form.helper.form_action = "edit"
-    context = {"form" : form, "edit" : True}
+    context = {"form" : form, "edit" : True, "isMaterial" : False}
     return render(request, "request_donations.html", context)
+
+@login_required
+@organisationRequired
+def create_material_donation_request(request):
+    if request.method == "POST":
+        form = MaterialDonationRequestForm(request.POST)
+
+        if form.is_valid():
+
+            donationRequestEntry = form.save(commit=False)
+            donationRequestEntry.organisation = Organisation.objects.get(user=request.user)
+            donationRequestEntry.save()
+
+            if request.FILES.get("images") is not None:
+                counter = 0
+                images = request.FILES.getlist('images')
+                for image in images:
+                    counter = counter + 1
+                    image = Image(image=image, request = donationRequestEntry)
+                    image.save()
+
+            context = {}
+            return render(request, "donation_request_created.html", context)
+
+    else:
+        form = MaterialDonationRequestForm()
+
+    context = {"form" : form, "edit" : False, "isMaterial" : True}
+    return render(request, "request_donations.html", context)
+
+
+@login_required
+@organisationRequired
+def edit_material_donation_request(request, donationRequest):
+    #donationRequest = get_object_or_404(MaterialDonationRequest, pk=material_donation_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if donationRequest.organisation != organisation:
+        raise PermissionDenied
+
+    if request.method == "POST":
+        form = MaterialDonationRequestForm(request.POST, instance=donationRequest)
+
+        if form.is_valid():
+            form.save()
+
+            if request.FILES.get("images") is not None:
+                counter = 0
+                images = request.FILES.getlist('images')
+                for image in images:
+                    counter = counter + 1
+                    image = Image(image=image, request = donationRequest)
+                    image.save()
+
+            return redirect('donation_detail', donation_request_id = donationRequest.pk)
+
+    form = MaterialDonationRequestForm(instance=donationRequest)
+    form.helper.form_action = "edit"
+    context = {"form" : form, "edit" : True, "isMaterial" : True}
+    return render(request, "request_donations.html", context)
+
+@login_required
+@organisationRequired
+def edit_redirect(request, donation_request_id):
+    try:
+        donationRequest = DonationRequest.objects.get(pk=donation_request_id)
+        return edit_donation_request(request, donationRequest)
+    except DonationRequest.DoesNotExist:
+        donationRequest = MaterialDonationRequest.objects.get(pk=donation_request_id)
+        return edit_material_donation_request(request, donationRequest)
+
 
 @login_required
 @organisationRequired
@@ -231,20 +306,28 @@ class OrganisationOverview(ListView):
 
 def donation_overview(request):
     donationRequests = DonationRequest.objects.filter(organisation__isApproved = True)
-    filter = DonationRequestFilter(request.GET, queryset=donationRequests)
-    paginator = Paginator(filter.qs, DONATIONS_PER_PAGE)
+    materialDonationRequests = MaterialDonationRequest.objects.filter(organisation__isApproved = True)
+    filterMoney = DonationRequestFilter(request.GET, queryset=donationRequests)
+    filterMaterial = DonationRequestFilter(request.GET, queryset=materialDonationRequests)
+    filters = list(chain(filterMoney.qs, filterMaterial.qs))
+    paginator = Paginator(filters, DONATIONS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
     context = {
         "page_obj" : page_obj,
-        "donationsCount" : filter.qs.count(),
-        "filter" : filter,
+        "donationsCount" : len(filters),
+        "filter" : filterMoney,
     }
     return render(request, "donations.html", context)
 
 def donation_detail(request, donation_request_id):
-    donationRequest = DonationRequest.objects.get(pk=donation_request_id)
+    try:
+        donationRequest = DonationRequest.objects.get(pk=donation_request_id)
+        isMaterial = False
+    except DonationRequest.DoesNotExist:
+        donationRequest = get_object_or_404(MaterialDonationRequest, pk=donation_request_id)
+        isMaterial = True
     organisation = donationRequest.organisation
     images = Image.objects.filter(request=donationRequest)
     editAllowed = request.user.is_authenticated and request.user.isOrganisation and donationRequest.organisation == Organisation.objects.get(user = request.user)
@@ -254,5 +337,6 @@ def donation_detail(request, donation_request_id):
         "organisation" : organisation, 
         "images" : images if images.count() > 0 else None,
         "editAllowed" : editAllowed,
+        "isMaterial" : isMaterial,
     }
     return render(request, "donation_detail.html", context)

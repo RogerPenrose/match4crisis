@@ -62,6 +62,21 @@ class DonationRequest(Request):
     iban = IBANField(verbose_name=_("IBAN"))
     reason = models.CharField(max_length=140, verbose_name=_("Spendenstichwort"))
 
+    @property
+    def isMaterial(self):
+        return False
+
+class MaterialDonationRequest(Request):
+    donationType = models.CharField(max_length=500, default="")
+    location = models.CharField(max_length=1000, default="")
+    lat = models.FloatField(null=True)
+    lng = models.FloatField(null=True)
+    bb = models.CharField(max_length=300, default="")
+
+    @property
+    def isMaterial(self):
+        return True
+
 class Image(models.Model):
     request = models.ForeignKey(Request, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to='requests/%Y/%m/%d/', blank=False)

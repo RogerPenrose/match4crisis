@@ -19,10 +19,6 @@ class DonationRequestFilter(filters.FilterSet):
     search = filters.CharFilter(method="custom_filter", label=_("Suchen"))
     createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method="date_select_filter", label=_("Zeitraum"), empty_label=_("Keine Begrenzung"))
 
-    class Meta:
-        model = DonationRequest
-        fields = ["createdAt"]
-
     def custom_filter(self, queryset, name, value):
         values = value.split(" ")
         return queryset.filter(
