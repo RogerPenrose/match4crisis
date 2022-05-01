@@ -169,8 +169,14 @@
     </div>
   </div>
   <div class="col-12 text-center">
-    <h2>{{ helpRequestsCount }} {% blocktrans %} Hilfeaufrufe {% endblocktrans %}</h2>
-  </div>
+    <h2>
+      {% blocktrans count counter=filter.qs.count %}
+      {{ counter }} Hilfeaufruf
+      {% plural %}
+      {{ counter }} Hilfeaufrufe
+      {% endblocktrans %}
+    </h2>
+   </div>
   <div class="row align-self-center align-items-center">
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
       <form method="get" id="filter-form">

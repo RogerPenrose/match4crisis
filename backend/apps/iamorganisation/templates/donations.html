@@ -168,7 +168,12 @@
     </div>
   </div>
   <div class="col-12 text-center">
-    <h2>{{ donationsCount }} {% blocktrans %} Spendenaufrufe {% endblocktrans %}</h2>
+    <h2>
+      {% blocktrans count counter=donationsCount %}
+      {{ counter }} Spendenaufruf
+      {% plural %}
+      {{ counter }} Spendenaufrufe
+      {% endblocktrans %}</h2>
   </div>
   <div class="row align-self-center align-items-center">
     <div class="row align-self-center align-items-center" style="margin-top:35px;">

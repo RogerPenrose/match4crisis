@@ -106,7 +106,6 @@ def help_requests_view(request):
 
     context = {
         "page_obj" : page_obj,
-        #"helpRequestsCount" : filter.qs.count(),
         "filter" : filter,
     }
     return render(request, "help_requests_overview.html", context)
