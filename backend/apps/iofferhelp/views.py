@@ -109,4 +109,4 @@ def help_requests_view(request):
         #"helpRequestsCount" : filter.qs.count(),
         "filter" : filter,
     }
-    return render(request, "filter_help_requests.html", context)
+    return render(request, "help_requests_overview.html", context)
