@@ -159,7 +159,8 @@ def request_help(request):
 
 @login_required
 @organisationRequired
-def edit_help_request(request, helpRequest):
+def edit_help_request(request, help_request_id):
+    helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
     organisation = Organisation.objects.get(user=request.user)
     if helpRequest.organisation != organisation:
         raise PermissionDenied
