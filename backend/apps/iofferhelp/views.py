@@ -2,14 +2,20 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from apps.accounts.views import DashboardView
+from apps.iamorganisation.models import HelpRequest
+from apps.iamorganisation.filters import HelpRequestFilter
 from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
 from .forms import ChooseHelpForm
+from .models import Helper
 from apps.accounts.decorator import helperRequired
 import logging
+
 logger = logging.getLogger("django")
+
 def thx(request):
     return render(request, "thanks.html")
 
@@ -86,3 +92,21 @@ def running_offers(request):
     runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
     context = {"offers": runningOffers}
     return render(request, "running_offers.html", context)
+
+@login_required
+@helperRequired
+def help_requests_view(request):
+    HELP_REQUEST_PER_PAGE = 25
+    helper = Helper.objects.get(user=request.user)
+    helpRequests = HelpRequest.objects.all()
+    filter = HelpRequestFilter(request.GET, queryset=helpRequests)
+    paginator = Paginator(list(filter.qs), 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj" : page_obj,
+        #"helpRequestsCount" : filter.qs.count(),
+        "filter" : filter,
+    }
+    return render(request, "filter_help_requests.html", context)
