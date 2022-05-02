@@ -179,7 +179,7 @@ def edit_help_request(request, help_request_id):
                     image = Image(image=image, request = helpRequest)
                     image.save()
 
-            return redirect('help_request_detail', help_request_id = helpRequest.pk)
+            return redirect('help_request_detail', help_request_id = help_request_id)
 
     form = HelpRequestForm(instance=helpRequest)
     form.helper.form_action = "edit"
