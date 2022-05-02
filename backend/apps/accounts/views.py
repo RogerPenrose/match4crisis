@@ -39,7 +39,6 @@ def signup_refugee(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        logger.info("Refugee Signup request", extra={"request": request})
         form = RefugeeCreationForm(request.POST)
 
         # check whether it's valid:
@@ -59,7 +58,6 @@ def signup_helper(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        logger.info("Helper Signup request", extra={"request": request})
         form = HelperCreationForm(request.POST)
 
         # check whether it's valid:
@@ -88,7 +86,6 @@ def signup_helper(request):
 
 def signup_organisation(request):
     if request.method == "POST":
-        logger.info("Organisation registration request", extra={"request": request})
         form_info = OrganisationFormInfoSignUp(request.POST)
 
         if form_info.is_valid():
@@ -395,7 +392,6 @@ def preferences(request):
     specificAccount = userTypeClass.objects.get(user=user)
     if user.is_authenticated and user.is_active:
         if request.method == "POST":
-            logger.info("Preferences edit request", extra={"request": request})
             comPrefForm = CommonPreferencesForm(request.POST, instance=user)
             specPrefForm = userTypeForm(request.POST, request.FILES, instance = specificAccount)
             if comPrefForm.is_valid() and specPrefForm.is_valid():
