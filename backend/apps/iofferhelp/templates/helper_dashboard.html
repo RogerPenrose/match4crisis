@@ -11,16 +11,23 @@ Dashboard - Helfende
 {% block header %}
 <style>
   .buttons > div > a > div { cursor: pointer;}
+  .cards .a { cursor: pointer; } 
 .dashboard-title { background: #ed0061;}
+.settings a { color: #fff !important; float: right;}
+.settings {padding-bottom: 30px;} 
+.complete p { width: 15px; height: 15px; background-color: rgb(61, 225, 61); border-radius: 15px; margin: 0 auto; }
+
+.incomplete p { width: 15px; height: 15px; background-color: red; border-radius: 15px; margin: 0 auto; }
+.attention > .icon { text-align:center;}
 .dashboard-title p, .dashboard-title h1, .dashboard-title h2 { color: #fff;}
+.attention {margin-left: 0px; margin-right: 0px;  margin-bottom: 45px; padding: 15px; background-color: rgb(255, 223, 159); border-radius: 15px;}
 .buttons img {     max-width: 100%; }
     @media only screen and (min-width: 768px) {
       .dashboard-title {
         padding: 80px 0px 80px 0px;
         box-shadow: 0px 0px 10px 0px rgb(0, 0, 0, 0.2);
       }
-  
-  
+
       .dashboard-title h2 {
         font-size: 20px;
         font-weight: 300;
@@ -37,7 +44,7 @@ Dashboard - Helfende
   
     @media only screen and (min-width: 1200px) {
       .dashboard-title {
-        padding: 130px 0px 100px 0px;
+        padding: 110px 0px 100px 0px;
       }
     }
   
@@ -144,17 +151,18 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 {% block content%}
 <div class="dashboard-title">
     <div class="container">
+      <div class="settings"><a href="{% url 'preferences' %}">{% blocktrans %}Profil-Einstellungen{% endblocktrans %}</a></div>
       <div class="row align-self-center align-items-center">
         <div class="col-md-8 col-xl-7">
           <h1>
             {% blocktrans %}Schön, dass du da bist {{ firstname }}!{% endblocktrans %}
           </h1>
           <h2 class="font-weight-regular">
-            {% blocktrans %}Hör auf zu warten und beginne jetzt zu helfen!{% endblocktrans %}
+            {% blocktrans %}Hier kannst du direkt weitere Kategorien, in welchen du helfen kannst, hinzufügen!{% endblocktrans %}
           </h2>
           <br />
           <a href="/offers/create" class="btn" role="button" aria-pressed="true"
-          >{% blocktrans %}Neues Angebot erstellen{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+          >{% blocktrans %}Neue Kategorie{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
           </svg></a>
@@ -166,48 +174,141 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
  
   
 
-  <div class="container" style="margin-top: 55px;">
-    <h2 style="margin-bottom: 35px;">{% blocktrans %}Helfer Dashboard{% endblocktrans %}</h2>
-        <div class="buttons row">
-            
-            <div class="col-12 col-md-6 col-xl-6 left">
-                <a href="{% url 'running_offers' %}">
-            <div class="row align-self-center align-items-center">
-                <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px; text-align:center;"><img src="{% static 'img/users/recent.svg' %}" width="45px" height="auto" ></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Aktive Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine aktuelle aktiven Angebote.{% endblocktrans %}</p></div>
-                </div>
-            </a>
+  <div class="container" style="margin-top: 35px;">
+    <div class="attention row align-self-center align-items-center">
+      <div class="col-1 icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-info-circle-fill" viewBox="0 0 16 16">
+       <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+     </svg></div> 
+     
+     <div class="col-11">  
+       Du musst mindestens eine Kategorie vervollständigen, um zu starten!</div>
+     </div>
+
+    <h3 style="margin-bottom: 25px; ">{% blocktrans %}Kategorien vervollständigen (2){% endblocktrans %}</h3>    
+   
+
+    <div class="container cards row">
+      <a href="#">        
+      <div class="col-12 col-lg-6 offer-card"> 
+
+          <div class="row align-self-center align-items-center">
+          <div class="col-4 col-sm-2" style="padding: 5px;">
+       
+              <div class="background-photo-search" style="background-image: url(/static/img/offers/accommodation.jpg)"></div>
+
             </div>
-        
+          <div class="description col-6 col-sm-8">
+<h3>Unterkunft</h3>
+<p>Suche nach einer passenden Unterkunft.</p>
+
+</div>
+<div class="incomplete col-2 col-sm-2">
+  <p></p>
+</div>
+          </div>
+
+      </div>   
+      </a>  
     
-            <div class="col-12 col-md-6 col-xl-6">
-    
-                <a href="{% url 'paused_offers' %}">
-                <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px;  padding-left: 0px; text-align:center;"><img src="{% static 'img/users/pause.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Pausierte Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Deine inaktiven pausierten Angebote.{% endblocktrans %}</p></div>
-                    </div>
-                </a>
+      <a href="#">        
+          <div class="col-12 col-lg-6 offer-card"> 
+
+              <div class="row align-self-center align-items-center">
+              <div class="col-4 col-sm-2" style="padding: 5px;">
+           
+                  <div class="background-photo-search" style="background-image: url(/static/img/offers/buerocracy.jpg)"></div>
+
                 </div>
-    
-                <div class="col-12 col-md-6 col-xl-6 left">
-                    <a href="{% url 'incomplete_offers' %}">
-                <div class="row align-self-center align-items-center">
-                    <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/incomplete.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Unvollständige Angebote{% endblocktrans %}</h3><p>{% blocktrans %}Angebote, von denen noch Informationen fehlen.{% endblocktrans %}</p></div>
-                    </div>
-                </a>
-                </div>
+              <div class="description col-6 col-sm-8">
+<h3>Bürokratie</h3>
+<p>z.B. Unterstützung bei Behördengängen.</p>
+
+</div>
+
+<div class="incomplete col-2 col-sm-2">
+
+<p></p>
+  
+  </div>
+              </div>
+
+          </div>   
+          </a>  
+
+
             
+
+        </div>
         
-                <div class="col-12 col-md-6 col-xl-6">
-        
-                    <a href="{% url 'preferences' %}">
+      
+
+   
+          <h3 style="margin-bottom: 25px; margin-top:35px;">{% blocktrans %}Deine Angebote (2){% endblocktrans %}</h3>    
+   
+
+          <div class="container cards row">
+            <a href="#">        
+            <div class="col-12 col-lg-6 offer-card"> 
+      
+                <div class="row align-self-center align-items-center">
+                <div class="col-4 col-sm-2" style="padding: 5px;">
+             
+                    <div class="background-photo-search" style="background-image: url(/static/img/offers/accommodation.jpg)"></div>
+      
+                  </div>
+                <div class="description col-6 col-sm-8">
+      <h3>Unterkunft</h3>
+      <p>Suche nach einer passenden Unterkunft.</p>
+      
+      </div>
+      <div class="complete col-2 col-sm-2">
+        <p></p>
+      </div>
+                </div>
+      
+            </div>   
+            </a>  
+          
+            <a href="#">        
+                <div class="col-12 col-lg-6 offer-card"> 
+      
                     <div class="row align-self-center align-items-center">
-                        <div class="col-3 col-sm-2" style="padding-right: 0px; padding-left: 0px;  text-align:center;"><img src="{% static 'img/users/settings.svg' %}" width="45px" height="auto"></div>  <div class="col-9 col-sm-10"><h3>{% blocktrans %}Einstellungen{% endblocktrans %}</h3><p>{% blocktrans %}Ändere hier dein Profil.{% endblocktrans %}</p></div>
-                        </div>
-                    </a>
-                    </div>      
-    
-            </div>
-    
+                    <div class="col-4 col-sm-2" style="padding: 5px;">
+                 
+                        <div class="background-photo-search" style="background-image: url(/static/img/offers/buerocracy.jpg)"></div>
+      
+                      </div>
+                    <div class="description col-6 col-sm-8">
+      <h3>Bürokratie</h3>
+      <p>z.B. Unterstützung bei Behördengängen.</p>
+      
+      </div>
+      
+      <div class="complete col-2 col-sm-2">
+      
+      <p></p>
+        
+        </div>
+                    </div>
+      
+                </div>   
+                </a>           
+
+
+                    
+
+
+
+                
+
+
+                    
+
+              
+
+                    
+
+    </div>
             </div>
       </div>
 
