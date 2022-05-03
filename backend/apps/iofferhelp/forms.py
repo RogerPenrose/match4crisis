@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.accounts.models import User
 from apps.accounts.forms import CustomUserCreationForm, SpecialPreferencesForm
-from apps.offers.models import GenericOffer
+from apps.offers.models import *
 from .models import Helper
 
 class HelperCreationForm(CustomUserCreationForm):
@@ -35,7 +35,36 @@ class HelperCreationForm(CustomUserCreationForm):
         if(commit):
             helper.save()
         return user, helper
+class ChooseHelpForm(forms.Form):
+    
 
+    # We need to Define what the user offers via the selected subcategories. Hence we need to build this form by having 
+    # One bool field per subcategory, with a class or something, associating this field with its parent category.
+   
+    transportation_people = forms.BooleanField(required=False, label=_("Personenfahrten"), widget=forms.CheckboxInput(attrs={"class": "subcategory transportation"}))
+    transportation_goods = forms.BooleanField(required=False, label=_("Gütertransport"), widget=forms.CheckboxInput(attrs={"class": "subcategory transportation"}))
+    buerocracy_translation = forms.BooleanField(required=False, label=_("Übersetzungen"), widget=forms.CheckboxInput(attrs={"class": "subcategory buerocracy"}))
+    buerocracy_companion = forms.BooleanField(required=False, label=_("Begleitung bei Amtsgängen"), widget=forms.CheckboxInput(attrs={"class": "subcategory buerocracy"}))
+    buerocracy_legal = forms.BooleanField(required=False, label=_("Juristische Hilfe"), widget=forms.CheckboxInput(attrs={"class": "subcategory buerocracy"}))
+    buerocracy_other = forms.BooleanField(required=False, label=_("Anderes"), widget=forms.CheckboxInput(attrs={"class": "subcategory buerocracy"}))
+    welfare_elderly = forms.BooleanField(required=False, label=_("Altenpflege"), widget=forms.CheckboxInput(attrs={"class": "subcategory welfare"}))
+    welfare_psych = forms.BooleanField(required=False, label=_("Psychologische Hilfe"), widget=forms.CheckboxInput(attrs={"class": "subcategory welfare"}))
+    welfare_disabled = forms.BooleanField(required=False, label=_("Behindertenpflege"), widget=forms.CheckboxInput(attrs={"class": "subcategory welfare"}))
+    def __init__(self, *args, **kwargs):
+        super(ChooseHelpForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-chooseHelpForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "choose_help"
+        for abbr, offerType in GenericOffer.OFFER_CHOICES:
+            if abbr != "DO" and abbr !="TL" :
+                svg =  open('static/img/icons/icon_'+abbr+'.svg', 'r').read()
+                self.fields[abbr] = forms.BooleanField(required=False, label=str(svg)+str(offerType)) # TODO change/remove the label
+        self.fields["NA"] = forms.BooleanField(required=False, label=_("Unklar"))
+        self.helper.add_input(Submit("submit", _("Weiter")))
+
+'''   
 class ChooseHelpForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ChooseHelpForm, self).__init__(*args, **kwargs)
@@ -47,12 +76,12 @@ class ChooseHelpForm(forms.Form):
 
         # Create a boolean field for every offer type
         for abbr, offerType in GenericOffer.OFFER_CHOICES:
-            if abbr != "DO":
+            if abbr != "DO" :
                 svg =  open('static/img/icons/icon_'+abbr+'.svg', 'r').read()
                 self.fields[abbr] = forms.BooleanField(required=False, label=str(svg)+str(offerType) ) # TODO change/remove the label
         self.fields["NA"] = forms.BooleanField(required=False, label=_("Unklar"))
         self.helper.add_input(Submit("submit", _("Weiter")))
-
+'''
 
 class HelperPreferencesForm(SpecialPreferencesForm):
     class Meta:

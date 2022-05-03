@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-
+from django.forms.models import model_to_dict
 from apps.accounts.views import DashboardView
 from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
@@ -46,9 +46,28 @@ def choose_help(request):
 
             # Filter the POST data to only include the offer information
             for k,v in request.POST.items():
+                logger.warning("Key: "+k+" Value: "+v)
                 if(k in OFFER_MODELS):
                     # If the offer of type k was selected, set its value to true in the chosenHelp dict, otherwise false
-                    chosenHelp[k] = (v == 'on')
+                    offer = GenericOffer()
+                    offer.userId = request.user
+                    specificOffer = OFFER_MODELS[k]
+                    if len(k) > 2:
+                        if "transportation" in k:
+                            offer.offerType = "TR"
+                        if "translation" in k:
+                            offer.offerType = "TL"
+                        if "buerocracy" in k:
+                            offer.offerType = "BU"
+                        if "welfare" in k:
+                            offer.offerType = "WE"
+                    else:
+                        offer.offertype = k
+                    offer.active = False
+                    offer.save()
+                    specificOffer.genericOffer= offer
+                    specificOffer.save()
+                    
 
             # Add the chosen help data to the request sessions
             request.session['chosenHelp'] = chosenHelp
