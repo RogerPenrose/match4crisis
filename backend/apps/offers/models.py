@@ -182,15 +182,27 @@ class LanguageOfferMap(models.Model):
 
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
-    'AC' : AccommodationOffer,
-    'TL' : TranslationOffer,
-    'TR' : TransportationOffer,
-    'BU' : BuerocraticOffer,
-    'CL' : ChildcareOffer,
-    'WE' : WelfareOffer,
-    'MP' : ManpowerOffer,
-    'JO' : JobOffer,
-    'DO' : DonationOffer,
+    'AC' : AccommodationOffer(),
+    'TL' : TranslationOffer(),
+    'TR' : TransportationOffer(),
+    'BU' : BuerocraticOffer(),
+    'CL' : ChildcareOffer(),
+    'WE' : WelfareOffer(),
+    'MP' : ManpowerOffer(),
+    'JO' : JobOffer(),
+    'DO' : DonationOffer(),
+    'transportation_people': TransportationOffer(helpType_transport="PT"),
+    'transportation_goods': TransportationOffer(helpType_transport="GT"),
+    'buerocracy_translation': TranslationOffer(),
+    'buerocracy_companion': BuerocraticOffer(helpType_buerocratic="AM"),
+    'buerocracy_legal': BuerocraticOffer(helpType_buerocratic="LE"),
+    'buerocracy_other': BuerocraticOffer(helpType_buerocratic="OT"),
+    'welfare_elderly': WelfareOffer(helpType_welfare="ELD"),
+    'welfare_psych': WelfareOffer(helpType_welfare="PSY"),
+    'welfare_disabled':  WelfareOffer(helpType_welfare="DIS"),
+
+
+
 
 }
 
