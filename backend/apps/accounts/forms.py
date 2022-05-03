@@ -180,7 +180,7 @@ class CustomAuthenticationForm(forms.Form):
         "inactive": _("Dieser Account wurde deaktiviert. Bitte melde dich beim Support wenn du denkst, dass dein Account zu unrecht deaktiviert wurde."),
         "email_not_confirmed" : format_html('{error_msg}: <a href="{href}">{link_content}</a>',
             error_msg = _("Bitte bestätige zunächst deine E-Mail-Adresse. Falls du keine Bestätigung-E-Mail erhalten hast, kannst du hier eine Neue anfordern"), 
-            href = "/accounts/thanks", # reversing results in a circular import error even with reverse_lazy, as this dict is evaluated at startup -> reverse_lazy('thanks'),
+            href = "/accounts/resend_confirmation_email", # reversing results in a circular import error even with reverse_lazy, as this dict is evaluated at startup -> reverse_lazy('thanks'),
             link_content = _("Neue Bestätigungs-E-Mail anfordern")
         ),
     }
