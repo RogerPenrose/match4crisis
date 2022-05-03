@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core import validators
 from django.utils.text import capfirst
 from django.utils.html import format_html
+from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, HTML, Layout, Row, Submit
@@ -256,11 +257,15 @@ def check_unique_email(value):
         raise ValidationError(_("Ein Benutzer mit dieser E-Mail-Adresse existiert bereits"))
     return value
 
+CONFIRMATION_EMAIL_TIMEOUT = 60 # seconds
+
 def email_exists_or_already_validated(value):
     try:
         u = User.objects.get(email=value)
         if u.validatedEmail:
             raise ValidationError(_("Diese E-Mail-Adresse wurde bereits bestätigt."))
+        if u.lastConfirmationMailSent and (timezone.now() - u.lastConfirmationMailSent).total_seconds() < CONFIRMATION_EMAIL_TIMEOUT:
+            raise ValidationError(_("Bitte warte kurz bevor du eine neue Bestätigungs-E-Mail anforderst."))
     except User.DoesNotExist:
         raise ValidationError(_("Es ist noch kein Nutzer mit diese E-Mail-Adresse registriert."))
 

@@ -230,6 +230,7 @@ def confirm_email(request, uidb64, token):
         user.is_active = True
         user.validatedEmail = True
         user.emailValidationDate = timezone.now()
+        user.lastConfirmationMailSent = None
         user.save()
         return render(request, "signup_complete.html")
     else:

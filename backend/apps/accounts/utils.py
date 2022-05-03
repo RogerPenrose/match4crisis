@@ -9,6 +9,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.template.loader import render_to_string  
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.utils import timezone
 
 
 from .models import User
@@ -45,3 +46,5 @@ def send_confirmation_email(user, domain, subject_template="registration/confirm
     })  
     to_email = user.email
     send_mail(subject, message, settings.NOREPLY_MAIL, [to_email])
+    user.lastConfirmationMailSent = timezone.now()
+    user.save()

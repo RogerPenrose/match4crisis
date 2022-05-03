@@ -87,6 +87,9 @@ class User(AbstractUser):
     isHelper = models.BooleanField(default=False)
     isOrganisation = models.BooleanField(default=False)
 
+    # used to prevent attackers from continuously requesting new confirmation mails.
+    lastConfirmationMailSent = models.DateTimeField(null=True, blank=True)
+
 class LanguageKnowledge(models.Model):
     """ The intermediary model that is used for the m:n-relation between User and Languages.\n
     Stores additional information on a user's language knowledge, e.g. the Level"""
@@ -97,20 +100,3 @@ class LanguageKnowledge(models.Model):
         default=6,
         validators=[MaxValueValidator(6), MinValueValidator(1)]
     )
-
-
-
-"""
-ONLY_VALIDATED = 0
-ONLY_NOT_VALIDATED = 1
-ALL = 2
-VALIDATED_AND_APPROVED = 3
-
-VALIDATION_CHOICES = (
-    (ONLY_VALIDATED, _("validierte")),
-    (ONLY_NOT_VALIDATED, _("nicht validierte")),
-    (ALL, _("validierte und nicht validierte")),
-    (VALIDATED_AND_APPROVED, _("validiert und von uns approved")),
-)
-"""
-
