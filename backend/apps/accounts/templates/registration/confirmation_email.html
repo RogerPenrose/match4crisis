@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% blocktrans with firstname=user.first_name%}
+Hallo {{firstname}},
+
+Herzlich Willkommen bei match4crisis!
+Bitte bestätige deine E-Mail-Adresse durch einen Klick auf den folgenden Link.
+{% endblocktrans %}
+
+{% block verification_link %}
+{{ protocol }}://{{ domain }}{% url 'confirm_email' uidb64=uid token=token %}
+{% endblock %}
+
+{% blocktrans %}
+Vielen Dank,
+Dein Team von match4crisis
+{% endblocktrans %}

@@ -5,18 +5,22 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.tokens import default_token_generator  
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.encoding import  force_text
+from django.utils.http import urlsafe_base64_decode
+
 from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
 from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
 from apps.accounts.forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm
 from rest_framework.views import APIView
 
-from apps.accounts.utils import send_password_set_email
 #from apps.iofferhelp.forms import HelperForm, HelperFormAndMail, HelperFormEditProfile
 from apps.iofferhelp.models import Helper
 #from apps.iofferhelp.views import send_mails_for
@@ -29,6 +33,7 @@ from apps.iamorganisation.models import Organisation
 from apps.ineedhelp.models import Refugee
 from apps.offers.models import GenericOffer, OFFER_MODELS
 
+from .utils import send_confirmation_email, send_password_set_email
 from .decorator import organisationRequired, helperRequired
 from .models import User
 
@@ -44,7 +49,8 @@ def signup_refugee(request):
 
         # check whether it's valid:
         if form.is_valid():
-            form.save()
+            user, refugee = form.save()
+            send_confirmation_email(user, get_current_site(request).domain)
             return HttpResponseRedirect("/ineedhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
@@ -75,6 +81,8 @@ def signup_helper(request):
                         genericOffer.save()
                         specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer)
                         specOffer.save()
+                    
+            send_confirmation_email(user, get_current_site(request).domain)
 
             return HttpResponseRedirect("/iofferhelp/thanks")
 
@@ -207,13 +215,29 @@ def delete_me(request):
     return render(request, "deleted_user.html")
 
 
-@login_required
-def validate_email(request):
-    if not request.user.validated_email:
+def confirm_email(request, uidb64, token):
+    
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and user.validatedEmail:
+        return render(request, "email_already_confirmed.html")
+    elif user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.validatedEmail = True
+        user.emailValidationDate = timezone.now()
+        user.save()
+        return render(request, "signup_complete.html")
+    else:
+        return render(request, "confirmation_link_invalid.html")
+
+    """if not request.user.validated_email:
         request.user.validated_email = True
         request.user.email_validation_date = timezone.now()
         request.user.save()
-    return HttpResponseRedirect("login_redirect")
+    return HttpResponseRedirect("login_redirect")"""
 
 @login_required
 def change_email(request):

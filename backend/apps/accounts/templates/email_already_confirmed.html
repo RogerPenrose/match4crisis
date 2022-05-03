@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}
+{% blocktrans %}Registrierung erfolgreich{% endblocktrans %}
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="bg-container">
+  <div class="container login-form">
+    <div class="col-xl-7 col-lg-8 col-md-10 col-sm-12 col-12" style="margin: 0 auto;">
+      <div class="card login-card text-center align-self-center align-items-center">
+
+        <svg class="bi bi-info" style="color:#F5980F; font-size:5rem; margin-bottom: 15px;" width="1em" height="1em"
+          viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+            d="M 12 2 C 6.4889971 2 2 6.4889971 2 12 C 2 17.511003 6.4889971 22 12 22 C 17.511003 22 22 17.511003 22 12 C 22 6.4889971 17.511003 2 12 2 z M 12 4 C 16.430123 4 20 7.5698774 20 12 C 20 16.430123 16.430123 20 12 20 C 7.5698774 20 4 16.430123 4 12 C 4 7.5698774 7.5698774 4 12 4 z M 11 7 L 11 9 L 13 9 L 13 7 L 11 7 z M 11 11 L 11 17 L 13 17 L 13 11 L 11 11 z"
+            clip-rule="evenodd" />
+        </svg>
+
+        <h2 class="font-weight-light">{% blocktrans %}Deine E-Mail-Adresse wurde bereits bestätigt{% endblocktrans %}
+        </h2>
+        <p>{% blocktrans %}Du hast deine E-Mail-Adresse bereits erfolgreich bestätigt. <br>
+          Bitte verwende diesen Link nicht mehr, wenn du zu match4crisis gelangen möchtest.<br>
+          {% endblocktrans %}<br></p>
+        <a class="btn" href="{% url 'login' %}">{% blocktrans %}Hier gelangst du zum Login{% endblocktrans %}</a>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

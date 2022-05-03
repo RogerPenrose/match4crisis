@@ -69,7 +69,7 @@ urlpatterns = [
     path("organisation_login", views.organisation_login, name="organisation_login"),
     path("refugee_login", views.refugee_login, name="refugee_login"),
     path("", include("django.contrib.auth.urls")),
-    path("validate_email", views.validate_email, name="validate_email"),
+    path("confirm_email/<uidb64>/<token>/", views.confirm_email, name="confirm_email"),
     path("change_email", views.change_email, name="change_email"),
     path("change_email_done", views.change_email_done, name="change_email_done"),
     path("change_email_complete", views.change_email_complete, name="change_email_complete"),

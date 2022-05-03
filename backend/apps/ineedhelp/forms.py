@@ -32,7 +32,7 @@ class RefugeeCreationForm(CustomUserCreationForm):
         # TODO add more fields as necessary
         if(commit):
             refugee.save()
-        return refugee
+        return user, refugee
 
 class RefugeePreferencesForm(SpecialPreferencesForm):
     class Meta:
