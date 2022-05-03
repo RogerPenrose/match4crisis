@@ -35,8 +35,7 @@ class Command(BaseCommand):
         TIME_CHOICES_CL = ['VM', 'NM', 'AB']
         residenceChoices = ['SO','RO', 'HO', 'LE'] 
         HELP_CHOICES_MP= ['ON',  'OS']
-        HELP_CHOICES_TR = ['GT', 'PT']
-        GENDER_CHOICES = ['FE', 'MA', 'NO']
+        GENDER_CHOICES = ['FE', 'MA', 'NO', 'OT']
         HELP_CHOICES= ['AM', 'LE', 'OT']
         WELFARE_CHOICES = ["ELD", "DIS", "PSY"]
         if options['user_id']:

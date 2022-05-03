@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block header %}
+<style>
+    .organisation-card {
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 25px;
+        padding: 10px;
+        min-height: 115px;
+        margin: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block title %}
+{% blocktrans %}Hilfsorganisationen-Übersicht{% endblocktrans %}
+{% endblock %}
+
+
+{% block content%}
+<div class="container">
+    <div style="height:40px"></div>
+    <h1>{% blocktrans %}Hilfsorganisationen{% endblocktrans %}</h1>
+</div>
+<div class="container pagination" style="text-align: center; margin: 0 auto; margin-top: 55px;">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
+        <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
+        {% endif %}
+
+        <span class="current">
+            {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+<div class="container cards">
+    {% for entry in page_obj %}
+    {% include 'organisation-card.html' %}
+    {% empty %}
+    {% blocktrans %}
+    Bald gibt es hier mehr zu sehen.
+    {% endblocktrans %}
+    {% endfor %}
+</div>
+{% endblock %}
