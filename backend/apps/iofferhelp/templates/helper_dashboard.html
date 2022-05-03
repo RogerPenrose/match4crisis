@@ -181,62 +181,54 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
      </svg></div> 
      
-     <div class="col-11">  
+     {% if activeOffers|length < 1 and pausedOffers|length < 1 %} <div class="col-11">  
        Du musst mindestens eine Kategorie vervollständigen, um zu starten!</div>
-     </div>
+     </div> {%endif%}
 
-    <h3 style="margin-bottom: 25px; ">{% blocktrans %}Kategorien vervollständigen (2){% endblocktrans %}</h3>    
+    <h3 style="margin-bottom: 25px; ">{% blocktrans %}Kategorien vervollständigen {{incompleteOffers|length}}{% endblocktrans %}</h3>    
    
-
-    <div class="container cards row">
-      <a href="#">        
-      <div class="col-12 col-lg-6 offer-card"> 
-
-          <div class="row align-self-center align-items-center">
-          <div class="col-4 col-sm-2" style="padding: 5px;">
-       
-              <div class="background-photo-search" style="background-image: url(/static/img/offers/accommodation.jpg)"></div>
-
-            </div>
-          <div class="description col-6 col-sm-8">
-<h3>Unterkunft</h3>
-<p>Suche nach einer passenden Unterkunft.</p>
-
-</div>
-<div class="incomplete col-2 col-sm-2">
-  <p></p>
-</div>
-          </div>
-
-      </div>   
-      </a>  
     
-      <a href="#">        
-          <div class="col-12 col-lg-6 offer-card"> 
+    <div class="container cards row">
 
-              <div class="row align-self-center align-items-center">
-              <div class="col-4 col-sm-2" style="padding: 5px;">
-           
-                  <div class="background-photo-search" style="background-image: url(/static/img/offers/buerocracy.jpg)"></div>
-
-                </div>
-              <div class="description col-6 col-sm-8">
-<h3>Bürokratie</h3>
-<p>z.B. Unterstützung bei Behördengängen.</p>
-
-</div>
-
-<div class="incomplete col-2 col-sm-2">
-
-<p></p>
-  
-  </div>
-              </div>
-
-          </div>   
-          </a>  
-
-
+      {% if incompleteOffers %}
+      {% for entry in incompleteOffers %} 
+      {{entry.genericOffer.offerType}}
+      {% if entry.offer.genericOffer.offerType == "AC"  %}  
+          {% include 'offers/accommodation-card.html' %}
+      {% endif %}      
+      {% if entry.offer.genericOffer.offerType == "TL"  %}
+          {% include 'offers/translation-card.html' %}
+       {%endif%}
+      {% if entry.offer.genericOffer.offerType == "TR"  %}
+          {% include 'offers/transportation-card.html' %} 
+      {%endif%}
+      {% if entry.offer.genericOffer.offerType == "BU"  %}
+          {% include 'offers/buerocratic-card.html' %}
+      {% endif %}
+      {% if entry.offer.genericOffer.offerType == "MP"  %}
+          {% include 'offers/manpower-card.html' %}
+      {%endif%}
+      {% if entry.offer.genericOffer.offerType == "CL"  %}
+          {% include 'offers/childcare-card.html' %}
+      {%endif%}     
+      {% if entry.offer.genericOffer.offerType == "WE"  %}
+          {% include 'offers/welfare-card.html' %}
+      {% endif%}
+      {% if entry.offer.genericOffer.offerType == "JO"  %}
+          {% include 'offers/job-card.html' %}
+      {%endif%}
+      {% endfor %}
+      {% else %}
+      {%if user.isHelper %}
+      {% blocktrans %}
+      Du hast keine unvollständigen Angebote.
+      {% endblocktrans %}
+      {%else%}
+      {% blocktrans %}
+      Du hast keine unvollständigen Gesuche.
+      {% endblocktrans %}
+      {%endif%}
+      {% endif %}
             
 
         </div>
@@ -244,58 +236,98 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
       
 
    
-          <h3 style="margin-bottom: 25px; margin-top:35px;">{% blocktrans %}Deine Angebote (2){% endblocktrans %}</h3>    
+          <h3 style="margin-bottom: 25px; margin-top:35px;">{% blocktrans %}Deine aktiven Angebote {{activeOffers|length}}{% endblocktrans %}</h3>    
    
 
           <div class="container cards row">
-            <a href="#">        
-            <div class="col-12 col-lg-6 offer-card"> 
-      
-                <div class="row align-self-center align-items-center">
-                <div class="col-4 col-sm-2" style="padding: 5px;">
-             
-                    <div class="background-photo-search" style="background-image: url(/static/img/offers/accommodation.jpg)"></div>
-      
-                  </div>
-                <div class="description col-6 col-sm-8">
-      <h3>Unterkunft</h3>
-      <p>Suche nach einer passenden Unterkunft.</p>
-      
-      </div>
-      <div class="complete col-2 col-sm-2">
-        <p></p>
-      </div>
-                </div>
-      
-            </div>   
-            </a>  
-          
-            <a href="#">        
-                <div class="col-12 col-lg-6 offer-card"> 
-      
-                    <div class="row align-self-center align-items-center">
-                    <div class="col-4 col-sm-2" style="padding: 5px;">
-                 
-                        <div class="background-photo-search" style="background-image: url(/static/img/offers/buerocracy.jpg)"></div>
-      
-                      </div>
-                    <div class="description col-6 col-sm-8">
-      <h3>Bürokratie</h3>
-      <p>z.B. Unterstützung bei Behördengängen.</p>
-      
-      </div>
-      
-      <div class="complete col-2 col-sm-2">
-      
-      <p></p>
-        
-        </div>
-                    </div>
-      
-                </div>   
-                </a>           
+          {% if activeOffers %}
+          {% for entry in activeOffers %} 
+          {{entry.genericOffer.offerType}}
+          {% if entry.offer.genericOffer.offerType == "AC"  %}  
+              {% include 'offers/accommodation-card.html' %}
+          {% endif %}      
+          {% if entry.offer.genericOffer.offerType == "TL"  %}
+              {% include 'offers/translation-card.html' %}
+           {%endif%}
+          {% if entry.offer.genericOffer.offerType == "TR"  %}
+              {% include 'offers/transportation-card.html' %} 
+          {%endif%}
+          {% if entry.offer.genericOffer.offerType == "BU"  %}
+              {% include 'offers/buerocratic-card.html' %}
+          {% endif %}
+          {% if entry.offer.genericOffer.offerType == "MP"  %}
+              {% include 'offers/manpower-card.html' %}
+          {%endif%}
+          {% if entry.offer.genericOffer.offerType == "CL"  %}
+              {% include 'offers/childcare-card.html' %}
+          {%endif%}     
+          {% if entry.offer.genericOffer.offerType == "WE"  %}
+              {% include 'offers/welfare-card.html' %}
+          {% endif%}
+          {% if entry.offer.genericOffer.offerType == "JO"  %}
+              {% include 'offers/job-card.html' %}
+          {%endif%}
+          {% endfor %}
+          {% else %}
+          {%if user.isHelper %}
+          {% blocktrans %}
+          Du hast keine aktiven Angebote.
+          {% endblocktrans %}
+          {%else%}
+          {% blocktrans %}
+          Du hast keine aktiven Gesuche.
+          {% endblocktrans %}
+          {%endif%}
+          {% endif %}
+                
+    
+</div>
+<h3 style="margin-bottom: 25px; margin-top:35px;">{% blocktrans %}Deine pausierten Angebote {{pausedOffers|length}}{% endblocktrans %}</h3>    
+   
 
+<div class="container cards row">
+{% if pausedOffers %}
+{% for entry in pausedOffers %} 
+{{entry.genericOffer.offerType}}
+{% if entry.offer.genericOffer.offerType == "AC"  %}  
+    {% include 'offers/accommodation-card.html' %}
+{% endif %}      
+{% if entry.offer.genericOffer.offerType == "TL"  %}
+    {% include 'offers/translation-card.html' %}
+ {%endif%}
+{% if entry.offer.genericOffer.offerType == "TR"  %}
+    {% include 'offers/transportation-card.html' %} 
+{%endif%}
+{% if entry.offer.genericOffer.offerType == "BU"  %}
+    {% include 'offers/buerocratic-card.html' %}
+{% endif %}
+{% if entry.offer.genericOffer.offerType == "MP"  %}
+    {% include 'offers/manpower-card.html' %}
+{%endif%}
+{% if entry.offer.genericOffer.offerType == "CL"  %}
+    {% include 'offers/childcare-card.html' %}
+{%endif%}     
+{% if entry.offer.genericOffer.offerType == "WE"  %}
+    {% include 'offers/welfare-card.html' %}
+{% endif%}
+{% if entry.offer.genericOffer.offerType == "JO"  %}
+    {% include 'offers/job-card.html' %}
+{%endif%}
+{% endfor %}
+{% else %}
+{%if user.isHelper %}
+{% blocktrans %}
+Du hast keine aktiven Angebote.
+{% endblocktrans %}
+{%else%}
+{% blocktrans %}
+Du hast keine aktiven Gesuche.
+{% endblocktrans %}
+{%endif%}
+{% endif %}
+      
 
+</div>
                     
 
 

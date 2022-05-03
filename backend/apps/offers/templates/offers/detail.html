@@ -300,11 +300,7 @@ navigator.share({
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
                 <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
                 <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-<<<<<<< HEAD
-              </svg> {% if generic.location.value == ""%}{{location.country}}-{{ location.plz }} {{location.city}} {{ location.streetname }} {{location.streetnumber}}{% else %}{{generic.location.value}}{%endif%}</p> 
-=======
-              </svg> {{location}}</p> {%endif%}
->>>>>>> origin/frontend
+              </svg> {{location}}</p> 
             <p>
 
               <div name="edit" style="display:none">
@@ -318,16 +314,9 @@ navigator.share({
                   <input type="hidden" name="bb"/>
                 </p>
               </div>
-<<<<<<< HEAD
-              <p class="map"><iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location.string }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+           {%if  location != "N/A" %}   <p class="map"><iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location.string }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             
-=======
-              <p class="map">
-              {% if generic.offerType.value != "TR" %}<iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{location}}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-              {% else%}<iframe src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&origin={{location}}&destination={{detail.locationEnd.value|safe}}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-              {%endif%}
->>>>>>> origin/frontend
-            </p>          
+            </p>{%else%} <p> {%blocktrans%}Kein Ort angegeben{%endblocktrans%}</p>{% endif%}          
             <p>ein {%if generic.requestForHelp == False%}Angebot{%else%}Gesuch{%endif%} von {{ username|default:"Anonym" }}, erstellt am {{createdAt }}</p>
               <p style="margin-top: 25px;" class="contact">
               <a href="/offers/{{id}}/contact" class="btn btn-green" role="button" aria-pressed="true">{% if  user.is_authenticated != True %} {% blocktrans %}Registrieren und Kontakt aufnehmen{% endblocktrans %} {% else %} {% blocktrans %}Jetzt kontaktieren{% endblocktrans %} {%endif %}   

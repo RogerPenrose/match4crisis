@@ -214,7 +214,7 @@ def getSpecificOffers(genericOffers: list):
     specificOffers = []
 
     for offer in genericOffers:       
-        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer)
+        specOff = OFFER_MODELS[offer.offerType].__class__.objects.get(genericOffer=offer)
         specificOffers.append(specOff)
 
     return specificOffers

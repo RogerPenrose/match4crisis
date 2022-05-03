@@ -23,11 +23,16 @@ class HelperDashboardView(DashboardView):
         incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
         runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
         firstname = request.user.first_name
+        userOffers =GenericOffer.objects.filter(userId=request.user.id)
+        incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
+        logger.warning("Have incomplete Offers: "+str(len(incompleteOffers)))
+        runningOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=True)))
+        pausedOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
 
         context = {
-            "pausedOffersCount": pausedOffersCount,
-            "incompleteOffersCount": incompleteOffersCount,
-            "runningOffersCount": runningOffersCount,
+            "pausedOffers": pausedOffers,
+            "incompleteOffers": incompleteOffers,
+            "runningOffers": runningOffers,
             "firstname": firstname
         }
 
@@ -49,25 +54,7 @@ def choose_help(request):
                 logger.warning("Key: "+k+" Value: "+v)
                 if(k in OFFER_MODELS):
                     # If the offer of type k was selected, set its value to true in the chosenHelp dict, otherwise false
-                    offer = GenericOffer()
-                    offer.userId = request.user
-                    specificOffer = OFFER_MODELS[k]
-                    if len(k) > 2:
-                        if "transportation" in k:
-                            offer.offerType = "TR"
-                        if "translation" in k:
-                            offer.offerType = "TL"
-                        if "buerocracy" in k:
-                            offer.offerType = "BU"
-                        if "welfare" in k:
-                            offer.offerType = "WE"
-                    else:
-                        offer.offertype = k
-                    offer.active = False
-                    offer.save()
-                    specificOffer.genericOffer= offer
-                    specificOffer.save()
-                    
+                    chosenHelp[k] = v
 
             # Add the chosen help data to the request sessions
             request.session['chosenHelp'] = chosenHelp

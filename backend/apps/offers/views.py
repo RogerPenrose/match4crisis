@@ -383,10 +383,13 @@ def mergeImages(offers):
     for entry in  offers: 
         images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
         location = {}
-        if entry.genericOffer.location == "":
-            location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
-            if location.get("city"):
-                entry.genericOffer.location =  location["city"]
+        if entry.genericOffer.location == "" :
+            if  entry.genericOffer.lat is not None and entry.genericOffer.lng is not None:
+                location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
+                if location.get("city"):
+                    entry.genericOffer.location =  location["city"]
+                else :
+                    entry.genericOffer.location = "N/A"
             else :
                 entry.genericOffer.location = "N/A"
             entry.genericOffer.save()  
