@@ -6,8 +6,6 @@ from apps.ineedhelp.models import Refugee
 from apps.offers.models import getSpecificOffers, GenericOffer
 from apps.offers.views import mergeImages
 from apps.accounts.decorator import refugeeRequired
-def thx(request):
-    return render(request, "thanks.html")
 
 @method_decorator(refugeeRequired, name='dispatch')
 class RefugeeDashboardView(DashboardView):

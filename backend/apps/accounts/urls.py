@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
+from django.views.generic import TemplateView
 
 from . import views
 
@@ -65,6 +66,7 @@ urlpatterns = [
         views.CustomLoginView.as_view(template_name="registration/login.html"),
         name="login",
     ),
+    path("thanks", views.thanks, name="thanks"),
     path("helper_login", views.helper_login, name="helper_login"),
     path("organisation_login", views.organisation_login, name="organisation_login"),
     path("refugee_login", views.refugee_login, name="refugee_login"),

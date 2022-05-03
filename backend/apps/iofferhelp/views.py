@@ -10,8 +10,6 @@ from .forms import ChooseHelpForm
 from apps.accounts.decorator import helperRequired
 import logging
 logger = logging.getLogger("django")
-def thx(request):
-    return render(request, "thanks.html")
 
 @method_decorator(helperRequired, name='dispatch')
 class HelperDashboardView(DashboardView):

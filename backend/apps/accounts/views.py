@@ -101,18 +101,16 @@ def signup_organisation(request):
 
         if form_info.is_valid():
             user, organisation = register_organisation_in_db(request, form_info.cleaned_data)
-            send_password_set_email(
-                email=form_info.cleaned_data["email"],
-                host=request.META["HTTP_HOST"],
-                template="registration/password_set_email_organisation.html",
-                subject_template="registration/password_reset_email_subject.txt",
-            )
+            send_confirmation_email(user, get_current_site(request).domain)
             return HttpResponseRedirect("/iamorganisation/thanks_organisation")
     else:
         form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
     form_info.helper.form_tag = False
     return render(request, "signup_organisation.html", {"form_info": form_info})
+
+def thanks(request):
+    return render(request, "thanks.html")
 
 def signup_complete(request):
     return render(request, "signup_complete.html")
@@ -269,15 +267,10 @@ def change_email_complete(request):
     return render(request, "change_email_complete.html")
     
 
-def resend_validation_email(request, email):
+def resend_validation_email(request, user):
     if request.user.is_anonymous:
-        if not User.objects.get(email=email).validated_email:
-            send_password_set_email(
-                email=email,
-                host=request.META["HTTP_HOST"],
-                template="registration/password_set_email_.html",
-                subject_template="registration/password_reset_email_subject.txt",
-            )
+        if not user.validatedEmail:
+            send_confirmation_email(user, get_current_site(request).domain)
             return HttpResponseRedirect("/accounts/password_reset/done")
     return HttpResponseRedirect("/")
 
