@@ -184,11 +184,7 @@ class LanguageOfferMap(models.Model):
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
     'AC' : AccommodationOffer(),
-    'TL' : TranslationOffer(),
-    'TR' : TransportationOffer(),
-    'BU' : BuerocraticOffer(),
     'CL' : ChildcareOffer(),
-    'WE' : WelfareOffer(),
     'MP' : ManpowerOffer(),
     'JO' : JobOffer(),
     'DO' : DonationOffer(),
@@ -206,7 +202,19 @@ OFFER_MODELS = {
 
 
 }
+SPEC_OFFER_MODELS ={
+    'AC' : AccommodationOffer(),
+    'CL' : ChildcareOffer(),
+    'WE' : WelfareOffer(),
+    'MP' : ManpowerOffer(),
+    'JO' : JobOffer(),
+    'DO' : DonationOffer(),
+    'TL' : TranslationOffer(),
+    'BU' : BuerocraticOffer(),
+    'TR' : TransportationOffer(),
+    
 
+}
 def getSpecificOffers(genericOffers: list):
     """
     Takes a list of generic offers and returns a list of the matching specific offers.
@@ -214,7 +222,7 @@ def getSpecificOffers(genericOffers: list):
     specificOffers = []
 
     for offer in genericOffers:       
-        specOff = OFFER_MODELS[offer.offerType].__class__.objects.get(genericOffer=offer)
+        specOff = SPEC_OFFER_MODELS[offer.offerType].__class__.objects.get(genericOffer=offer)
         specificOffers.append(specOff)
 
     return specificOffers
