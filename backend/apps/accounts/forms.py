@@ -6,6 +6,7 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from django.core import validators
 from django.utils.text import capfirst
+from django.utils.html import format_html
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, HTML, Layout, Row, Submit
@@ -174,11 +175,13 @@ class CustomAuthenticationForm(forms.Form):
     )
 
     error_messages = {
-        "invalid_login": _(
-            "Please enter a correct %(email)s and password. Note that both "
-            "fields may be case-sensitive."
+        "invalid_login": _("Falsche E-Mail-Adresse oder falsches Passwort. Bitte überprüfe deine Eingabe."),
+        "inactive": _("Dieser Account wurde deaktiviert. Bitte melde dich beim Support wenn du denkst, dass dein Account zu unrecht deaktiviert wurde."),
+        "email_not_confirmed" : format_html('{error_msg}: <a href="{href}">{link_content}</a>',
+            error_msg = _("Bitte bestätige zunächst deine E-Mail-Adresse. Falls du keine Bestätigung-E-Mail erhalten hast, kannst du hier eine Neue anfordern"), 
+            href = "/accounts/thanks", # reversing results in a circular import error even with reverse_lazy, as this dict is evaluated at startup -> reverse_lazy('thanks'),
+            link_content = _("Neue Bestätigungs-E-Mail anfordern")
         ),
-        "inactive": _("This account is inactive."),
     }
 
     def __init__(self, request=None, *args, **kwargs):
@@ -218,12 +221,20 @@ class CustomAuthenticationForm(forms.Form):
         Controls whether the given User may log in. This is a policy setting,
         independent of end-user authentication. This default behavior is to
         allow login by active users, and reject login by inactive users.
+        Also disallows login by users who have not confirmed their email address.
 
         If the given user cannot log in, this method should raise a
         ``ValidationError``.
 
         If the given user may log in, this method should return None.
         """
+
+        if not user.validatedEmail:
+            raise ValidationError(
+                self.error_messages["email_not_confirmed"],
+                code="email_not_confirmed",
+            )
+
         if not user.is_active:
             raise ValidationError(
                 self.error_messages["inactive"],
@@ -245,6 +256,14 @@ def check_unique_email(value):
         raise ValidationError(_("Ein Benutzer mit dieser E-Mail-Adresse existiert bereits"))
     return value
 
+def email_exists_or_already_validated(value):
+    try:
+        u = User.objects.get(email=value)
+        if u.validatedEmail:
+            raise ValidationError(_("Diese E-Mail-Adresse wurde bereits bestätigt."))
+    except User.DoesNotExist:
+        raise ValidationError(_("Es ist noch kein Nutzer mit diese E-Mail-Adresse registriert."))
+
 class ChangeEmailForm(forms.Form):
     email = forms.EmailField(label=_("Neue E-Mail-Adresse"), validators=[check_unique_email])
 
@@ -258,3 +277,15 @@ class ChangeEmailForm(forms.Form):
 
         self.helper.add_input(Submit("submit", _("E-Mail-Adresse ändern")))
 
+class ResendConfirmationEmailForm(forms.Form):
+    email = forms.EmailField(label=_("E-Mail-Adresse"), validators=[email_exists_or_already_validated])
+
+    def __init__(self, *args, **kwargs):
+        super(ResendConfirmationEmailForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-resendConfirmationEmailForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "resend_confirmation_email"
+
+        self.helper.add_input(Submit("submit", _("Neue Bestätigungs-E-Mail anfordern")))

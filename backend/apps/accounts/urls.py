@@ -43,9 +43,9 @@ from . import views
     ),"""
 urlpatterns = [ 
     path(
-        "resend_validation_email/<email>",
-        views.resend_validation_email,
-        name="resend_validation_email",
+        "resend_confirmation_email",
+        views.resend_confirmation_email,
+        name="resend_confirmation_email",
     ),
     path(
         "password_reset/",

@@ -1,4 +1,5 @@
 import logging
+from django.conf import settings
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -9,7 +10,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.utils.encoding import  force_text
@@ -18,7 +19,6 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
 from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
-from apps.accounts.forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm
 from rest_framework.views import APIView
 
 #from apps.iofferhelp.forms import HelperForm, HelperFormAndMail, HelperFormEditProfile
@@ -36,6 +36,7 @@ from apps.offers.models import GenericOffer, OFFER_MODELS
 from .utils import send_confirmation_email, send_password_set_email
 from .decorator import organisationRequired, helperRequired
 from .models import User
+from .forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm, ResendConfirmationEmailForm
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +52,7 @@ def signup_refugee(request):
         if form.is_valid():
             user, refugee = form.save()
             send_confirmation_email(user, get_current_site(request).domain)
-            return HttpResponseRedirect("/ineedhelp/thanks")
+            return redirect('thanks')
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -122,6 +123,9 @@ def register_organisation_in_db(request, formData):
     user = User.objects.create(email=formData["email"], isOrganisation=True)
     user.set_password(pwd)
     user.phoneNumber = formData["phoneNumber"]
+    # In Prod: user should be inactive (unable to log in) until email is confirmed
+    # Bypass email confirmation in Dev (where settings.DEBUG is True)
+    user.is_active = settings.DEBUG
     user.save()
 
     organisation = Organisation.objects.create(user=user)
@@ -267,12 +271,19 @@ def change_email_complete(request):
     return render(request, "change_email_complete.html")
     
 
-def resend_validation_email(request, user):
-    if request.user.is_anonymous:
-        if not user.validatedEmail:
+def resend_confirmation_email(request):
+    if request.method == "POST":
+        logger.info("Resend confirmation email request", extra={"request": request})
+        form = ResendConfirmationEmailForm(request.POST)
+
+        if form.is_valid():
+            user = User.objects.get(email=form.cleaned_data['email'])
             send_confirmation_email(user, get_current_site(request).domain)
-            return HttpResponseRedirect("/accounts/password_reset/done")
-    return HttpResponseRedirect("/")
+            return redirect('thanks')
+    else:
+        form = ResendConfirmationEmailForm()
+
+    return render(request, "resend_confirmation_email.html", {"form":form})
 
 
 class UserCountView(APIView):
