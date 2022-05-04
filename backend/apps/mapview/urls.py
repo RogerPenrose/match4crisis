@@ -4,15 +4,15 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("accommodationOffers", views.accommodationOffersJSON, name="accommodationOffersJSON"),
-    path("medicalOffers", views.medicalOffersJSON, name="medicalOffersJSON"),
+    path("AccommodationOffers", views.accommodationOffersJSON, name="accommodationOffersJSON"),
+    path("MedicalOffers", views.medicalOffersJSON, name="medicalOffersJSON"),
     path("BuerocraticOffers", views.buerocraticOffersJSON, name="buerocraticOffersJSON"),
     path("ManpowerOffers", views.manpowerOffersJSON, name="manpowerOffersJSON"),
     path("ChildcareOffers", views.childcareOffersJSON, name="childcareOffersJSON"),
     path("generalInformationJSON", views.generalInformationJSON, name="generalInformationJSON"),
-    path("jobOffers", views.jobOffersJSON, name="jobOffersJSON"),
-    path("translationOffers", views.translationOffersJSON, name="translationOffersJSON"),
-    path("transportationOffers", views.transportationOffersJSON, name="transportationOffersJSON"),
+    path("JobOffers", views.jobOffersJSON, name="jobOffersJSON"),
+    path("TranslationOffers", views.translationOffersJSON, name="translationOffersJSON"),
+    path("TransportationOffers", views.transportationOffersJSON, name="transportationOffersJSON"),
     path("mapview/", views.mapviewjs, name="mapview/")
 
 ]

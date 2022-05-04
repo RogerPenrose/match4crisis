@@ -31,28 +31,14 @@ def getCenterOfCity(city):
                     center = mappings.get(entry)
                     return center
 def mapviewjs(request):
-    accommodationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="AC", requestForHelp = False).count()
-    transportationCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="TR", requestForHelp = False).count()
-    buerocraticCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="BU", requestForHelp = False).count()
-    jobCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="JO", requestForHelp = False).count()
-    medicalCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="WE", requestForHelp = False).count()
-    translationCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL", requestForHelp = False).count()
-    manpowerCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="MP", requestForHelp = False).count()
-    childcareCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False, requestForHelp = False ).count()
-    
-    accommodationRequestCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="AC", requestForHelp = True).count()
-    transportationRequestCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="TR", requestForHelp = True).count()
-    buerocraticRequestCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="BU", requestForHelp = True).count()
-    jobRequestCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="JO", requestForHelp = True).count()
-    medicalRequestCount =  GenericOffer.objects.filter(active= True, isDigital = False, offerType="WE", requestForHelp = True).count()
-    translationRequestCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="TL", requestForHelp = True).count()
-    manpowerRequestCount = GenericOffer.objects.filter(active= True, isDigital = False, offerType="MP", requestForHelp = True).count()
-    childcareRequestCount = GenericOffer.objects.filter(Q(offerType = "CL")|Q(offerType="BA"),active= True, isDigital = False, requestForHelp = True ).count()
-    context = { "entryCount": {"buerocratic": buerocraticCount,"manpower": manpowerCount, "accommodation": accommodationCount, "transportation": transportationCount, "translation": translationCount, "childcare": childcareCount, "medical": medicalCount, "job": jobCount ,
-    "buerocraticRequests": buerocraticRequestCount,"manpowerRequests": manpowerRequestCount, "accommodationRequests": accommodationRequestCount, "transportationRequests": transportationRequestCount, "translationRequests": translationRequestCount, "childcareRequests": childcareRequestCount, "medicalRequests": medicalRequestCount, "jobRequests": jobRequestCount }}
-    #"accommodation" :request.GET.get("accommodation") == 'True', "transportation": request.GET.get("transportation") == 'True',  "translation": request.GET.get("translation")  == 'True',  "generic": request.GET.get("generic")  == 'True'}
-    context.update(request.GET.dict())
-    logger.warning("rendering mapview JS ? "+str(request.GET.dict()))
+    context = {}
+    BASE= "/mapview/"
+    if request.user.isOrganisation:
+        #get only MP
+        context["categories"] = [BASE+"ManpowerOffers"]
+    else:
+        context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
+    logger.warning("rendering mapview JS ? "+str(context))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")
 # Should be safe against BREACH attack because we don't have user input in reponse body
@@ -83,10 +69,15 @@ def generalInformationJSON(request):
     }
     return JsonResponse(returnVal)
 def accommodationOffersJSON(request):
-    offers = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = False)
-    requests = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = True)
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = False)
+    if request.user.isHelper:
+        requests = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = True)
     icon =  "<img src=\"/static/img/icons/icon_AC.svg\">"
     facilities = {
+        "type" : "accommodation",
         "legend": icon+str(_("Unterbringungen ")),
         "offers":[{
         "text":  """<div style=\"margin-left: -19px; margin-right:-19px; margin-top:-13px;\">
@@ -146,11 +137,17 @@ LOCATION_SVG = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"
   <path d=\"M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z\"/> \
 </svg>"    
 def transportationOffersJSON(request):
-    offers = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     
     icon =  "<img src=\"/static/img/icons/icon_TR.svg\">"
     facilities = {
+        "type" : "transportation",
         "legend": icon+str(_("Logistik ")),
         "offers":[{
         "text" : "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4> <br>"+LOCATION_SVG+str(e.distance or "N/A")+"km um "+str(e.genericOffer.location or "N/A")+" .\n\n<br>"+str(str(e.numberOfPassengers) if e.helpType_transport == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display())+"<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
@@ -165,10 +162,16 @@ def transportationOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
  
 def medicalOffersJSON(request):
-    offers = WelfareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = WelfareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = WelfareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = WelfareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_WE.svg\">"
     facilities = {
+        "type" : "welfare",
         "legend": icon+str(_("Medizinische Hilfe ")),
         "offers":[{
         "text": "<h4 class=\"popup-title\">Medizinisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_welfare_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
@@ -183,10 +186,16 @@ def medicalOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
  
 def buerocraticOffersJSON(request):
-    offers = BuerocraticOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = BuerocraticOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = BuerocraticOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = BuerocraticOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_BU.svg\">"
     facilities = {
+        "type" : "buerocracy",
         "legend": icon+str(_("Bürokratische ")),
         "offers":[{
         "text":  "<h4 class=\"popup-title\">Bürokratisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_buerocratic_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
@@ -202,10 +211,16 @@ def buerocraticOffersJSON(request):
 
 
 def childcareOffersJSON(request):
-    offers = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_CL.svg\">"
     facilities = {
+        "type" : "childcare",
         "legend": icon+str(_("Kinderbetreuung ")),
         "offers":[{
         "text": "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+str("Hat eine Ausbildung\n<br>" if e.hasEducation else "")+str("Hat Erfahrung\n<br>" if e.hasExperience else "")+str("Hat Räumlichkeiten" if e.hasSpace else str(e.distance)+"km Umkreis")+"\n<br>"+e.get_helpType_childcare_display()+"<br>Anzahl Kinder:"+str(e.numberOfChildren)+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
@@ -220,10 +235,16 @@ def childcareOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
 
 def jobOffersJSON(request):
-    offers = JobOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = JobOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = JobOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = JobOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_JO.svg\">"
     facilities = {
+        "type" : "joboffers",
         "legend": icon+str(_("Jobangebote ")),
         "offers":[{
         "text":"<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_jobType_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
@@ -238,10 +259,16 @@ def jobOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
 
 def manpowerOffersJSON(request):
-    offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
     facilities = {
+        "type" : "manpower",
         "legend": icon+str(_("Manneskraft ")),
         "offers":[{
         "text": "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>Reisebereitschaft: "+str(e.get_distanceChoices_display())+"\n<br>"+str("Bereit für Auslandseinsätze \n<br>" if e.canGoforeign else"")+str("Hat Krisenerfahrung\n<br>"  if e.hasExperience_crisis else"")+str("Hat medizinische Erfahrung\n<br>" if e.hasMedicalExperience else "")+str("Hat Führerschein" if e.hasDriverslicense else "")+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
@@ -256,10 +283,16 @@ def manpowerOffersJSON(request):
     return JsonResponse(facilities, safe=False) 
 
 def translationOffersJSON(request):
-    offers = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    requests = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
+    requests = []
+    offers= []
+    if request.user.isRefugee:
+        offers = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
+    if request.user.isHelper:
+        requests = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_TL.svg\">"
     facilities = {
+        "type" : "translation",
         "legend": icon+str(_("Übersetzungen ")),
         "offers":[{
         "text": "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+str([language.englishName for language in e.languages.all()])+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
