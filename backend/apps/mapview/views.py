@@ -32,12 +32,17 @@ def getCenterOfCity(city):
                     return center
 def mapviewjs(request):
     context = {}
+    context["show"] = []
     BASE= "/mapview/"
     if request.user.isOrganisation:
         #get only MP
         context["categories"] = [BASE+"ManpowerOffers"]
     else:
         context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
+    for key,value in request.GET.dict().items():
+        if value == "True":
+            context["show"].append(key.replace("Offers","").replace("Requests", ""))
+    logger.warning(str(request.GET.dict()))
     logger.warning("rendering mapview JS ? "+str(context))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
 logger = logging.getLogger("django")

@@ -123,9 +123,10 @@ mapViewPage = {
         entries =await Promise.all(
             [{% for entry in categories %}          $.get("{{entry}}"),          {%endfor%}]
            )
-        console.log(entries.length)
         var offerOverlays = {}
         var requestOverlays ={}
+        var show = [{%for entry in show%} "{{entry}}",{%endfor%}]
+        console.log(show)
         
         for (var i = 0; i < entries.length; i++){
             console.log("Entry: "+i)
@@ -142,7 +143,11 @@ mapViewPage = {
                 markerGroup.addTo(this.mapObject)
                 markers.addTo(this.mapObject)
                 offerOverlays[entries[i].legend+"("+entries[i].offers.length+")"] = markers
-                this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": false})
+                
+            if (show.includes(entries[i].type)){
+                this.offers.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": true})
+            }
+            else this.offers.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": false})
         }
         if (entries[i].requests.length > 0){
             var requestMarkerGroup = L.markerClusterGroup({
@@ -157,7 +162,10 @@ mapViewPage = {
             requestMarkerGroup.addTo(this.mapObject)
             requestMarkers.addTo(this.mapObject)
             requestOverlays[entries[i].legend+"("+entries[i].requests.length+")"] = requestMarkers
-            this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": false})
+            if (show.includes(entries[i].type)){
+                this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": true})
+            }
+            else this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": false})
         }
     }
         var offerString = "Angebote ("+genericParameters.offerCount+")"
@@ -201,9 +209,7 @@ mapViewPage = {
                                     .childNodes[2];
             if (this.offers.length > 0)
             requestsCheckboxParents = requestsCheckboxParents.childNodes[1].childNodes;
-            else requestsCheckboxParents = requestsCheckboxParents.childNodes[0].childNodes;
-
-            
+            else requestsCheckboxParents = requestsCheckboxParents.childNodes[0].childNodes;            
                         requestsCheckboxParents[0].childNodes[0].setAttribute("name", "allRequests");
                         requestsCheckboxParents[0].childNodes[0].addEventListener("change", e => this.handleCheckBoxClick(e));
                                 }
