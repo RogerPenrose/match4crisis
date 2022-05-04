@@ -2,7 +2,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-
+from django.forms.models import model_to_dict
 from apps.accounts.views import DashboardView
 from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
@@ -23,11 +23,16 @@ class HelperDashboardView(DashboardView):
         incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
         runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
         firstname = request.user.first_name
+        userOffers =GenericOffer.objects.filter(userId=request.user.id)
+        incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
+        logger.warning("Have incomplete Offers: "+str(len(incompleteOffers)))
+        runningOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=True)))
+        pausedOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
 
         context = {
-            "pausedOffersCount": pausedOffersCount,
-            "incompleteOffersCount": incompleteOffersCount,
-            "runningOffersCount": runningOffersCount,
+            "pausedOffers": pausedOffers,
+            "incompleteOffers": incompleteOffers,
+            "runningOffers": runningOffers,
             "firstname": firstname
         }
 
@@ -46,9 +51,10 @@ def choose_help(request):
 
             # Filter the POST data to only include the offer information
             for k,v in request.POST.items():
+                logger.warning("Key: "+k+" Value: "+v)
                 if(k in OFFER_MODELS):
                     # If the offer of type k was selected, set its value to true in the chosenHelp dict, otherwise false
-                    chosenHelp[k] = (v == 'on')
+                    chosenHelp[k] = v
 
             # Add the chosen help data to the request sessions
             request.session['chosenHelp'] = chosenHelp

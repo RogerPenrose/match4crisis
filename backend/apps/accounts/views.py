@@ -66,14 +66,27 @@ def signup_helper(request):
             # If the user got here through the /iofferhelp/choose_help page, get the chosen help data from the request session
             if('chosenHelp' in request.session):
                 chosenHelp = request.session['chosenHelp'].items()
-                for offerType, chosen in chosenHelp:
-                    if chosen:
-                        # Create a new incomplete offer of this type
-                        genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
-                        genericOffer.save()
-                        specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer)
-                        specOffer.save()
-
+                for offerType, chosen in chosenHelp:    
+                    offer = GenericOffer()
+                    offer.incomplete = True
+                    offer.userId = user
+                    specificOffer = OFFER_MODELS[offerType]
+                    if len(offerType) > 2:
+                        if "transportation" in offerType:
+                            offer.offerType = "TR"
+                        if "translation" in offerType:
+                            offer.offerType = "TL"
+                        if "buerocracy" in offerType:
+                            offer.offerType = "BU"
+                        if "welfare" in offerType:
+                            offer.offerType = "WE"
+                    else:
+                        offer.offertype = offerType
+                    offer.active = False
+                    offer.save()
+                    specificOffer.genericOffer= offer
+                    specificOffer.save()
+                    
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form

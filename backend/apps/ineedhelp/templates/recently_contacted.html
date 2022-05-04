@@ -18,33 +18,30 @@ Kürzlich kontaktierte Angebote
   {% if offers %}
   {% for entry in offers %}
   
-    {% if entry.offer.genericOffer.offerType == "AC"  %}  
-        {% include 'offers/accommodation-card.html' %}
-    {% endif %}      
-    {% if entry.offer.genericOffer.offerType == "TL"  %}
-        {% include 'offers/translation-card.html' %}
-     {%endif%}
-    {% if entry.offer.genericOffer.offerType == "TR"  %}
-        {% include 'offers/transportation-card.html' %} 
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "BU"  %}
-        {% include 'offers/buerocratic-card.html' %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "MP"  %}
-        {% include 'offers/manpower-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "CL"  %}
-        {% include 'offers/childcareLong-card.html' %}
-    {%endif%}     
-    {% if entry.offer.genericOffer.offerType == "BA"  %}
-        {% include 'offers/childcareShort-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "WE"  %}
-        {% include 'offers/welfare-card.html' %}
-    {% endif%}
-    {% if entry.offer.genericOffer.offerType == "JO"  %}
-        {% include 'offers/job-card.html' %}
-    {%endif%}
+  {% if entry.offer.genericOffer.offerType == "AC"  %}  
+      {% include 'offers/accommodation-card.html' %}
+  {% endif %}      
+  {% if entry.offer.genericOffer.offerType == "TL"  %}
+      {% include 'offers/translation-card.html' %}
+   {%endif%}
+  {% if entry.offer.genericOffer.offerType == "TR"  %}
+      {% include 'offers/transportation-card.html' %} 
+  {%endif%}
+  {% if entry.offer.genericOffer.offerType == "BU"  %}
+      {% include 'offers/buerocratic-card.html' %}
+  {% endif %}
+  {% if entry.offer.genericOffer.offerType == "MP"  %}
+      {% include 'offers/manpower-card.html' %}
+  {%endif%}
+  {% if entry.offer.genericOffer.offerType == "CL"  %}
+      {% include 'offers/childcare-card.html' %}
+  {%endif%}     
+  {% if entry.offer.genericOffer.offerType == "WE"  %}
+      {% include 'offers/welfare-card.html' %}
+  {% endif%}
+  {% if entry.offer.genericOffer.offerType == "JO"  %}
+      {% include 'offers/job-card.html' %}
+  {%endif%}
   {% endfor %}
 {% else %}
 {% blocktrans %}
