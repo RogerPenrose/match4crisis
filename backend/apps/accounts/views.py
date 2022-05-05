@@ -213,7 +213,10 @@ def delete_me(request):
     logout(request)
     logger.info("Delete User with email %s", user.email, extra={"request": request})
     user.delete()
-    return render(request, "deleted_user.html")
+    return redirect("deleted_user")
+
+def deleted_user(request):
+    return render(request, 'deleted_user.html')
 
 
 def confirm_email(request, uidb64, token):
