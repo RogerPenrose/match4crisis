@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView
 from django.contrib.auth.tokens import default_token_generator  
 from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
@@ -36,7 +36,7 @@ from apps.offers.models import GenericOffer, OFFER_MODELS
 from .utils import send_confirmation_email, send_password_set_email
 from .decorator import organisationRequired, helperRequired
 from .models import User
-from .forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm, ResendConfirmationEmailForm
+from .forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm, CustomPasswordResetForm, ResendConfirmationEmailForm
 
 logger = logging.getLogger(__name__)
 
@@ -207,7 +207,6 @@ def edit_organisation_profile(request):
 
     return render(request, "organisation_edit.html", {"form": form})"""
 
-
 @login_required
 def delete_me(request):
     user = request.user
@@ -236,12 +235,6 @@ def confirm_email(request, uidb64, token):
     else:
         return render(request, "confirmation_link_invalid.html")
 
-    """if not request.user.validated_email:
-        request.user.validated_email = True
-        request.user.email_validation_date = timezone.now()
-        request.user.save()
-    return HttpResponseRedirect("login_redirect")"""
-
 @login_required
 def change_email(request):
     if request.method == "POST":
@@ -255,7 +248,7 @@ def change_email(request):
             user.emailValidationDate = None
             user.save()
             logout(request)
-            # TODO send verification email
+            send_confirmation_email(user, get_current_site(request).domain)
             return HttpResponseRedirect("change_email_done")
     else:
         form = ChangeEmailForm()
@@ -346,10 +339,6 @@ class CustomLoginView(LoginView):
             return self.form_valid(form)
         else:
             return self.render_to_response(self.get_usertype_data(request, form=form))
-
-
-
-
 
 def helper_login(request):
     request.session["requiredUserType"] = _("Helfer*in")
