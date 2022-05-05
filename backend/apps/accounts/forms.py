@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm, PasswordChangeForm
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from django.core import validators
@@ -304,7 +304,6 @@ class CustomPasswordResetForm(PasswordResetForm):
         self.helper.form_id = "id-passwordResetForm"
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
-        #self.helper.form_action = "reset_password"
         
         self.fields['email'].label = _("E-Mail-Adresse")
 
@@ -318,12 +317,30 @@ class CustomSetPasswordForm(SetPasswordForm):
         self.helper.form_id = "id-passwordResetForm"
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
-        #self.helper.form_action = "reset_password"
         
         self.fields['new_password1'].label = ""
         self.fields['new_password1'].help_text = None
         self.fields['new_password1'].widget.attrs["placeholder"] = _("Neues Passwort")
         self.fields['new_password2'].label = ""
         self.fields['new_password2'].widget.attrs["placeholder"] = _("Passwort bestätigen")
+
+        self.helper.add_input(Submit("submit", _("Passwort ändern")))  
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-passwordChangeForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        
+        self.fields['old_password'].label = ""
+        self.fields['old_password'].widget.attrs["placeholder"] = _("Aktuelles Passwort")
+        self.fields['new_password1'].label = ""
+        self.fields['new_password1'].help_text = None
+        self.fields['new_password1'].widget.attrs["placeholder"] = _("Neues Passwort")
+        self.fields['new_password2'].label = ""
+        self.fields['new_password2'].widget.attrs["placeholder"] = _("Neues Passwort bestätigen")
 
         self.helper.add_input(Submit("submit", _("Passwort ändern")))  

@@ -3,7 +3,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from django.views.generic import TemplateView
 
-from .forms import CustomPasswordResetForm, CustomSetPasswordForm
+from .forms import CustomPasswordChangeForm, CustomPasswordResetForm, CustomSetPasswordForm
 
 from . import views
 
@@ -13,20 +13,7 @@ from . import views
         auth_views.LogoutView.as_view(template_name="registration/logout.html"),
         name="logout",
     ),
-    path(
-        "password_change/done/",
-        auth_views.PasswordChangeDoneView.as_view(
-            template_name="registration/password_change_done_.html"
-        ),
-        name="password_change_done",
-    ),
-    path(
-        "password_change",
-        auth_views.PasswordChangeView.as_view(
-            template_name="registration/password_change_form_.html"
-        ),
-        name="password_change_form",
-    ),
+    
     path(
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(
@@ -83,6 +70,21 @@ urlpatterns = [
             template_name="password_management/password_reset_complete.html"
         ),
         name="password_reset_complete",
+    ),
+    path(
+        "password_change/",
+        auth_views.PasswordChangeView.as_view(
+            template_name="password_management/password_change_form.html",
+            form_class=CustomPasswordChangeForm,
+        ),
+        name="password_change",
+    ),
+    path(
+        "password_change/done/",
+        auth_views.PasswordChangeDoneView.as_view(
+            template_name="password_management/password_change_done.html"
+        ),
+        name="password_change_done",
     ),
     path(
         "login/",
