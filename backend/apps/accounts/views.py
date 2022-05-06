@@ -261,8 +261,13 @@ def change_email(request):
             user.emailValidationDate = None
             user.save()
             logout(request)
-            send_confirmation_email(user, get_current_site(request).domain)
-            return HttpResponseRedirect("change_email_done")
+            send_confirmation_email(
+                user, 
+                get_current_site(request).domain, 
+                subject_template="registration/change_email_address_email_subject.txt",
+                template="registration/change_email_address_email.html"
+                )
+            return redirect("change_email_done")
     else:
         form = ChangeEmailForm()
 
@@ -271,12 +276,24 @@ def change_email(request):
 def change_email_done(request):
     return render(request, "change_email_done.html")
 
-@login_required
-def change_email_complete(request):
-    """The Page that opens when the user clicks on the confirmation link in the email."""
-    validate_email(request)
-    return render(request, "change_email_complete.html")
+def confirm_change_email(request, uidb64, token):
     
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and user.validatedEmail:
+        return render(request, "email_already_confirmed.html")
+    elif user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.validatedEmail = True
+        user.emailValidationDate = timezone.now()
+        user.lastConfirmationMailSent = None
+        user.save()
+        return render(request, "change_email_complete.html")
+    else:
+        return render(request, "confirmation_link_invalid.html")    
 
 def resend_confirmation_email(request):
     if request.method == "POST":
