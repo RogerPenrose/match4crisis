@@ -112,7 +112,9 @@ padding: .1rem .75rem;
 
       <!-- Danger zone --> 
       <a class="btn" href="{% url 'change_email' %}">{% blocktrans %} E-Mail-Adresse ändern {% endblocktrans %}</a>
-      <a class="btn btn-sm btn-danger" style="background-color:red; float: right;" href="#deleteUserModal" data-toggle="modal" data-target="#deleteUserModal">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
+      <a class="btn" href="{% url 'password_change' %}">{% blocktrans %} Passwort ändern {% endblocktrans %}</a>
+      <br>
+      <a class="btn btn-sm btn-danger" style="background-color:red;" href="#deleteUserModal" data-toggle="modal" data-target="#deleteUserModal">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
       
 
       <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
@@ -136,7 +138,7 @@ padding: .1rem .75rem;
                 {% endif %}
             </div>
             <div class="modal-footer">
-              <a class="btn btn-sm btn-danger" style="background-color:red;;" href="{% url 'deleted_user' %}">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
+              <a class="btn btn-sm btn-danger" style="background-color:red;;" href="{% url 'delete_me' %}">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
               <a class="btn" style="color:white" data-dismiss="modal" aria-label="close">{% blocktrans %} Abbrechen {% endblocktrans %}</a> 
             </div>
           </div>

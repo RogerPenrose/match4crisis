@@ -2,6 +2,7 @@ from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, HTML, Layout, Row, Submit
+from django.conf import settings
 
 from django.utils.translation import gettext_lazy as _
 
@@ -24,15 +25,18 @@ class RefugeeCreationForm(CustomUserCreationForm):
 
 
     def save(self, commit: bool = ...):
-        user = super().save(commit)
+        user = super().save(False)
         user.isRefugee = True
+        # In Prod: user should be unable to log in until email is confirmed
+        # Bypass email confirmation in Dev (where settings.DEBUG is True)
+        user.validatedEmail = settings.DEBUG
         if(commit):
             user.save()
         refugee = Refugee.objects.create(user=user)
         # TODO add more fields as necessary
         if(commit):
             refugee.save()
-        return refugee
+        return user, refugee
 
 class RefugeePreferencesForm(SpecialPreferencesForm):
     class Meta:

@@ -2,6 +2,7 @@ from django import forms
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, HTML, Layout, Row, Submit
+from django.conf import settings
 
 from django.utils.translation import gettext_lazy as _
 
@@ -26,8 +27,11 @@ class HelperCreationForm(CustomUserCreationForm):
 
 
     def save(self, commit: bool = ...):
-        user = super().save(commit)
+        user = super().save(False)
         user.isHelper = True
+        # In Prod: user should be inactive (unable to log in) until email is confirmed
+        # Bypass email confirmation in Dev (where settings.DEBUG is True)
+        user.is_active = settings.DEBUG
         if(commit):
             user.save()
         helper = Helper.objects.create(user=user)

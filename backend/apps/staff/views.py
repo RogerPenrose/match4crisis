@@ -4,8 +4,12 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import mpld3
 
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string  
 from django.shortcuts import render
 from django.contrib import messages
+from django.contrib.sites.shortcuts import get_current_site
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
 
@@ -45,23 +49,31 @@ def approve_organisations(request):
 
 def change_organisation_approval(request, uuid):
 
-    h = Organisation.objects.get(uuid=uuid)
+    org = Organisation.objects.get(uuid=uuid)
     logger.info(
-        "Set Organisation %s approval to %s", uuid, (not h.isApproved), extra={"request": request},
+        "Set Organisation %s approval to %s", uuid, (not org.isApproved), extra={"request": request},
     )
 
-    if not h.isApproved:
-        h.isApproved = True
-        h.approval_date = timezone.now()
-        h.approved_by = request.user
+    if not org.isApproved:
+        org.isApproved = True
+        org.approval_date = timezone.now()
+        org.approved_by = request.user
     else:
-        h.isApproved = False
-        h.approval_date = None
-        h.approved_by = None
-    h.save()
+        org.isApproved = False
+        org.approval_date = None
+        org.approved_by = None
+    org.save()
 
-    if h.isApproved:
-        pass #send_mails_for(h)
+    if org.isApproved:
+        # Send Email to organisation, informing them of their approval
+        subject = render_to_string("organisation_approved_email_subject.txt")
+        message = render_to_string("organisation_approved_email.html", {  
+            'organisation': org,
+            'protocol' : "https",
+            'domain': get_current_site(request),
+        })  
+        to_email = org.user.email
+        send_mail(subject, message, settings.NOREPLY_MAIL, [to_email])
 
     return HttpResponseRedirect("/staff/approve_organisations")
 

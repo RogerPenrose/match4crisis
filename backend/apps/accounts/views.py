@@ -1,22 +1,26 @@
 import logging
+from django.conf import settings
 
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView
+from django.contrib.auth.tokens import default_token_generator  
+from django.contrib.sites.shortcuts import get_current_site
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from django.utils.encoding import  force_text
+from django.utils.http import urlsafe_base64_decode
+
 from django.views.generic import TemplateView
 from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
 from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
-from apps.accounts.forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm
 from rest_framework.views import APIView
 
-from apps.accounts.utils import send_password_set_email
 #from apps.iofferhelp.forms import HelperForm, HelperFormAndMail, HelperFormEditProfile
 from apps.iofferhelp.models import Helper
 #from apps.iofferhelp.views import send_mails_for
@@ -29,8 +33,10 @@ from apps.iamorganisation.models import Organisation
 from apps.ineedhelp.models import Refugee
 from apps.offers.models import GenericOffer, OFFER_MODELS
 
+from .utils import send_confirmation_email, send_password_set_email
 from .decorator import organisationRequired, helperRequired
 from .models import User
+from .forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm, CustomPasswordResetForm, ResendConfirmationEmailForm
 
 logger = logging.getLogger(__name__)
 
@@ -43,8 +49,9 @@ def signup_refugee(request):
 
         # check whether it's valid:
         if form.is_valid():
-            form.save()
-            return HttpResponseRedirect("/ineedhelp/thanks")
+            user, refugee = form.save()
+            send_confirmation_email(user, get_current_site(request).domain)
+            return redirect('thanks')
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -87,6 +94,8 @@ def signup_helper(request):
                     specificOffer.genericOffer= offer
                     specificOffer.save()
                     
+            send_confirmation_email(user, get_current_site(request).domain)
+            
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
@@ -103,18 +112,16 @@ def signup_organisation(request):
 
         if form_info.is_valid():
             user, organisation = register_organisation_in_db(request, form_info.cleaned_data)
-            send_password_set_email(
-                email=form_info.cleaned_data["email"],
-                host=request.META["HTTP_HOST"],
-                template="registration/password_set_email_organisation.html",
-                subject_template="registration/password_reset_email_subject.txt",
-            )
+            send_confirmation_email(user, get_current_site(request).domain)
             return HttpResponseRedirect("/iamorganisation/thanks_organisation")
     else:
         form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
     form_info.helper.form_tag = False
     return render(request, "signup_organisation.html", {"form_info": form_info})
+
+def thanks(request):
+    return render(request, "thanks.html")
 
 def signup_complete(request):
     return render(request, "signup_complete.html")
@@ -126,6 +133,9 @@ def register_organisation_in_db(request, formData):
     user = User.objects.create(email=formData["email"], isOrganisation=True)
     user.set_password(pwd)
     user.phoneNumber = formData["phoneNumber"]
+    # In Prod: user should be inactive (unable to log in) until email is confirmed
+    # Bypass email confirmation in Dev (where settings.DEBUG is True)
+    user.is_active = settings.DEBUG
     user.save()
 
     organisation = Organisation.objects.create(user=user)
@@ -207,23 +217,36 @@ def edit_organisation_profile(request):
 
     return render(request, "organisation_edit.html", {"form": form})"""
 
-
 @login_required
 def delete_me(request):
     user = request.user
     logout(request)
     logger.info("Delete User with email %s", user.email, extra={"request": request})
     user.delete()
-    return render(request, "deleted_user.html")
+    return redirect("deleted_user")
+
+def deleted_user(request):
+    return render(request, 'deleted_user.html')
 
 
-@login_required
-def validate_email(request):
-    if not request.user.validated_email:
-        request.user.validated_email = True
-        request.user.email_validation_date = timezone.now()
-        request.user.save()
-    return HttpResponseRedirect("login_redirect")
+def confirm_email(request, uidb64, token):
+    
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and user.validatedEmail:
+        return render(request, "email_already_confirmed.html")
+    elif user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.validatedEmail = True
+        user.emailValidationDate = timezone.now()
+        user.lastConfirmationMailSent = None
+        user.save()
+        return render(request, "signup_complete.html")
+    else:
+        return render(request, "confirmation_link_invalid.html")
 
 @login_required
 def change_email(request):
@@ -238,7 +261,7 @@ def change_email(request):
             user.emailValidationDate = None
             user.save()
             logout(request)
-            # TODO send verification email
+            send_confirmation_email(user, get_current_site(request).domain)
             return HttpResponseRedirect("change_email_done")
     else:
         form = ChangeEmailForm()
@@ -255,17 +278,19 @@ def change_email_complete(request):
     return render(request, "change_email_complete.html")
     
 
-def resend_validation_email(request, email):
-    if request.user.is_anonymous:
-        if not User.objects.get(email=email).validated_email:
-            send_password_set_email(
-                email=email,
-                host=request.META["HTTP_HOST"],
-                template="registration/password_set_email_.html",
-                subject_template="registration/password_reset_email_subject.txt",
-            )
-            return HttpResponseRedirect("/accounts/password_reset/done")
-    return HttpResponseRedirect("/")
+def resend_confirmation_email(request):
+    if request.method == "POST":
+        logger.info("Resend confirmation email request", extra={"request": request})
+        form = ResendConfirmationEmailForm(request.POST)
+
+        if form.is_valid():
+            user = User.objects.get(email=form.cleaned_data['email'])
+            send_confirmation_email(user, get_current_site(request).domain)
+            return redirect('thanks')
+    else:
+        form = ResendConfirmationEmailForm()
+
+    return render(request, "resend_confirmation_email.html", {"form":form})
 
 
 class UserCountView(APIView):
@@ -327,10 +352,6 @@ class CustomLoginView(LoginView):
             return self.form_valid(form)
         else:
             return self.render_to_response(self.get_usertype_data(request, form=form))
-
-
-
-
 
 def helper_login(request):
     request.session["requiredUserType"] = _("Helfer*in")
