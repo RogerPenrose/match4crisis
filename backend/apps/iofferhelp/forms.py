@@ -29,9 +29,9 @@ class HelperCreationForm(CustomUserCreationForm):
     def save(self, commit: bool = ...):
         user = super().save(False)
         user.isHelper = True
-        # In Prod: user should be inactive (unable to log in) until email is confirmed
+        # In Prod: user should be unable to log in until email is confirmed
         # Bypass email confirmation in Dev (where settings.DEBUG is True)
-        user.is_active = settings.DEBUG
+        user.validatedEmail = settings.DEBUG
         if(commit):
             user.save()
         helper = Helper.objects.create(user=user)

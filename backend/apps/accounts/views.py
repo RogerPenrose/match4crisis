@@ -127,9 +127,9 @@ def register_organisation_in_db(request, formData):
     user = User.objects.create(email=formData["email"], isOrganisation=True)
     user.set_password(pwd)
     user.phoneNumber = formData["phoneNumber"]
-    # In Prod: user should be inactive (unable to log in) until email is confirmed
+    # In Prod: user should be unable to log in until email is confirmed
     # Bypass email confirmation in Dev (where settings.DEBUG is True)
-    user.is_active = settings.DEBUG
+    user.validatedEmail = settings.DEBUG
     user.save()
 
     organisation = Organisation.objects.create(user=user)
