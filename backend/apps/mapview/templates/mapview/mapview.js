@@ -9,16 +9,7 @@ mapViewPage = {
         supporterListURL  : '',
         mapboxToken: '',
         isStudent: true,
-        isHospital: true,
-        createPopupTextTransportation  :  (countrycode,city, plz, count, url) => '',
-        createPopupTextGeneric  :  (countrycode,city, plz, count, url) => '',
-        createPopupTextTranslation :  (countrycode,city, plz, count, url) => '',
-        createPopupTextAccommodation :  (descr, location,type, numberOfAdults, numberOfChildren, numberOfPets, refer_url) => '',
-        createAccommodationCountText: (count) => '',
-        createTransportationCountText: (count) => '',
-        createTranslationCountText: (count) => '',
-        createDigitalCountText: (count) => '',
-        createGenericCountText: (count) => '',
+        isHospital: true, 
         startPosition: '',
         facilityIcon: new L.Icon.Default(),
 
@@ -199,239 +190,45 @@ mapViewPage = {
 
 // @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
-        const [genericParameters, manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations ] = await Promise.all([$.get(this.options.generalInformationURL),$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
+        //const  [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
+        const genericParameters = await $.get(this.options.generalInformationURL)
         const generic = [] // we could remove that from lelfeat, since we only need it to activate / deactivate the others but it is easier to deal with it that way
-        
-        // ACCOMMODATIONS:
-        var accommodationClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
-        });
-        let accommodationMarkers = L.featureGroup.subGroup(accommodationClusterMarkerGroup, this.createBlankMapMarker(accommodations.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{ 
-                icon:  this.createIcon(1, "accommodationMarker"),
-                itemCount: 1,
-           }).bindPopup(this.options.createPopupTextAccommodation(marker))
-        }))
-        var accommodationRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        let accommodationRequestMarkers = L.featureGroup.subGroup(accommodationRequestClusterMarkerGroup, this.createBlankMapMarker(accommodations.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{ 
-                icon:  this.createIcon(1, "request"),
-                itemCount: 1,
-           }).bindPopup(this.options.createPopupTextAccommodation(marker))
-        }))
-        // TRANSPORTATIONS:
-
-        var transportationClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('transportationMarker'),
-        });
-        var transportationMarkers = L.featureGroup.subGroup(transportationClusterMarkerGroup, this.createBlankMapMarker(transportations.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "transportationMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTransportation(marker))
-        }))
-
-        var transportationRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var transportationRequestMarkers = L.featureGroup.subGroup(transportationRequestClusterMarkerGroup, this.createBlankMapMarker(transportations.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTransportation(marker))
-        }))
-
-        // TRANSLATIONS:
-       
-        var translationClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('translationMarker'),
-        });
-        var translationMarkers = L.featureGroup.subGroup(translationClusterMarkerGroup, this.createBlankMapMarker(translations.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "translationMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTranslation(marker))
-        }))
-        
-        var translationRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var translationRequestMarkers = L.featureGroup.subGroup(translationRequestClusterMarkerGroup, this.createBlankMapMarker(translations.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextTranslation(marker))
-        }))
-        
-        // BUEROCRATIC:
-       
-        var buerocraticClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('buerocraticMarker'),
-        });
-        var buerocraticMarkers = L.featureGroup.subGroup(buerocraticClusterMarkerGroup, this.createBlankMapMarker(buerocratics.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "buerocraticMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextBuerocratic(marker))
-        }))
-        
-        var buerocraticRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var buerocraticRequestMarkers = L.featureGroup.subGroup(buerocraticRequestClusterMarkerGroup, this.createBlankMapMarker(buerocratics.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextBuerocratic(marker))
-        }))
-        // JOBS:
-       
-        var jobClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('jobMarker'),
-        });
-        var jobMarkers = L.featureGroup.subGroup(jobClusterMarkerGroup, this.createBlankMapMarker(jobs.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "jobMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextJob(marker))
-        }))
-        
-        var jobRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var jobRequestMarkers = L.featureGroup.subGroup(jobRequestClusterMarkerGroup, this.createBlankMapMarker(jobs.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextJob(marker))
-        }))
-        // MANPOWER:
-       
-        var manpowerClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('manpowerMarker'),
-        });
-        var manpowerMarkers = L.featureGroup.subGroup(manpowerClusterMarkerGroup, this.createBlankMapMarker(manpowers.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "manpowerMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextManpower(marker))
-        }))
-        
-        var manpowerRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var manpowerRequestMarkers = L.featureGroup.subGroup(manpowerRequestClusterMarkerGroup, this.createBlankMapMarker(manpowers.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextManpower(marker))
-        }))
-        // MEDICAL:
-       
-        var medicalClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('medicalMarker'),
-        });
-        var medicalMarkers = L.featureGroup.subGroup(medicalClusterMarkerGroup, this.createBlankMapMarker(medicals.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "medicalMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextMedical(marker))
-        }))
-        
-        var medicalRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var medicalRequestMarkers = L.featureGroup.subGroup(medicalRequestClusterMarkerGroup, this.createBlankMapMarker(medicals.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextMedical(marker))
-        }))
-        // CHILDCARE:
-       
-        var childcareClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('childcareMarker'),
-        });
-        var childcareMarkers = L.featureGroup.subGroup(childcareClusterMarkerGroup, this.createBlankMapMarker(childcares.offers,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "childcareMarker"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextChildcare(marker))
-        }))
-        
-        var childcareRequestClusterMarkerGroup = L.markerClusterGroup({
-            iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-        });
-        var childcareRequestMarkers = L.featureGroup.subGroup(childcareRequestClusterMarkerGroup, this.createBlankMapMarker(childcares.requests,(marker) => {
-            return L.marker([marker.lat,marker.lng],{
-                 icon:  this.createIcon(1, "request"),
-                 itemCount: 1,
-            }).bindPopup(this.options.createPopupTextChildcare(marker))
-        }))
-        
-        // GENERIC:  // somewhat redundant
-        
-                        
+        var entries =[]
+        entries =await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
+        console.log(entries.length)
         var offerOverlays = {}
         var requestOverlays ={}
-        childcareClusterMarkerGroup.addTo(this.mapObject)
-        childcareMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createChildcareCountText(childcares.offers.length)] = childcareMarkers
-        childcareRequestClusterMarkerGroup.addTo(this.mapObject)
-        childcareRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createChildcareCountText(childcares.requests.length)] = childcareRequestMarkers
+        
+        for (var i = 0; i < entries.length; i++){
+            console.log("Entry: "+i)
+            var markerGroup= L.markerClusterGroup({
+                iconCreateFunction: this.cssClassedIconCreateFunction('accommodationMarker'),
+            });
+            let markers = L.featureGroup.subGroup(markerGroup, this.createBlankMapMarker(entries[i].offers,(marker) => {
+                return L.marker([marker.lat,marker.lng],{ 
+                    icon:  this.createIcon(1, "accommodationMarker"),
+                    itemCount: 1,
+               }).bindPopup(marker.text)
+            }))
+            var requestMarkerGroup = L.markerClusterGroup({
+                iconCreateFunction: this.cssClassedIconCreateFunction('request'),
+            });
+            let requestMarkers = L.featureGroup.subGroup(requestMarkerGroup, this.createBlankMapMarker(entries[i].requests,(marker) => {
+                return L.marker([marker.lat,marker.lng],{ 
+                    icon:  this.createIcon(1, "request"),
+                    itemCount: 1,
+               }).bindPopup(marker.text)
+            }))
 
-        manpowerClusterMarkerGroup.addTo(this.mapObject)
-        manpowerMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createManpowerCountText(manpowers.offers.length)] = manpowerMarkers
-        manpowerRequestClusterMarkerGroup.addTo(this.mapObject)
-        manpowerRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createManpowerCountText(manpowers.requests.length)] = manpowerRequestMarkers
 
-        jobClusterMarkerGroup.addTo(this.mapObject)
-        jobMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createJobCountText(jobs.offers.length)] = jobMarkers
-        jobRequestClusterMarkerGroup.addTo(this.mapObject)
-        jobRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createJobCountText(jobs.requests.length)] = jobRequestMarkers
-
-        buerocraticClusterMarkerGroup.addTo(this.mapObject)
-        buerocraticMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createBuerocraticCountText(buerocratics.offers.length)] = buerocraticMarkers
-        buerocraticRequestClusterMarkerGroup.addTo(this.mapObject)
-        buerocraticRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createBuerocraticCountText(buerocratics.requests.length)] = buerocraticRequestMarkers
-
-        medicalClusterMarkerGroup.addTo(this.mapObject)
-        medicalMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createMedicalCountText(medicals.offers.length)] = medicalMarkers
-        medicalRequestClusterMarkerGroup.addTo(this.mapObject)
-        medicalRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createMedicalCountText(medicals.requests.length)] = medicalRequestMarkers
-
-        translationClusterMarkerGroup.addTo(this.mapObject)
-        translationMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createTranslationCountText(translations.offers.length)] = translationMarkers
-        translationRequestClusterMarkerGroup.addTo(this.mapObject)
-        translationRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createTranslationCountText(translations.requests.length)] = translationRequestMarkers
-
-        transportationClusterMarkerGroup.addTo(this.mapObject)
-        transportationMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createTransportationCountText(transportations.offers.length)] = transportationMarkers
-        transportationRequestClusterMarkerGroup.addTo(this.mapObject)
-        transportationRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createTransportationCountText(transportations.requests.length)] = transportationRequestMarkers
-
-        accommodationClusterMarkerGroup.addTo(this.mapObject)
-        accommodationMarkers.addTo(this.mapObject)
-        offerOverlays[this.options.createAccommodationCountText(accommodations.offers.length)] = accommodationMarkers
-        accommodationRequestClusterMarkerGroup.addTo(this.mapObject)
-        accommodationRequestMarkers.addTo(this.mapObject)
-        requestOverlays[this.options.createAccommodationCountText(accommodations.requests.length)] = accommodationRequestMarkers
-
+                          
+            markerGroup.addTo(this.mapObject)
+            markers.addTo(this.mapObject)
+            offerOverlays[entries[i].legend+"("+entries[i].offers.length+")"] = markers
+            requestMarkerGroup.addTo(this.mapObject)
+            requestMarkers.addTo(this.mapObject)
+            requestOverlays[entries[i].legend+"("+entries[i].requests.length+")"] = requestMarkers
+        }
         var offerString = "Angebote ("+genericParameters.offerCount+")"
         var requestString = "Gesuche ("+genericParameters.requestCount+")"
         var groupedOverlays ={}
@@ -532,11 +329,6 @@ mapViewPage = {
         mapViewPage.updateViewAsListBtn();
     },
 
-    createGenericMapMarkers : function addMapMarkers(markers, createMarkerFunction) {
-        return markers.map(marker => {
-            return createMarkerFunction(marker.lng, marker.lat, marker.offerDescription, marker.location, marker.refer_url)
-        })
-    },
     createBlankMapMarker: function addMapMarkers(markers, createMarkerFunction){
         return markers.map(marker => {return createMarkerFunction(marker)})
     },

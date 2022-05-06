@@ -1,5 +1,4 @@
 import logging
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -55,7 +54,6 @@ class Languages(models.Model):
     def __str__(self) -> str:
         return "%s (%s)" % (self.englishName, self.nativeName)
 
-
 class User(AbstractUser):
     """ A custom User Model serving as a basis for all accounts."""
 
@@ -86,7 +84,7 @@ class User(AbstractUser):
     isRefugee = models.BooleanField(default=False)
     isHelper = models.BooleanField(default=False)
     isOrganisation = models.BooleanField(default=False)
-
+    
     # used to prevent attackers from continuously requesting new confirmation mails.
     lastConfirmationMailSent = models.DateTimeField(null=True, blank=True)
 

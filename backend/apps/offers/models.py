@@ -2,7 +2,8 @@ import uuid
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from apps.accounts.models import User, Languages
+from apps.accounts.models import User
+from apps.accounts.models import Languages
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from match4crisis.constants.choices import GENDER_CHOICES
@@ -24,8 +25,7 @@ class GenericOffer(models.Model):
     ('TR', _('Logistik')),
     ('BU', _('Bürokratie')),
     ('MP', _('Manneskraft')),
-    ('CL', _('Kinderbetreuung Langzeit')),
-    ('BA', _('Babysitting')),
+    ('CL', _('Kinderbetreuung')),
     ('WE', _('Medizinische Hilfe')),
     ('JO', _('Jobangebot')),
     ('DO', _('Spende'))
@@ -51,14 +51,30 @@ class GenericOffer(models.Model):
         super().save(*args, **kwargs)
     def __str__(self):
         return self.offerType
-class ChildcareOfferLongterm(models.Model):
+
+
+class ChildcareOffer(models.Model):
+    CHILDCARE_CHOICES = [
+        ('GT', _('Ganztagesbetruung')),
+        ('HT', _('Halbtagsbetreuung')),
+        ('WE', _('Wochendendbetreuung'))
+    ]
+    TIME_CHOICES = [
+        ('VM', _('Vormittags')),
+        ('NM', _('Nachmittags')),
+        ('AB', _('Abends'))
+    ]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    gender_longterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
-class ChildcareOfferShortterm(models.Model):
-    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    gender_shortterm = models.CharField(max_length=2, choices=GENDER_CHOICES, default="NO")
-    numberOfChildrenToCare =  models.IntegerField(default=2)
     isRegular = models.BooleanField(default=False)
+    hasExperience = models.BooleanField(default=False)
+    hasEducation = models.BooleanField(default=False)
+    hasSpace = models.BooleanField(default=False)
+    distance = models.IntegerField(default=5)
+    numberOfChildren = models.IntegerField(default=1)
+    helpType_childcare = models.CharField(max_length=2, choices=CHILDCARE_CHOICES, default="GT")
+    timeOfDay = models.CharField(max_length=2, choices=TIME_CHOICES, default="VM")
+    
+    
 class JobOffer(models.Model):
     JOB_CHOICES = [
         ("ACA",_("Akademische Hilfe")),
@@ -86,6 +102,7 @@ class JobOffer(models.Model):
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
     requirements = models.TextField(blank=True)
+
 class DonationOffer(models.Model):
     account= models.CharField(max_length=350)
     donationTitle = models.CharField(max_length=128, blank=True)
@@ -95,14 +112,21 @@ class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
+
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
 class ManpowerOffer(models.Model):
-    HELP_CHOICES= [('ON', _('Online')), ('OS', _('Vor Ort'))]
+    DISTANCE_CHOICES=[('0', _('0-100km')),('1', _('100-200km')), ('2', _('200-400km')), ('3', _('400-600km')), ('4', 'Komplett Flexibel')]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    helpType_manpower = models.CharField(max_length=2, choices=HELP_CHOICES, default="ON")
+    distanceChoices = models.CharField(max_length=1, choices=DISTANCE_CHOICES, default="0")
+    canGoforeign = models.BooleanField(default=False)
+    hasExperience_crisis = models.BooleanField(default=False)
+    hasDriverslicense = models.BooleanField(default=False)
+    hasMedicalExperience = models.BooleanField(default=False)
+    describeMedicalExperience = models.TextField(default="")
+
 
 class AccommodationOffer(models.Model):
 
@@ -112,9 +136,8 @@ class AccommodationOffer(models.Model):
         ('HO', _('Gesamte Wohnung / Haus'))
     ]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    numberOfAdults = models.IntegerField(default=2)
-    numberOfChildren = models.IntegerField(default=0, blank=True)
-    numberOfPets = models.IntegerField(default=0, blank=True)
+    numberOfPeople = models.IntegerField(default=2)
+    petsAllowed = models.BooleanField(default=0, blank=True)
     typeOfResidence = models.CharField(max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
     startDateAccommodation = models.DateField(default=timezone.now)
     def __str__(self):
@@ -124,38 +147,74 @@ class WelfareOffer(models.Model):
     WELFARE_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") # Use this to track between "Bus", "Car", "Transporter" ?
+    helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") 
+    hasEducation_welfare = models.BooleanField(default=False)
+    typeOfEducation = models.TextField(default="")
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     #country = models.CharField(max_length=200) # Do this as a select ? 
-    
-    locationEnd = models.TextField(max_length=300)
-    latEnd = models.FloatField(null=True)
-    lngEnd = models.FloatField(null=True)
-    bbEnd =  models.CharField(max_length=300)
-    date=models.DateField(default=timezone.now)
+    TRANSPORTATIONCHOICES=[
+        ('PT', _("Personentransport")),
+        ('GT', _("Gütertransport"))
+    ]
+    CARCHOICES=[
+        ('KW', _("Kleinwagen")),
+        ('MW', _("Mittelklassewagen")),
+        ('KM', _("Kobi")),
+        ('SU', _("SUV")),
+        ('MI', _("Minivan")),
+        ('TR', _("Transporter"))
+    ]
+    helpType_transport = models.CharField(max_length=2, choices=TRANSPORTATIONCHOICES, default="PT" )
+    distance = models.IntegerField(default=100)
     numberOfPassengers = models.IntegerField(default=2)
+    typeOfCar = models.CharField(max_length=2, choices=CARCHOICES, default="KW")
+
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    
-    firstLanguage = models.ForeignKey(Languages,verbose_name=_("Erste Sprache"), related_name='firstLanguage', on_delete=models.CASCADE, default="de")
-    secondLanguage = models.ForeignKey(Languages,verbose_name=_("Zweite Sprache"),related_name='secondLanguage', on_delete=models.CASCADE, default="uk")
+    languages = models.ManyToManyField(Languages,through='LanguageOfferMap', blank=True, verbose_name=_("Sprachen"))
+
+
+
+class LanguageOfferMap(models.Model):
+    offer = models.ForeignKey(TranslationOffer, on_delete=models.CASCADE)
+    language = models.ForeignKey(Languages, on_delete=models.CASCADE)
+
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
-    'AC' : AccommodationOffer,
-    'TL' : TranslationOffer,
-    'TR' : TransportationOffer,
-    'BU' : BuerocraticOffer,
-    'BA' : ChildcareOfferShortterm,
-    'CL' : ChildcareOfferLongterm,
-    'WE' : WelfareOffer,
-    'MP' : ManpowerOffer,
-    'JO' : JobOffer,
-    'DO' : DonationOffer,
+    'AC' : AccommodationOffer(),
+    'CL' : ChildcareOffer(),
+    'MP' : ManpowerOffer(),
+    'JO' : JobOffer(),
+    'DO' : DonationOffer(),
+    'transportation_people': TransportationOffer(helpType_transport="PT"),
+    'transportation_goods': TransportationOffer(helpType_transport="GT"),
+    'buerocracy_translation': TranslationOffer(),
+    'buerocracy_companion': BuerocraticOffer(helpType_buerocratic="AM"),
+    'buerocracy_legal': BuerocraticOffer(helpType_buerocratic="LE"),
+    'buerocracy_other': BuerocraticOffer(helpType_buerocratic="OT"),
+    'welfare_elderly': WelfareOffer(helpType_welfare="ELD"),
+    'welfare_psych': WelfareOffer(helpType_welfare="PSY"),
+    'welfare_disabled':  WelfareOffer(helpType_welfare="DIS"),
+
+
+
 
 }
+SPEC_OFFER_MODELS ={
+    'AC' : AccommodationOffer(),
+    'CL' : ChildcareOffer(),
+    'WE' : WelfareOffer(),
+    'MP' : ManpowerOffer(),
+    'JO' : JobOffer(),
+    'DO' : DonationOffer(),
+    'TL' : TranslationOffer(),
+    'BU' : BuerocraticOffer(),
+    'TR' : TransportationOffer(),
+    
 
+}
 def getSpecificOffers(genericOffers: list):
     """
     Takes a list of generic offers and returns a list of the matching specific offers.
@@ -163,7 +222,7 @@ def getSpecificOffers(genericOffers: list):
     specificOffers = []
 
     for offer in genericOffers:       
-        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer)
+        specOff = SPEC_OFFER_MODELS[offer.offerType].__class__.objects.get(genericOffer=offer)
         specificOffers.append(specOff)
 
     return specificOffers

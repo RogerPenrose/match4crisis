@@ -45,7 +45,6 @@ def signup_refugee(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        logger.info("Refugee Signup request", extra={"request": request})
         form = RefugeeCreationForm(request.POST)
 
         # check whether it's valid:
@@ -66,7 +65,6 @@ def signup_helper(request):
     # if this is a POST request we need to process the form data
     if request.method == "POST":
         # create a form instance and populate it with data from the request:
-        logger.info("Helper Signup request", extra={"request": request})
         form = HelperCreationForm(request.POST)
 
         # check whether it's valid:
@@ -75,16 +73,29 @@ def signup_helper(request):
             # If the user got here through the /iofferhelp/choose_help page, get the chosen help data from the request session
             if('chosenHelp' in request.session):
                 chosenHelp = request.session['chosenHelp'].items()
-                for offerType, chosen in chosenHelp:
-                    if chosen:
-                        # Create a new incomplete offer of this type
-                        genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
-                        genericOffer.save()
-                        specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer)
-                        specOffer.save()
+                for offerType, chosen in chosenHelp:    
+                    offer = GenericOffer()
+                    offer.incomplete = True
+                    offer.userId = user
+                    specificOffer = OFFER_MODELS[offerType]
+                    if len(offerType) > 2:
+                        if "transportation" in offerType:
+                            offer.offerType = "TR"
+                        if "translation" in offerType:
+                            offer.offerType = "TL"
+                        if "buerocracy" in offerType:
+                            offer.offerType = "BU"
+                        if "welfare" in offerType:
+                            offer.offerType = "WE"
+                    else:
+                        offer.offertype = offerType
+                    offer.active = False
+                    offer.save()
+                    specificOffer.genericOffer= offer
+                    specificOffer.save()
                     
             send_confirmation_email(user, get_current_site(request).domain)
-
+            
             return HttpResponseRedirect("/iofferhelp/thanks")
 
     # if a GET (or any other method) we'll create a blank form
@@ -97,7 +108,6 @@ def signup_helper(request):
 
 def signup_organisation(request):
     if request.method == "POST":
-        logger.info("Organisation registration request", extra={"request": request})
         form_info = OrganisationFormInfoSignUp(request.POST)
 
         if form_info.is_valid():
@@ -416,7 +426,6 @@ def preferences(request):
     specificAccount = userTypeClass.objects.get(user=user)
     if user.is_authenticated and user.is_active:
         if request.method == "POST":
-            logger.info("Preferences edit request", extra={"request": request})
             comPrefForm = CommonPreferencesForm(request.POST, instance=user)
             specPrefForm = userTypeForm(request.POST, request.FILES, instance = specificAccount)
             if comPrefForm.is_valid() and specPrefForm.is_valid():

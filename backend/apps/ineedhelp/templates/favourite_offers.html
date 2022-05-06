@@ -33,11 +33,8 @@ Gespeicherte Angebote
       {% include 'offers/manpower-card.html' %}
   {%endif%}
   {% if entry.offer.genericOffer.offerType == "CL"  %}
-      {% include 'offers/childcareLong-card.html' %}
+      {% include 'offers/childcare-card.html' %}
   {%endif%}     
-  {% if entry.offer.genericOffer.offerType == "BA"  %}
-      {% include 'offers/childcareShort-card.html' %}
-  {%endif%}
   {% if entry.offer.genericOffer.offerType == "WE"  %}
       {% include 'offers/welfare-card.html' %}
   {% endif%}
