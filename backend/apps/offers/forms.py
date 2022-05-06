@@ -5,7 +5,7 @@ from django_select2 import forms as s2forms
 import logging
 from django.utils.translation import gettext_lazy as _
 from match4crisis.constants.countries import countries
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, DonationOffer, AccommodationOffer
+from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, AccommodationOffer
 from apps.accounts.models import Languages
 
 def validate_plz(value):
@@ -40,7 +40,6 @@ HELPTYPE_WE=_("Art der medizinischen Hilfe")
 BANKACCOUNT=_("Bankdaten")
 STARTDATE= _("Startdatum")
 ENDDATE = _("Endddatum")
-DONATION_TITLE=_("Titel")
 DEPARTUREDATE=_("Abfahrtsdatum")
 NUMBERADULTS=_("Anzahl der Erwachsenen")
 NUMBERPETS = _("Anzahl der Haustiere")
@@ -77,17 +76,6 @@ class GenericForm(OfferForm):
 
         widgets = {
             'location': forms.TextInput(attrs={ 'class': 'form-control'}),
-        }
-
-class DonationForm(OfferForm):
-    class Meta:
-        attrs = { "class": "form-control"}
-        model = DonationOffer
-        exclude = ("genericOffer",)
-
-        labels = {
-            "account" : BANKACCOUNT,
-            "donationTitle" : DONATION_TITLE,
         }
 
 
@@ -231,6 +219,4 @@ OFFER_FORMS = {
     'WE' : WelfareForm,
     'MP' : ManpowerForm,
     'JO' : JobForm,
-    'DO' : DonationForm,
-
 }

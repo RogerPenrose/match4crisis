@@ -11,7 +11,7 @@ from django.utils import timezone
 from datetime import timedelta
 import numpy as np
 from apps.accounts.models import User
-from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOffer, WelfareOffer, JobOffer, DonationOffer
+from apps.offers.models import GenericOffer
 
 
 

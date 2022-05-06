@@ -57,31 +57,12 @@ class ChooseHelpForm(forms.Form):
             self.fields[abbr] = forms.BooleanField(required=False, label=str(svg)+str(SPECIAL_CASE_OFFERS[abbr]['helpTypeChoiceLabel']))
 
         for abbr, offerType in GenericOffer.OFFER_CHOICES:
-            if abbr != "DO" and abbr !="BU" and abbr !="WE" and abbr!="TR":
+            if abbr !="BU" and abbr !="WE" and abbr!="TR":
                 svg =  open('static/img/icons/icon_'+abbr+'.svg', 'r').read()
                 self.fields[abbr] = forms.BooleanField(required=False, label=str(svg)+str(offerType)) # TODO change/remove the label
           
         self.fields["NA"] = forms.BooleanField(required=False, label=_("Unklar"))
         self.helper.add_input(Submit("submit", _("Weiter")))
-
-'''   
-class ChooseHelpForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        super(ChooseHelpForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.form_id = "id-chooseHelpForm"
-        self.helper.form_class = "blueForms"
-        self.helper.form_method = "post"
-        self.helper.form_action = "choose_help"
-
-        # Create a boolean field for every offer type
-        for abbr, offerType in GenericOffer.OFFER_CHOICES:
-            if abbr != "DO" :
-                svg =  open('static/img/icons/icon_'+abbr+'.svg', 'r').read()
-                self.fields[abbr] = forms.BooleanField(required=False, label=str(svg)+str(offerType) ) # TODO change/remove the label
-        self.fields["NA"] = forms.BooleanField(required=False, label=_("Unklar"))
-        self.helper.add_input(Submit("submit", _("Weiter")))
-'''
 
 class HelperPreferencesForm(SpecialPreferencesForm):
     class Meta:

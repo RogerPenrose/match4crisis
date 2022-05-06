@@ -12,7 +12,7 @@ from django.utils import timezone
 from datetime import timedelta
 import numpy as np
 from apps.accounts.models import User, Languages
-from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOffer, WelfareOffer, JobOffer, DonationOffer
+from apps.offers.models import GenericOffer, AccommodationOffer, TransportationOffer, TranslationOffer, BuerocraticOffer, ManpowerOffer,ChildcareOffer, WelfareOffer, JobOffer
 import logging
 
 logger = logging.getLogger("django")
@@ -135,11 +135,6 @@ class Command(BaseCommand):
                     g.offerType = "JO"
                     g.save()
                     b = JobOffer(genericOffer=g, jobTitle="Master of awesome.", requirements="10 Year Job experience.", jobType=JOB_CHOICES[np.random.randint(0,len(JOB_CHOICES)-1)])
-                    b.save()
-                if counter == 8: # Transportation
-                    g.offerType = "DO"
-                    g.save()
-                    b = DonationOffer(genericOffer=g, donationTitle="Human Fund", account="Deutsche Bank DE 12 3456 7891 07893.")
                     b.save()
                     counter = -1
                 counter = counter + 1   

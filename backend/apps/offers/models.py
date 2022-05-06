@@ -28,7 +28,6 @@ class GenericOffer(models.Model):
     ('CL', _('Kinderbetreuung')),
     ('WE', _('Medizinische Hilfe')),
     ('JO', _('Jobangebot')),
-    ('DO', _('Spende'))
     ]
     offerTitle = models.TextField(max_length=100, default="")
     location = models.TextField(max_length=300, default="")
@@ -102,11 +101,6 @@ class JobOffer(models.Model):
     jobType = models.CharField(max_length=3, choices=JOB_CHOICES, default="ACA")
     jobTitle = models.CharField(max_length=128, blank=True)
     requirements = models.TextField(blank=True)
-
-class DonationOffer(models.Model):
-    account= models.CharField(max_length=350)
-    donationTitle = models.CharField(max_length=128, blank=True)
-    genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
     HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere Bürokratische Hilfe'))]
@@ -191,7 +185,6 @@ OFFER_MODELS = {
     'WE' : WelfareOffer,
     'MP' : ManpowerOffer,
     'JO' : JobOffer,
-    'DO' : DonationOffer,
 }
 
 SPECIAL_CASE_OFFERS = {
