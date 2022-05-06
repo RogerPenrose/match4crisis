@@ -109,7 +109,7 @@ class DonationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
 
 class BuerocraticOffer(models.Model):
-    HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere'))]
+    HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere Bürokratische Hilfe'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 
@@ -183,38 +183,76 @@ class LanguageOfferMap(models.Model):
 
 # TODO when adding new offer types this needs to be updated
 OFFER_MODELS = {
-    'AC' : AccommodationOffer(),
-    'CL' : ChildcareOffer(),
-    'MP' : ManpowerOffer(),
-    'JO' : JobOffer(),
-    'DO' : DonationOffer(),
-    'transportation_people': TransportationOffer(helpType_transport="PT"),
-    'transportation_goods': TransportationOffer(helpType_transport="GT"),
-    'buerocracy_translation': TranslationOffer(),
-    'buerocracy_companion': BuerocraticOffer(helpType_buerocratic="AM"),
-    'buerocracy_legal': BuerocraticOffer(helpType_buerocratic="LE"),
-    'buerocracy_other': BuerocraticOffer(helpType_buerocratic="OT"),
-    'welfare_elderly': WelfareOffer(helpType_welfare="ELD"),
-    'welfare_psych': WelfareOffer(helpType_welfare="PSY"),
-    'welfare_disabled':  WelfareOffer(helpType_welfare="DIS"),
-
-
-
-
+    'AC' : AccommodationOffer,
+    'TL' : TranslationOffer,
+    'TR' : TransportationOffer,
+    'BU' : BuerocraticOffer,
+    'CL' : ChildcareOffer,
+    'WE' : WelfareOffer,
+    'MP' : ManpowerOffer,
+    'JO' : JobOffer,
+    'DO' : DonationOffer,
 }
-SPEC_OFFER_MODELS ={
-    'AC' : AccommodationOffer(),
-    'CL' : ChildcareOffer(),
-    'WE' : WelfareOffer(),
-    'MP' : ManpowerOffer(),
-    'JO' : JobOffer(),
-    'DO' : DonationOffer(),
-    'TL' : TranslationOffer(),
-    'BU' : BuerocraticOffer(),
-    'TR' : TransportationOffer(),
-    
 
+SPECIAL_CASE_OFFERS = {
+    'transportation_people': {
+        'offerTypeAbbr': 'TR',
+        'helpType': {
+            'helpType_transport': 'PT'
+        },
+        'helpTypeChoiceLabel': TransportationOffer.TRANSPORTATIONCHOICES[0][1]
+    },
+    'transportation_goods': {
+        'offerTypeAbbr': 'TR',
+        'helpType': {
+            'helpType_transport': 'GT'
+        },
+        'helpTypeChoiceLabel': TransportationOffer.TRANSPORTATIONCHOICES[1][1]
+    },
+    'buerocracy_companion': {
+        'offerTypeAbbr': 'BU',
+        'helpType': {
+            'helpType_buerocratic': 'AM'
+        },
+        'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[0][1]
+    },
+    'buerocracy_legal': {
+        'offerTypeAbbr': 'BU',
+        'helpType': {
+            'helpType_buerocratic': 'LE'
+        },
+        'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[1][1]
+    },
+    'buerocracy_other': {
+        'offerTypeAbbr': 'BU',
+        'helpType': {
+            'helpType_buerocratic': 'OT'
+        },
+        'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[2][1]
+    },
+    'welfare_elderly': {
+        'offerTypeAbbr': 'WE',
+        'helpType': {
+            'helpType_welfare': 'ELD'
+        },
+        'helpTypeChoiceLabel': WelfareOffer.WELFARE_CHOICES[0][1]
+    },
+    'welfare_disabled': {
+        'offerTypeAbbr': 'WE',
+        'helpType': {
+            'helpType_welfare': 'DIS'
+        },
+        'helpTypeChoiceLabel': WelfareOffer.WELFARE_CHOICES[1][1]
+    },
+    'welfare_psych': {
+        'offerTypeAbbr': 'WE',
+        'helpType': {
+            'helpType_welfare': 'PSY'
+        },
+        'helpTypeChoiceLabel': WelfareOffer.WELFARE_CHOICES[2][1]
+    },
 }
+
 def getSpecificOffers(genericOffers: list):
     """
     Takes a list of generic offers and returns a list of the matching specific offers.
@@ -222,7 +260,7 @@ def getSpecificOffers(genericOffers: list):
     specificOffers = []
 
     for offer in genericOffers:       
-        specOff = SPEC_OFFER_MODELS[offer.offerType].__class__.objects.get(genericOffer=offer)
+        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer)
         specificOffers.append(specOff)
 
     return specificOffers

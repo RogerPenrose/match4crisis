@@ -456,7 +456,7 @@ def save(request, offer_id=None):
             genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
             specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
         else:
-            genOffer = GenericOffer.objects.get(id=offer_id)
+            genOffer = get_object_or_404(GenericOffer, pk=offer_id)
             check_user_is_allowed(request, genOffer.userId.id)
             specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
         genOffer.incomplete=True
@@ -487,9 +487,9 @@ def update(request, offer_id = None, newly_created = False):
             genOffer.requestForHelp = True
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     else:
-        genOffer = GenericOffer.objects.get(pk=offer_id)
+        genOffer = get_object_or_404(GenericOffer, pk=offer_id)
         check_user_is_allowed(request, genOffer.userId.id)
-        specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
+        specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer = genOffer)
     genOffer.incomplete=False
     genOffer.active=True
     genForm = GenericForm(request.POST, instance=genOffer)
@@ -623,14 +623,14 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
 
 @helperRequired
 def edit(request, offer_id):
-    genOffer = GenericOffer.objects.get(id=offer_id)
+    genOffer = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, genOffer.userId.id)
 
     if request.method == 'POST':
         return update(request, offer_id, newly_created=True)
     else:
         offerType = genOffer.offerType
-        specOffer = OFFER_MODELS[offerType](genericOffer=genOffer)
+        specOffer = OFFER_MODELS[offerType].objects.get(genericOffer=genOffer)
 
         context = {}
         context["genericForm"]  = GenericForm(instance=genOffer)
