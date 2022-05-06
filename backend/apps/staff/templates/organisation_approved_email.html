@@ -1,0 +1,20 @@
+
+{% load i18n %}
+
+{% blocktrans with orgName=organisation.organisationName%}
+Hallo {{orgName}},
+
+Euer Account wurde von unserem Staff überprüft und freigegeben.
+Ihr könnt jetzt anfangen, match4crisis zu benutzen!
+
+Über diesen Link gelangt ihr direkt zum Login:
+{% endblocktrans %}
+
+{% block verification_link %}
+{{ protocol }}://{{ domain }}{% url 'login' %}
+{% endblock %}
+
+{% blocktrans %}
+Vielen Dank für euer Engagement,
+Euer Team von match4crisis
+{% endblocktrans %}
