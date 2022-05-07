@@ -11,7 +11,7 @@ Ort der Anfrage: {{helpRequestLocation}}
 {% endblocktrans %}
 
 {% block helpRequest_link %}
-{{ protocol }}://{{ domain }}
+{{ protocol }}://{{ domain }}{%url 'help_request_detail' help_request_id=helpRequest.pk%}
 {% endblock %}
 
 {% blocktrans %}

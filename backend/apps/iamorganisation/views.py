@@ -138,19 +138,16 @@ def request_help(request):
 
             helpRequestEntry = form.save(commit=False)
             helpRequestEntry.organisation = organisation
-            helpRequestEntry.save()
-
 
             offers = GenericOffer.objects.filter(offerType="MP", requestForHelp=False)
             users = User.objects.filter(genericoffer__in=offers).distinct()
 
-            send_help_request_emails(organisation, helpRequestEntry, users, get_current_site(request).domain)
-
-            recipientCount = 42 # TODO how many helpers were contacted
-
+            recipientCount = users.count()
 
             helpRequestEntry.recipientCount = recipientCount
             helpRequestEntry.save()
+
+            send_help_request_emails(organisation, helpRequestEntry, users, get_current_site(request).domain)
 
             if request.FILES.get("images") is not None:
                 counter = 0
