@@ -331,6 +331,7 @@ Dashboard - Organisationen
     </div>
     <h2 class="title">{% blocktrans %}Eure Hilfegesuche{% endblocktrans %}</h2>
     {% for entry in helpRequests %}
+    {% include 'help-request-card.html' %}
     {% endfor %}
   </div>
 

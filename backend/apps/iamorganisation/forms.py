@@ -216,7 +216,7 @@ class DonationRequestForm(forms.ModelForm):
         self.helper.form_id = "id-donationRequestForm"
         self.helper.form_class = "blueForms"
         self.helper.form_method = "post"
-        self.helper.form_action = "request_donations"
+        self.helper.form_action = "create_donation_request"
 
         self.helper.add_input(Submit("submit", _("Speichern")))
 

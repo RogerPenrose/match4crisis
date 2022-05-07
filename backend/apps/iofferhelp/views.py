@@ -2,14 +2,21 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.forms.models import model_to_dict
+from django.core.paginator import Paginator
+
+from apps.iamorganisation.models import HelpRequest
+from apps.iamorganisation.filters import HelpRequestFilter
 from apps.accounts.views import DashboardView
+from apps.accounts.decorator import helperRequired
 from apps.offers.models import SPECIAL_CASE_OFFERS, GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
+
 from .forms import ChooseHelpForm
-from apps.accounts.decorator import helperRequired
+from .models import Helper
 import logging
+
 logger = logging.getLogger("django")
+
 
 @method_decorator(helperRequired, name='dispatch')
 class HelperDashboardView(DashboardView):
@@ -89,3 +96,20 @@ def running_offers(request):
     runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
     context = {"offers": runningOffers}
     return render(request, "running_offers.html", context)
+
+@login_required
+@helperRequired
+def help_requests_view(request):
+    HELP_REQUEST_PER_PAGE = 25
+    helper = Helper.objects.get(user=request.user)
+    helpRequests = HelpRequest.objects.all()
+    filter = HelpRequestFilter(request.GET, queryset=helpRequests)
+    paginator = Paginator(list(filter.qs), 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj" : page_obj,
+        "filter" : filter,
+    }
+    return render(request, "help_requests_overview.html", context)

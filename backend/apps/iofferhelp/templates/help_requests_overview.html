@@ -3,7 +3,8 @@
 {% load i18n %}
 {% load display_value %}
 {% block title %}
-{% blocktrans %}Listenansicht Angebote{% endblocktrans %}{% endblock %}
+{% blocktrans %}Hilfeaufrufe filtern{% endblocktrans %}
+{% endblock %}
 
 {% block header %}
 <style>
@@ -169,12 +170,13 @@
   </div>
   <div class="col-12 text-center">
     <h2>
-      {% blocktrans count counter=donationsCount %}
-      {{ counter }} Spendenaufruf
+      {% blocktrans count counter=filter.qs.count %}
+      {{ counter }} Hilfeaufruf
       {% plural %}
-      {{ counter }} Spendenaufrufe
-      {% endblocktrans %}</h2>
-  </div>
+      {{ counter }} Hilfeaufrufe
+      {% endblocktrans %}
+    </h2>
+   </div>
   <div class="row align-self-center align-items-center">
     <div class="row align-self-center align-items-center" style="margin-top:35px;">
       <form method="get" id="filter-form">
@@ -201,17 +203,17 @@
       <div class="container cards">
 
         {% for entry in page_obj %}
-        {% include 'donation-card.html' %}
+        {% include 'help-request-card.html' %}
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
 <script type="text/javascript">
-  $(document).ready(function () {
+  /*$(document).ready(function () {
     $('#id_createdAt').bind('change', function (event) {
       $('#filter-form').trigger("submit");
     });
-  });
+  });*/
 </script>
 {% endblock %}

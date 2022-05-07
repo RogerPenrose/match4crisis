@@ -156,6 +156,36 @@ def request_help(request):
 
 @login_required
 @organisationRequired
+def edit_help_request(request, help_request_id):
+    helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if helpRequest.organisation != organisation:
+        raise PermissionDenied
+
+    if request.method == "POST":
+        form = HelpRequestForm(request.POST, instance=helpRequest)
+
+        if form.is_valid():
+            form.save()
+
+            if request.FILES.get("images") is not None:
+                counter = 0
+                images = request.FILES.getlist('images')
+                for image in images:
+                    counter = counter + 1
+                    image = Image(image=image, request = helpRequest)
+                    image.save()
+
+            return redirect('help_request_detail', help_request_id = help_request_id)
+
+    form = HelpRequestForm(instance=helpRequest)
+    form.helper.form_action = "edit"
+    context = {"form" : form, "edit" : True}
+    return render(request, "request_help.html", context)
+
+
+@login_required
+@organisationRequired
 def request_donations(request):
     return render(request, "select_donation_type.html")
 
@@ -337,3 +367,18 @@ def donation_detail(request, donation_request_id):
         "isMaterial" : isMaterial,
     }
     return render(request, "donation_detail.html", context)
+
+@login_required
+def help_request_detail(request, help_request_id):
+    helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
+    organisation = helpRequest.organisation
+    images = Image.objects.filter(request=helpRequest)
+    editAllowed = request.user.is_authenticated and request.user.isOrganisation and helpRequest.organisation == Organisation.objects.get(user = request.user)
+
+    context = {
+        "helpRequest" : helpRequest, 
+        "organisation" : organisation, 
+        "images" : images if images.count() > 0 else None,
+        "editAllowed" : editAllowed,
+    }
+    return render(request, "help_request_detail.html", context)
