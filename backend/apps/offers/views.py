@@ -19,8 +19,8 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.accounts.decorator import helperRequired, refugeeRequired
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
-from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer, DonationOffer
-from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm, DonationForm
+from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
+from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
 from django.contrib.auth.decorators import login_required
 import re
 
@@ -151,13 +151,12 @@ def select_category(request):
     totalWelfare = GenericOffer.objects.filter(offerType="WE",**filters_noLocation).count()
     totalChildcare= GenericOffer.objects.filter(offerType="CL",**filters_noLocation).count()
     totalJobs = GenericOffer.objects.filter(offerType="JO",**filters_noLocation).count()
-    totalDonations = GenericOffer.objects.filter(offerType="DO",**filters_noLocation).count()
     context = {
         'city' : city,
         'range': rangeKm,
         'requestForHelp': filters["requestForHelp"],
-        'local' : {'PsychologicalOffers': psych,  'DonationOffers': donations, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOffer": childcare, "ManpowerOffers": manpower},
-        'total' : {'DonationOffers': totalDonations, 'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOffer': totalChildcare},
+        'local' : {'PsychologicalOffers': psych, 'AccommodationOffers': accommodations, 'JobOffers': jobs,'WelfareOffers': welfare, 'TransportationOffers': transportations, 'TranslationOffers': translations, 'BuerocraticOffers': buerocratic, "ChildcareOffer": childcare, "ManpowerOffers": manpower},
+        'total' : {'AccommodationOffers': totalAccommodations, 'JobOffers': totalJobs, 'WelfareOffers': totalWelfare, 'TransportationOffers': totalTransportations, 'TranslationOffers': totalTranslations, 'BuerocraticOffer': totalBuerocratic, 'ChildcareOffer': totalChildcare},
     }
     logger.warning(str(context))
     return render(request, 'offers/category_select.html', context)
@@ -365,7 +364,7 @@ def filter(request):
             context["entries"]["accommodation"] = mergeImages(accommodation.qs[lastEntry:firstEntry])
         maxPage = int(numEntries/(N_ENTRIES))
         if not currentFilter:
-            context["currentFilter"] = {"childcareVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","donationVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
+            context["currentFilter"] = {"childcareVisible": "1","jobVisible": "1","buerocraticVisible": "1","welfareVisible": "1","manpowerVisible": "1","transportationVisible": "1","translationVisible": "1","accommodationVisible": "1"}
         context["maxPage"] = maxPage
         if maxPage > 1:
             context["pagination"] = True
@@ -408,10 +407,7 @@ def index(request):
     context = filter(request)
     
     return render(request, 'offers/index.html', context)
-def donations(request):
-    donation = DonationOffer.objects.filter(genericOffer__active=True, genericOffer__requestForHelp=False)
-    context = {"ResultCount": donation.count(), "DonationOffers": donation }
-    return render(request, 'offers/donations.html', context)
+
 @login_required
 def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
@@ -421,7 +417,7 @@ def delete_offer(request, offer_id):
 @login_required
 def selectOfferType(request):
     context= {"entries": [], "requestForHelp": False}
-    for entry in GenericOffer.OFFER_CHOICES[:-1]:
+    for entry in GenericOffer.OFFER_CHOICES:
         context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
     if request.GET.get("rfh", "False") == "True":
         context["requestForHelp"] = True
@@ -456,7 +452,7 @@ def save(request, offer_id=None):
             genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
             specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
         else:
-            genOffer = GenericOffer.objects.get(id=offer_id)
+            genOffer = get_object_or_404(GenericOffer, pk=offer_id)
             check_user_is_allowed(request, genOffer.userId.id)
             specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
         genOffer.incomplete=True
@@ -487,9 +483,9 @@ def update(request, offer_id = None, newly_created = False):
             genOffer.requestForHelp = True
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
     else:
-        genOffer = GenericOffer.objects.get(pk=offer_id)
+        genOffer = get_object_or_404(GenericOffer, pk=offer_id)
         check_user_is_allowed(request, genOffer.userId.id)
-        specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
+        specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer = genOffer)
     genOffer.incomplete=False
     genOffer.active=True
     genForm = GenericForm(request.POST, instance=genOffer)
@@ -585,9 +581,6 @@ def getOfferDetails(request, offer_id):
     if generic.offerType == "MP":
         detail = get_object_or_404(ManpowerOffer, pk=generic.id)
         detailForm = ManpowerForm(model_to_dict(detail))
-    if generic.offerType == "DO":
-        detail = get_object_or_404(DonationOffer, pk=generic.id)
-        detailForm = DonationForm(model_to_dict(detail))
     if generic.offerType == "CL":
         detail = get_object_or_404(ChildcareOffer, pk=generic.id)
         detailForm = ChildcareForm(model_to_dict(detail))
@@ -623,14 +616,14 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
 
 @helperRequired
 def edit(request, offer_id):
-    genOffer = GenericOffer.objects.get(id=offer_id)
+    genOffer = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, genOffer.userId.id)
 
     if request.method == 'POST':
         return update(request, offer_id, newly_created=True)
     else:
         offerType = genOffer.offerType
-        specOffer = OFFER_MODELS[offerType](genericOffer=genOffer)
+        specOffer = OFFER_MODELS[offerType].objects.get(genericOffer=genOffer)
 
         context = {}
         context["genericForm"]  = GenericForm(instance=genOffer)

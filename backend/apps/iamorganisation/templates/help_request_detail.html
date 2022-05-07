@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load display_value %}
 {% block title %}
-{{donationRequest.title}}
+{{helpRequest.title}}
 {% endblock %}
 
 {% block content %}
@@ -26,7 +26,7 @@
     <div class="col-6" style="text-align:right;">
       <p>
       {% if editAllowed %}
-        <a href="{{donationRequest.pk}}/edit" class="btn">
+        <a href="{{helpRequest.pk}}/edit" class="btn">
           <svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor"
             class="bi bi-pencil-fill" viewBox="0 0 16 16">
             <path
@@ -79,26 +79,12 @@
     </div>
 
     <div class="col-sm-12 col-lg-8 description">
-      <h1 class="title">{{ donationRequest.title }}</h1>
-      <h3 class="subtitle">
-        {% if isMaterial %}
-        {% blocktrans %}Sachspendenaufruf{% endblocktrans %}
-        {% else %}
-        {% blocktrans %}Geldspendenaufruf{% endblocktrans %}
-        {% endif %}
-      </h3>
-      <p>{% blocktrans %}Organisation{% endblocktrans%}: {{ donationRequest.organisation }}</p>
-      {% if isMaterial %}
-        <p>{% blocktrans %}Art der Sachspende{% endblocktrans%}: {{ donationRequest.donationType }}</p>
-        <p>{% blocktrans %}Abgabeort{% endblocktrans%}: {{ donationRequest.location }}</p>
-        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ donationRequest.location }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-      {% else %}
-        <p>{% blocktrans %}Begünstigte*r{% endblocktrans%}: {{ donationRequest.beneficiary }}</p>
-        <p>{% blocktrans %}IBAN{% endblocktrans%}: {{ donationRequest.iban }}</p>
-        <p>{% blocktrans %}Spendenstichwort{% endblocktrans%}: {{ donationRequest.reason }}</p>
-      {% endif %}
+      <h1 class="title">{{ helpRequest.title }}</h1>
+      <p>{% blocktrans %}Organisation{% endblocktrans%}: {{ helpRequest.organisation }}</p>
+        <p>{% blocktrans %}Ort{% endblocktrans%}: {{ helpRequest.location }}</p>
+        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ helpRequest.location }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       <h5>{% blocktrans %}Beschreibung{% endblocktrans%}</h5>
-      <p>{{ donationRequest.description|linebreaks }}</p>
+      <p>{{ helpRequest.description|linebreaks }}</p>
       <hr>
 
     </div>

@@ -31,7 +31,7 @@ from apps.iamorganisation.forms import (
 )
 from apps.iamorganisation.models import Organisation
 from apps.ineedhelp.models import Refugee
-from apps.offers.models import GenericOffer, OFFER_MODELS
+from apps.offers.models import SPECIAL_CASE_OFFERS, GenericOffer, OFFER_MODELS
 
 from .utils import send_confirmation_email, send_password_set_email
 from .decorator import organisationRequired, helperRequired
@@ -74,29 +74,23 @@ def signup_helper(request):
             if('chosenHelp' in request.session):
                 chosenHelp = request.session['chosenHelp'].items()
                 for offerType, chosen in chosenHelp:    
-                    offer = GenericOffer()
-                    offer.incomplete = True
-                    offer.userId = user
-                    specificOffer = OFFER_MODELS[offerType]
-                    if len(offerType) > 2:
-                        if "transportation" in offerType:
-                            offer.offerType = "TR"
-                        if "translation" in offerType:
-                            offer.offerType = "TL"
-                        if "buerocracy" in offerType:
-                            offer.offerType = "BU"
-                        if "welfare" in offerType:
-                            offer.offerType = "WE"
-                    else:
-                        offer.offertype = offerType
-                    offer.active = False
-                    offer.save()
-                    specificOffer.genericOffer= offer
-                    specificOffer.save()
+
+                    if chosen:
+                        # Create a new incomplete offer of this type
+                        if offerType in SPECIAL_CASE_OFFERS:
+                            genericOffer = GenericOffer(offerType=SPECIAL_CASE_OFFERS[offerType]['offerTypeAbbr'], userId=user, active=False, incomplete=True)
+                            genericOffer.save()
+                            specOffer = OFFER_MODELS[SPECIAL_CASE_OFFERS[offerType]['offerTypeAbbr']](genericOffer=genericOffer, **SPECIAL_CASE_OFFERS[offerType]['helpType'])
+                            specOffer.save()
+                        else:
+                            genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
+                            genericOffer.save()
+                            specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer)
+                            specOffer.save()
                     
             send_confirmation_email(user, get_current_site(request).domain)
             
-            return HttpResponseRedirect("/iofferhelp/thanks")
+            return redirect('thanks')
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -113,7 +107,7 @@ def signup_organisation(request):
         if form_info.is_valid():
             user, organisation = register_organisation_in_db(request, form_info.cleaned_data)
             send_confirmation_email(user, get_current_site(request).domain)
-            return HttpResponseRedirect("/iamorganisation/thanks_organisation")
+            return redirect('thanks')
     else:
         form_info = OrganisationFormInfoSignUp()
         # form_user = OrganisationSignUpForm()
@@ -133,9 +127,9 @@ def register_organisation_in_db(request, formData):
     user = User.objects.create(email=formData["email"], isOrganisation=True)
     user.set_password(pwd)
     user.phoneNumber = formData["phoneNumber"]
-    # In Prod: user should be inactive (unable to log in) until email is confirmed
+    # In Prod: user should be unable to log in until email is confirmed
     # Bypass email confirmation in Dev (where settings.DEBUG is True)
-    user.is_active = settings.DEBUG
+    user.validatedEmail = settings.DEBUG
     user.save()
 
     organisation = Organisation.objects.create(user=user)

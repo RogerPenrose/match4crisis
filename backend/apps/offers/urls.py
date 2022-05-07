@@ -14,7 +14,6 @@ urlpatterns = [
     path('create', views.selectOfferType, name='create'),
     path('save', views.save, name='save'),
     path('<int:offer_id>/save', views.save, name='save'),
-    path('donations', views.donations, name="donations"),
     path('<int:offer_id>/', views.detail, name='detail'),
     path('<int:offer_id>/contact', views.contact, name='contact'),
     path('translation/', views.getTranslationImage, name="image"),

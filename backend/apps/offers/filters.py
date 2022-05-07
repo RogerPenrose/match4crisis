@@ -3,7 +3,7 @@ from django.db import models
 from django import forms
 from django_select2 import forms as s2forms
 from apps.accounts.models import Languages
-from .models import GenericOffer, JobOffer, ChildcareOffer,  WelfareOffer, TranslationOffer, TransportationOffer, DonationOffer, BuerocraticOffer, ManpowerOffer, AccommodationOffer
+from .models import GenericOffer, JobOffer, ChildcareOffer,  WelfareOffer, TranslationOffer, TransportationOffer, BuerocraticOffer, ManpowerOffer, AccommodationOffer
 class GenericFilter(django_filters.FilterSet):
     cost_lt = django_filters.NumberFilter(field_name="cost", lookup_expr="lt")
     class Meta:
