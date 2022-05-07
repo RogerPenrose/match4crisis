@@ -91,6 +91,11 @@ urlpatterns = [
         views.CustomLoginView.as_view(template_name="registration/login.html"),
         name="login",
     ),
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(),
+        name="logout",
+    ),
     path("thanks", views.thanks, name="thanks"),
     path("helper_login", views.helper_login, name="helper_login"),
     path("organisation_login", views.organisation_login, name="organisation_login"),
