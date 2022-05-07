@@ -1,5 +1,4 @@
 import logging
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -55,7 +54,6 @@ class Languages(models.Model):
     def __str__(self) -> str:
         return "%s (%s)" % (self.englishName, self.nativeName)
 
-
 class User(AbstractUser):
     """ A custom User Model serving as a basis for all accounts."""
 
@@ -86,6 +84,9 @@ class User(AbstractUser):
     isRefugee = models.BooleanField(default=False)
     isHelper = models.BooleanField(default=False)
     isOrganisation = models.BooleanField(default=False)
+    
+    # used to prevent attackers from continuously requesting new confirmation mails.
+    lastConfirmationMailSent = models.DateTimeField(null=True, blank=True)
 
 class LanguageKnowledge(models.Model):
     """ The intermediary model that is used for the m:n-relation between User and Languages.\n
@@ -97,20 +98,3 @@ class LanguageKnowledge(models.Model):
         default=6,
         validators=[MaxValueValidator(6), MinValueValidator(1)]
     )
-
-
-
-"""
-ONLY_VALIDATED = 0
-ONLY_NOT_VALIDATED = 1
-ALL = 2
-VALIDATED_AND_APPROVED = 3
-
-VALIDATION_CHOICES = (
-    (ONLY_VALIDATED, _("validierte")),
-    (ONLY_NOT_VALIDATED, _("nicht validierte")),
-    (ALL, _("validierte und nicht validierte")),
-    (VALIDATED_AND_APPROVED, _("validiert und von uns approved")),
-)
-"""
-

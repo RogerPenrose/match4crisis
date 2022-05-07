@@ -84,7 +84,9 @@ margin-top: 20px; }
       <h2 class="title">{% blocktrans %}Schön, dass du helfen möchtest{% endblocktrans %}</h2>
       <p style="margin-bottom: 35px;">{% blocktrans %}Wähle die Kategorien, in denen du Hilfe/Unterstützung leisten kannst.{% endblocktrans %}</p>
                {% crispy form form.helper %}
-
+              {% for entry in form.helper %}
+             {{ entry}}
+              {%endfor%}
         </div>
    </div>
 </div>

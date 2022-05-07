@@ -165,7 +165,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                
 
          
-                    <a onclick="search_offers(['childShort', 'childLong']);" class="pointer">      
+                    <a onclick="search_offers(['childcare']);" class="pointer">      
                         <div class="col-12 col-lg-6 offer-card"> 
             
                             <div class="row align-self-center align-items-center">
@@ -182,7 +182,7 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
             
             <div class="count col-2 col-sm-2">
             
-                <p>{{ local.ChildcareOfferShortterm }}</p>
+                <p>{{ local.ChildcareOffer }}</p>
                 
                 </div>
                             </div>
@@ -243,7 +243,30 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
                         </div>   
                         </a>  
 
-
+                        <a onclick="search_offers(['translation']);" class="pointer">         
+                          <div class="col-12 col-lg-6 offer-card"> 
+              
+                              <div class="row align-self-center align-items-center">
+                              <div class="col-4 col-sm-2" style="padding: 5px;">
+                           
+                                  <div class="background-photo-search" style="background-image: url({% static 'img/offers/translation.jpg' %})"></div>
+              
+                                </div>
+                              <div class="description col-6 col-sm-8">
+              <h3>{% blocktrans %}Übersetzungen{% endblocktrans %}</h3>
+              <p>{% blocktrans %}Finde einen passenden Übersetzer.{% endblocktrans %}</p>
+              
+              </div>
+              
+              <div class="count col-2 col-sm-2">
+              
+                  <p>{{ local.TranslationOffers }}</p>
+                  
+                  </div>
+                              </div>
+              
+                          </div>   
+                          </a>  
                         <a onclick="search_offers(['transportation']);" class="pointer">             
                           <div class="col-12 col-lg-6 offer-card"> 
       
@@ -295,32 +318,6 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 
                     </div>   
                   </a>  
-
-                        <a onclick="search_offers(['donations']);" class="pointer">      
-                        <div class="col-12 col-lg-6 offer-card"> 
-            
-                            <div class="row align-self-center align-items-center">
-                            <div class="col-4 col-sm-2" style="padding: 5px;">
-                         
-                                <div class="background-photo-search" style="background-image: url({% static 'img/offers/donations.jpg' %})"></div>
-            
-                              </div>
-                            <div class="description col-6 col-sm-8">
-            <h3>{% blocktrans %}Spenden{% endblocktrans %}</h3>
-            <p>{% blocktrans %}Spende an Hilfsorganisationen{% endblocktrans %}</p>
-            
-            </div>
-            
-            <div class="count col-2 col-sm-2">
-            
-                <p>{{ total.DonationOffers }}</p>
-                
-                </div>
-                            </div>
-            
-                        </div>   
-                        </a>  
-
 
 </div>
 

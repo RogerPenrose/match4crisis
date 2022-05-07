@@ -101,9 +101,6 @@ class OrganisationTable(tables.Table):
         fields = ["organisationName", "contactPerson"]
         exclude = ["id"]
 
-def thx(request):
-    return render(request, "thanks_organisation.html")
-
 @method_decorator(organisationRequired, name='dispatch')
 class OrganisationDashboardView(DashboardView):
     template_name = "organisation_dashboard.html"

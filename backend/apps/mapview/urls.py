@@ -4,7 +4,6 @@ from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("genericOffers", views.genericOffersJSON, name="genericOffersJSON"),
     path("accommodationOffers", views.accommodationOffersJSON, name="accommodationOffersJSON"),
     path("medicalOffers", views.medicalOffersJSON, name="medicalOffersJSON"),
     path("BuerocraticOffers", views.buerocraticOffersJSON, name="buerocraticOffersJSON"),

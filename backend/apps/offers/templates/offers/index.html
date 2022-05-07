@@ -241,12 +241,9 @@ margin-top: 20px; }
         <p>{{ filter.buerocratic.form.as_p }}</p>
         <hr>{% endif%}
         
-        {% if currentFilter.childShortVisible  %}     <p class="filter-title"> {% blocktrans %}Babysitten (short-term){% endblocktrans %} </p>
-        <p>{{ filter.buerocratic.form.as_p }}</p>
+        {% if currentFilter.childcareVisible  %}     <p class="filter-title"> {% blocktrans %}Kinderbetreuung{% endblocktrans %} </p>
+        <p>{{ filter.childcare.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.childLongVisible  %}     <p class="filter-title"> {% blocktrans %}Babysitten (long-term){% endblocktrans %} </p>
-        <p>{{ filter.welfare.form.as_p }}</p>
-       {% endif%}
         
               </div>
           <div class="modal-footer">
@@ -287,12 +284,9 @@ margin-top: 20px; }
         {% for entry in entries.manpower %}
           {% include 'offers/manpower-card.html' %}
         {% endfor %}
-        {% for entry in entries.childLong %}
-          {% include 'offers/childcareLong-card.html' %}
+        {% for entry in entries.childcare %}
+          {% include 'offers/childcare-card.html' %}
         {% endfor %}  
-        {% for entry in entries.childShort %}
-          {% include 'offers/childcareShort-card.html' %}
-        {% endfor %}
         {% for entry in entries.welfare %}
           {% include 'offers/welfare-card.html' %}
         {% endfor %}

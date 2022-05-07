@@ -4,20 +4,19 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
-from apps.accounts.views import DashboardView
 from apps.iamorganisation.models import HelpRequest
 from apps.iamorganisation.filters import HelpRequestFilter
-from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
+from apps.accounts.views import DashboardView
+from apps.accounts.decorator import helperRequired
+from apps.offers.models import SPECIAL_CASE_OFFERS, GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
+
 from .forms import ChooseHelpForm
 from .models import Helper
-from apps.accounts.decorator import helperRequired
 import logging
 
 logger = logging.getLogger("django")
 
-def thx(request):
-    return render(request, "thanks.html")
 
 @method_decorator(helperRequired, name='dispatch')
 class HelperDashboardView(DashboardView):
@@ -29,11 +28,16 @@ class HelperDashboardView(DashboardView):
         incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
         runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
         firstname = request.user.first_name
+        userOffers =GenericOffer.objects.filter(userId=request.user.id)
+        incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
+        logger.warning("Have incomplete Offers: "+str(len(incompleteOffers)))
+        runningOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=True)))
+        pausedOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
 
         context = {
-            "pausedOffersCount": pausedOffersCount,
-            "incompleteOffersCount": incompleteOffersCount,
-            "runningOffersCount": runningOffersCount,
+            "pausedOffers": pausedOffers,
+            "incompleteOffers": incompleteOffers,
+            "runningOffers": runningOffers,
             "firstname": firstname
         }
 
@@ -52,9 +56,9 @@ def choose_help(request):
 
             # Filter the POST data to only include the offer information
             for k,v in request.POST.items():
-                if(k in OFFER_MODELS):
+                if(k in OFFER_MODELS or k in SPECIAL_CASE_OFFERS):
                     # If the offer of type k was selected, set its value to true in the chosenHelp dict, otherwise false
-                    chosenHelp[k] = (v == 'on')
+                    chosenHelp[k] = v
 
             # Add the chosen help data to the request sessions
             request.session['chosenHelp'] = chosenHelp
