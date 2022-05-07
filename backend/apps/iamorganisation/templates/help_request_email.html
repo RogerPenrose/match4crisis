@@ -1,0 +1,20 @@
+{% load i18n %}
+
+{% blocktrans with firstname=recipient.first_name orgName=organisation.organisationName helpRequestTitle=helpRequest.title helpRequestLocation=helpRequest.location %}
+Hallo {{firstname}},
+
+Du hast eine neue Hilfsanfrage von der Organisation/Initiative "{{orgName}}"!
+Titel der Anfrage: "{{helpRequestTitle}}"
+Ort der Anfrage: {{helpRequestLocation}} 
+
+Über den folgenden Link gelangst du auf die Übersichtsseite der Hilfsanfrage. Dort kannst du mehr darüber erfahren.
+{% endblocktrans %}
+
+{% block helpRequest_link %}
+{{ protocol }}://{{ domain }}
+{% endblock %}
+
+{% blocktrans %}
+Vielen Dank,
+Dein Team von match4crisis
+{% endblocktrans %}
