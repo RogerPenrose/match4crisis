@@ -34,11 +34,11 @@ def mapviewjs(request):
     context = {}
     context["show"] = []
     BASE= "/mapview/"
-    if request.user.isOrganisation:
+    if not request.user.is_authenticated or not request.user.isOrganisation :
+        context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
+    else:
         #get only MP
         context["categories"] = [BASE+"ManpowerOffers"]
-    else:
-        context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
     for key,value in request.GET.dict().items():
         if value == "True":
             context["show"].append(key.replace("Offers","").replace("Requests", ""))
@@ -76,9 +76,9 @@ def generalInformationJSON(request):
 def accommodationOffersJSON(request):
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = False)
-    if request.user.isHelper:
+    else:
         requests = AccommodationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp = True)
     icon =  "<img src=\"/static/img/icons/icon_AC.svg\">"
     facilities = {
@@ -145,9 +145,9 @@ def transportationOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = TransportationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     
     icon =  "<img src=\"/static/img/icons/icon_TR.svg\">"
@@ -170,9 +170,9 @@ def medicalOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = WelfareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = WelfareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_WE.svg\">"
     facilities = {
@@ -194,9 +194,9 @@ def buerocraticOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = BuerocraticOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = BuerocraticOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_BU.svg\">"
     facilities = {
@@ -219,9 +219,9 @@ def childcareOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = ChildcareOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_CL.svg\">"
     facilities = {
@@ -243,9 +243,9 @@ def jobOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = JobOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = JobOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_JO.svg\">"
     facilities = {
@@ -267,9 +267,9 @@ def manpowerOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
     facilities = {
@@ -291,9 +291,9 @@ def translationOffersJSON(request):
     
     requests = []
     offers= []
-    if request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee:
         offers = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
-    if request.user.isHelper:
+    else:
         requests = TranslationOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
     icon =  "<img src=\"/static/img/icons/icon_TL.svg\">"
     facilities = {

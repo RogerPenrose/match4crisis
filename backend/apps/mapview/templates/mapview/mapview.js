@@ -145,9 +145,9 @@ mapViewPage = {
                 offerOverlays[entries[i].legend+"("+entries[i].offers.length+")"] = markers
                 
             if (show.includes(entries[i].type)){
-                this.offers.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": true})
+                this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": true})
             }
-            else this.offers.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": false})
+            else this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": false})
         }
         if (entries[i].requests.length > 0){
             var requestMarkerGroup = L.markerClusterGroup({
@@ -193,7 +193,8 @@ mapViewPage = {
         
         if (this.offers.length > 0){
         // click (uncheck) checkboxes, if not selected in URL-Params
-          document.getElementById("controlContainer")
+        console.log("Showing Offers")
+          offersCheckboxParents = document.getElementById("controlContainer")
                                     .childNodes[0]
                                     .childNodes[0]
                                     .childNodes[2]
@@ -203,6 +204,7 @@ mapViewPage = {
                                     offersCheckboxParents[0].childNodes[0].addEventListener("change", e => this.handleCheckBoxClick(e));
         }
         if (this.requests.length > 0){
+            console.log("Showing Requests")
          requestsCheckboxParents = document.getElementById("controlContainer")
                                     .childNodes[0]
                                     .childNodes[0]
