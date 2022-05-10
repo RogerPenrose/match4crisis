@@ -75,24 +75,10 @@
 {% endblock %}
 
 {% block content %}
-  {% if user.is_authenticated and user.isOrganisation %}
-<nav class="navbar navbar-expand-sm navbar-dark bg-light search-map" id="organisation_navbar">
-  <div class="container">
-    <div class="order-0">
-      <select name="countrycode" id="countrycode" class="map-dropdown">
-        <option value="DE">{% blocktrans %}Deutschland{% endblocktrans %}</option>
-        <option value="AT">{% blocktrans %}Österreich{% endblocktrans %}</option>
-      </select>
-      <input type="text" id="search" class="form textinput textInput map-input" placeholder="Postleitzahl">
-      <button class="btn btn-primary btn blue text-white btn-md" role="button" onclick="gototable()">{% blocktrans %}Direktsuche{% endblocktrans %} &raquo;</button>
-    </div>
-  </div>
-</nav>
-{% endif %}
 
 <div id="mapContainer" style="z-index:1; position: relative;">
   <div class="container"><input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}" class="search-input"/></div>
-  <div id="controlContainer" class="container control-container"></div>
+  <div id="controlContainer" class="container control-container" {% if request.GET.no_controls%}style="visibility: hidden;"{% endif %}></div>
 	 <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
    <p class="listview">
     <a id="results_as_list" href="../offers/list" class="btn btn-yellow" role="button" aria-pressed="true">

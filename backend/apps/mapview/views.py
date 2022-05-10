@@ -267,7 +267,7 @@ def manpowerOffersJSON(request):
     
     requests = []
     offers= []
-    if not request.user.is_authenticated or request.user.isRefugee:
+    if not request.user.is_authenticated or request.user.isRefugee or request.user.isOrganisation:
         offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
     else:
         requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
