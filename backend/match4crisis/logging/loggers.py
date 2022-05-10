@@ -17,7 +17,7 @@ class DiscordHandler(logging.Handler):
         self.webhook_url = webhook_url
         logging.Handler.__init__(self)
 
-        notify_users=["everyone"]
+        notify_users=["Schnickster#8001"]
         agent=gethostname()
 
         self._url = webhook_url
@@ -25,6 +25,7 @@ class DiscordHandler(logging.Handler):
         self._notify_users = notify_users
         self._header = self.create_header()
         self.name = ""
+        logger.warning("Logging to : "+webhook_url)
 
     def create_header(self):
         return {
@@ -32,6 +33,7 @@ class DiscordHandler(logging.Handler):
         }
 
     def discord_log(self, message):
+        logger.warning("Would log: "+message)
         request = requests.post(self._url, headers=self._header, data={
             "content": message
             })
@@ -55,6 +57,6 @@ class DiscordHandler(logging.Handler):
         try:
             msg = self.format(record)
             users = '\n'.join(f'<@{user}>' for user in self._notify_users)
-            self.write_to_discord("```%s```%s" % (msg, users))
+            self.discord_log("```%s```%s" % (msg, users))
         except Exception:
             self.handleError(record)
