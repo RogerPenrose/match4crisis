@@ -155,12 +155,12 @@ def transportationOffersJSON(request):
         "type" : "transportation",
         "legend": icon+str(_("Logistik ")),
         "offers":[{
-        "text" : "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4> <br>"+LOCATION_SVG+str(e.distance or "N/A")+"km um "+str(e.genericOffer.location or "N/A")+" .\n\n<br>"+str(str(e.numberOfPassengers) if e.helpType_transport == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display())+"<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "text" : "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4> <br>"+LOCATION_SVG+str(e.distance or "N/A")+"km um "+str(e.genericOffer.location or "N/A")+" .\n\n<br>"+str(str(e.numberOfPassengers) if e.helpType == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display())+"<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
         "lng": e.genericOffer.lng
     } for e in offers],
     "requests": [{
-        "text" : "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4> <br>"+LOCATION_SVG+str(e.distance or "N/A")+"km um "+str(e.genericOffer.location or "N/A")+" .\n\n<br>"+str(str(e.numberOfPassengers) if e.helpType_transport == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display())+"<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "text" : "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4> <br>"+LOCATION_SVG+str(e.distance or "N/A")+"km um "+str(e.genericOffer.location or "N/A")+" .\n\n<br>"+str(str(e.numberOfPassengers) if e.helpType == "PT" else "Fahrzeugtyp:"+e.get_typeOfCar_display())+"<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
         "lng": e.genericOffer.lng
     } for e in requests]}
@@ -179,12 +179,12 @@ def medicalOffersJSON(request):
         "type" : "welfare",
         "legend": icon+str(_("Medizinische Hilfe ")),
         "offers":[{
-        "text": "<h4 class=\"popup-title\">Medizinisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_welfare_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "text": "<h4 class=\"popup-title\">Medizinisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
         "lng": e.genericOffer.lng,
     } for e in offers],
     "requests":[{
-        "text": "<h4 class=\"popup-title\">Medizinisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_welfare_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "text": "<h4 class=\"popup-title\">Medizinisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
         "lng": e.genericOffer.lng,
     } for e in requests]}
@@ -203,12 +203,12 @@ def buerocraticOffersJSON(request):
         "type" : "buerocracy",
         "legend": icon+str(_("Bürokratische ")),
         "offers":[{
-        "text":  "<h4 class=\"popup-title\">Bürokratisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_buerocratic_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "text":  "<h4 class=\"popup-title\">Bürokratisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
         "lng": e.genericOffer.lng
     } for e in offers],
     "requests":[{
-        "text":  "<h4 class=\"popup-title\">Bürokratisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_buerocratic_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "text":  "<h4 class=\"popup-title\">Bürokratisches Hilfsangebot</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>"+e.get_helpType_display()+"\n<br>"+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
         "lng": e.genericOffer.lng
     } for e in requests]}

@@ -9,86 +9,164 @@
 {% block header %}
 
 <style>
+  #chooseHelpForm {
+    margin-left: -10px;
+    margin-right: -10px;
+  }
 
-  .blueForms { margin-left: -10px; margin-right: -10px;}
-      @media only screen and (min-width: 768px) {
-.custom-control { width: 33%; float: left;}
-      }
+  @media only screen and (min-width: 768px) {
+    .custom-control {
+      width: 33%;
+      float: left;
+    }
+  }
 
-      @media only screen and (max-width: 767px) {
-.custom-control { width: 50%; float: left;}
-      }
+  @media only screen and (max-width: 767px) {
+    .custom-control {
+      width: 50%;
+      float: left;
+    }
+  }
 
-      @media only screen and (max-width: 440px) {
-.custom-control { width: 100%;}
-      }
+  @media only screen and (max-width: 440px) {
+    .custom-control {
+      width: 100%;
+    }
+  }
 
-.custom-control * { cursor: pointer;}
-.form-group .btn {     clear: both;
-    width: 100%; }
-    label.custom-control-label { position: relative;
-      text-align:center;
-  display: inline-block;
- margin-right: .5rem;
-  border-radius: 23px;
-  vertical-align: text-bottom;
-  transition: all 0.3s linear;
-margin-bottom: 0px;
-background: #f4f4f4;
+  .custom-control * {
+    cursor: pointer;
+  }
+
+  .form-group .btn {
+    clear: both;
+    width: 100%;
+  }
+
+  label.custom-control-label {
+    position: relative;
+    text-align: center;
+    display: inline-block;
+    margin-right: .5rem;
+    border-radius: 23px;
+    vertical-align: text-bottom;
+    transition: all 0.3s linear;
+    margin-bottom: 0px;
+    background: #f4f4f4;
     border-radius: 25px;
     color: #28445b;
     width: 100%;
-    padding:40px 10px;
+    padding: 40px 10px;
     font-weight: 600;
-}
-.custom-checkbox .custom-control-label::before { display: none;}
+  }
 
-.custom-control input { display: none; }
+  .custom-checkbox .custom-control-label::before {
+    display: none;
+  }
 
-.custom-control-input:checked~.custom-control-label {  background-color: #ed0061; color: #fff;}
+  .custom-control-input {
+    display: none;
+  }
 
-.custom-control-input:checked~.custom-control-label svg { fill: #fff; }
+  .custom-control-input:checked~.custom-control-label {
+    background-color: #ed0061;
+    color: #fff;
+  }
 
-.custom-control { padding: 10px; }
+  .custom-control-input:checked~.custom-control-label svg {
+    fill: #fff;
+  }
+
+  .custom-control-input:checked~.custom-control-label .subchoices-group {
+    display: block !important;
+  }
+
+  .custom-control {
+    padding: 10px;
+  }
 
 
 
-.btn {     background-color: #32bd69;
+  .btn {
+    background-color: #32bd69;
     font-size: 1rem;
     color: #fff;
     padding: .8rem 2.5rem;
     border-radius: 15px;
     border: 0px;
     font-weight: bold;
-margin-top: 20px; }
+    margin-top: 20px;
+  }
 
-    .btn:hover { background-color: #1eb159; }
+  .btn:hover {
+    background-color: #1eb159;
+  }
 
-    .form-group svg { fill: #28445b; width: 30px; height: auto; display:block; margin: 0 auto; margin-bottom: 10px; -webkit-transition: all .2s ease-in-out;
-  -moz-transition: all .2s ease-in-out;
-  -o-transition: all .2s ease-in-out;
-  -ms-transition: all .2s ease-in-out;
-  transition: all .2s ease-in-out;}
+  .form-group svg {
+    fill: #28445b;
+    width: 30px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+  }
 
+  .subchoices-group {
+    text-align: left;
+  }
 </style>
 
 {% endblock %}
 
-{% load crispy_forms_tags %}
+{% load getdictvalue %}
 
 {% block content %}
 <div style="height:40px"></div>
 <div class="container">
-    <div class="row align-self-center">
-        <div class="col-lg-8" style="margin: 0 auto; ">
+  <div class="row align-self-center">
+    <div class="col-lg-8" style="margin: 0 auto; ">
       <h2 class="title">{% blocktrans %}Schön, dass du helfen möchtest{% endblocktrans %}</h2>
-      <p style="margin-bottom: 35px;">{% blocktrans %}Wähle die Kategorien, in denen du Hilfe/Unterstützung leisten kannst.{% endblocktrans %}</p>
-               {% crispy form form.helper %}
-              {% for entry in form.helper %}
-             {{ entry}}
-              {%endfor%}
+      <p style="margin-bottom: 35px;">{% blocktrans %}Wähle die Kategorien, in denen du Hilfe/Unterstützung leisten
+        kannst.{% endblocktrans %}</p>
+      <form id="chooseHelpForm" action="/iofferhelp/choose_help" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          <div id="div_id_{{field_name}}" class="custom-control custom-checkbox">
+            {{ field.errors }}
+            <input type="checkbox" name="{{field.name}}" class="checkboxinput custom-control-input"
+              id="id_{{field.name}}" wfd-invisible="true">
+            <label class="custom-control-label" for="id_{{field.name}}">
+              {{ field.label|safe }}
+
+              {% if field.name|add:'Subchoices' in form.fields %}
+              {% with field.name|add:'Subchoices' as subchoicesFieldName%}
+              {% with form|getdictvalue:subchoicesFieldName as subchoicesField %}
+              <div class="subchoices-group" style="display:none">
+                {% blocktrans %}Bitte wähle:{% endblocktrans %}
+                {% for choice in subchoicesField %}
+                <div class="subchoice">
+                  {{choice}}
+                </div>
+                {% endfor %}
+              </div>
+              {% endwith %}
+              {% endwith %}
+              {% endif %}
+            </label>
+          </div>
         </div>
-   </div>
+        {% endfor %}
+        <div class="form-group">
+          <input type="submit" name="submit" value="Weiter" class="btn btn-primary" id="submit-id-submit">
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
-

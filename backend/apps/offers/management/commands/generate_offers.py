@@ -92,14 +92,14 @@ class Command(BaseCommand):
                 if counter == 2: # Accompaniment
                     g.offerType = "BU"
                     g.save()
-                    b = BuerocraticOffer(genericOffer=g, helpType_buerocratic=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
+                    b = BuerocraticOffer(genericOffer=g, helpType=HELP_CHOICES[np.random.randint(0,len(HELP_CHOICES)-1)])
                     b.save()
                 if counter == 3: # Transportation
                     g.offerType = "TR"
                     g.save()
                     t = TransportationOffer(genericOffer=g, \
                         numberOfPassengers=np.random.randint(0, 10),\
-                        helpType_transport=HELP_CHOICES_TR[np.random.randint(0, len(HELP_CHOICES_TR)-1)],\
+                        helpType=HELP_CHOICES_TR[np.random.randint(0, len(HELP_CHOICES_TR)-1)],\
                         distance=np.random.randint(5,200))
                     t.save()
                 if counter == 4: # Transportation
@@ -129,7 +129,7 @@ class Command(BaseCommand):
                 if counter == 6: # Transportation
                     g.offerType = "WE"
                     g.save()
-                    b = WelfareOffer(genericOffer=g,typeOfEducation="Dr. Feelgood", hasEducation_welfare=bool(np.random.randint(0, 1)), helpType_welfare=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
+                    b = WelfareOffer(genericOffer=g,typeOfEducation="Dr. Feelgood", hasEducation_welfare=bool(np.random.randint(0, 1)), helpType=WELFARE_CHOICES[np.random.randint(0,len(WELFARE_CHOICES)-1)])
                     b.save()
                 if counter == 7: # Transportation
                     g.offerType = "JO"

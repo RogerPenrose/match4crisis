@@ -73,15 +73,19 @@ def signup_helper(request):
             # If the user got here through the /iofferhelp/choose_help page, get the chosen help data from the request session
             if('chosenHelp' in request.session):
                 chosenHelp = request.session['chosenHelp'].items()
+                chosenHelpSubchoices = request.session['chosenHelpSubchoices']
                 for offerType, chosen in chosenHelp:    
 
                     if chosen:
-                        # Create a new incomplete offer of this type
-                        if offerType in SPECIAL_CASE_OFFERS:
-                            genericOffer = GenericOffer(offerType=SPECIAL_CASE_OFFERS[offerType]['offerTypeAbbr'], userId=user, active=False, incomplete=True)
-                            genericOffer.save()
-                            specOffer = OFFER_MODELS[SPECIAL_CASE_OFFERS[offerType]['offerTypeAbbr']](genericOffer=genericOffer, **SPECIAL_CASE_OFFERS[offerType]['helpType'])
-                            specOffer.save()
+                        # Create a new incomplete offer of this type; 
+                        # if subchoices are active for this offer type; create one offer for every chosen subchoice
+                        if offerType in chosenHelpSubchoices:
+                            for subchoice in chosenHelpSubchoices[offerType]:
+                                logger.info(offerType + " " + subchoice)
+                                genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
+                                genericOffer.save()
+                                specOffer = OFFER_MODELS[offerType](genericOffer=genericOffer, helpType=subchoice)
+                                specOffer.save()
                         else:
                             genericOffer = GenericOffer(offerType=offerType, userId=user, active=False, incomplete=True)
                             genericOffer.save()

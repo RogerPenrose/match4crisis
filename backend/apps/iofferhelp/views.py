@@ -8,7 +8,7 @@ from apps.iamorganisation.models import HelpRequest
 from apps.iamorganisation.filters import HelpRequestFilter
 from apps.accounts.views import DashboardView
 from apps.accounts.decorator import helperRequired
-from apps.offers.models import SPECIAL_CASE_OFFERS, GenericOffer, getSpecificOffers, OFFER_MODELS
+from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
 
 from .forms import ChooseHelpForm
@@ -53,16 +53,24 @@ def choose_help(request):
         # check whether it's valid:
         if form.is_valid():
             chosenHelp = {}
+            chosenHelpSubchoices = {}
 
             # Filter the POST data to only include the offer information
-            for k,v in request.POST.items():
-                if(k in OFFER_MODELS or k in SPECIAL_CASE_OFFERS):
+            for k in request.POST:
+                if(k in OFFER_MODELS):
                     # If the offer of type k was selected, set its value to true in the chosenHelp dict, otherwise false
-                    chosenHelp[k] = v
+                    chosenHelp[k] = request.POST.get(k)
+                elif(k.endswith("Subchoices")):
+                    # Add the subchoices in case there are any
+                    chosenHelpSubchoices[k[:2]] = request.POST.getlist(k)
 
             # Add the chosen help data to the request sessions
             request.session['chosenHelp'] = chosenHelp
+            request.session['chosenHelpSubchoices'] = chosenHelpSubchoices
+
             return HttpResponseRedirect("/accounts/signup_helper")
+        else:
+            return HttpResponse(form.errors)
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -104,7 +112,7 @@ def help_requests_view(request):
     helper = Helper.objects.get(user=request.user)
     helpRequests = HelpRequest.objects.all()
     filter = HelpRequestFilter(request.GET, queryset=helpRequests)
-    paginator = Paginator(list(filter.qs), 25)
+    paginator = Paginator(list(filter.qs), HELP_REQUEST_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

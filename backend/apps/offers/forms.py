@@ -139,7 +139,7 @@ class WelfareForm(OfferForm):
         exclude = ("genericOffer",)
 
         labels = {
-            "helpType_welfare" : HELPTYPE_WE,
+            "helpType" : HELPTYPE_WE,
             "hasEducation_welfare": _("Ich habe Vorerfahrung"),
             "typeOfEducation": _("Ausbildung / Erfahrung")
         }
@@ -151,7 +151,7 @@ class BuerocraticForm(OfferForm):
         exclude = ("genericOffer",)
 
         labels = {
-            "helpType_buerocratic" : HELPTYPE,
+            "helpType" : HELPTYPE,
         }
 
 class TransportationForm(OfferForm):
@@ -163,7 +163,7 @@ class TransportationForm(OfferForm):
         labels = {
             "numberOfPassengers" : PASSENGER_COUNT,
             "distance" : DISTANCE,
-            "helpType_transport": TRANSPORT_TYPE,
+            "helpType": TRANSPORT_TYPE,
             "typeOfCar": CAR_TYPE
         }
 

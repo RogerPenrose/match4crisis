@@ -103,9 +103,10 @@ class JobOffer(models.Model):
     requirements = models.TextField(blank=True)
 
 class BuerocraticOffer(models.Model):
+    # Don't change this variable name!
     HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere Bürokratische Hilfe'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    helpType_buerocratic = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
+    helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="AM")
 
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
@@ -138,29 +139,30 @@ class AccommodationOffer(models.Model):
         return self.typeOfResidence
 
 class WelfareOffer(models.Model):
-    WELFARE_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
+    # Don't change this variable name!
+    HELP_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     
-    helpType_welfare = models.CharField(max_length=3, choices=WELFARE_CHOICES, default="ELD") 
+    helpType = models.CharField(max_length=3, choices=HELP_CHOICES, default="ELD") 
     hasEducation_welfare = models.BooleanField(default=False)
     typeOfEducation = models.TextField(default="")
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    #country = models.CharField(max_length=200) # Do this as a select ? 
-    TRANSPORTATIONCHOICES=[
+    # Don't change this variable name!
+    HELP_CHOICES=[
         ('PT', _("Personentransport")),
         ('GT', _("Gütertransport"))
     ]
     CARCHOICES=[
         ('KW', _("Kleinwagen")),
         ('MW', _("Mittelklassewagen")),
-        ('KM', _("Kobi")),
+        ('KM', _("Kombi")),
         ('SU', _("SUV")),
         ('MI', _("Minivan")),
         ('TR', _("Transporter"))
     ]
-    helpType_transport = models.CharField(max_length=2, choices=TRANSPORTATIONCHOICES, default="PT" )
+    helpType = models.CharField(max_length=2, choices=HELP_CHOICES, default="PT" )
     distance = models.IntegerField(default=100)
     numberOfPassengers = models.IntegerField(default=2)
     typeOfCar = models.CharField(max_length=2, choices=CARCHOICES, default="KW")
@@ -191,58 +193,58 @@ SPECIAL_CASE_OFFERS = {
     'transportation_people': {
         'offerTypeAbbr': 'TR',
         'helpType': {
-            'helpType_transport': 'PT'
+            'helpType': 'PT'
         },
-        'helpTypeChoiceLabel': TransportationOffer.TRANSPORTATIONCHOICES[0][1]
+        'helpTypeChoiceLabel': TransportationOffer.HELP_CHOICES[0][1]
     },
     'transportation_goods': {
         'offerTypeAbbr': 'TR',
         'helpType': {
-            'helpType_transport': 'GT'
+            'helpType': 'GT'
         },
-        'helpTypeChoiceLabel': TransportationOffer.TRANSPORTATIONCHOICES[1][1]
+        'helpTypeChoiceLabel': TransportationOffer.HELP_CHOICES[1][1]
     },
     'buerocracy_companion': {
         'offerTypeAbbr': 'BU',
         'helpType': {
-            'helpType_buerocratic': 'AM'
+            'helpType': 'AM'
         },
         'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[0][1]
     },
     'buerocracy_legal': {
         'offerTypeAbbr': 'BU',
         'helpType': {
-            'helpType_buerocratic': 'LE'
+            'helpType': 'LE'
         },
         'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[1][1]
     },
     'buerocracy_other': {
         'offerTypeAbbr': 'BU',
         'helpType': {
-            'helpType_buerocratic': 'OT'
+            'helpType': 'OT'
         },
         'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[2][1]
     },
     'welfare_elderly': {
         'offerTypeAbbr': 'WE',
         'helpType': {
-            'helpType_welfare': 'ELD'
+            'helpType': 'ELD'
         },
-        'helpTypeChoiceLabel': WelfareOffer.WELFARE_CHOICES[0][1]
+        'helpTypeChoiceLabel': WelfareOffer.HELP_CHOICES[0][1]
     },
     'welfare_disabled': {
         'offerTypeAbbr': 'WE',
         'helpType': {
-            'helpType_welfare': 'DIS'
+            'helpType': 'DIS'
         },
-        'helpTypeChoiceLabel': WelfareOffer.WELFARE_CHOICES[1][1]
+        'helpTypeChoiceLabel': WelfareOffer.HELP_CHOICES[1][1]
     },
     'welfare_psych': {
         'offerTypeAbbr': 'WE',
         'helpType': {
-            'helpType_welfare': 'PSY'
+            'helpType': 'PSY'
         },
-        'helpTypeChoiceLabel': WelfareOffer.WELFARE_CHOICES[2][1]
+        'helpTypeChoiceLabel': WelfareOffer.HELP_CHOICES[2][1]
     },
 }
 

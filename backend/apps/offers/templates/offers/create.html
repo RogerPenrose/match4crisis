@@ -144,7 +144,7 @@ flex-direction: column-reverse;">{{field }} {{ field.label_tag }}</td>
 document.addEventListener('readystatechange', function(event) {
     if (document.readyState === "complete") {
 {% if  genericForm.offerType.value == "TR"%}
-document.getElementById("id_helpType_transport").addEventListener("change", toggleTransport);
+document.getElementById("id_helpType").addEventListener("change", toggleTransport);
 toggleTransport()
 {%elif genericForm.offerType.value == "CL"%}
     document.getElementById("id_timeOfDay").parentElement.parentElement.style.display = "none"

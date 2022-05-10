@@ -120,7 +120,7 @@ else{
 }
 }
 function toggleTransport(){
-if(document.getElementById("id_helpType_transport").value == "GT"){
+if(document.getElementById("id_helpType").value == "GT"){
     document.getElementById("id_typeOfCar").parentElement.parentElement.style.display = "table-row"
     document.getElementById("id_numberOfPassengers").parentElement.parentElement.style.display ="none"
 }

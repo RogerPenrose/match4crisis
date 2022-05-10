@@ -24,7 +24,7 @@ class JobFilter(django_filters.FilterSet):
 class BuerocraticFilter(django_filters.FilterSet):
     class Meta:
         model = BuerocraticOffer
-        fields = ['helpType_buerocratic']
+        fields = ['helpType']
         
 class ManpowerFilter(django_filters.FilterSet):
     class Meta:
@@ -40,12 +40,12 @@ class AccommodationFilter(django_filters.FilterSet):
 class WelfareFilter(django_filters.FilterSet):
     class Meta:
         model = WelfareOffer
-        fields = ['helpType_welfare', 'hasEducation_welfare']
+        fields = ['helpType', 'hasEducation_welfare']
 class TransportationFilter(django_filters.FilterSet):
     date = django_filters.DateFilter(widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
     class Meta:
         model = TransportationOffer
-        fields = [ 'numberOfPassengers','distance', 'helpType_transport', 'typeOfCar']
+        fields = [ 'numberOfPassengers','distance', 'helpType', 'typeOfCar']
 class TranslationFilter(django_filters.FilterSet):
     class Meta:
         model = TranslationOffer
