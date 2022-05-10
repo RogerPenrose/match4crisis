@@ -311,7 +311,7 @@ navigator.share({
                   <input type="hidden" name="bb"/>
                 </p>
               </div>
-           {%if  location != "N/A" %}   <p class="map"><iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location.string }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+           {%if  location != "N/A" %}   <p class="map"><iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location }}" width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             
             </p>{%else%} <p> {%blocktrans%}Kein Ort angegeben{%endblocktrans%}</p>{% endif%}          
             <p>ein {%if generic.requestForHelp == False%}Angebot{%else%}Gesuch{%endif%} von {{ username|default:"Anonym" }}, erstellt am {{createdAt }}</p>
