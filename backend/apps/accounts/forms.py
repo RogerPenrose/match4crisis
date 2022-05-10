@@ -14,6 +14,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, HTML, Layout, Row, Submit
 
 from django_select2 import forms as s2forms
+from apps.iamorganisation.models import Organisation
 
 from match4crisis.constants.choices import GENDER_CHOICES
 
@@ -184,6 +185,7 @@ class CustomAuthenticationForm(forms.Form):
             href = "/accounts/resend_confirmation_email", # reversing results in a circular import error even with reverse_lazy, as this dict is evaluated at startup -> reverse_lazy('thanks'),
             link_content = _("Neue Bestätigungs-E-Mail anfordern")
         ),
+        "organisation_not_approved" : _("Dein Organisations-Account wird gerade von unserem Staff überprüft. Du bekommst in Kürze eine Bestätigung per E-Mail - im Anschluss kannst du dich einloggen.")
     }
 
     def __init__(self, request=None, *args, **kwargs):
@@ -235,6 +237,12 @@ class CustomAuthenticationForm(forms.Form):
             raise ValidationError(
                 self.error_messages["email_not_confirmed"],
                 code="email_not_confirmed",
+            )
+
+        if user.isOrganisation and not Organisation.objects.get(user=user).isApproved:
+            raise ValidationError(
+                self.error_messages["organisation_not_approved"],
+                code="organisation_not_approved",
             )
 
         if not user.is_active:
