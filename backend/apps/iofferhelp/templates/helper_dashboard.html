@@ -227,15 +227,9 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
       {%endif%}
       {% endfor %}
       {% else %}
-      {%if user.isHelper %}
-      {% blocktrans %}
-      Du hast keine unvollständigen Angebote.
-      {% endblocktrans %}
-      {%else%}
       {% blocktrans %}
       Du hast keine unvollständigen Gesuche.
       {% endblocktrans %}
-      {%endif%}
       {% endif %}
             
 
@@ -277,15 +271,9 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
           {%endif%}
           {% endfor %}
           {% else %}
-          {%if user.isHelper %}
           {% blocktrans %}
           Du hast keine aktiven Angebote.
           {% endblocktrans %}
-          {%else%}
-          {% blocktrans %}
-          Du hast keine aktiven Gesuche.
-          {% endblocktrans %}
-          {%endif%}
           {% endif %}
                 
     
@@ -323,15 +311,9 @@ div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-widt
 {%endif%}
 {% endfor %}
 {% else %}
-{%if user.isHelper %}
 {% blocktrans %}
-Du hast keine aktiven Angebote.
+Du hast keine pausierten Angebote.
 {% endblocktrans %}
-{%else%}
-{% blocktrans %}
-Du hast keine aktiven Gesuche.
-{% endblocktrans %}
-{%endif%}
 {% endif %}
       
 

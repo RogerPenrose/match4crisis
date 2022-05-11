@@ -54,9 +54,9 @@ class GenericOffer(models.Model):
 
 class ChildcareOffer(models.Model):
     CHILDCARE_CHOICES = [
-        ('GT', _('Ganztagesbetruung')),
+        ('GT', _('Ganztagsbetreuung')),
         ('HT', _('Halbtagsbetreuung')),
-        ('WE', _('Wochendendbetreuung'))
+        ('WE', _('Wochendendsbetreuung'))
     ]
     TIME_CHOICES = [
         ('VM', _('Vormittags')),
