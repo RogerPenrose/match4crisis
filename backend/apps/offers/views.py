@@ -387,10 +387,10 @@ def mergeImages(offers):
                 location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
                 if location.get("city"):
                     entry.genericOffer.location =  location["city"]
-                else :
-                    entry.genericOffer.location = "N/A"
-            else :
-                entry.genericOffer.location = "N/A"
+                else:
+                    entry.genericOffer.location = None
+            else:
+                entry.genericOffer.location = None
             entry.genericOffer.save()  
         location = {"city": entry.genericOffer.location}
         newEntry =  {
@@ -413,7 +413,7 @@ def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, generic.userId.id)
     generic.delete()
-    return index(request)
+    return redirect('helper_dashboard')
 @login_required
 def selectOfferType(request):
     context= {"entries": [], "requestForHelp": False}
@@ -424,6 +424,14 @@ def selectOfferType(request):
     logger.warning("RFH: "+str(context["requestForHelp"]))
     return render(request, 'offers/selectOfferType.html', context)
 
+@login_required
+@helperRequired
+def toggle_active(request, offer_id):
+    generic = get_object_or_404(GenericOffer, pk=offer_id)
+    check_user_is_allowed(request, generic.userId.id)
+    generic.active = not generic.active
+    generic.save()
+    return redirect('detail', offer_id)
 
 @login_required
 def create(request):
@@ -538,11 +546,14 @@ def check_user_is_allowed(request, target_id, raise_permission_denied = True):
         raise PermissionDenied
     return False
 
+@login_required
+@helperRequired
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, generic.userId.id)
     ImageClass.objects.filter(image_id=image_id).delete()
     return detail(request, offer_id, edit_active=True)
+
 def getOfferDetails(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     genericForm = GenericForm(instance = generic)
@@ -592,6 +603,7 @@ def getOfferDetails(request, offer_id):
         detailForm = BuerocraticForm(model_to_dict(detail))
     genericContext["detail"] = detailForm
     return genericContext
+
 def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
     context = getOfferDetails(request, offer_id)
     offer = GenericOffer.objects.get(pk=offer_id)
@@ -614,6 +626,7 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
         refugee.addRecentlyViewedOffer(offer)
     return render(request, 'offers/detail.html', context)
 
+@login_required
 @helperRequired
 def edit(request, offer_id):
     genOffer = get_object_or_404(GenericOffer, pk=offer_id)
@@ -626,12 +639,12 @@ def edit(request, offer_id):
         specOffer = OFFER_MODELS[offerType].objects.get(genericOffer=genOffer)
 
         context = {}
+        context["requestForHelp"] = False
         context["genericForm"]  = GenericForm(instance=genOffer)
         context["detailForm"] = OFFER_FORMS[offerType](instance=specOffer)
         if offerType == "AC" or offerType =="CL":
             context["imageForm"] = ImageForm()
         return render(request, 'offers/create.html', context)
-    #return detail(request, offer_id, edit_active=True)
 
 def results(request, offer_id):
     response = "You're looking at the results of offer %s."

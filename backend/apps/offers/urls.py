@@ -18,6 +18,7 @@ urlpatterns = [
     path('<int:offer_id>/contact', views.contact, name='contact'),
     path('translation/', views.getTranslationImage, name="image"),
     path('<int:offer_id>/delete_offer', views.delete_offer, name='delete'),
+    path('<int:offer_id>/toggle_active', views.toggle_active, name='toggle_active'),
     path('<int:offer_id>/delete_image/<int:image_id>', views.delete_image, name='delete_image'),
     path('<int:offer_id>/update', views.update, name='update'),
     path('<int:offer_id>/edit', views.edit, name='edit'),

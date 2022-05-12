@@ -94,9 +94,13 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 <div class="container">
     <div class="row" style=" margin-bottom:55px;">
                <div class="col-12 col-lg-6" style="margin: 0 auto">
-                {% if  requestForHelp == False %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}</h2>
-                {% else %}<h2 class="title" style="margin-bottom: 35px">{% blocktrans %}Wo benötigst du Hilfe?{% endblocktrans %}</h2>
-                {% endif %}
+                <h2 class="title" style="margin-bottom: 35px">
+                    {% if requestForHelp %}
+                    {% blocktrans %}Wo benötigst du Hilfe?{% endblocktrans %}
+                    {% else %}
+                    {% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}
+                    {% endif %}
+                </h2>
 
 <form id="thisForm" action="/offers/createOffer" method="POST" enctype="multipart/form-data">
     {% csrf_token %} 

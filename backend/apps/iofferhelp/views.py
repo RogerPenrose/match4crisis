@@ -31,13 +31,13 @@ class HelperDashboardView(DashboardView):
         userOffers =GenericOffer.objects.filter(userId=request.user.id)
         incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
         logger.warning("Have incomplete Offers: "+str(len(incompleteOffers)))
-        runningOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=True)))
+        activeOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=True)))
         pausedOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
 
         context = {
             "pausedOffers": pausedOffers,
             "incompleteOffers": incompleteOffers,
-            "runningOffers": runningOffers,
+            "activeOffers": activeOffers,
             "firstname": firstname
         }
 
