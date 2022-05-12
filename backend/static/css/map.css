@@ -196,7 +196,7 @@ div.leaflet-control-layers-overlays, div.leaflet-control-layers-base {
 .leaflet-control-layers-group > label {
   padding: 10px;
 }
-.leaflet-control-layers-overlays, img {
+.leaflet-control-layers-overlays img {
   height: 20pt;
 }
 .leaflet-control-layers-overlays input[type="checkbox"], input[type="radio"]{

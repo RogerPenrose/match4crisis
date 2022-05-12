@@ -23,12 +23,16 @@ Dashboard - Helfende
   }
 
   .settings a {
-    color: #fff !important;
+    border: 2px solid #fff !important;
+    color: #fff;
     float: right;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-weight: 600;
   }
 
   .settings {
-    padding-bottom: 30px;
+    padding-bottom: 45px;
   }
 
   .complete p {
@@ -99,7 +103,7 @@ Dashboard - Helfende
 
   @media only screen and (min-width: 1200px) {
     .dashboard-title {
-      padding: 110px 0px 100px 0px;
+      padding: 90px 0px 100px 0px;
     }
   }
 
@@ -421,9 +425,11 @@ Dashboard - Helfende
     {%endif%}
     {% endfor %}
     {% else %}
+    <p style="padding: 0px 15px;">
     {% blocktrans %}
     Du hast keine aktiven Angebote.
     {% endblocktrans %}
+  </p>
     {% endif %}
 
 
@@ -462,9 +468,11 @@ Dashboard - Helfende
     {%endif%}
     {% endfor %}
     {% else %}
+    <p style="padding: 0px 15px;">
     {% blocktrans %}
     Du hast keine pausierten Angebote.
     {% endblocktrans %}
+    </p>
     {% endif %}
 
 

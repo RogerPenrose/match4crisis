@@ -39,7 +39,7 @@ def date_select_filter(queryset, name, value):
 
 class DonationRequestFilter(filters.FilterSet):
     search = filters.CharFilter(method="search_filter", label=_("Suchen"))
-    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Keine Begrenzung"))
+    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Zeitraum wählen"))
 
     def search_filter(self, queryset, name, value):
         values = value.split(" ")

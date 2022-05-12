@@ -148,6 +148,45 @@
     min-height: 115px;
     margin: 30px;
   }
+ input[type=text] {
+    display: block;
+    width: 100%;
+    height: calc(1.5em + 1rem + 2px);
+    padding: 0.375rem 0.75rem 0.375rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    border: 0px;
+    border-radius: 1rem;
+ } 
+ #id_radius, #id_createdAt {
+    float: left;
+    display: block;
+    height: calc(1.5em + 1rem + 2px);
+    padding: 0.375rem .75rem 0.375rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    box-shadow: 0px 0px 10px rgb(0 0 0 / 10%) !important;
+    border: 0px;
+    border-radius: 1rem;
+}
+input[type="submit"] {
+
+  background-color: #32bd69;
+    font-size: 1rem;
+    color: #fff;
+    padding: .5rem 2rem;
+    border-radius: 15px;
+    font-weight: bold;
+    outline: 0;
+    border:0;
+}
 </style>
 {% endblock %}
 
@@ -177,8 +216,7 @@
       {% endblocktrans %}
     </h2>
    </div>
-  <div class="row align-self-center align-items-center">
-    <div class="row align-self-center align-items-center" style="margin-top:35px;">
+ 
       <form method="get" id="filter-form">
         {{ filter.form.as_p }}
         <input type="submit" value="{% blocktrans %}Filtern{% endblocktrans %}" />
@@ -207,8 +245,7 @@
         {% include 'help-request-card.html' %}
         {% endfor %}
       </div>
-    </div>
-  </div>
+    
 </div>
 <script type="text/javascript">
   /*$(document).ready(function () {
