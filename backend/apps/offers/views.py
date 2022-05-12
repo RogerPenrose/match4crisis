@@ -388,9 +388,9 @@ def mergeImages(offers):
                 if location.get("city"):
                     entry.genericOffer.location =  location["city"]
                 else:
-                    entry.genericOffer.location = None
+                    entry.genericOffer.location = ""
             else:
-                entry.genericOffer.location = None
+                entry.genericOffer.location = ""
             entry.genericOffer.save()  
         location = {"city": entry.genericOffer.location}
         newEntry =  {
