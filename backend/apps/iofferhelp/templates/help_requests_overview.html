@@ -16,7 +16,9 @@
   .modal-header span {
     font-size: 50px;
   }
-
+  .cards img { max-width: 100px; margin: 0 auto;}
+  #filter-form label { display: none; }
+ 
   .modal-header .close {
     padding: .5rem 1rem 0rem 1rem
   }
@@ -187,6 +189,15 @@ input[type="submit"] {
     outline: 0;
     border:0;
 }
+#filter-form select { margin-bottom: 15px; }
+  
+
+@media only screen and (min-width: 768px) {
+#filter-form p { width: calc(50% - 15px); float: left; }
+  #filter-form p:nth-of-type(2), #filter-form p:nth-of-type(4) { margin-left: 15px; }
+  #filter-form select { margin-bottom: 0px; }
+  
+}
 </style>
 {% endblock %}
 
@@ -217,28 +228,20 @@ input[type="submit"] {
     </h2>
    </div>
  
-      <form method="get" id="filter-form">
+      <form method="get" id="filter-form" style="margin-top: 35px;">
         {{ filter.form.as_p }}
         <input type="submit" value="{% blocktrans %}Filtern{% endblocktrans %}" />
       </form>
-      <div class="container pagination" style="text-align: center; margin: 0 auto; margin-top: 55px;">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
-            <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
-            {% endif %}
     
-            <span class="current">
-              {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
-            </span>
-    
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
-    <a class="btn" href="{% url 'help_requests_mapview' %}">{% blocktrans %}Auf der Karte anzeigen{% endblocktrans %}</a>
+      <div style="text-align: center; margin-bottom: 55px;">
+        <a href="{% url 'help_requests_mapview' %}" style="color: #000;">{% blocktrans count counter=filter.qs.count %}
+          {{ counter }} Hilfeaufruf
+          {% plural %}
+          {{ counter }} Hilfeaufrufe
+          {% endblocktrans %} {% blocktrans %}auf der Karte anzeigen{% endblocktrans %}</a>
+
+      </div>
+
       <div class="container cards">
 
         {% for entry in page_obj %}
@@ -246,6 +249,23 @@ input[type="submit"] {
         {% endfor %}
       </div>
     
+      <div class="container" style="text-align: center; margin: 0 auto; margin-top: 35px;">
+
+        {% if page_obj.has_previous %}
+        <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
+        <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
+        {% endif %}
+
+        <span class="current">
+          {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
+        {% endif %}
+
+</div>
 </div>
 <script type="text/javascript">
   /*$(document).ready(function () {

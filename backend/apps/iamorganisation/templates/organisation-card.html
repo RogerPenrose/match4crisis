@@ -10,7 +10,9 @@
         <div class="background-photo" style="background-image: url({{ entry.logo.url }})"></div>
         </div>  
     {% else %}
-        <!-- Default logo ?-->
+    <div class="col-5 col-sm-4">
+        <div class="background-photo" style="background-image: url({% static 'img/noimage.jpg' %})"></div>
+        </div>  
     {%endif%}
     
     <div class="description col-7 col-sm-8">

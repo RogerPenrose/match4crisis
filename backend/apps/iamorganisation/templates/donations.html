@@ -41,7 +41,7 @@
   .custom-control {
     margin-bottom: 0px;
   }
-
+.cards img { max-width: 100px; margin: 0 auto;}
   label.custom-control-label {
     position: relative;
     display: inline-block;
@@ -231,24 +231,8 @@ input[type="submit"] {
         {{ filter.form }}
         <input type="submit" value="{% blocktrans %}Filtern{% endblocktrans %}" />
       </form>
-      <div style="clear:both"></div>
-      <div class="container" style="text-align: center; margin: 0 auto; margin-top: 35px;">
-
-            {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
-            <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
-            {% endif %}
-    
-            <span class="current">
-              {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
-            </span>
-    
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
-            {% endif %}
-
-      </div>
+      <div style="clear:both; margin-bottom: 35px;" ></div>
+     
     </div>
       <div class="container cards">
 
@@ -257,7 +241,23 @@ input[type="submit"] {
         {% endfor %}
       </div>
     </div>
+    <div class="container" style="text-align: center; margin: 0 auto; margin-top: 35px;">
 
+      {% if page_obj.has_previous %}
+      <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
+      <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
+      {% endif %}
+
+      <span class="current">
+        {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+      </span>
+
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
+      <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
+      {% endif %}
+
+</div>
 </div>
 <script type="text/javascript">
   $(document).ready(function () {
