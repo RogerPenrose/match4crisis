@@ -164,10 +164,14 @@ def select_category(request):
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
-    context ={"searchRequests": False}
-    if request.GET.get("requests", "False") == "true":
-        context["searchRequests"] = True
-    return render(request, 'offers/search.html', context)
+    if  not request.user.isOrganisation:
+        context ={"searchRequests": False}
+        if request.GET.get("requests", "False") == "true":
+            context["searchRequests"] = True
+        return render(request, 'offers/search.html', context)
+    else:
+        return handle_filter(request)
+
 def getTranslationImage(request):
     logger.warning("Received: "+str(request.GET.dict()))
     rawData = []
@@ -301,9 +305,9 @@ def filter(request):
     ids = []
     mapparameter = ""
     currentFilter = request.POST.dict()
-    if not currentFilter:
+    if not currentFilter and not request.user.isOrganisation:
         context= filter_get(request)
-    else : 
+    elif not request.user.isOrganisation : 
         logger.warning("current Filter: "+str(currentFilter))
         categoryCounter = 1
         for key in request.POST:
@@ -318,6 +322,7 @@ def filter(request):
                     mapparameter += key.replace("Visible","")+suffix+"=True&"
         if not currentFilter and categoryCount == 1:
             categoryCounter = 11
+    
         mapparameter = mapparameter[:-1]
         N_ENTRIES = int(50 / categoryCounter)
         firstEntry = (pageCount+1)* N_ENTRIES
@@ -370,6 +375,18 @@ def filter(request):
             context["pagination"] = True
         context["ResultCount"] = numEntries
         logger.warning("Result: "+str(context))
+    if request.user.isOrganisation:
+        manpower = ManpowerOffer.objects.filter(**filters)
+        numEntries = len(manpower)
+        N_ENTRIES = int(50 / 1)
+        firstEntry = (pageCount+1)* N_ENTRIES
+        lastEntry = pageCount * N_ENTRIES
+        maxPage = int(numEntries/(N_ENTRIES))
+        pageCount = int(request.POST.get("page", 0))
+        
+        context = {'currentFilter': "", "mapparameter": "","ResultCount": len(manpower),"location": request.POST.get("city"), "range": "",
+        'entries': {"manpower": mergeImages(manpower[lastEntry:firstEntry])}, 'requestForHelp': False,
+        'filter': {'manpower' : manpower}, 'page': pageCount, 'maxPage': maxPage}
     return  context
 
 def handle_filter(request):
