@@ -17,10 +17,19 @@ Dashboard - Helfende
   .cards .a {
     cursor: pointer;
   }
-
+.incomplete-offer .description p { display:none;}
+  .status p {  padding: 8px; border-radius: 10px;}
+  .active-offer .status p { background-color: rgb(0, 165, 0); }
+  .incomplete-offer .status p { background-color: red; }
+  .paused-offer .status p { background-color: orange; }
+  .status {         position: absolute;
+    right: 20px;
+    top: 34%; }
   .dashboard-title {
     background: #ed0061;
   }
+
+  .status {display: block !important;}
 
   .settings a {
     border: 2px solid #fff !important;
@@ -229,6 +238,7 @@ Dashboard - Helfende
 
   div.description {
     padding: 10px;
+    padding-right:35px;
     position: relative;
   }
 
@@ -354,7 +364,7 @@ Dashboard - Helfende
     {% blocktrans %}Kategorien vervollständigen{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row incomplete-offer">
 
     
     {% for entry in incompleteOffers %}
@@ -395,7 +405,7 @@ Dashboard - Helfende
     {{activeOffers|length}}{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row active-offer">
     {% if activeOffers %}
     {% for entry in activeOffers %}
     {{entry.genericOffer.offerType}}
@@ -438,7 +448,7 @@ Dashboard - Helfende
     {{pausedOffers|length}}{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row paused-offer">
     {% if pausedOffers %}
     {% for entry in pausedOffers %}
     {{entry.genericOffer.offerType}}
