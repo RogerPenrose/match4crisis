@@ -7,12 +7,18 @@
 {% endblock %}
 
 {% load crispy_forms_tags %}
-
+{% block header %}
+<style>
+    .form-group { margin-bottom: 25px;}
+    .form-group label { font-weight: 600; }
+    </style>
+    {% endblock %}
 {% block content %}
 <div class="container">
-    <div class="row" style="margin-top:200px; margin-bottom:55px;">
+    <div class="row" style="margin-top:150px; margin-bottom:55px;">
                <div class="col-lg-10 col-sm-12 col-12">
-                   <h2>Hilfe anfordern</h2>
+                   <h2>{% blocktrans %}Hilfe anfordern{% endblocktrans %}</h2>
+                   <p>{% blocktrans %}Bei einem Hilfsaufruf werden automatisch E-Mails an alle Helfenden versendet, die persönliche Hilfe vor Ort anbieten. Zudem besteht die Möglichkeit für Helfende, euch als Organisation direkt zu kontaktieren.{% endblocktrans %}</p>
                 {% csrf_token %}
                {% crispy form form.helper %}
 

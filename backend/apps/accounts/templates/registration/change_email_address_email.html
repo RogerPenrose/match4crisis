@@ -1,0 +1,17 @@
+{% load i18n %}
+
+{% blocktrans with firstname=user.first_name%}
+Hallo {{firstname}},
+
+Vor kurzem hast du deine E-Mail-Adresse bei match4crisis geändert.
+Damit du match4crisis weiterhin wie gewohnt nutzen kannst, bitten wir dich, deine E-Mail-Adresse durch einen Klick auf den folgenden Link zu bestätigen.
+{% endblocktrans %}
+
+{% block verification_link %}
+{{ protocol }}://{{ domain }}{% url 'confirm_change_email' uidb64=uid token=token %}
+{% endblock %}
+
+{% blocktrans %}
+Vielen Dank, dass du unsere Seite nutzt!
+Dein Team von match4crisis
+{% endblocktrans %}

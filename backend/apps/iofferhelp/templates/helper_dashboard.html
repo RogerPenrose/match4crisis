@@ -17,10 +17,20 @@ Dashboard - Helfende
   .cards .a {
     cursor: pointer;
   }
-
+  .settings { display: flow-root;}
+.incomplete-offer .description p { display:none;}
+  .status p {  padding: 8px; border-radius: 10px;}
+  .active-offer .status p { background-color: rgb(0, 165, 0); }
+  .incomplete-offer .status p { background-color: red; }
+  .paused-offer .status p { background-color: orange; }
+  .status {         position: absolute;
+    right: 20px;
+    top: 34%; }
   .dashboard-title {
     background: #ed0061;
   }
+
+  .status {display: block !important;}
 
   .settings a {
     border: 2px solid #fff !important;
@@ -229,6 +239,7 @@ Dashboard - Helfende
 
   div.description {
     padding: 10px;
+    padding-right:35px;
     position: relative;
   }
 
@@ -310,7 +321,7 @@ Dashboard - Helfende
               d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
           </svg></a>
         <a href="{% url 'search_requests' %}?requests=true" class="btn" role="button" aria-pressed="true">
-          {% blocktrans %}Hilfsgesuche finden{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="16"
+          {% blocktrans %}Wo Hilfe benötigt wird{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="16"
             height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor" class="bi bi-plus-circle"
             viewBox="0 0 16 16">
             <path fill-rule="evenodd"
@@ -354,7 +365,7 @@ Dashboard - Helfende
     {% blocktrans %}Kategorien vervollständigen{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row incomplete-offer">
 
     
     {% for entry in incompleteOffers %}
@@ -395,7 +406,7 @@ Dashboard - Helfende
     {{activeOffers|length}}{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row active-offer">
     {% if activeOffers %}
     {% for entry in activeOffers %}
     {{entry.genericOffer.offerType}}
@@ -438,7 +449,7 @@ Dashboard - Helfende
     {{pausedOffers|length}}{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row paused-offer">
     {% if pausedOffers %}
     {% for entry in pausedOffers %}
     {{entry.genericOffer.offerType}}

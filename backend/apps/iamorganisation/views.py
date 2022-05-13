@@ -3,6 +3,7 @@ from itertools import chain
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -16,14 +17,17 @@ import django_tables2 as tables
 from django_filters.views import FilterView
 from django.utils.decorators import method_decorator
 
-from apps.accounts.decorator import organisationRequired
+from apps.accounts.models import User
+from apps.accounts.decorator import helperRequired, organisationRequired
 from apps.mapview.utils import haversine, plzs
 from apps.mapview.views import get_ttl_hash
-from apps.accounts.decorator import organisationRequired
+from apps.offers.models import GenericOffer, ManpowerOffer
+from apps.iofferhelp.models import Helper
 
 from .models import DonationRequest, HelpRequest, Image, MaterialDonationRequest, Organisation
-from .forms import DonationRequestForm, HelpRequestForm, MaterialDonationRequestForm
+from .forms import ContactHelpRequestForm, DonationRequestForm, HelpRequestForm, MaterialDonationRequestForm
 from .filters import DonationRequestFilter
+from .utils import send_email_to_organisation, send_help_request_emails
 
 
 # CONSTANTS
@@ -129,13 +133,21 @@ def request_help(request):
         form = HelpRequestForm(request.POST)
 
         if form.is_valid():
-            # TODO add logic for actually sending out emails
-            recipientCount = 42 # TODO how many helpers were contacted
+
+            organisation = Organisation.objects.get(user=request.user)
 
             helpRequestEntry = form.save(commit=False)
-            helpRequestEntry.organisation = Organisation.objects.get(user=request.user)
+            helpRequestEntry.organisation = organisation
+
+            offers = GenericOffer.objects.filter(offerType="MP", requestForHelp=False)
+            users = User.objects.filter(genericoffer__in=offers).distinct()
+
+            recipientCount = users.count()
+
             helpRequestEntry.recipientCount = recipientCount
             helpRequestEntry.save()
+
+            send_help_request_emails(organisation, helpRequestEntry, users, get_current_site(request).domain)
 
             if request.FILES.get("images") is not None:
                 counter = 0
@@ -183,6 +195,15 @@ def edit_help_request(request, help_request_id):
     context = {"form" : form, "edit" : True}
     return render(request, "request_help.html", context)
 
+@login_required
+@organisationRequired
+def delete_help_request(request, help_request_id):
+    helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if helpRequest.organisation != organisation:
+        raise PermissionDenied
+    helpRequest.delete()
+    return redirect("login_redirect")
 
 @login_required
 @organisationRequired
@@ -247,6 +268,19 @@ def edit_donation_request(request, donationRequest):
     form.helper.form_action = "edit"
     context = {"form" : form, "edit" : True, "isMaterial" : False}
     return render(request, "request_donations.html", context)
+
+@login_required
+@organisationRequired
+def delete_donation_request(request, donation_request_id):
+    try:
+        donationRequest = DonationRequest.objects.get(pk=donation_request_id)
+    except DonationRequest.DoesNotExist:
+        donationRequest = MaterialDonationRequest.objects.get(pk=donation_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if donationRequest.organisation != organisation:
+        raise PermissionDenied
+    donationRequest.delete()
+    return redirect("login_redirect")
 
 @login_required
 @organisationRequired
@@ -369,7 +403,7 @@ def donation_detail(request, donation_request_id):
     return render(request, "donation_detail.html", context)
 
 @login_required
-def help_request_detail(request, help_request_id):
+def help_request_detail(request, help_request_id, contacted=False):
     helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
     organisation = helpRequest.organisation
     images = Image.objects.filter(request=helpRequest)
@@ -380,5 +414,27 @@ def help_request_detail(request, help_request_id):
         "organisation" : organisation, 
         "images" : images if images.count() > 0 else None,
         "editAllowed" : editAllowed,
+        "contacted" : contacted,
     }
     return render(request, "help_request_detail.html", context)
+
+    
+@login_required
+@helperRequired
+def contact_help_request(request, help_request_id):
+
+    if request.method == "POST":
+        form = ContactHelpRequestForm(request.POST)
+
+        if form.is_valid():
+            helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
+            helper = Helper.objects.get(user=request.user)
+            recipient = helpRequest.organisation
+            send_email_to_organisation(helper, helpRequest, form.cleaned_data["message"], get_current_site(request).domain)
+
+            #TODO Add this offer to the helper's recently contacted offers
+            # refugee.addRecentlyContactedOffer(offer)
+            return help_request_detail(request, help_request_id, contacted = True)
+    else:
+        form = ContactHelpRequestForm()
+        return render(request, 'contact_help_request.html', {"form" : form})

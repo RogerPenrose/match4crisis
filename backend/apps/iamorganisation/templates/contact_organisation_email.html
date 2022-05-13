@@ -1,0 +1,26 @@
+{% load i18n %}
+
+{% blocktrans with helperFirstname=sender.first_name helperEmail=sender.email orgName=organisation.organisationName helpRequestTitle=helpRequest.title %}
+Hallo {{orgName}},
+
+Ihr habt eine neue Kontaktanfrage von {{helperFirstname}}.
+Es geht um eure Hilfsaufruf mit dem Titel "{{helpRequestTitle}}"
+
+{{helperFirstname}} hat euch folgende Nachricht hinterlassen:
+
+{{message}}
+
+Ihr könnt direkt auf diese Email antworten, um mit {{helperFirstname}} in Kontakt zu treten.
+Alternativ könnt ihr ihn/sie unter dieser E-Mail-Adresse erreichen: {{helperEmail}}
+
+Über folgenden Link gelangt ihr noch einmal zu eurem Hilfsaufruf:
+{% endblocktrans %}
+
+{% block helpRequest_link %}
+{{ protocol }}://{{ domain }}{%url 'help_request_detail' help_request_id=helpRequest.pk%}
+{% endblock %}
+
+{% blocktrans %}
+Vielen Dank,
+Euer Team von match4crisis
+{% endblocktrans %}

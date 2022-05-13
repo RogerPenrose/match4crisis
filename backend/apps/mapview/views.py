@@ -281,7 +281,7 @@ def manpowerOffersJSON(request):
     icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
     facilities = {
         "type" : "manpower",
-        "legend": icon+str(_("Manneskraft ")),
+        "legend": icon+str(_("Hilfe vor Ort ")),
         "offers":[{
         "text": "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>Reisebereitschaft: "+str(e.get_distanceChoices_display())+"\n<br>"+str("Bereit für Auslandseinsätze \n<br>" if e.canGoforeign else"")+str("Hat Krisenerfahrung\n<br>"  if e.hasExperience_crisis else"")+str("Hat medizinische Erfahrung\n<br>" if e.hasMedicalExperience else "")+str("Hat Führerschein" if e.hasDriverslicense else "")+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,

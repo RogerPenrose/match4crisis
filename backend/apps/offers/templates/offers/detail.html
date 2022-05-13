@@ -30,9 +30,12 @@
   .top-menu a {
     padding: 5px;
   }
+  @media only screen and (min-width: 768px) {
+    .edit { float: left; margin-right: 10px; }
+  }
 
   @media only screen and (max-width: 767px) {
-    .contact, .edit {
+    .contact {
       text-align: center;
     }
   }
@@ -196,6 +199,10 @@
             src="/offers/translation/?{% for language in languages %}{{forloop.counter0}}={{language.Country|default:"not"}}&{%endfor%}">
         </div>
       </p>
+      {% else %}
+      <img src="{% static 'img/offers/no-acc-img.jpg' %}">
+
+      
       {%endif%}
 
     </div>
