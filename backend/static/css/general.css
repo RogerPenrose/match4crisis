@@ -326,6 +326,7 @@ div.boxed {
 }
 
 @media only screen and (max-width: 767px) {
+  .container.cards { padding-left: 0px; padding-right: 0px; margin: 0px;}
   .dropdown-menu {
     border-radius: 0px !important;
     border: 0px !important;
