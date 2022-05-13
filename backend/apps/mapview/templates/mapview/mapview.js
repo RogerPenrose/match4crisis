@@ -284,8 +284,11 @@ mapViewPage = {
         return markers.map(marker => {return createMarkerFunction(marker)})
     },
     updateViewAsListBtn: () => {
-        document.getElementById("resultString").textContent = mapViewPage.offers.reduce((total, offer) => total + offer.show * offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.show * request.amt, 0)
-        if (document.getElementById("resultString").textContent == "0"){
+        var count =  mapViewPage.offers.reduce((total, offer) => total + offer.show * offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.show * request.amt, 0)
+       var possibleCount = mapViewPage.offers.reduce((total, offer) => total + offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.amt, 0)
+       
+       document.getElementById("resultString").textContent = count
+        if (possibleCount == 0){
             document.getElementById("results_as_list").style.display = "none"
             console.log("No offers.")
             document.getElementById("no-offers").style.display = "initial"
