@@ -243,6 +243,7 @@ mapViewPage = {
                     this.setGetParameter([[this.requests[i].type+"RequestsVisible", "True"]])
                 }
         }
+        mapViewPage.updateViewAsListBtn();
     },
 
     handleCheckBoxClick: (e, isOffer=true) => {
@@ -284,6 +285,16 @@ mapViewPage = {
     },
     updateViewAsListBtn: () => {
         document.getElementById("resultString").textContent = mapViewPage.offers.reduce((total, offer) => total + offer.show * offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.show * request.amt, 0)
+        if (document.getElementById("resultString").textContent == "0"){
+            document.getElementById("results_as_list").style.display = "none"
+            console.log("No offers.")
+            document.getElementById("no-offers").style.display = "initial"
+        }
+        else {
+            document.getElementById("results_as_list").style.display = "initial"
+            document.getElementById("no-offers").style.display = "none"
+
+        }
     },
     initAutocomplete: () => {
         const input = document.getElementById("location");
