@@ -486,6 +486,7 @@ def save(request, offer_id=None):
 
 @login_required
 def update(request, offer_id = None, newly_created = False):
+    logger.warning("request: "+str(request.POST.dict))
     if offer_id is None:
         genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
         if request.user.isRefugee:

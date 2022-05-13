@@ -90,9 +90,11 @@ function offer_autocomplete(){
 function toggleMedicalExperience(){
     if(document.getElementById("id_hasMedicalExperience").checked != true){
         document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "none"
+        document.getElementById("id_describeMedicalExperience").required = false
     }
     else{
         document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "table-row"
+        document.getElementById("id_describeMedicalExperience").required = true
     }
     }
 function toggleChildcareCredentials(){

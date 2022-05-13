@@ -120,7 +120,7 @@ class ManpowerOffer(models.Model):
     hasExperience_crisis = models.BooleanField(default=False)
     hasDriverslicense = models.BooleanField(default=False)
     hasMedicalExperience = models.BooleanField(default=False)
-    describeMedicalExperience = models.TextField(default="")
+    describeMedicalExperience = models.TextField(default=" ", blank=True)
 
 
 class AccommodationOffer(models.Model):
@@ -145,7 +145,7 @@ class WelfareOffer(models.Model):
     
     helpType = models.CharField(max_length=3, choices=HELP_CHOICES, default="ELD") 
     hasEducation_welfare = models.BooleanField(default=False)
-    typeOfEducation = models.TextField(default="")
+    typeOfEducation = models.TextField(default="", blank=True)
 
 class TransportationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
