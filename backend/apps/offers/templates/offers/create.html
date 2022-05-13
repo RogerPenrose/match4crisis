@@ -159,6 +159,7 @@ document.getElementById("id_hasSpace").addEventListener("change", toggleHasSpace
 {% if genericForm.offerType.value == "MP"%}
 document.getElementById("id_hasMedicalExperience").addEventListener("change", toggleMedicalExperience);
 document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "none"
+toggleMedicalExperience()
 {%endif%}
     }
 })

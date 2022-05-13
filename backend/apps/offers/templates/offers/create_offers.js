@@ -90,9 +90,11 @@ function offer_autocomplete(){
 function toggleMedicalExperience(){
     if(document.getElementById("id_hasMedicalExperience").checked != true){
         document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "none"
+        document.getElementById("id_describeMedicalExperience").required = false
     }
     else{
         document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "table-row"
+        document.getElementById("id_describeMedicalExperience").required = true
     }
     }
 function toggleChildcareCredentials(){
@@ -151,6 +153,7 @@ function save_without_active(){
     var checkbox= document.getElementById("id_active")
     checkbox.checked = false
     var form = document.getElementById("thisForm");
+    
     var pathArray = window.location.pathname.split('/');
     if(pathArray[pathArray.length - 1] === "edit"){
         form.action = "/offers/" + pathArray[pathArray.length - 2] + "/save";
