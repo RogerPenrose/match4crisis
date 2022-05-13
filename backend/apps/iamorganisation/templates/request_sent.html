@@ -39,11 +39,11 @@ body { margin-top: 0px !important;}
     <div class="col-xl-7 col-lg-8 col-md-10 col-sm-12 col-12" style="margin: 0 auto;">
       <div class="card login-card text-center align-self-center align-items-center">
   
-        <h2>Sent successfully</h2>
-            You have successfully sent out emails to {{ recipientCount }} helpers in your area.<br/>
-            It won't take long until somebody contacts you.<br/><br>
+        <h2>{% blocktrans %}Erfolgreich versendet{% endblocktrans %}</h2>
+        {% blocktrans %}Ihr habt nun erfolgreich E-Mails an {{ receiverCount }} Helfende in eurer Nähe versendet.<br/>
+             Wir hoffen, dass sich bald jemand bei euch meldet.{% endblocktrans %}<br/><br>
       <a href="{% url 'organisation_dashboard' %}" class="btn btn-green" role="button" aria-pressed="true"
-        >Back to your dashboard
+        >{% blocktrans %}Zurück zum Dashboard{% endblocktrans %}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
