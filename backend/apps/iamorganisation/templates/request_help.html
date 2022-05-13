@@ -7,10 +7,15 @@
 {% endblock %}
 
 {% load crispy_forms_tags %}
-
+{% block header %}
+<style>
+    .form-group { margin-bottom: 25px;}
+    .form-group label { font-weight: 600; }
+    </style>
+    {% endblock %}
 {% block content %}
 <div class="container">
-    <div class="row" style="margin-top:200px; margin-bottom:55px;">
+    <div class="row" style="margin-top:150px; margin-bottom:55px;">
                <div class="col-lg-10 col-sm-12 col-12">
                    <h2>Hilfe anfordern</h2>
                 {% csrf_token %}

@@ -7,9 +7,13 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="container">
+    <div style="height:40px"></div>
 <h2>Help Requests you sent out to helpers</h2>
 {% for req in helpRequests %}
 <p>Request with title {{req.title}} sent out to {{req.recipientCount}} Helpers in an area of {{req.radius}} km. Description:</p>
 <p>{{req.description}} </p>
 {% endfor %}
+</div>
 {% endblock%}

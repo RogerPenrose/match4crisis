@@ -6,12 +6,12 @@
 <a href="donation_detail/{{entry.id}}">
   <div class="col-12 col-lg-6 offer-card">
     <div class="row align-self-center align-items-center">
-      <div class="col-5 col-sm-4">
-        <img class="d-block w-100"
-          src="{% if entry.images.count > 0 %} {{entry.images.first.image.url}} {% elif  entry.organisation.logo.url|length > 0%} {{entry.organisation.logo.url}} {% else %} {% static 'img/icons/icon_DO.svg'%} {% endif %}">
+      <div class="col-5 col-sm-4" style="padding: 10px 20px 10px 10px">
+        <div class="background-photo" style="background-image: url('{% if entry.images.count > 0 %} {{entry.images.first.image.url}} {% elif  entry.organisation.logo.url|length > 0%} {{entry.organisation.logo.url}} {% else %} {% static 'img/icons/icon_DO.svg'%} {% endif %}');">
+</div>
       </div>
       <div class="description col-7 col-sm-8">
-        <h2 style="font-size: 25px; line-height: 30px;">{{ entry.title }} </h2>
+        <h2 style="font-size: 20px; line-height: 30px;">{{ entry.title }} </h2>
         <h3>
           {% if entry.isMaterial %}
           {% blocktrans %}Sachspendenaufruf{% endblocktrans %}

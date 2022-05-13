@@ -189,18 +189,20 @@ h5 {
 h2.title {
   font-size: 1.5rem;
 }
-.btn-green {
-  background-color: #32bd69;
-  font-size: 1rem;
-  color: #fff;
-  padding: 1rem 2.5rem;
+.btn-green, .btn-primary {
+  background-color: #32bd69 !important;
+  font-size: 1rem !important;
+  color: #fff !important;
+  padding: 1rem 2.5rem !important;
   border-radius: 15px;
   font-weight: bold;
+  border: 0;
 }
 
-.btn-green:hover {
-  color: #fff;
-  background-color: #1eb159;
+.btn-green:hover, .btn-primary:hover {
+  color: #fff !important;
+  background-color: #1eb159 !important;
+  border: 0;
 }
 .btn-red {
   background-color: #ff3300;
