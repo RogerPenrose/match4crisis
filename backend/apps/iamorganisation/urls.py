@@ -13,7 +13,6 @@ urlpatterns = [
     path("request_donations", views.request_donations, name="request_donations"),
     path("create_donation_request", views.create_donation_request, name="create_donation_request"),
     path("create_material_donation_request", views.create_material_donation_request, name="create_material_donation_request"),
-    path("sent_requests", views.sent_requests, name="sent_requests"),
     #path("organisation_view/<str:uuid>/", views.organisation_view, name="organisation_view"),
     path("organisation_overview", views.OrganisationOverview.as_view(), name="organisation_overview"),
     path("donation_requests", views.donation_overview, name="donation_requests"),

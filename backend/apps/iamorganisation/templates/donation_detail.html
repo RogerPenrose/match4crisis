@@ -6,6 +6,19 @@
 {{donationRequest.title}}
 {% endblock %}
 
+{% block header %}
+
+<script type="text/javascript">
+  function share_this() {
+    navigator.share({
+      title: "match4crisis.org",
+      url: document.URL,
+      text: '{% blocktrans with orgName=organisation.organisationName %}Die Organisation "{{orgName}}" ruft hier zum Spenden auf, schau mal{% endblocktrans %}'
+    })
+  }
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
 
@@ -25,7 +38,7 @@
     </div>
     <div class="col-8" style="text-align:right;">
       <p>
-        <a href="#" onclick="share_this()" style="margin-left:5px;"><svg xmlns="http://www.w3.org/2000/svg" width="28"
+        <a onclick="share_this()" style="margin-left:5px;"><svg xmlns="http://www.w3.org/2000/svg" width="28"
             height="28" fill="currentColor" class="bi bi-share" viewBox="0 0 20 18">
             <path
               d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />

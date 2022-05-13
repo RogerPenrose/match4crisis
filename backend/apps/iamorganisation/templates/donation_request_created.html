@@ -32,8 +32,17 @@ body { margin-top: 0px !important;}
       }).trigger("resize");
 
   });
+
+  function share_this() {
+    navigator.share({
+      title: "match4crisis.org",
+      url: document.URL,
+      text: '{% blocktrans with orgName=organisation.organisationName %}Die Organisation "{{orgName}}" sucht hier nach Hilfe, schau mal{% endblocktrans %}'
+    })
+  }
 </script>
 {% endblock %}
+
 {% block content %}
 
 <div class="bg-container">
@@ -44,7 +53,13 @@ body { margin-top: 0px !important;}
 
         <h2>{% blocktrans %}Spendenaufruf erfolgreich erstellt{% endblocktrans %}</h2>
         {% blocktrans %}Dein Spendenaufruf ist jetzt online. Teile ihn hier, um mehr Menschen zu erreichen.{% endblocktrans %}<br>
-        <a href='#' class="btn" role="button">Teilen</a><br>
+        <a onclick="share_this()" class="btn btn-yellow" role="button" style="color:#fff; margin: 15px;"><svg xmlns="http://www.w3.org/2000/svg" width="28"
+          height="28" fill="currentColor" class="bi bi-share" viewBox="0 0 20 18">
+          <path
+            d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm11 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z" />
+        </svg>
+        {% trans "Teilen" %}
+      </a><br>
       <a href="{% url 'organisation_dashboard' %}" class="btn btn-green" role="button" aria-pressed="true"
         >{% blocktrans %}Zurück zum Dashboard{% endblocktrans %}
         <svg

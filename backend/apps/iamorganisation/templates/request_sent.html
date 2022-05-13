@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}Request Help{% endblocktrans %}
+{% blocktrans %}Hilfsanfragen verschickt{% endblocktrans %}
 {% endblock %}
 {% block header %}
 <style>
@@ -40,7 +40,7 @@ body { margin-top: 0px !important;}
       <div class="card login-card text-center align-self-center align-items-center">
   
         <h2>{% blocktrans %}Erfolgreich versendet{% endblocktrans %}</h2>
-        {% blocktrans %}Ihr habt nun erfolgreich E-Mails an {{ receiverCount }} Helfende in eurer Nähe versendet.<br/>
+        {% blocktrans %}Ihr habt nun erfolgreich E-Mails an {{ recipientCount }} Helfende in eurer Nähe versendet.<br/>
              Wir hoffen, dass sich bald jemand bei euch meldet.{% endblocktrans %}<br/><br>
       <a href="{% url 'organisation_dashboard' %}" class="btn btn-green" role="button" aria-pressed="true"
         >{% blocktrans %}Zurück zum Dashboard{% endblocktrans %}

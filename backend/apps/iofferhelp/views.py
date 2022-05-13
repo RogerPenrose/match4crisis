@@ -69,8 +69,6 @@ def choose_help(request):
             request.session['chosenHelpSubchoices'] = chosenHelpSubchoices
 
             return HttpResponseRedirect("/accounts/signup_helper")
-        else:
-            return HttpResponse(form.errors)
 
     # if a GET (or any other method) we'll create a blank form
     else:

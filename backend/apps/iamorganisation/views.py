@@ -351,14 +351,6 @@ def edit_redirect(request, donation_request_id):
         donationRequest = MaterialDonationRequest.objects.get(pk=donation_request_id)
         return edit_material_donation_request(request, donationRequest)
 
-
-@login_required
-@organisationRequired
-def sent_requests(request):
-    requests = HelpRequest.objects.filter(organisation=Organisation.objects.get(user=request.user))
-    context = {"helpRequests" : requests}
-    return render(request, "sent_requests.html", context)
-
 class OrganisationOverview(ListView):
     paginate_by = ORGANISATIONS_PER_PAGE
     model = Organisation

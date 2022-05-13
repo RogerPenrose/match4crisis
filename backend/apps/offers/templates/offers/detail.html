@@ -87,7 +87,7 @@
 
   function share_this() {
     navigator.share({
-      title: "{%blocktrans%}match4crisis.org{%endblocktrans%}",
+      title: "match4crisis.org",
       url: document.URL,
       text: '{% blocktrans with offerType=generic.offerType.value %}Ich habe dieses {{ offerType }} gefunden, schau mal{% endblocktrans %}'
     })
