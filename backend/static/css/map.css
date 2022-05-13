@@ -252,9 +252,11 @@ filter: invert(100%);
   background-position: center center;
   background-repeat: no-repeat;
 }
+/*
 .request div{
   background-color: #28445b !important;
 }
+*/
 .marker-cluster, .marker-cluster div {   border-radius: 30px !important; }
 
 .genericMarker { background-color: #ed0061; border-radius: 30px !important;}

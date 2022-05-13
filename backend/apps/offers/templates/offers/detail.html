@@ -199,6 +199,10 @@
             src="/offers/translation/?{% for language in languages %}{{forloop.counter0}}={{language.Country|default:"not"}}&{%endfor%}">
         </div>
       </p>
+      {% else %}
+      <img src="{% static 'img/offers/no-acc-img.jpg' %}">
+
+      
       {%endif%}
 
     </div>
