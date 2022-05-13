@@ -195,6 +195,15 @@ def edit_help_request(request, help_request_id):
     context = {"form" : form, "edit" : True}
     return render(request, "request_help.html", context)
 
+@login_required
+@organisationRequired
+def delete_help_request(request, help_request_id):
+    helpRequest = get_object_or_404(HelpRequest, pk=help_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if helpRequest.organisation != organisation:
+        raise PermissionDenied
+    helpRequest.delete()
+    return redirect("login_redirect")
 
 @login_required
 @organisationRequired
@@ -259,6 +268,19 @@ def edit_donation_request(request, donationRequest):
     form.helper.form_action = "edit"
     context = {"form" : form, "edit" : True, "isMaterial" : False}
     return render(request, "request_donations.html", context)
+
+@login_required
+@organisationRequired
+def delete_donation_request(request, donation_request_id):
+    try:
+        donationRequest = DonationRequest.objects.get(pk=donation_request_id)
+    except DonationRequest.DoesNotExist:
+        donationRequest = MaterialDonationRequest.objects.get(pk=donation_request_id)
+    organisation = Organisation.objects.get(user=request.user)
+    if donationRequest.organisation != organisation:
+        raise PermissionDenied
+    donationRequest.delete()
+    return redirect("login_redirect")
 
 @login_required
 @organisationRequired
