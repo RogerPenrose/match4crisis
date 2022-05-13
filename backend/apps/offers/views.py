@@ -391,9 +391,9 @@ def mergeImages(offers):
                 if location.get("city"):
                     entry.genericOffer.location =  location["city"]
                 else:
-                    entry.genericOffer.location = " "
+                    entry.genericOffer.location = ""
             else:
-                entry.genericOffer.location = " "
+                entry.genericOffer.location = ""
             entry.genericOffer.save()  
         location = {"city": entry.genericOffer.location}
         newEntry =  {
@@ -417,7 +417,7 @@ def delete_offer(request, offer_id):
     check_user_is_allowed(request, generic.userId.id)
     generic.delete()
     return redirect('login_redirect')
-    
+
 @login_required
 def selectOfferType(request):
     context= {"entries": [], "requestForHelp": False}

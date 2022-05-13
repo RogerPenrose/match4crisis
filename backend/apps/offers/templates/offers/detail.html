@@ -492,7 +492,7 @@
         </svg>{%if location %} {{location}} {%else%}{%blocktrans%}Kein Ort angegeben{%endblocktrans%}{% endif %}</p>
       <p>
 
-        {%if location != " " %}
+        {%if location %}
         <p class="map"><iframe
             src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location }}"
             width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
