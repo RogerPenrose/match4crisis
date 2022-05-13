@@ -127,6 +127,7 @@ mapViewPage = {
         var requestOverlays ={}
         var show = [{%for entry in show%} "{{entry}}",{%endfor%}]
         console.log(show)
+        console.log(JSON.stringify(entries))
         
         for (var i = 0; i < entries.length; i++){
             console.log("Entry: "+i)

@@ -8,8 +8,11 @@ from django.db.models import Q
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
+from django.forms.models import model_to_dict
 from django.views.decorators.gzip import gzip_page
 from django.utils.translation import gettext_lazy as _
+
+from apps.iamorganisation.models import HelpRequest, Request
 
 from apps.offers.models import GenericOffer, AccommodationOffer, ManpowerOffer,TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOffer
 from apps.mapview.utils import get_plz_data, plzs
@@ -34,13 +37,16 @@ def mapviewjs(request):
     context = {}
     context["show"] = []
     BASE= "/mapview/"
+    logger.warning(str(request.GET.dict()))
     if not request.user.is_authenticated or not request.user.isOrganisation :
         context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
+        if request.GET.get("show_mp", ""):
+            context["categories"].append(BASE+"HelpRequests")
     else:
         #get only MP
         context["categories"] = [BASE+"ManpowerOffers"]
     for key,value in request.GET.dict().items():
-        if value == "True":
+        if value == "True" and key != "show_mp":
             context["show"].append(key.replace("Offers","").replace("Requests", ""))
     logger.warning(str(request.GET.dict()))
     logger.warning("rendering mapview JS ? "+str(context))
@@ -271,6 +277,7 @@ def manpowerOffersJSON(request):
         offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
     else:
         requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
     icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
     facilities = {
         "type" : "manpower",
@@ -287,6 +294,21 @@ def manpowerOffersJSON(request):
     } for e in requests]}
     return JsonResponse(facilities, safe=False) 
 
+def helprequestJSON(request):
+    
+    requests = HelpRequest.objects.filter()
+    logger.warning(str(requests))
+    icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
+    facilities = {
+        "type" : "request",
+        "legend": icon+str(_("Hilfeaufruf ")),
+        "offers":[],
+    "requests":[{
+        "text": "<h4 class=\"popup-title\">"+e.title+"</h4>"+LOCATION_SVG+str(e.location or "N/A")+"\n<br>Beschreibung: "+e.description+"<br><a href=\"/iamorganisation/help_request_detail/"+str(e.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "lat": e.lat,
+        "lng": e.lng,
+    } for e in requests]}
+    return JsonResponse(facilities, safe=False) 
 def translationOffersJSON(request):
     
     requests = []
