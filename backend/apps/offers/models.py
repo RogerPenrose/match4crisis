@@ -29,11 +29,11 @@ class GenericOffer(models.Model):
     ('WE', _('Medizinische Hilfe')),
     ('JO', _('Jobangebot')),
     ]
-    offerTitle = models.TextField(max_length=100, default="")
-    location = models.TextField(max_length=300, default="")
+    offerTitle = models.TextField(max_length=100, default=" ")
+    location = models.TextField(max_length=300, default=" ")
     lat = models.FloatField(null=True)
     lng = models.FloatField(null=True)
-    bb = models.CharField(max_length=300, default="")
+    bb = models.CharField(max_length=300, default=" ")
     offerType = models.CharField(max_length=2, choices=OFFER_CHOICES, default="AC") # Use this to track between "Bus", "Car", "Transporter" ?
     cost = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True, default=0)
     #image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png')
