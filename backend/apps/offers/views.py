@@ -416,7 +416,8 @@ def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, generic.userId.id)
     generic.delete()
-    return redirect('helper_dashboard')
+    return redirect('login_redirect')
+    
 @login_required
 def selectOfferType(request):
     context= {"entries": [], "requestForHelp": False}
