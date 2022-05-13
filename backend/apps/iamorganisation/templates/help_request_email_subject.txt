@@ -1,0 +1,1 @@
+{% load i18n %} [match4crisis] {% blocktrans %}Du hast eine neue Hilfsanfrage!{% endblocktrans %}

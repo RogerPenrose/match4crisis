@@ -1,0 +1,1 @@
+{% load i18n %} [match4crisis] {% blocktrans %}Neue Anfrage zu einem deiner Angebote{% endblocktrans %}

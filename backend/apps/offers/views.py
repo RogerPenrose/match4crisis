@@ -11,6 +11,7 @@ from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
+from django.contrib.sites.shortcuts import get_current_site
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
@@ -18,6 +19,7 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllo
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.accounts.decorator import helperRequired, refugeeRequired
+from .utils import send_email_to_helper
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
@@ -72,9 +74,9 @@ def contact(request, offer_id):
     if request.method == "POST":
         # TODO send email
 
-        # If the current user is a Refugee: Add this offer to their recently contacted offers
+        # If the current user is a Refugee
         if request.user.is_authenticated and request.user.isRefugee:
-            subject = _("Anfrage zu deinem Hilfsangebot: ")
+            """subject = _("Anfrage zu deinem Hilfsangebot: ")
             if request.POST.get("predefined") == "available":
                 subject += _("Ist das Angebot noch aktuell?")
             if request.POST.get("predefined") == "further_info":
@@ -93,9 +95,15 @@ def contact(request, offer_id):
             text_content = plaintext.render(d)
             html_content = htmly.render(d)
             send_mail(subject, message,
-                      settings.DEFAULT_FROM_EMAIL, [recipient], html_message=html_content)
+                      settings.DEFAULT_FROM_EMAIL, [recipient], html_message=html_content)"""
+
             offer = GenericOffer.objects.get(pk=offer_id)
             refugee = Refugee.objects.get(user=request.user)
+            recipient = offer.userId
+            sender = refugee.user
+            send_email_to_helper(offer, request.POST.get('message'), recipient, sender, get_current_site(request).domain)
+
+            #Add this offer to the refugee's recently contacted offers
             refugee.addRecentlyContactedOffer(offer)
         return detail(request, offer_id, contacted = True)
     else:
