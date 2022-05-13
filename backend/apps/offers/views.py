@@ -499,7 +499,7 @@ def save(request, offer_id=None):
                 image = ImageClass(image=image, offerId = genOffer)
                 image.save()
 
-    return HttpResponseRedirect("/iofferhelp/helper_dashboard")
+    return redirect("login_redirect")
 
 @login_required
 def update(request, offer_id = None, newly_created = False):
