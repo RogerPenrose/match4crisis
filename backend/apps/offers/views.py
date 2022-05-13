@@ -19,7 +19,8 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllo
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.accounts.decorator import helperRequired, refugeeRequired
-from .utils import send_email_to_helper
+from apps.iamorganisation.models import Organisation
+from .utils import send_manpower_offer_message, send_offer_message
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
@@ -69,20 +70,25 @@ def kmInLat(km):
     return float(lat)
 
 @login_required
-@refugeeRequired
 def contact(request, offer_id):
     if request.method == "POST":
-        # If the current user is a Refugee
-        if request.user.is_authenticated and request.user.isRefugee:
 
-            offer = GenericOffer.objects.get(pk=offer_id)
-            refugee = Refugee.objects.get(user=request.user)
-            recipient = offer.userId
-            sender = refugee.user
-            send_email_to_helper(offer, request.POST.get('message'), recipient, sender, get_current_site(request).domain)
+        user = request.user
+        offer = GenericOffer.objects.get(pk=offer_id)
+        recipient = offer.userId
 
-            #Add this offer to the refugee's recently contacted offers
-            refugee.addRecentlyContactedOffer(offer)
+        if user.isOrganisation:
+            send_manpower_offer_message(offer, request.POST.get('message'), recipient, Organisation.objects.get(user=user), get_current_site(request).domain)
+
+        else:
+            send_offer_message(offer, request.POST.get('message'), recipient, user, get_current_site(request).domain)
+
+            # If the current user is a Refugee add this offer to their recently contacted offers
+            if request.user.isRefugee:
+                Refugee.objects.get(user=user).addRecentlyContactedOffer(offer)
+                
+            # TODO helper's recently contacted
+
         return detail(request, offer_id, contacted = True)
     else:
         details = getOfferDetails(request,offer_id)
@@ -630,6 +636,12 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
         refugee = Refugee.objects.get(user=request.user)
         refugee.addRecentlyViewedOffer(offer)
+    # The current user is able to contact the offer iff:
+    # They are not authenticated or
+    # They are a helper and the offer is a request for help or
+    # They are a refugee and the offer is not a request for help or
+    # They are an organisation and the offer is a manpower offer
+    context["contactable"] = not request.user.is_authenticated or (request.user.isHelper and offer.requestForHelp) or (request.user.isRefugee and not offer.requestForHelp) or (request.user.isOrganisation and offer.offerType == "MP")
     return render(request, 'offers/detail.html', context)
 
 @login_required

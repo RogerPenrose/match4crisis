@@ -1,16 +1,24 @@
 {% load i18n %}
 
+{% if offer.requestForHelp %}
+{% blocktrans with recipientFirstname=recipient.first_name senderFirstname=sender.first_name offerTitle=offer.offerTitle%}
+Hallo {{recipientFirstname}},
+
+{{senderFirstname}} hat folgende Anfrage zu deinem Hilfsgesuch {{offerTitle}}:
+{% endblocktrans %}
+{% else %}
 {% blocktrans with recipientFirstname=recipient.first_name senderFirstname=sender.first_name offerTitle=offer.offerTitle%}
 Hallo {{recipientFirstname}},
 
 {{senderFirstname}} hat folgende Anfrage zu deinem Hilfsangebot {{offerTitle}}:
 {% endblocktrans %}
+{% endif %}
 
 {{ message }}
 
 {% blocktrans with senderFirstname=sender.first_name senderEmail=sender.email%}
 Du kannst direkt auf diese E-Mail antworten, um mit {{senderFirstname}} in Kontakt zu treten.
-Ansonsten erreichst du {{recipientFirstname}} unter: {{senderEmail}}
+Ansonsten erreichst du {{senderFirstname}} unter: {{senderEmail}}
 
 Hier gelangst du noch einmal zu deinem Hilfsangebot:
 {% endblocktrans %}

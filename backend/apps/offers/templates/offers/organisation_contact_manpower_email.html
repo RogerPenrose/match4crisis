@@ -1,0 +1,26 @@
+{% load i18n %}
+
+{% blocktrans with recipientFirstname=recipient.first_name orgName=organisation.organisationName offerTitle=offer.offerTitle%}
+Hallo {{recipientFirstname}},
+
+Die Initiative/Organisation {{orgName}} hat dich persönlich zu deinem Angebot "{{offerTitle}}" kontaktiert.
+Sie haben folgende Nachricht hinterlassen:
+{% endblocktrans %}
+
+{{ message }}
+
+{% blocktrans with orgName=organisation.organisationName orgEmail=organisation.user.email%}
+Du kannst direkt auf diese E-Mail antworten, um mit {{orgName}} in Kontakt zu treten.
+Ansonsten erreichst du sie unter: {{orgEmail}}
+
+Hier gelangst du noch einmal zu deinem Hilfsangebot:
+{% endblocktrans %}
+
+{% block offer_link %}
+{{ protocol }}://{{ domain }}{%url 'detail' offer_id=offer.pk%}
+{% endblock %}
+
+{% blocktrans %}
+Vielen Dank,
+Dein Team von match4crisis
+{% endblocktrans %}
