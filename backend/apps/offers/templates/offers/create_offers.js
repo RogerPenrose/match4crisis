@@ -151,6 +151,7 @@ function save_without_active(){
     var checkbox= document.getElementById("id_active")
     checkbox.checked = false
     var form = document.getElementById("thisForm");
+    
     var pathArray = window.location.pathname.split('/');
     if(pathArray[pathArray.length - 1] === "edit"){
         form.action = "/offers/" + pathArray[pathArray.length - 2] + "/save";

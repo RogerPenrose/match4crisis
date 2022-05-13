@@ -382,15 +382,15 @@ def mergeImages(offers):
     for entry in  offers: 
         images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
         location = {}
-        if entry.genericOffer.location == "" :
+        if entry.genericOffer.location == "" or entry.genericOffer.location == " " :
             if  entry.genericOffer.lat is not None and entry.genericOffer.lng is not None:
                 location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
                 if location.get("city"):
                     entry.genericOffer.location =  location["city"]
                 else:
-                    entry.genericOffer.location = None
+                    entry.genericOffer.location = " "
             else:
-                entry.genericOffer.location = None
+                entry.genericOffer.location = " "
             entry.genericOffer.save()  
         location = {"city": entry.genericOffer.location}
         newEntry =  {
@@ -464,6 +464,7 @@ def save(request, offer_id=None):
             check_user_is_allowed(request, genOffer.userId.id)
             specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
         genOffer.incomplete=True
+        logger.warning(str(model_to_dict(genOffer)))
         genForm = GenericForm(request.POST, instance=genOffer)
         specForm = OFFER_FORMS[request.POST["offerType"]](request.POST, instance=specOffer)
         for field in genForm.fields:
