@@ -86,14 +86,20 @@ def request_help(request):
                     image = Image(image=image, request = helpRequestEntry)
                     image.save()
 
-            context = {"recipientCount" : recipientCount} 
-            return render(request, "request_sent.html", context)
+            request.session["recipientCount"] = recipientCount
+            return redirect('help_requests_created')
 
     else:
         form = HelpRequestForm()
 
     context = {"form" : form}
     return render(request, "request_help.html", context)
+
+
+@login_required
+@organisationRequired
+def help_requests_created(request):
+    return render(request, "request_sent.html", {"recipientCount" : request.session["recipientCount"]})
 
 @login_required
 @organisationRequired
@@ -159,8 +165,7 @@ def create_donation_request(request):
                     image = Image(image=image, request = donationRequestEntry)
                     image.save()
 
-            context = {}
-            return render(request, "donation_request_created.html", context)
+            return redirect('donation_request_created')
 
     else:
         form = DonationRequestForm()
@@ -168,6 +173,11 @@ def create_donation_request(request):
     context = {"form" : form, "edit" : False, "isMaterial" : False}
     return render(request, "request_donations.html", context)
 
+
+@login_required
+@organisationRequired
+def donation_request_created(request):
+    return render(request, "donation_request_created.html")
 
 @login_required
 @organisationRequired
