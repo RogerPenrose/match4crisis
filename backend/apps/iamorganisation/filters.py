@@ -38,8 +38,8 @@ def date_select_filter(queryset, name, value):
 
 
 class DonationRequestFilter(filters.FilterSet):
-    search = filters.CharFilter(method="search_filter", label=_("Suchen"))
-    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Keine Begrenzung"))
+    search = filters.CharFilter(method="search_filter", label="", widget=forms.TextInput(attrs={'placeholder': _("Suchen")}))
+    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Zeitraum wählen"))
 
     def search_filter(self, queryset, name, value):
         values = value.split(" ")
@@ -50,13 +50,10 @@ class DonationRequestFilter(filters.FilterSet):
     
 class HelpRequestFilter(filters.FilterSet):
 
-    search = filters.CharFilter(method="search_filter", label=_("Suchen"))
+    search = filters.CharFilter(method="search_filter", label=_("Suchen"), widget=forms.TextInput(attrs={'placeholder': _("Suchen")}))
     location = filters.CharFilter(method="filter_location", label=_("Ort"))
-    """lat = filters.NumberFilter(widget=forms.HiddenInput())
-    lng = filters.NumberFilter(widget=forms.HiddenInput())
-    bb = filters.CharFilter(widget=forms.HiddenInput())"""
     radius = filters.ChoiceFilter(choices=RADIUS_CHOICES, method='no_filter', label=_("Umkreis"), empty_label=None)
-    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Keine Begrenzung"))
+    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Zeitraum wählen"))
 
     def search_filter(self, queryset, name, value):
         values = value.split(" ")

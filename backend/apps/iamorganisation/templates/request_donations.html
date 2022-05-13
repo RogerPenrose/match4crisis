@@ -19,12 +19,17 @@
 {% endblock %}
 
 {% load crispy_forms_tags %}
-
+{% block header %}
+<style>
+    .btn-primary { margin-top: 15px;}
+    </style>
+{% endblock %}
 {% block content %}
 <div class="container">
-    <div class="row" style="margin-top:200px; margin-bottom:55px;">
-        <div class="col-lg-10 col-sm-12 col-12">
-            <h2>
+    <div style="height:40px"></div>
+    <div class="row" style="margin-bottom:55px;">
+        <div class="col-md-8" style="margin: 0 auto;">
+            <h2 class="title">
                 {% if isMaterial %}
                     {% if edit %}
                     {% blocktrans %}Sachspendenaufruf bearbeiten{% endblocktrans %}

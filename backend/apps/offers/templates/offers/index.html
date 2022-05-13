@@ -214,7 +214,7 @@ margin-top: 20px; }
             <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="translationVisible" value="1" name="translationVisible" {% if currentFilter.translationVisible  %}checked {%endif%}><label for="translationVisible" class="custom-control-label">{% blocktrans %}Übersetzungen{% endblocktrans %}</label></p>
             <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="transportationVisible" value="1" name="transportationVisible"  {% if currentFilter.transportationVisible  %}checked {%endif%}><label for="transportationVisible" class="custom-control-label">{% blocktrans %}Transport{% endblocktrans %}</label></p>
             <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="jobVisible" value="1" name="jobVisible"  {% if currentFilter.jobVisible  %}checked {%endif%}><label for="jobVisible" class="custom-control-label">{% blocktrans %}Jobs{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="manpowerVisible" value="1" name="manpowerVisible"  {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible" class="custom-control-label">{% blocktrans %}Manneskraft{% endblocktrans %}</label></p>
+            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="manpowerVisible" value="1" name="manpowerVisible"  {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible" class="custom-control-label">{% blocktrans %}Hilfe vor Ort{% endblocktrans %}</label></p>
             <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="welfareVisible" value="1" name="welfareVisible"  {% if currentFilter.welfareVisible  %}checked {%endif%}><label for="welfareVisible" class="custom-control-label">{% blocktrans %}Medizinische Unterstützung{% endblocktrans %}</label></p>
             <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="buerocraticVisible" value="1" name="buerocraticVisible"  {% if currentFilter.buerocraticVisible  %}checked {%endif%}><label for="buerocraticVisible" class="custom-control-label">{% blocktrans %}Bürokratische Hilfe{% endblocktrans %}</label></p>
             <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="childShortVisible" value="1" name="childShortVisible"  {% if currentFilter.childShortVisible  %}checked {%endif%}><label for="childShortVisible" class="custom-control-label">{% blocktrans %}Babysitten (short-term){% endblocktrans %}</label></p>
@@ -231,7 +231,7 @@ margin-top: 20px; }
         {% if currentFilter.jobVisible  %}     <p class="filter-title"> {% blocktrans %}Jobs{% endblocktrans %} </p>
         <p>{{ filter.job.form.as_p }}</p>
         <hr>{% endif%}
-        {% if currentFilter.manpowerVisible  %}     <p class="filter-title"> {% blocktrans %}Manneskraft{% endblocktrans %} </p>
+        {% if currentFilter.manpowerVisible  %}     <p class="filter-title"> {% blocktrans %}Hilfe vor Ort{% endblocktrans %} </p>
         <p>{{ filter.manpower.form.as_p }}</p>
         <hr>{% endif%}
         {% if currentFilter.welfareVisible  %}    <p class="filter-title"> {% blocktrans %}Mediznische Unterstützung{% endblocktrans %} </p>
@@ -262,7 +262,7 @@ margin-top: 20px; }
  <div class="col-12 text-center" style="text-align:center;" >
     <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
     <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="/mapview/?{% if city %}city={{ city }}&%}{%endif%}{{mapparameter}}{% if requestForHelp == True %}&showRequests=true{%endif%} ">{% if requestForHelp == "Offer" %}{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}{% elif requestForHelp == "Request" %}  {{ResultCount}} Gesuche auf Karte anzeigen {% else %}  {{ResultCount}} Inserate auf Karte anzeigen {%endif%}</a></p></div>
+        <p><a href="/mapview/?{% if city %}city={{ city }}&{%endif%}{{mapparameter}}{% if requestForHelp == True %}&showRequests=true{%endif%} ">{% if requestForHelp == "Offer" %}{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}{% elif requestForHelp == "Request" %}  {{ResultCount}} Gesuche auf Karte anzeigen {% else %}  {{ResultCount}} Inserate auf Karte anzeigen {%endif%}</a></p></div>
         </div>
         </div>
         {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page|add:"1"  }} {% blocktrans %}von{% endblocktrans %} {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}

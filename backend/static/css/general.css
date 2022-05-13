@@ -189,18 +189,20 @@ h5 {
 h2.title {
   font-size: 1.5rem;
 }
-.btn-green {
-  background-color: #32bd69;
-  font-size: 1rem;
-  color: #fff;
-  padding: 1rem 2.5rem;
+.btn-green, .btn-primary {
+  background-color: #32bd69 !important;
+  font-size: 1rem !important;
+  color: #fff !important;
+  padding: 1rem 2.5rem !important;
   border-radius: 15px;
   font-weight: bold;
+  border: 0;
 }
 
-.btn-green:hover {
-  color: #fff;
-  background-color: #1eb159;
+.btn-green:hover, .btn-primary:hover {
+  color: #fff !important;
+  background-color: #1eb159 !important;
+  border: 0;
 }
 .btn-red {
   background-color: #ff3300;
@@ -217,7 +219,7 @@ h2.title {
 }
 
 .btn-yellow {
-  background: linear-gradient(98deg, #28445b 5.87%, #ed0061 100%);
+  background:#28445b;
   font-size: 1rem;
   color: #fff;
   padding: 1rem 2.5rem;
@@ -228,7 +230,7 @@ h2.title {
 
 .btn-yellow:hover {
   color: #fff;
-  background: linear-gradient(98deg, #28445b 5.87%, #ed0061 100%);
+  background:#1f3a50;
 }
 
 
@@ -324,6 +326,7 @@ div.boxed {
 }
 
 @media only screen and (max-width: 767px) {
+  .container.cards { padding-left: 0px; padding-right: 0px; margin: 0px;}
   .dropdown-menu {
     border-radius: 0px !important;
     border: 0px !important;
@@ -688,3 +691,6 @@ input.back { background: transparent; border: 0px; font-weight: 700; color: #284
     box-shadow: none; 
   padding-left: 10px; }
     .pac-logo:after { height: 0px; padding: 0; }
+    .carousel-item img { border-radius: 25px; }
+
+    .status {display: none;}

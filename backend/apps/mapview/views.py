@@ -8,8 +8,11 @@ from django.db.models import Q
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.template import loader
+from django.forms.models import model_to_dict
 from django.views.decorators.gzip import gzip_page
 from django.utils.translation import gettext_lazy as _
+
+from apps.iamorganisation.models import HelpRequest, Request
 
 from apps.offers.models import GenericOffer, AccommodationOffer, ManpowerOffer,TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOffer
 from apps.mapview.utils import get_plz_data, plzs
@@ -34,13 +37,16 @@ def mapviewjs(request):
     context = {}
     context["show"] = []
     BASE= "/mapview/"
+    logger.warning(str(request.GET.dict()))
     if not request.user.is_authenticated or not request.user.isOrganisation :
         context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
+        if request.GET.get("show_mp", ""):
+            context["categories"].append(BASE+"HelpRequests")
     else:
         #get only MP
         context["categories"] = [BASE+"ManpowerOffers"]
     for key,value in request.GET.dict().items():
-        if value == "True":
+        if value == "True" and key != "show_mp":
             context["show"].append(key.replace("Offers","").replace("Requests", ""))
     logger.warning(str(request.GET.dict()))
     logger.warning("rendering mapview JS ? "+str(context))
@@ -87,7 +93,7 @@ def accommodationOffersJSON(request):
         "offers":[{
         "text":  """<div style=\"margin-left: -19px; margin-right:-19px; margin-top:-13px;\">
      </div>
-      <h4 class=\"popup-title\">${marker.title}</h4>
+      <h4 class=\"popup-title\">"""+e.genericOffer.offerTitle+"""</h4>
       <p class=\"icon\">
         <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" fill=\"currentColor\" class=\"bi bi-people\" viewBox=\"0 0 18 18\">
           <path d=\"M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z\"/>
@@ -113,7 +119,7 @@ def accommodationOffersJSON(request):
     "requests":[{
         "text":  """<div style=\"margin-left: -19px; margin-right:-19px; margin-top:-13px;\">
      </div>
-      <h4 class=\"popup-title\">${marker.title}</h4>
+      <h4 class=\"popup-title\">"""+e.genericOffer.offerTitle+"""</h4>
       <p class=\"icon\">
         <svg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" fill=\"currentColor\" class=\"bi bi-people\" viewBox=\"0 0 18 18\">
           <path d=\"M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z\"/>
@@ -271,10 +277,11 @@ def manpowerOffersJSON(request):
         offers = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=False)
     else:
         requests = ManpowerOffer.objects.filter(genericOffer__active = True, genericOffer__isDigital = False, genericOffer__requestForHelp=True)
+    
     icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
     facilities = {
         "type" : "manpower",
-        "legend": icon+str(_("Manneskraft ")),
+        "legend": icon+str(_("Hilfe vor Ort ")),
         "offers":[{
         "text": "<h4 class=\"popup-title\">"+e.genericOffer.offerTitle+"</h4>"+LOCATION_SVG+str(e.genericOffer.location or "N/A")+"\n<br>Reisebereitschaft: "+str(e.get_distanceChoices_display())+"\n<br>"+str("Bereit für Auslandseinsätze \n<br>" if e.canGoforeign else"")+str("Hat Krisenerfahrung\n<br>"  if e.hasExperience_crisis else"")+str("Hat medizinische Erfahrung\n<br>" if e.hasMedicalExperience else "")+str("Hat Führerschein" if e.hasDriverslicense else "")+e.genericOffer.offerDescription+"<br><a href=\"/offers/"+str(e.genericOffer.id)+"\" target=\"_blank\">Detailansicht</a>",
         "lat": e.genericOffer.lat,
@@ -287,6 +294,21 @@ def manpowerOffersJSON(request):
     } for e in requests]}
     return JsonResponse(facilities, safe=False) 
 
+def helprequestJSON(request):
+    
+    requests = HelpRequest.objects.filter()
+    logger.warning(str(requests))
+    icon =  "<img src=\"/static/img/icons/icon_MP.svg\">"
+    facilities = {
+        "type" : "request",
+        "legend": icon+str(_("Hilfeaufruf ")),
+        "offers":[],
+    "requests":[{
+        "text": "<h4 class=\"popup-title\">"+e.title+"</h4>"+LOCATION_SVG+str(e.location or "N/A")+"\n<br>Beschreibung: "+e.description+"<br><a href=\"/iamorganisation/help_request_detail/"+str(e.id)+"\" target=\"_blank\">Detailansicht</a>",
+        "lat": e.lat,
+        "lng": e.lng,
+    } for e in requests]}
+    return JsonResponse(facilities, safe=False) 
 def translationOffersJSON(request):
     
     requests = []

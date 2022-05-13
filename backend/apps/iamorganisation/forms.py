@@ -256,3 +256,17 @@ class MaterialDonationRequestForm(forms.ModelForm):
         self.helper.form_action = "create_material_donation_request"
 
         self.helper.add_input(Submit("submit", _("Speichern")))
+
+
+class ContactHelpRequestForm(forms.Form):
+    message = forms.CharField(label="", widget=forms.Textarea(attrs={"placeholder" : _("Nachricht an die Organisation")}))
+
+    def __init__(self, *args, **kwargs):
+        super(ContactHelpRequestForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = "id-contactHelpRequestForm"
+        self.helper.form_class = "blueForms"
+        self.helper.form_method = "post"
+        self.helper.form_action = "contact"
+
+        self.helper.add_input(Submit("submit", _("Absenden")))

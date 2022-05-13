@@ -11,6 +11,7 @@ from django.template.loader import get_template
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
+from django.contrib.sites.shortcuts import get_current_site
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
@@ -18,6 +19,8 @@ from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllo
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.accounts.decorator import helperRequired, refugeeRequired
+from apps.iamorganisation.models import Organisation
+from .utils import send_manpower_offer_message, send_offer_message
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
@@ -67,36 +70,25 @@ def kmInLat(km):
     return float(lat)
 
 @login_required
-@refugeeRequired
 def contact(request, offer_id):
     if request.method == "POST":
-        # TODO send email
 
-        # If the current user is a Refugee: Add this offer to their recently contacted offers
-        if request.user.is_authenticated and request.user.isRefugee:
-            subject = _("Anfrage zu deinem Hilfsangebot: ")
-            if request.POST.get("predefined") == "available":
-                subject += _("Ist das Angebot noch aktuell?")
-            if request.POST.get("predefined") == "further_info":
-                subject += _("Weitere Informationen gewünscht")
-            if request.POST.get("predefined") == "call":
-                subject += _("Anruf erbeten")
-            plaintext = get_template('offers/contact_email.txt')
-            htmly     = get_template('offers/contact_email.html')
-            contactData = _("E-Mail : ")+request.user.email+ " "
-            if request.user.sharePhoneNumber and request.user.phoneNumber is not None:
-                contactData += _("Telefon : ")+request.user.phoneNumber
-            recipientUser = GenericOffer.objects.get(pk=offer_id).userId
-            recipient = recipientUser.email
-            logger.warning("Trying to send: "+message+" To: "+recipient)
-            d = { "message": message, "contact": contactData,'sender': request.user.first_name+" "+request.user.last_name, 'recipient': recipientUser.first_name, 'message':message, "link":"http://match4crisis.org/offers/"+str(offer_id)+"/"}
-            text_content = plaintext.render(d)
-            html_content = htmly.render(d)
-            send_mail(subject, message,
-                      settings.DEFAULT_FROM_EMAIL, [recipient], html_message=html_content)
-            offer = GenericOffer.objects.get(pk=offer_id)
-            refugee = Refugee.objects.get(user=request.user)
-            refugee.addRecentlyContactedOffer(offer)
+        user = request.user
+        offer = GenericOffer.objects.get(pk=offer_id)
+        recipient = offer.userId
+
+        if user.isOrganisation:
+            send_manpower_offer_message(offer, request.POST.get('message'), recipient, Organisation.objects.get(user=user), get_current_site(request).domain)
+
+        else:
+            send_offer_message(offer, request.POST.get('message'), recipient, user, get_current_site(request).domain)
+
+            # If the current user is a Refugee add this offer to their recently contacted offers
+            if request.user.isRefugee:
+                Refugee.objects.get(user=user).addRecentlyContactedOffer(offer)
+                
+            # TODO helper's recently contacted
+
         return detail(request, offer_id, contacted = True)
     else:
         details = getOfferDetails(request,offer_id)
@@ -164,10 +156,14 @@ def select_category(request):
 def search(request):
     # Ideally: Associate Postcode with city here...
     #Get list of all PostCodes within the City: 
-    context ={"searchRequests": False}
-    if request.GET.get("requests", "False") == "true":
-        context["searchRequests"] = True
-    return render(request, 'offers/search.html', context)
+    if  request.user.is_anonymous or not request.user.isOrganisation:
+        context ={"searchRequests": False}
+        if request.GET.get("requests", "False") == "true":
+            context["searchRequests"] = True
+        return render(request, 'offers/search.html', context)
+    else:
+        return handle_filter(request)
+
 def getTranslationImage(request):
     logger.warning("Received: "+str(request.GET.dict()))
     rawData = []
@@ -301,9 +297,9 @@ def filter(request):
     ids = []
     mapparameter = ""
     currentFilter = request.POST.dict()
-    if not currentFilter:
+    if not currentFilter and (request.user.is_anonymous or not request.user.isOrganisation):
         context= filter_get(request)
-    else : 
+    elif request.user.is_anonymous or not request.user.isOrganisation : 
         logger.warning("current Filter: "+str(currentFilter))
         categoryCounter = 1
         for key in request.POST:
@@ -318,6 +314,7 @@ def filter(request):
                     mapparameter += key.replace("Visible","")+suffix+"=True&"
         if not currentFilter and categoryCount == 1:
             categoryCounter = 11
+    
         mapparameter = mapparameter[:-1]
         N_ENTRIES = int(50 / categoryCounter)
         firstEntry = (pageCount+1)* N_ENTRIES
@@ -370,6 +367,18 @@ def filter(request):
             context["pagination"] = True
         context["ResultCount"] = numEntries
         logger.warning("Result: "+str(context))
+    if not request.user.is_anonymous and request.user.isOrganisation:
+        manpower = ManpowerOffer.objects.filter(**filters)
+        numEntries = len(manpower)
+        N_ENTRIES = int(50 / 1)
+        firstEntry = (pageCount+1)* N_ENTRIES
+        lastEntry = pageCount * N_ENTRIES
+        maxPage = int(numEntries/(N_ENTRIES))
+        pageCount = int(request.POST.get("page", 0))
+        
+        context = {'currentFilter': "", "mapparameter": "","ResultCount": len(manpower),"location": request.POST.get("city"), "range": "",
+        'entries': {"manpower": mergeImages(manpower[lastEntry:firstEntry])}, 'requestForHelp': False,
+        'filter': {'manpower' : manpower}, 'page': pageCount, 'maxPage': maxPage}
     return  context
 
 def handle_filter(request):
@@ -382,7 +391,7 @@ def mergeImages(offers):
     for entry in  offers: 
         images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
         location = {}
-        if entry.genericOffer.location == "" :
+        if entry.genericOffer.location == "" or entry.genericOffer.location == " " :
             if  entry.genericOffer.lat is not None and entry.genericOffer.lng is not None:
                 location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
                 if location.get("city"):
@@ -413,7 +422,8 @@ def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, generic.userId.id)
     generic.delete()
-    return redirect('helper_dashboard')
+    return redirect('login_redirect')
+
 @login_required
 def selectOfferType(request):
     context= {"entries": [], "requestForHelp": False}
@@ -464,6 +474,7 @@ def save(request, offer_id=None):
             check_user_is_allowed(request, genOffer.userId.id)
             specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
         genOffer.incomplete=True
+        logger.warning(str(model_to_dict(genOffer)))
         genForm = GenericForm(request.POST, instance=genOffer)
         specForm = OFFER_FORMS[request.POST["offerType"]](request.POST, instance=specOffer)
         for field in genForm.fields:
@@ -481,10 +492,11 @@ def save(request, offer_id=None):
                 image = ImageClass(image=image, offerId = genOffer)
                 image.save()
 
-    return HttpResponseRedirect("/iofferhelp/helper_dashboard")
+    return redirect("login_redirect")
 
 @login_required
 def update(request, offer_id = None, newly_created = False):
+    logger.warning("request: "+str(request.POST.dict))
     if offer_id is None:
         genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
         if request.user.isRefugee:
@@ -624,6 +636,12 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
         context["favourited"] = offer.favouritedBy.filter(user=request.user)
         refugee = Refugee.objects.get(user=request.user)
         refugee.addRecentlyViewedOffer(offer)
+    # The current user is able to contact the offer iff:
+    # They are not authenticated or
+    # They are a helper and the offer is a request for help or
+    # They are a refugee and the offer is not a request for help or
+    # They are an organisation and the offer is a manpower offer
+    context["contactable"] = not request.user.is_authenticated or (request.user.isHelper and offer.requestForHelp) or (request.user.isRefugee and not offer.requestForHelp) or (request.user.isOrganisation and offer.offerType == "MP")
     return render(request, 'offers/detail.html', context)
 
 @login_required

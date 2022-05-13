@@ -127,6 +127,7 @@ mapViewPage = {
         var requestOverlays ={}
         var show = [{%for entry in show%} "{{entry}}",{%endfor%}]
         console.log(show)
+        console.log(JSON.stringify(entries))
         
         for (var i = 0; i < entries.length; i++){
             console.log("Entry: "+i)
@@ -243,6 +244,7 @@ mapViewPage = {
                     this.setGetParameter([[this.requests[i].type+"RequestsVisible", "True"]])
                 }
         }
+        mapViewPage.updateViewAsListBtn();
     },
 
     handleCheckBoxClick: (e, isOffer=true) => {
@@ -283,7 +285,20 @@ mapViewPage = {
         return markers.map(marker => {return createMarkerFunction(marker)})
     },
     updateViewAsListBtn: () => {
-        document.getElementById("resultString").textContent = mapViewPage.offers.reduce((total, offer) => total + offer.show * offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.show * request.amt, 0)
+        var count =  mapViewPage.offers.reduce((total, offer) => total + offer.show * offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.show * request.amt, 0)
+       var possibleCount = mapViewPage.offers.reduce((total, offer) => total + offer.amt, 0)+mapViewPage.requests.reduce((total, request) => total + request.amt, 0)
+       
+       document.getElementById("resultString").textContent = count
+        if (possibleCount == 0){
+            document.getElementById("results_as_list").style.display = "none"
+            console.log("No offers.")
+            document.getElementById("no-offers").style.display = "initial"
+        }
+        else {
+            document.getElementById("results_as_list").style.display = "initial"
+            document.getElementById("no-offers").style.display = "none"
+
+        }
     },
     initAutocomplete: () => {
         const input = document.getElementById("location");

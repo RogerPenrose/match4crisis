@@ -4,13 +4,35 @@
 
 {% block header %}
 <style>
-    .organisation-card {
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 25px;
-        padding: 10px;
-        min-height: 115px;
-        margin: 30px;
+
+    div.background-photo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.cards h2 { font-size: 1.5rem;}
+.cards h5 { font-size: 1rem; }
+div.organisation-card {
+    float: left;
+}
+
+div.organisation-card > .row {
+    box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+    border-radius: 25px;
+    padding: 20px;
+    min-height: 115px; }
+
+    @media only screen and (min-width: 768px) {
+    div.organisation-card .row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+div.organisation-card > .row {
+    margin-bottom: 30px;
+}
     }
+
 </style>
 {% endblock %}
 
@@ -22,9 +44,20 @@
 {% block content%}
 <div class="container">
     <div style="height:40px"></div>
-    <h1>{% blocktrans %}Hilfsorganisationen{% endblocktrans %}</h1>
+    <h2>{% blocktrans %}Hilfsorganisationen{% endblocktrans %}</h2>
+    <p>Folgende Organisationen sind bei uns registriert.</p>
 </div>
-<div class="container pagination" style="text-align: center; margin: 0 auto; margin-top: 55px;">
+
+<div class="container cards">
+    {% for entry in page_obj %}
+    {% include 'organisation-card.html' %}
+    {% empty %}
+    {% blocktrans %}
+    Bald gibt es hier mehr zu sehen.
+    {% endblocktrans %}
+    {% endfor %}
+</div>
+<div class="container" style="text-align: center; margin: 0 auto; margin-top: 55px;">
     <span class="step-links">
         {% if page_obj.has_previous %}
         <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
@@ -40,14 +73,5 @@
         <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
         {% endif %}
     </span>
-</div>
-<div class="container cards">
-    {% for entry in page_obj %}
-    {% include 'organisation-card.html' %}
-    {% empty %}
-    {% blocktrans %}
-    Bald gibt es hier mehr zu sehen.
-    {% endblocktrans %}
-    {% endfor %}
 </div>
 {% endblock %}

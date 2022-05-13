@@ -11,7 +11,7 @@
 
 <style>
 .form-group { margin-bottom: 25px; }
-
+.btn:hover { color: #fff;}
     label.custom-control-label { position: relative;
   display: inline-block;
  margin-right: .5rem;
@@ -91,6 +91,8 @@ padding: .1rem .75rem;
 }
 .select2-dropdown { border: 0px !important;}
 .select2-container .select2-search--inline .select2-search__field {  font-weight: 300 !important;}
+.btn.grey { background-color: #afafaf !important;}
+.btn.grey:hover { background-color: #848484 !important;}
 </style>
 
 {% endblock %}
@@ -111,8 +113,8 @@ padding: .1rem .75rem;
       
 
       <!-- Danger zone --> 
-      <a class="btn" href="{% url 'change_email' %}">{% blocktrans %} E-Mail-Adresse ändern {% endblocktrans %}</a>
-      <a class="btn" href="{% url 'password_change' %}">{% blocktrans %} Passwort ändern {% endblocktrans %}</a>
+      <a class="btn grey" href="{% url 'change_email' %}">{% blocktrans %} E-Mail-Adresse ändern {% endblocktrans %}</a>
+      <a class="btn grey" href="{% url 'password_change' %}">{% blocktrans %} Passwort ändern {% endblocktrans %}</a>
       <br>
       <a class="btn btn-sm btn-danger" style="background-color:red;" href="#deleteUserModal" data-toggle="modal" data-target="#deleteUserModal">{% blocktrans %} Meinen Account löschen {% endblocktrans %}</a>
       

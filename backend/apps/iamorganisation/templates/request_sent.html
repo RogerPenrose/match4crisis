@@ -3,18 +3,47 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}Request Help{% endblocktrans %}
+{% blocktrans %}Hilfsanfragen verschickt{% endblocktrans %}
 {% endblock %}
+{% block header %}
+<style>
+       .footer { margin-top: 0px !important;}
+.bg-container { background: #ed0061; }
+body { margin-top: 0px !important;}
 
+.login-card { border-radius: 30px;}
+
+.login-form { padding-top: 100px;}
+</style>
+<script type="text/javascript">
+  window.addEventListener('load', function() {
+      $(window).on("resize", function() {
+
+          var height = $(window).height();
+          var navHeight = $('.navbar').outerHeight();
+          var footerHeight = $('.footer').innerHeight();
+
+          var newHeight = height - footerHeight - navHeight;
+
+          $(".login-form").height(newHeight);
+
+      }).trigger("resize");
+
+  });
+</script>
+{% endblock %}
 {% block content %}
 
-<div class="row align-self-center">
-    <div class="col-sm-12" style="text-align: center">
-        <h2>Sent successfully</h2>
-            You have successfully sent out emails to {{ recipientCount }} helpers in your area.<br/>
-            It won't take long until somebody contacts you.<br/>
+<div class="bg-container">
+  <div class="container login-form">
+    <div class="col-xl-7 col-lg-8 col-md-10 col-sm-12 col-12" style="margin: 0 auto;">
+      <div class="card login-card text-center align-self-center align-items-center">
+  
+        <h2>{% blocktrans %}Erfolgreich versendet{% endblocktrans %}</h2>
+        {% blocktrans %}Ihr habt nun erfolgreich E-Mails an {{ recipientCount }} Helfende in eurer Nähe versendet.<br/>
+             Wir hoffen, dass sich bald jemand bei euch meldet.{% endblocktrans %}<br/><br>
       <a href="{% url 'organisation_dashboard' %}" class="btn btn-green" role="button" aria-pressed="true"
-        >Back to your dashboard
+        >{% blocktrans %}Zurück zum Dashboard{% endblocktrans %}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -31,6 +60,7 @@
         </svg>
       </a>
     </div>
+    </div></div>
   </div>
 
 {% endblock%}

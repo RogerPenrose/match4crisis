@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load display_value %}
-<div class="col-12 organisation-card"> 
+<div class="col-12 col-lg-6 organisation-card"> 
 <div class="row align-self-center align-items-center">
     
     {% if entry.logo %}
@@ -10,7 +10,9 @@
         <div class="background-photo" style="background-image: url({{ entry.logo.url }})"></div>
         </div>  
     {% else %}
-        <!-- Default logo ?-->
+    <div class="col-5 col-sm-4">
+        <div class="background-photo" style="background-image: url({% static 'img/noimage.jpg' %})"></div>
+        </div>  
     {%endif%}
     
     <div class="description col-7 col-sm-8">
@@ -31,8 +33,7 @@
             </svg>
             {% blocktrans %}Adresse: {% endblocktrans %} {{entry.address}}
         </p>
-        <hr>
-        <h5>{% blocktrans %}Über diese Organisation:{% endblocktrans %}</h5>
+        <h5 style="margin-top: 15px; ">{% blocktrans %}Über diese Organisation:{% endblocktrans %}</h5>
         <p>{{entry.about}}</p>
     </div>
 

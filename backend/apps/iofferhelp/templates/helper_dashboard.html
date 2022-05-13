@@ -17,18 +17,32 @@ Dashboard - Helfende
   .cards .a {
     cursor: pointer;
   }
-
+  .settings { display: flow-root;}
+.incomplete-offer .description p { display:none;}
+  .status p {  padding: 8px; border-radius: 10px;}
+  .active-offer .status p { background-color: rgb(0, 165, 0); }
+  .incomplete-offer .status p { background-color: red; }
+  .paused-offer .status p { background-color: orange; }
+  .status {         position: absolute;
+    right: 20px;
+    top: 34%; }
   .dashboard-title {
     background: #ed0061;
   }
 
+  .status {display: block !important;}
+
   .settings a {
-    color: #fff !important;
+    border: 2px solid #fff !important;
+    color: #fff;
     float: right;
+    padding: 10px 15px;
+    border-radius: 15px;
+    font-weight: 600;
   }
 
   .settings {
-    padding-bottom: 30px;
+    padding-bottom: 45px;
   }
 
   .complete p {
@@ -99,7 +113,7 @@ Dashboard - Helfende
 
   @media only screen and (min-width: 1200px) {
     .dashboard-title {
-      padding: 110px 0px 100px 0px;
+      padding: 90px 0px 100px 0px;
     }
   }
 
@@ -225,6 +239,7 @@ Dashboard - Helfende
 
   div.description {
     padding: 10px;
+    padding-right:35px;
     position: relative;
   }
 
@@ -306,14 +321,14 @@ Dashboard - Helfende
               d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
           </svg></a>
         <a href="{% url 'search_requests' %}?requests=true" class="btn" role="button" aria-pressed="true">
-          {% blocktrans %}Hilfsgesuche finden{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="16"
+          {% blocktrans %}Wo Hilfe benötigt wird{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="16"
             height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor" class="bi bi-plus-circle"
             viewBox="0 0 16 16">
             <path fill-rule="evenodd"
               d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z">
             </path>
           </svg></a>
-        <a href="{% url 'help_requests' %}" class="btn" role="button" aria-pressed="true">
+        <a href="/mapview/?show_mp=True&ManpowerOffers=True" class="btn" role="button" aria-pressed="true">
           {% blocktrans %}Organisationen unterstützen{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg"
             width="16" height="16" style="margin-left:10px; margin-top:-2px;" fill="currentColor"
             class="bi bi-plus-circle" viewBox="0 0 16 16">
@@ -350,7 +365,7 @@ Dashboard - Helfende
     {% blocktrans %}Kategorien vervollständigen{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row incomplete-offer">
 
     
     {% for entry in incompleteOffers %}
@@ -391,7 +406,7 @@ Dashboard - Helfende
     {{activeOffers|length}}{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row active-offer">
     {% if activeOffers %}
     {% for entry in activeOffers %}
     {{entry.genericOffer.offerType}}
@@ -421,9 +436,11 @@ Dashboard - Helfende
     {%endif%}
     {% endfor %}
     {% else %}
+    <p style="padding: 0px 15px;">
     {% blocktrans %}
     Du hast keine aktiven Angebote.
     {% endblocktrans %}
+  </p>
     {% endif %}
 
 
@@ -432,7 +449,7 @@ Dashboard - Helfende
     {{pausedOffers|length}}{% endblocktrans %}</h3>
 
 
-  <div class="container cards row">
+  <div class="container cards row paused-offer">
     {% if pausedOffers %}
     {% for entry in pausedOffers %}
     {{entry.genericOffer.offerType}}
@@ -462,9 +479,11 @@ Dashboard - Helfende
     {%endif%}
     {% endfor %}
     {% else %}
+    <p style="padding: 0px 15px;">
     {% blocktrans %}
     Du hast keine pausierten Angebote.
     {% endblocktrans %}
+    </p>
     {% endif %}
 
 
