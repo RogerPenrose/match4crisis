@@ -89,7 +89,7 @@
     navigator.share({
       title: "match4crisis.org",
       url: document.URL,
-      text: '{% blocktrans with offerType=generic.offerType.value %}Ich habe dieses {{ offerType }} gefunden, schau mal{% endblocktrans %}'
+      text: '{%if requestForHelp %}{% blocktrans %}Ich habe dieses Hilfsgesuch gefunden, schau mal{%endblocktrans%}{%else%}{% blocktrans %}Ich habe dieses Angebot gefunden, schau mal{% endblocktrans %}{% endif %}'
     })
   }
 </script>
