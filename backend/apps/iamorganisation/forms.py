@@ -259,7 +259,14 @@ class MaterialDonationRequestForm(forms.ModelForm):
 
 
 class ContactHelpRequestForm(forms.Form):
-    message = forms.CharField(label="", widget=forms.Textarea(attrs={"placeholder" : _("Nachricht an die Organisation")}))
+    PREDEFINED_CHOICES = (
+        ("", _("--------")),
+        ("available", _("Ist das Inserat noch aktuell?")),
+        ("further_info", _("Ich wünsche weitere Informationen")),
+        ("call", _("Können Sie mich zurückrufen?"))
+    )
+    predefinedMessage = forms.ChoiceField(choices=PREDEFINED_CHOICES, required=False, label=_("Vorgefertigte Nachricht"))
+    message = forms.CharField(label=_("Eigene Nachricht"), widget=forms.Textarea(attrs={"placeholder" : _("Nachricht an die Organisation")}), help_text=_("<b>Achtung:</b> Deine persönlichen Daten (E-Mail und Name) werden automatisch mit der Organisation geteilt!"))
 
     def __init__(self, *args, **kwargs):
         super(ContactHelpRequestForm, self).__init__(*args, **kwargs)
