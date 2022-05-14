@@ -52,7 +52,7 @@ elif MAIL_RELAY_OPTION == "sendgrid":
     use_sendgrid_api = True
 
     # Retrieve sendgrid api key
-    NOREPLY_MAIL = "match4crisis<noreply@testing.match4crisis.de>"
+    NOREPLY_MAIL = "match4crisis<noreply@testing.match4crisis.org>"
 
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
