@@ -74,10 +74,17 @@ def index(request):
     context.update(request.GET.dict())
     return render(request, "mapview/map.html", context )
 def generalInformationJSON(request):
-    returnVal = {
-        "offerCount": GenericOffer.objects.filter(active=True, requestForHelp=False, isDigital=False).count(),
-        "requestCount":GenericOffer.objects.filter(active=True, requestForHelp=True, isDigital=False).count()
-    }
+    returnVal = {}
+    if request.user.is_anonymous or not request.user.isOrganisation:
+        returnVal = {
+            "offerCount": GenericOffer.objects.filter( ~Q(offerType="MP"), ~Q(offerType="DO"), active=True, requestForHelp=False, isDigital=False).count(),
+            "requestCount":GenericOffer.objects.filter( ~Q(offerType="MP"), ~Q(offerType="DO"),active=True, requestForHelp=True, isDigital=False).count()
+        }
+    else:
+        returnVal = {
+            "offerCount": GenericOffer.objects.filter(active=True, requestForHelp=False, isDigital=False, offerType="MP").count(),
+            "requestCount":GenericOffer.objects.filter(active=True, requestForHelp=True, isDigital=False, offerType="MP").count()
+        }
     return JsonResponse(returnVal)
 def accommodationOffersJSON(request):
     requests = []

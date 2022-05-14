@@ -44,7 +44,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # =============== MAIL RELAY SERVER CONFIGURATION ===============
 # TODO: add environment variable based detection whether we are on prod or staging # noqa: T003
-NOREPLY_MAIL = "match4crisis<noreply@match4crisis.de>"
+NOREPLY_MAIL = "match4crisis<noreply@match4crisis.org>"
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 
 # Use API instead of SMTP server
