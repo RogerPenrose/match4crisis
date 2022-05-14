@@ -212,7 +212,7 @@
     <div class="col-sm-12 col-lg-8 description">
 
       <h2 class="title">{% if requestForHelp %}{% trans "Hilfsgesuch" %}{%else%}{% trans "Angebot" %}{%endif%}:
-        {{ offerType }} {{detail.helpType}} | {{ generic.offerTitle }}</h2>
+        {{ offerType }}{% if detail.helpType %} - {{detail.get_helpType_display}}{% endif %} | {{ generic.offerTitle }}</h2>
       <p>
         <div>{{ generic.offerDescription }}</div>
       </p>
