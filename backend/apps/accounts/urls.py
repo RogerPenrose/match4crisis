@@ -1,35 +1,11 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-from django.views.generic import TemplateView
 
 from .forms import CustomPasswordChangeForm, CustomPasswordResetForm, CustomSetPasswordForm
 
 from . import views
 
-"""urlpatterns = [
-    path(
-        "logout/",
-        auth_views.LogoutView.as_view(template_name="registration/logout.html"),
-        name="logout",
-    ),
-    
-    path(
-        "reset/done/",
-        auth_views.PasswordResetCompleteView.as_view(
-            template_name="registration/password_reset_complete_.html"
-        ),
-        name="password_reset_complete_",
-    ),
-    path(
-        "reset/<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name="registration/password_reset_confirm_.html",
-            post_reset_login=True,
-            success_url="/accounts/validate_email",
-        ),
-        name="password_reset_confirm_",
-    ),"""
 urlpatterns = [ 
     path(
         "resend_confirmation_email",
@@ -112,7 +88,5 @@ urlpatterns = [
     path("preferences", views.preferences, name="preferences"),
     path("delete_me", views.delete_me, name="delete_me"),
     path("deleted_user", views.deleted_user, name="deleted_user"),
-    path("change_activation", views.change_activation_ask, name="activate_helper_ask"),
-    path("change_activation_confirm", views.change_activation, name="activate_helper"),
     path("i18n/", include("django.conf.urls.i18n")),
 ]

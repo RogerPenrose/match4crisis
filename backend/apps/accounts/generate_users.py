@@ -1,13 +1,9 @@
 """
 Add testing data to database.
-
-route /accounts/add_data aufrufen um user zu generieren
-muss in urls.py auskommentiert werden
 """
 
 from django.conf import settings
 from django.http import HttpResponse
-import numpy as np
 
 from apps.accounts.models import User
 from apps.ineedhelp.models import Refugee

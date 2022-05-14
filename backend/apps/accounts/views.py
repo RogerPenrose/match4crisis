@@ -21,9 +21,7 @@ from apps.iofferhelp.forms import HelperCreationForm, HelperPreferencesForm
 from apps.ineedhelp.forms import RefugeeCreationForm, RefugeePreferencesForm
 from rest_framework.views import APIView
 
-#from apps.iofferhelp.forms import HelperForm, HelperFormAndMail, HelperFormEditProfile
 from apps.iofferhelp.models import Helper
-#from apps.iofferhelp.views import send_mails_for
 from apps.iamorganisation.forms import (
     OrganisationFormInfoCreate,
     OrganisationFormInfoSignUp,
@@ -31,12 +29,11 @@ from apps.iamorganisation.forms import (
 )
 from apps.iamorganisation.models import Organisation
 from apps.ineedhelp.models import Refugee
-from apps.offers.models import SPECIAL_CASE_OFFERS, GenericOffer, OFFER_MODELS
+from apps.offers.models import  GenericOffer, OFFER_MODELS
 
-from .utils import send_confirmation_email, send_password_set_email
-from .decorator import organisationRequired, helperRequired
+from .utils import send_confirmation_email
 from .models import User
-from .forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm, CustomPasswordResetForm, ResendConfirmationEmailForm
+from .forms import ChangeEmailForm, CommonPreferencesForm, CustomAuthenticationForm, ResendConfirmationEmailForm
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +111,7 @@ def signup_organisation(request):
             return redirect('thanks')
     else:
         form_info = OrganisationFormInfoSignUp()
-        # form_user = OrganisationSignUpForm()
+        
     form_info.helper.form_tag = False
     return render(request, "signup_organisation.html", {"form_info": form_info})
 
@@ -160,60 +157,10 @@ def login_redirect(request):
 
     else:
         # TODO: throw 404  # noqa: T003
-        logger.warning(
+        logger.error(
             "User is unknown type, login redirect not possible", extra={"request": request},
         )
-        return HttpResponse("Something wrong in database")
-
-"""
-@login_required
-@helperRequired
-def edit_helper_profile(request):
-    helper = request.user.helper
-
-    if request.method == "POST":
-        logger.info("Update Helper Profile", extra={"request": request})
-        form = HelperFormEditProfile(request.POST or None, instance=helper, prefix="infos")
-
-        if form.is_valid():
-            messages.success(
-                request, _("Deine Daten wurden erfolgreich geändert!"), extra_tags="alert-success",
-            )
-            form.save()
-
-    else:
-        form = HelperFormEditProfile(instance=helper, prefix="infos")
-
-    return render(
-        request, "helper_edit.html", {"form": form, "is_activated": helper.is_activated},
-    )
-"""
-
-"""@login_required
-@organisationRequired
-def edit_organisation_profile(request):
-    organisation = request.user.organisation
-
-    if request.method == "POST":
-        logger.info("Update Organisation Profile", extra={"request": request})
-        form = OrganisationFormEditProfile(request.POST or None, instance=organisation, prefix="infos")
-
-        if form.is_valid():
-            messages.success(
-                request, _("Deine Daten wurden erfolgreich geändert!"), extra_tags="alert-success",
-            )
-            form.save()
-        else:
-            messages.info(
-                request,
-                _("Deine Daten wurden nicht erfolgreich geändert!"),
-                extra_tags="alert-warning",
-            )
-
-    else:
-        form = OrganisationFormEditProfile(instance=organisation, prefix="infos")
-
-    return render(request, "organisation_edit.html", {"form": form})"""
+        raise Exception("User is unknown type, login redirect not possible")
 
 @login_required
 def delete_me(request):
@@ -226,9 +173,7 @@ def delete_me(request):
 def deleted_user(request):
     return render(request, 'deleted_user.html')
 
-
 def confirm_email(request, uidb64, token):
-    
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -275,7 +220,6 @@ def change_email_done(request):
     return render(request, "change_email_done.html")
 
 def confirm_change_email(request, uidb64, token):
-    
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -306,25 +250,6 @@ def resend_confirmation_email(request):
         form = ResendConfirmationEmailForm()
 
     return render(request, "resend_confirmation_email.html", {"form":form})
-
-
-class UserCountView(APIView):
-    """
-    A view that returns the count of active users.
-
-    Source: https://stackoverflow.com/questions/25151586/django-rest-framework-retrieving-object-count-from-a-model
-    """
-
-    def get(self, request, format=None):  # noqa: A002
-        supporter_count = User.objects.filter(
-            isHelper__exact=True, validated_email__exact=True
-        ).count()
-        facility_count = User.objects.filter(
-            isOrganisation__exact=True, validated_email__exact=True
-        ).count()
-        content = {"user_count": supporter_count, "facility_count": facility_count}
-        return JsonResponse(content)
-
 
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
@@ -385,39 +310,6 @@ def organisation_login(request):
     resp =  HttpResponseRedirect("login")
     resp["Location"] += "?next="+request.GET['next']
     return resp
-
-@login_required
-@helperRequired
-def change_activation_ask(request):
-    return render(
-        request, "change_activation_ask.html", {"is_activated": request.user.helper.is_activated},
-    )
-
-
-@login_required
-@helperRequired
-def change_activation(request):
-    s = request.user.helper
-    status = s.is_activated
-    s.is_activated = not s.is_activated
-    s.save()
-    if status:
-        messages.add_message(
-            request,
-            messages.INFO,
-            _(
-                "Du hast dein Profil erfolgreich deaktiviert, du kannst nun keine Anfragen mehr von Hilfesuchenden bekommen."
-            ),
-        )
-    else:
-        messages.add_message(
-            request,
-            messages.INFO,
-            _(
-                "Du hast dein Profil erfolgreich aktiviert, du kannst nun wieder von Hilfesuchenden kontaktiert werden."
-            ),
-        )
-    return HttpResponseRedirect("profile_helper")
 
 @method_decorator(login_required, name='dispatch')
 class DashboardView(TemplateView):
