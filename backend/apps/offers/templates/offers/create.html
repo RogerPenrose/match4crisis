@@ -5,6 +5,12 @@
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
+.subtitle{
+    font-size : 1em;
+    font-weight: 400;
+    margin-bottom : 25px;
+}
+
 input[type=checkbox]~label { position: relative;
   display: inline-block;
  margin-right: .5rem;
@@ -80,7 +86,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 .select2-dropdown { border: 0px !important;}
 .select2-container .select2-search--inline .select2-search__field {  font-weight: 300 !important;}
 
-#offerType, #lng, #lat, #bb, #latEnd, #lngEnd, #bbEnd{
+#offerType, #lng, #lat, #bb, #latEnd, #lngEnd, #bbEnd, #helpType{
     display: none !important;
 }
 </style>
@@ -93,13 +99,21 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 <div class="container">
     <div class="row" style=" margin-bottom:55px;">
                <div class="col-12 col-lg-6" style="margin: 0 auto">
-                <h2 class="title" style="margin-bottom: 35px">
+                <h2 class="title" style="margin-bottom: 5px">
                     {% if requestForHelp %}
-                    {% blocktrans %}Wo benötigst du Hilfe?{% endblocktrans %}
+                    {% blocktrans %}Hilfsgesuch erstellen:{% endblocktrans %}
                     {% else %}
-                    {% blocktrans %}Wo möchtest du helfen?{% endblocktrans %}
+                    {% blocktrans %}Hilfsangebot erstellen:{% endblocktrans %}
                     {% endif %}
+                    {{genericForm.instance.get_offerType_display}} {% if request.GET.subtype %} | {{detailForm.instance.get_helpType_display}} {% endif %}
                 </h2>
+                <h4 class="subtitle">
+                    {% if requestForHelp %}
+                    {% blocktrans %}Beschreibe, wie und wo du Hilfe benötigst{% endblocktrans %}
+                    {% else %}
+                    {% blocktrans %}Beschreibe, wie und wo du helfen kannst{% endblocktrans %}
+                    {% endif %}
+                </h4>
 
 <form id="thisForm" action="/offers/createOffer" method="POST" enctype="multipart/form-data">
     {% csrf_token %} 

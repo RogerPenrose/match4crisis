@@ -8,6 +8,7 @@ from django.conf import settings
 import math
 import base64
 from django.template.loader import get_template
+from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
@@ -426,13 +427,27 @@ def delete_offer(request, offer_id):
 
 @login_required
 def selectOfferType(request):
-    context= {"entries": [], "requestForHelp": False}
-    for entry in GenericOffer.OFFER_CHOICES:
-        context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
-    if request.GET.get("rfh", "False") == "True":
-        context["requestForHelp"] = True
-    logger.warning("RFH: "+str(context["requestForHelp"]))
-    return render(request, 'offers/selectOfferType.html', context)
+    if 'type' in request.GET:
+        specType = request.GET.get('type')
+        specModel = OFFER_MODELS[specType]
+        if hasattr(specModel, 'HELP_CHOICES'):
+            context= {"subtypes": [], "requestForHelp": False, "offerTypeName" : dict(GenericOffer.OFFER_CHOICES)[specType]}
+            for subtypeEntry in specModel.HELP_CHOICES:
+                context["subtypes"].append({'longForm' : subtypeEntry[1], 'shortForm' : subtypeEntry[0], 'svg' : open('static/img/icons/icon_%s.svg' % specType, 'r').read()})
+            if request.GET.get("rfh", "False") == "True":
+                context["requestForHelp"] = True
+            return render(request, 'offers/selectOfferSubtype.html', context)
+        else:
+            response = redirect('createOffer')
+            response['Location'] += '?%s' % request.GET.urlencode()
+            return response
+    else:
+        context= {"entries": [], "requestForHelp": False}
+        for entry in GenericOffer.OFFER_CHOICES:
+            context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_%s.svg' % entry[0], 'r').read()})
+        if request.GET.get("rfh", "False") == "True":
+            context["requestForHelp"] = True
+        return render(request, 'offers/selectOfferType.html', context)
 
 @login_required
 @helperRequired
@@ -450,13 +465,17 @@ def create(request):
     elif request.method == 'GET':
         context = {}
         offerType = request.GET.get("type")
+        offerSubtype = request.GET.get("subtype")
         context["requestForHelp"] = False
         newOffer = GenericOffer(offerType=offerType)
+        newSpecOffer = OFFER_MODELS[offerType]()
+        if offerSubtype:
+            newSpecOffer.helpType = offerSubtype
         if request.GET.get("rfh", "False") == "True":
             context["requestForHelp"] = True
         context["genericForm"]  = GenericForm(instance=newOffer)
-        context["detailForm"] = OFFER_FORMS[request.GET.get("type")]()
-        if request.GET.get("type") == "AC":
+        context["detailForm"] = OFFER_FORMS[offerType](instance=newSpecOffer)
+        if offerType == "AC":
             context["imageForm"] = ImageForm()
         return render(request, 'offers/create.html', context)
 
