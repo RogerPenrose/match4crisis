@@ -645,7 +645,6 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
     return render(request, 'offers/detail.html', context)
 
 @login_required
-@helperRequired
 def edit(request, offer_id):
     genOffer = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, genOffer.userId.id)
@@ -657,7 +656,7 @@ def edit(request, offer_id):
         specOffer = OFFER_MODELS[offerType].objects.get(genericOffer=genOffer)
 
         context = {}
-        context["requestForHelp"] = False
+        context["requestForHelp"] = genOffer.userId.isRefugee
         context["genericForm"]  = GenericForm(instance=genOffer)
         context["detailForm"] = OFFER_FORMS[offerType](instance=specOffer)
         if offerType == "AC" or offerType =="CL":
