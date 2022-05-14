@@ -121,7 +121,7 @@ def select_category(request):
             locationData = padByRange(locationData,rangeKm)
             city = locationData["city"]
         lat = locationData["latMin"]+(locationData["latMax"]-locationData["latMin"])/2
-        lat = locationData["lngMin"]+(locationData["lngMax"]-locationData["lngMin"])/2
+        lng = locationData["lngMin"]+(locationData["lngMax"]-locationData["lngMin"])/2
         filters["lat__range"] = (locationData["latMin"], locationData["latMax"])
         filters["lng__range"] = (locationData["lngMin"], locationData["lngMax"])
         filters_generic["genericOffer__lat__range"] = (locationData["latMin"], locationData["latMax"])
