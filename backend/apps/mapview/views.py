@@ -65,6 +65,10 @@ def index(request):
         startPosition = getCenterOfCity(request.GET.get("city"))
         zoom = 10
         logger.warning("Received: "+str(startPosition))
+    elif request.GET.get("lat") and request.GET.get("lng"):
+        startPoisiton = [ request.GET.get("lng"),  request.GET.get("lat")]
+        zoom = 10
+
     context = {
     "startPosition":  startPosition,
     "zoom": zoom,
