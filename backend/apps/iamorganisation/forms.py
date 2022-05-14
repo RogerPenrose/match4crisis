@@ -139,7 +139,7 @@ def check_unique_email(value):
 
 class OrganisationFormInfoSignUp(OrganisationFormO):
     email = forms.EmailField(
-        validators=[check_unique_email], label='', widget=forms.EmailInput(attrs={'placeholder':_("Offizielle E-Mail-Adresse der Kontaktperson")}) 
+        validators=[check_unique_email], label='', widget=forms.EmailInput(attrs={'placeholder':_("Offizielle E-Mail-Adresse")}) 
     )
    
 class OrganisationFormInfoCreate(OrganisationFormO):
