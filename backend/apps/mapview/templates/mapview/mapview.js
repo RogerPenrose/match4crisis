@@ -364,7 +364,7 @@ mapViewPage = {
 
     setGetParameter: function setGetParameter(params)
         {
-            var url = window.location.href.split("#")[0];
+            var url = window.location.href.split("?")[0];
             var hash = location.hash;
             url = url.replace(hash, '');
         
@@ -392,7 +392,7 @@ mapViewPage = {
             this.update_link_element_params(params);
         },
 
-    update_link_element_params : params => ["results_as_list", "nav-link_search", "nav-link_map"].forEach(id => {
+    update_link_element_params : params => ["results_as_list"/*, "nav-link_search", "nav-link_map"*/].forEach(id => { 
         upadateLinksElementParams(
             document.getElementById(id),
             params
