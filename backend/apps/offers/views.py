@@ -587,7 +587,6 @@ def delete_image(request, offer_id, image_id):
 
 def getOfferDetails(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
-    genericForm = GenericForm(instance = generic)
     try:
         imageQuery = ImageClass.objects.filter(offerId=offer_id)
     except ImageClass.DoesNotExist:
@@ -602,37 +601,11 @@ def getOfferDetails(request, offer_id):
     allowed = check_user_is_allowed(request, generic.userId.id, raise_permission_denied = False)
     location = generic.location 
     #location = getLocationFromOffer(generic)
-    detailForm = {}
-    genericContext = {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'location': location, 'edit_allowed': allowed, 'images': images, 'imageForm': ImageForm(), "id": generic.id, "requestForHelp": generic.requestForHelp}
-    if generic.offerType == "AC":
-        detail = get_object_or_404(AccommodationOffer, pk=generic.id)
-        detailForm = AccommodationForm(model_to_dict(detail))
-    if generic.offerType == "WE":
-        detail = get_object_or_404(WelfareOffer, pk=generic.id)
-        detailForm = WelfareForm(model_to_dict(detail))
-    if generic.offerType == "TL":
-        detail = get_object_or_404(TranslationOffer, pk=generic.id)
-        logger.warning(str(detail.languages.all()))
-        detailForm = TranslationForm(model_to_dict(detail))
-        genericContext["languages"]= []
-        for entry in detail.languages.all() :       
-            genericContext["languages"].append({"Name": entry.englishName, "Country": entry.country})
-    if generic.offerType == "TR":
-        detail = get_object_or_404(TransportationOffer, pk=generic.id)
-        detailForm = TransportationForm(model_to_dict(detail))
-    if generic.offerType == "MP":
-        detail = get_object_or_404(ManpowerOffer, pk=generic.id)
-        detailForm = ManpowerForm(model_to_dict(detail))
-    if generic.offerType == "CL":
-        detail = get_object_or_404(ChildcareOffer, pk=generic.id)
-        detailForm = ChildcareForm(model_to_dict(detail))
-    if generic.offerType == "JO":
-        detail = get_object_or_404(JobOffer, pk=generic.id)
-        detailForm = JobForm(model_to_dict(detail))
-    if generic.offerType == "BU":
-        detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
-        detailForm = BuerocraticForm(model_to_dict(detail))
-    genericContext["detail"] = detailForm
+    genericContext = {'offerType': generic.get_offerType_display(), 'generic': generic, 'location': location, 'edit_allowed': allowed, 'images': images, 'imageForm': ImageForm(), "id": generic.id, "requestForHelp": generic.requestForHelp}
+    
+    specOffer = get_object_or_404(OFFER_MODELS[generic.offerType], genericOffer=generic)
+    
+    genericContext["detail"] = specOffer
     return genericContext
 
 def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
