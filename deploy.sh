@@ -7,6 +7,7 @@ docker exec backend python3 manage.py migrate
 docker exec --env PYTHONPATH="/match4crisis-backend:$PYTHONPATH" backend django-admin makemessages --no-location
 docker exec --env PYTHONPATH="/match4crisis-backend:$PYTHONPATH" backend django-admin compilemessages
 docker exec backend python3 manage.py collectstatic --no-input
+docker exec backend python3 manage.py loaddata apps/accounts/fixtures/languages-with-countrycode.json
 docker exec backend python3 manage.py migrate
 docker exec backend python3 manage.py check
 # Restart container AFTER static files have been collected
