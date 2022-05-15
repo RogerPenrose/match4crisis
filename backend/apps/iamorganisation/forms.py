@@ -147,7 +147,6 @@ class OrganisationFormInfoCreate(OrganisationFormO):
     email = forms.EmailField()
 
 class HelpRequestForm(forms.ModelForm):
-    # TODO also allow digital offers?
     RADIUS_CHOICES = [
         ('', _('Radius wählen')),
         (5, "<5km"),
