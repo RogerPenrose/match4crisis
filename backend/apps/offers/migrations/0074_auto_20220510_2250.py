@@ -35,7 +35,4 @@ class Migration(migrations.Migration):
             name='typeOfCar',
             field=models.CharField(choices=[('KW', 'Kleinwagen'), ('MW', 'Mittelklassewagen'), ('KM', 'Kombi'), ('SU', 'SUV'), ('MI', 'Minivan'), ('TR', 'Transporter')], default='KW', max_length=2),
         ),
-        migrations.DeleteModel(
-            name='DonationOffer',
-        ),
     ]

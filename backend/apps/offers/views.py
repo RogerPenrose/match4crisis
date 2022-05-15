@@ -96,6 +96,8 @@ def contact(request, offer_id):
         return render(request, 'offers/contact.html', details)
 def select_category(request):
     city = ""
+    lat = 51.13
+    lng = 10.018
     lngMax = 360
     lngMin = -360
     latMax =90
@@ -119,7 +121,8 @@ def select_category(request):
             logger.warning("Getting BB from City?!")
             locationData = padByRange(locationData,rangeKm)
             city = locationData["city"]
-        
+        lat = locationData["latMin"]+(locationData["latMax"]-locationData["latMin"])/2
+        lng = locationData["lngMin"]+(locationData["lngMax"]-locationData["lngMin"])/2
         filters["lat__range"] = (locationData["latMin"], locationData["latMax"])
         filters["lng__range"] = (locationData["lngMin"], locationData["lngMax"])
         filters_generic["genericOffer__lat__range"] = (locationData["latMin"], locationData["latMax"])
@@ -145,6 +148,7 @@ def select_category(request):
     totalChildcare= GenericOffer.objects.filter(offerType="CL",**filters_noLocation).count()
     totalJobs = GenericOffer.objects.filter(offerType="JO",**filters_noLocation).count()
     context = {
+        'lat' : lat, 'lng': lng,
         'city' : city,
         'range': rangeKm,
         'requestForHelp': filters["requestForHelp"],

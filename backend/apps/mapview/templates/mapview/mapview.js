@@ -119,6 +119,7 @@ mapViewPage = {
         //const  [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
         const genericParameters = await $.get("/mapview/generalInformationJSON")
         const generic = [] // we could remove that from lelfeat, since we only need it to activate / deactivate the others but it is easier to deal with it that way
+
         var entries =[]
         entries =await Promise.all(
             [{% for entry in categories %}          $.get("{{entry}}"),          {%endfor%}]
