@@ -8,6 +8,7 @@ from django.conf import settings
 import math
 import base64
 from django.template.loader import get_template
+from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
@@ -235,7 +236,7 @@ def filter_get(request):
     logger.warning(str(filters))
     for key, value in filters.items():
         if key == "childcare":
-            childcare = ChildCareFilter(request.GET, queryset=ChildcareOffer.objects.filter(**value))
+            childcare = ChildcareFilter(request.GET, queryset=ChildcareOffer.objects.filter(**value))
             context["entries"]["childcare"] =  mergeImages(childcare.qs[lastEntry:firstEntry])
             context["filter"]["childcare"]  = childcare
             numEntries += len(childcare.qs)
@@ -316,7 +317,7 @@ def filter(request):
                     mapparameter+= "childcare"+suffix+"=True&"
                 else:
                     mapparameter += key.replace("Visible","")+suffix+"=True&"
-        if not currentFilter and categoryCount == 1:
+        if not currentFilter and categoryCounter == 1:
             categoryCounter = 11
     
         mapparameter = mapparameter[:-1]
@@ -430,13 +431,27 @@ def delete_offer(request, offer_id):
 
 @login_required
 def selectOfferType(request):
-    context= {"entries": [], "requestForHelp": False}
-    for entry in GenericOffer.OFFER_CHOICES:
-        context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_'+entry[0]+'.svg', 'r').read()})
-    if request.GET.get("rfh", "False") == "True":
-        context["requestForHelp"] = True
-    logger.warning("RFH: "+str(context["requestForHelp"]))
-    return render(request, 'offers/selectOfferType.html', context)
+    if 'type' in request.GET:
+        specType = request.GET.get('type')
+        specModel = OFFER_MODELS[specType]
+        if hasattr(specModel, 'HELP_CHOICES'):
+            context= {"subtypes": [], "requestForHelp": False, "offerTypeName" : dict(GenericOffer.OFFER_CHOICES)[specType]}
+            for subtypeEntry in specModel.HELP_CHOICES:
+                context["subtypes"].append({'longForm' : subtypeEntry[1], 'shortForm' : subtypeEntry[0], 'svg' : open('static/img/icons/icon_%s.svg' % specType, 'r').read()})
+            if request.GET.get("rfh", "False") == "True":
+                context["requestForHelp"] = True
+            return render(request, 'offers/select_offer_subtype.html', context)
+        else:
+            response = redirect('createOffer')
+            response['Location'] += '?%s' % request.GET.urlencode()
+            return response
+    else:
+        context= {"entries": [], "requestForHelp": False}
+        for entry in GenericOffer.OFFER_CHOICES:
+            context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_%s.svg' % entry[0], 'r').read()})
+        if request.GET.get("rfh", "False") == "True":
+            context["requestForHelp"] = True
+        return render(request, 'offers/select_offer_type.html', context)
 
 @login_required
 @helperRequired
@@ -454,13 +469,17 @@ def create(request):
     elif request.method == 'GET':
         context = {}
         offerType = request.GET.get("type")
+        offerSubtype = request.GET.get("subtype")
         context["requestForHelp"] = False
         newOffer = GenericOffer(offerType=offerType)
+        newSpecOffer = OFFER_MODELS[offerType]()
+        if offerSubtype:
+            newSpecOffer.helpType = offerSubtype
         if request.GET.get("rfh", "False") == "True":
             context["requestForHelp"] = True
         context["genericForm"]  = GenericForm(instance=newOffer)
-        context["detailForm"] = OFFER_FORMS[request.GET.get("type")]()
-        if request.GET.get("type") == "AC":
+        context["detailForm"] = OFFER_FORMS[offerType](instance=newSpecOffer)
+        if offerType == "AC":
             context["imageForm"] = ImageForm()
         return render(request, 'offers/create.html', context)
 
@@ -572,7 +591,6 @@ def delete_image(request, offer_id, image_id):
 
 def getOfferDetails(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
-    genericForm = GenericForm(instance = generic)
     try:
         imageQuery = ImageClass.objects.filter(offerId=offer_id)
     except ImageClass.DoesNotExist:
@@ -587,37 +605,11 @@ def getOfferDetails(request, offer_id):
     allowed = check_user_is_allowed(request, generic.userId.id, raise_permission_denied = False)
     location = generic.location 
     #location = getLocationFromOffer(generic)
-    detailForm = {}
-    genericContext = {'offerType': generic.get_offerType_display(), 'generic': genericForm, 'location': location, 'edit_allowed': allowed, 'images': images, 'imageForm': ImageForm(), "id": generic.id, "requestForHelp": generic.requestForHelp}
-    if generic.offerType == "AC":
-        detail = get_object_or_404(AccommodationOffer, pk=generic.id)
-        detailForm = AccommodationForm(model_to_dict(detail))
-    if generic.offerType == "WE":
-        detail = get_object_or_404(WelfareOffer, pk=generic.id)
-        detailForm = WelfareForm(model_to_dict(detail))
-    if generic.offerType == "TL":
-        detail = get_object_or_404(TranslationOffer, pk=generic.id)
-        logger.warning(str(detail.languages.all()))
-        detailForm = TranslationForm(model_to_dict(detail))
-        genericContext["languages"]= []
-        for entry in detail.languages.all() :       
-            genericContext["languages"].append({"Name": entry.englishName, "Country": entry.country})
-    if generic.offerType == "TR":
-        detail = get_object_or_404(TransportationOffer, pk=generic.id)
-        detailForm = TransportationForm(model_to_dict(detail))
-    if generic.offerType == "MP":
-        detail = get_object_or_404(ManpowerOffer, pk=generic.id)
-        detailForm = ManpowerForm(model_to_dict(detail))
-    if generic.offerType == "CL":
-        detail = get_object_or_404(ChildcareOffer, pk=generic.id)
-        detailForm = ChildcareForm(model_to_dict(detail))
-    if generic.offerType == "JO":
-        detail = get_object_or_404(JobOffer, pk=generic.id)
-        detailForm = JobForm(model_to_dict(detail))
-    if generic.offerType == "BU":
-        detail = get_object_or_404(BuerocraticOffer, pk=generic.id)
-        detailForm = BuerocraticForm(model_to_dict(detail))
-    genericContext["detail"] = detailForm
+    genericContext = {'offerType': generic.get_offerType_display(), 'generic': generic, 'location': location, 'edit_allowed': allowed, 'images': images, 'imageForm': ImageForm(), "id": generic.id, "requestForHelp": generic.requestForHelp}
+    
+    specOffer = get_object_or_404(OFFER_MODELS[generic.offerType], genericOffer=generic)
+    
+    genericContext["detail"] = specOffer
     return genericContext
 
 def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
@@ -649,7 +641,6 @@ def detail(request, offer_id, edit_active = False,  newly_created = False, conta
     return render(request, 'offers/detail.html', context)
 
 @login_required
-@helperRequired
 def edit(request, offer_id):
     genOffer = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, genOffer.userId.id)
@@ -661,19 +652,12 @@ def edit(request, offer_id):
         specOffer = OFFER_MODELS[offerType].objects.get(genericOffer=genOffer)
 
         context = {}
-        context["requestForHelp"] = False
+        context["requestForHelp"] = genOffer.userId.isRefugee
         context["genericForm"]  = GenericForm(instance=genOffer)
         context["detailForm"] = OFFER_FORMS[offerType](instance=specOffer)
         if offerType == "AC" or offerType =="CL":
             context["imageForm"] = ImageForm()
         return render(request, 'offers/create.html', context)
-
-def results(request, offer_id):
-    response = "You're looking at the results of offer %s."
-    return HttpResponse(response % offer_id)
-
-def vote(request, offer_id):
-    return HttpResponse("You're voting on question %s." % offer_id)
 
 def ajax_toggle_favourite(request):
     if not request.is_ajax() or not request.method=='POST':

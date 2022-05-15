@@ -21,7 +21,11 @@
 <script src="{% static 'js/leaflet.markercluster-1.4.1/leaflet.markercluster.js' %}" ></script>
 <script src="{% static 'js/Leaflet.FeatureGroup.SubGroup-1.0.2/leaflet.featuregroup.subgroup.js' %}" ></script>
 
-<style>.footer { margin-top:0px !important; }
+<style>
+#controlContainer > div {     -ms-overflow-style: none; /* IE 11 */
+    scrollbar-width: none; /* Firefox 64 */
+    scrollbar-color: transparent transparent; }
+.footer { margin-top:0px !important; }
 .leaflet-control-layers label { display: inline-block; }
 .leaflet-control-layers-group > label { padding: 10px 0px;}
   .control-container { margin-top: 5px;}
@@ -43,7 +47,7 @@
       p.listview a {    color: #fff !important; }
   h4.popup-title { font-size: 14px; margin-top: 10px;}
       div.content { position: relative; }
-      .leaflet-popup-content { padding-bottom: 10px; padding-top: 20px; min-width: 180px;}
+      .leaflet-popup-content { padding-bottom: 10px; padding-top: 10px; min-width: 180px;}
       .btn { color: #fff !important; background-color: #ed0061; border-radius: 10px; font-size: 14px;}
    .leaflet-popup-content .btn { padding: .2rem 1rem; width: 100% }
 

@@ -3,19 +3,8 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_select2 import forms as s2forms
 import logging
-from django.utils.translation import gettext_lazy as _
-from match4crisis.constants.countries import countries
-from .models import GenericOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, TranslationOffer, TransportationOffer, WelfareOffer, JobOffer, AccommodationOffer
-from apps.accounts.models import Languages
+from .models import *
 
-def validate_plz(value):
-    try:
-        number = int(value)
-    except:
-        raise ValidationError(
-            _('%(value)s is not a valid postcode'),
-            params={'value': value},
-        )
 OFFERTYPE = _("Angebotstyp")
 OFFERDESCRIPTION = _("Beschreibung")
 COUNTRY = _("Land")
@@ -23,7 +12,7 @@ PRICE = _("Preis")
 PASSENGER_COUNT=_("Anzahl der freien Plätze")
 FIRSTLANGUAGE=_("Übersetze von")
 SECONDLANGUAGE=_("Übersetze nach")
-NUMBEROFPEOPLE=_("Maximale anzahl der Bewohner")
+NUMBEROFPEOPLE=_("Maximale Anzahl der Bewohner")
 PETSALLOWED=_("Haustiere gestattet?")
 DIGITAL=_("Digital verfügbar")
 ACTIVE=_("Aktives Angebot")

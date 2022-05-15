@@ -1,9 +1,6 @@
 from django.urls import path, register_converter
 
-from . import converters, views
-
-register_converter(converters.DecimalPointFloatConverter, "float")
-
+from . import views
 
 urlpatterns = [
     path("organisation_dashboard", views.OrganisationDashboardView.as_view(), name="organisation_dashboard"),
@@ -12,7 +9,6 @@ urlpatterns = [
     path("request_donations", views.request_donations, name="request_donations"),
     path("create_donation_request", views.create_donation_request, name="create_donation_request"),
     path("create_material_donation_request", views.create_material_donation_request, name="create_material_donation_request"),
-    #path("organisation_view/<str:uuid>/", views.organisation_view, name="organisation_view"),
     path("organisation_overview", views.OrganisationOverview.as_view(), name="organisation_overview"),
     path("donation_requests", views.donation_overview, name="donation_requests"),
     path("donation_request_created", views.donation_request_created, name="donation_request_created"),

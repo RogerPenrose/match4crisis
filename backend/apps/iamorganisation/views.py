@@ -1,27 +1,19 @@
-from functools import lru_cache
 from itertools import chain
-
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpRequest, HttpResponse
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
-from django.views.decorators.gzip import gzip_page
 from apps.accounts.views import DashboardView
-import django_tables2 as tables
-from django_filters.views import FilterView
 from django.utils.decorators import method_decorator
 
 from apps.accounts.models import User
 from apps.accounts.decorator import helperRequired, organisationRequired
-from apps.mapview.utils import haversine, plzs
-from apps.mapview.views import get_ttl_hash
-from apps.offers.models import GenericOffer, ManpowerOffer
+from apps.offers.models import GenericOffer
 from apps.iofferhelp.models import Helper
 
 from .models import DonationRequest, HelpRequest, Image, MaterialDonationRequest, Organisation

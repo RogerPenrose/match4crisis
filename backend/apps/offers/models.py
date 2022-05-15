@@ -9,14 +9,6 @@ from django.utils import timezone
 from match4crisis.constants.choices import GENDER_CHOICES
 from match4crisis.constants.countries import countries
 from apps.iofferhelp.models import Helper
-def validate_plz(value):
-    try:
-        number = int(value)
-    except:
-        raise ValidationError(
-            _('%(value)s is not a valid postcode'),
-            params={'value': value},
-        )
 
 class GenericOffer(models.Model):
     OFFER_CHOICES = [
@@ -29,7 +21,7 @@ class GenericOffer(models.Model):
     ('WE', _('Medizinische Hilfe')),
     ('JO', _('Jobangebot')),
     ]
-    offerTitle = models.TextField(max_length=100, default="")
+    offerTitle = models.CharField(max_length=100, default="")
     location = models.TextField(max_length=300, default="")
     lat = models.FloatField(null=True)
     lng = models.FloatField(null=True)

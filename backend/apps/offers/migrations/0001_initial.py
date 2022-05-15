@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('offerType', models.CharField(choices=[('AC', 'Accomodation'), ('TL', 'Translation'), ('TR', 'Transportation')], default='AC', max_length=2)),
-                ('postCode', models.CharField(max_length=5, validators=[apps.offers.models.validate_plz])),
+                ('postCode', models.CharField(max_length=5)),
                 ('streetName', models.CharField(max_length=200)),
                 ('streetNumber', models.CharField(max_length=10)),
                 ('country', models.CharField(max_length=200)),
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('newGenericOffer', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to='offers.GenericOffer')),
                 ('country', models.CharField(max_length=200)),
-                ('postCodeEnd', models.CharField(max_length=5, validators=[apps.offers.models.validate_plz])),
+                ('postCodeEnd', models.CharField(max_length=5)),
                 ('streetNameEnd', models.CharField(max_length=200)),
                 ('streetNumberEnd', models.CharField(max_length=4)),
                 ('typeOfCar', models.CharField(choices=[('LKW', 'Large Truck'), ('CAR', 'Car'), ('TRA', 'Transporter'), ('BUS', 'Bus')], default='CAR', max_length=3)),

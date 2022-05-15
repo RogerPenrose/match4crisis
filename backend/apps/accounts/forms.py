@@ -11,7 +11,7 @@ from django.utils.html import format_html
 from django.utils import timezone
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Column, HTML, Layout, Row, Submit
+from crispy_forms.layout import Submit
 
 from django_select2 import forms as s2forms
 from apps.iamorganisation.models import Organisation
@@ -68,48 +68,6 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields["password2"].help_text = ""
         self.fields["password1"].widget.attrs["placeholder"] = _("Passwort")
         self.fields["password2"].widget.attrs["placeholder"] = _("Passwort bestätigen")
-
-        
-
-
-
-class OrganisationSignUpForm(UserCreationForm):
-    # add more query fields
-
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = []  # ['email']
-
-    @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
-        user.save()
-        return user
-
-
-class HelperEmailForm(forms.ModelForm):
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = ["email"]
-
-    @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
-        user.save()
-        return user
-
-
-class OrganisationEmailForm(forms.ModelForm):
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = ["email"]
-
-    @transaction.atomic
-    def save(self):
-        user = super().save(commit=False)
-        user.save()
-        return user
-
 
 class CommonPreferencesForm(forms.ModelForm):
     class Meta:

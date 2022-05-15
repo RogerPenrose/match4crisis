@@ -4,7 +4,7 @@
 
 {% block title %}
 {% blocktrans %}
-Logout - Studierende
+Seite nicht gefunden
 {% endblocktrans %}
 {% endblock %}
 
@@ -19,11 +19,13 @@ Logout - Studierende
 </script>
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style type="text/css">
+    .login-card { border-radius: 25px;}
     .bg-container {
-        background-image: url({% static 'img/login-bg.jpg' %});
+        background-image: url({% static 'img/about.jpg' %});
         background-position: center;
         background-size: cover;
     }
+    .footer { margin-top: 0px;}
 	@media only screen and (max-width: 767px) {
 	.bg-container {background-position: left; background-image:none; background-color:#bdcbcc;}
 	}
@@ -55,10 +57,8 @@ Logout - Studierende
   <div class="container login-form">
 	 <div class="col-xl-7 col-lg-8 col-md-10 col-sm-12 col-12">
     <div class="card login-card text-center align-items-center">
-      <h2 class="font-weight-light"> {% blocktrans %}Diese Seite konnte nicht gefunden werden{% endblocktrans %}</h2>
-      <p>{% blocktrans %}Wenn der Fehler weiterhin auftritt, melde dich per email bei {% endblocktrans %} <script type="text/javascript">document.write(decode("fhccbeg@zngpu4urnygupner.qr"))</script></p>
-      <img src="{% static 'img/match4crisis-logo-text.svg' %}" width="180px" style="vertical-align: baseline">
-		  <a href="/"><button type="submit" class="btn blue text-white btn-md" style="margin-top:35px;">{% blocktrans %}Zurück zur Startseite{% endblocktrans %}</button></a>
+      <h2 class="title"> {% blocktrans %}Diese Seite konnte nicht gefunden werden{% endblocktrans %}</h2>
+		<p>Bitte überprüfe den eingegebenen Link oder informiere uns über das Problem unter info@match4crisis.org.</p>  <a href="/"><button type="submit" class="btn btn-green text-white btn-md">{% blocktrans %}Zurück zur Startseite{% endblocktrans %}</button></a>
     </div>
 	 </div>
   </div>

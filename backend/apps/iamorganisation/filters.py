@@ -8,8 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from functools import reduce
 
-from .models import DonationRequest, HelpRequest
-
 gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
 
 DATE_CHOICES = (
