@@ -232,7 +232,7 @@ def filter_get(request):
     logger.warning(str(filters))
     for key, value in filters.items():
         if key == "childcare":
-            childcare = ChildCareFilter(request.GET, queryset=ChildcareOffer.objects.filter(**value))
+            childcare = ChildcareFilter(request.GET, queryset=ChildcareOffer.objects.filter(**value))
             context["entries"]["childcare"] =  mergeImages(childcare.qs[lastEntry:firstEntry])
             context["filter"]["childcare"]  = childcare
             numEntries += len(childcare.qs)
@@ -313,7 +313,7 @@ def filter(request):
                     mapparameter+= "childcare"+suffix+"=True&"
                 else:
                     mapparameter += key.replace("Visible","")+suffix+"=True&"
-        if not currentFilter and categoryCount == 1:
+        if not currentFilter and categoryCounter == 1:
             categoryCounter = 11
     
         mapparameter = mapparameter[:-1]
@@ -436,7 +436,7 @@ def selectOfferType(request):
                 context["subtypes"].append({'longForm' : subtypeEntry[1], 'shortForm' : subtypeEntry[0], 'svg' : open('static/img/icons/icon_%s.svg' % specType, 'r').read()})
             if request.GET.get("rfh", "False") == "True":
                 context["requestForHelp"] = True
-            return render(request, 'offers/selectOfferSubtype.html', context)
+            return render(request, 'offers/select_offer_subtype.html', context)
         else:
             response = redirect('createOffer')
             response['Location'] += '?%s' % request.GET.urlencode()
@@ -447,7 +447,7 @@ def selectOfferType(request):
             context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_%s.svg' % entry[0], 'r').read()})
         if request.GET.get("rfh", "False") == "True":
             context["requestForHelp"] = True
-        return render(request, 'offers/selectOfferType.html', context)
+        return render(request, 'offers/select_offer_type.html', context)
 
 @login_required
 @helperRequired
@@ -654,13 +654,6 @@ def edit(request, offer_id):
         if offerType == "AC" or offerType =="CL":
             context["imageForm"] = ImageForm()
         return render(request, 'offers/create.html', context)
-
-def results(request, offer_id):
-    response = "You're looking at the results of offer %s."
-    return HttpResponse(response % offer_id)
-
-def vote(request, offer_id):
-    return HttpResponse("You're voting on question %s." % offer_id)
 
 def ajax_toggle_favourite(request):
     if not request.is_ajax() or not request.method=='POST':

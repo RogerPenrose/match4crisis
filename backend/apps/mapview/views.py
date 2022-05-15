@@ -1,21 +1,17 @@
-from functools import lru_cache
 import time
-from django.shortcuts import get_object_or_404,render
 import logging
 import json
+from django.shortcuts import render
 from os.path import dirname, abspath, join
 from django.db.models import Q
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse
-from django.template import loader
-from django.forms.models import model_to_dict
+from django.http import JsonResponse
 from django.views.decorators.gzip import gzip_page
 from django.utils.translation import gettext_lazy as _
 
-from apps.iamorganisation.models import HelpRequest, Request
+from apps.iamorganisation.models import HelpRequest
 
-from apps.offers.models import GenericOffer, AccommodationOffer, ManpowerOffer,TransportationOffer, TranslationOffer, WelfareOffer, BuerocraticOffer, JobOffer, ChildcareOffer
-from apps.mapview.utils import get_plz_data, plzs
+from apps.offers.models import *
 
 
 logger = logging.getLogger("django")

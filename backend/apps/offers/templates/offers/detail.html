@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
-{% load display_value %}
+
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
@@ -314,7 +314,7 @@
         </svg><span>{%blocktrans%}Anzahl an Kindern:{%endblocktrans%} {{ detail.numberOfChildren }}</span>
       </p>
       {% if detail.helpType_childcare != "GT"%}
-      <p><span>{{ detail.timeOfDay|display }}</span></p>
+      <p><span>{{ detail.get_timeOfDay_display }}</span></p>
       {%endif%}
       {% if detail.hasExperience %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"

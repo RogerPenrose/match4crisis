@@ -81,23 +81,7 @@ class DataBaseStats:
             return GenericOffer.objects.filter(active=True, incomplete=False, created_at__lte=str(date)).count()
         return GenericOffer.objects.filter(active=True, incomplete=False).count()
 
-    # TODO: helfende pro bundesland und großstadt. Requires
-    # https://github.com/match4everyone/match4healthcare/issues/492
-
     # TODO Contact stats
-    """@stat_count.register(name=_("Kontaktanfragen an Helfende"))
-    def emails_to_students(self, date=None):
-        qs = EmailToSend.objects.all()
-        if date is not None:
-            qs = qs.filter(send_date__lte=str(date))
-        return qs.filter(was_sent=True).count()
-
-    @stat_count.register(name=_("Kontaktanfragen an Institutionen"))
-    def emails_to_hospitals(self, date=None):
-        qs = EmailToHospital.objects.all()
-        if date is not None:
-            qs = qs.filter(send_date__lte=str(date))
-        return qs.count()"""
 
     @stat_count.register(name=_("Anzahl gesendeter Newsletter"))
     def newsletter_count(self, date=None):
@@ -106,15 +90,6 @@ class DataBaseStats:
             qs = qs.filter(send_date__lte=str(date))
 
         return qs.filter(was_sent=True).count()
-
-    """@stat_count.register(name=_("Institutionen mit Anzeige"))
-    def hospitals_allowing_contact_by_students(self, date=None):
-        qs = Hospital.objects.all()
-
-        if date is not None:
-            qs = qs.filter(user__date_joined__lte=str(date))
-
-        return qs.filter(is_approved=True, user__validated_email=True, appears_in_map=True).count()"""
 
     def all_stats(self):
         results = [(description, count_func(self)) for description, count_func in self.stat_count]
