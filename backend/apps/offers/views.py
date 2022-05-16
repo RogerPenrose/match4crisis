@@ -489,6 +489,8 @@ def save(request, offer_id=None):
     if request.method == 'POST':
         if offer_id is None:
             genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
+            if request.user.isRefugee:
+                genOffer.requestForHelp = True
             specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
         else:
             genOffer = get_object_or_404(GenericOffer, pk=offer_id)
