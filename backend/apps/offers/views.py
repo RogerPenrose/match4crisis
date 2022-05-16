@@ -1,4 +1,5 @@
 import re
+from tabnanny import check
 from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
@@ -16,7 +17,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from apps.accounts.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.iamorganisation.models import Organisation
@@ -613,7 +614,13 @@ def getOfferDetails(request, offer_id):
 
 def detail(request, offer_id, edit_active = False,  newly_created = False, contacted = False) :
     context = getOfferDetails(request, offer_id)
-    offer = GenericOffer.objects.get(pk=offer_id)
+    offer = context['generic']
+    # incomplete offers shouldn't have a detail page
+    # paused offers' detail pages should be visible only to the creator
+    if offer.incomplete:
+        raise Http404
+    if not offer.active:
+        check_user_is_allowed(request, offer.userId.id)
     context["createdAt"] = offer.created_at.strftime("%d.%m.%Y")
     context["username"] = offer.userId.first_name
     logger.warning("context: "+str(offer.requestForHelp))
