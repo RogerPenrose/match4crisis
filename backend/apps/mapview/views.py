@@ -35,9 +35,10 @@ def mapviewjs(request):
     BASE= "/mapview/"
     logger.warning(str(request.GET.dict()))
     if not request.user.is_authenticated or not request.user.isOrganisation :
-        context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
         if request.GET.get("show_mp", ""):
-            context["categories"].append(BASE+"HelpRequests")
+            context["categories"] = [BASE+"HelpRequests"]
+        else:
+            context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
     else:
         #get only MP
         context["categories"] = [BASE+"ManpowerOffers"]
@@ -47,29 +48,27 @@ def mapviewjs(request):
     logger.warning(str(request.GET.dict()))
     logger.warning("rendering mapview JS ? "+str(context))
     return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
-logger = logging.getLogger("django")
+
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
     startPosition =  [51.13, 10.018]
     zoom = 6
-    getString = ""
-    for key in request.GET.dict():
-        getString += key+"="+request.GET.get(key)+"&"
+    getString = request.GET.urlencode()
     logger.warning("Received Request in Mapview: "+str(request.GET))
     if request.GET.get("city"):
         startPosition = getCenterOfCity(request.GET.get("city"))
         zoom = 10
         logger.warning("Received: "+str(startPosition))
-    elif request.GET.get("lat") and request.GET.get("lng"):
-        startPoisiton = [ request.GET.get("lng"),  request.GET.get("lat")]
+    elif 'lat' in request.GET and 'lng' in request.GET:
+        startPosition = [float(request.GET.get("lat")),  float(request.GET.get("lng"))]
         zoom = 10
 
     context = {
     "startPosition":  startPosition,
     "zoom": zoom,
     "mapbox_token": settings.MAPBOX_TOKEN,
-    "get_params": getString[:-1]
+    "get_params": getString
     }
     context.update(request.GET.dict())
     return render(request, "mapview/map.html", context )

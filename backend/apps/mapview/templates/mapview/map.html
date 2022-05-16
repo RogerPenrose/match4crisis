@@ -91,17 +91,4 @@
   </a></p>
 </div>
 
-<script type="text/javascript">
-  var gototable = function() {
-      if ($('#search').val()) {
-        window.location = "/iamorganisation/helpers/" + $('#countrycode').val() + "/" + $('#search').val() + "/0"
-      }
-    };
-  $("#search").keyup(function(event) {
-      if (event.keyCode === 13) {
-          gototable();
-      }
-  });
-</script>
-
 {% endblock %}
