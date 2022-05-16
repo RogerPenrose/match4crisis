@@ -3,7 +3,7 @@ from django.utils.decorators import method_decorator
 
 from apps.accounts.views import DashboardView
 from apps.ineedhelp.models import Refugee
-from apps.offers.models import getSpecificOffers, GenericOffer
+from apps.offers.models import OFFER_CARD_NAMES, getSpecificOffers, GenericOffer
 from apps.offers.views import mergeImages
 from apps.accounts.decorator import refugeeRequired
 
@@ -14,9 +14,18 @@ class RefugeeDashboardView(DashboardView):
     def get(self, request, *args, **kwargs):
         firstname = request.user.first_name
         hasRequests = GenericOffer.objects.filter(userId=request.user).count() > 0
+        userRequests = GenericOffer.objects.filter(userId=request.user)
+        incompleteRequests = mergeImages(getSpecificOffers(userRequests.filter(incomplete=True)))
+        activeRequests =  mergeImages(getSpecificOffers(userRequests.filter(active=True)))
+        pausedRequests =  mergeImages(getSpecificOffers(userRequests.filter(active=False, incomplete=False)))
+
         context = {
             "firstname": firstname,
-            "hasRequests": hasRequests
+            "hasRequests": hasRequests,
+            "incompleteRequests" : incompleteRequests,
+            "activeRequests" : activeRequests,
+            "pausedRequests" : pausedRequests,
+            "offercardnames" : OFFER_CARD_NAMES,
         }
 
         return self.render_to_response(context)
