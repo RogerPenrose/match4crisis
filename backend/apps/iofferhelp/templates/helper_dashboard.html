@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load getdictvalue %}
 
 {% block title %}
 {% blocktrans %}
@@ -364,38 +365,10 @@ Dashboard - Helfende
   <h3 style="margin-bottom: 25px; ">
     {% blocktrans %}Kategorien vervollständigen{% endblocktrans %}</h3>
 
-
   <div class="container cards row incomplete-offer">
-
-    
     {% for entry in incompleteOffers %}
-    {{entry.genericOffer.offerType}}
-    {% if entry.offer.genericOffer.offerType == "AC"  %}
-    {% include 'offers/accommodation-card.html' with redirectToEdit=True %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "TL"  %}
-    {% include 'offers/translation-card.html' with redirectToEdit=True %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "TR"  %}
-    {% include 'offers/transportation-card.html' with redirectToEdit=True %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "BU"  %}
-    {% include 'offers/buerocratic-card.html' with redirectToEdit=True %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "MP"  %}
-    {% include 'offers/manpower-card.html' with redirectToEdit=True %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "CL"  %}
-    {% include 'offers/childcare-card.html' with redirectToEdit=True %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "WE"  %}
-    {% include 'offers/welfare-card.html' with redirectToEdit=True %}
-    {% endif%}
-    {% if entry.offer.genericOffer.offerType == "JO"  %}
-    {% include 'offers/job-card.html' with redirectToEdit=True %}
-    {%endif%}
+    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
     {% endfor %}
-
   </div>
   {% endif %}
 
@@ -407,86 +380,32 @@ Dashboard - Helfende
 
 
   <div class="container cards row active-offer">
-    {% if activeOffers %}
     {% for entry in activeOffers %}
-    {{entry.genericOffer.offerType}}
-    {% if entry.offer.genericOffer.offerType == "AC"  %}
-    {% include 'offers/accommodation-card.html' %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "TL"  %}
-    {% include 'offers/translation-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "TR"  %}
-    {% include 'offers/transportation-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "BU"  %}
-    {% include 'offers/buerocratic-card.html' %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "MP"  %}
-    {% include 'offers/manpower-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "CL"  %}
-    {% include 'offers/childcare-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "WE"  %}
-    {% include 'offers/welfare-card.html' %}
-    {% endif%}
-    {% if entry.offer.genericOffer.offerType == "JO"  %}
-    {% include 'offers/job-card.html' %}
-    {%endif%}
-    {% endfor %}
-    {% else %}
+    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+    {% empty %}
     <p style="padding: 0px 15px;">
-    {% blocktrans %}
-    Du hast keine aktiven Angebote.
-    {% endblocktrans %}
-  </p>
-    {% endif %}
-
-
+      {% blocktrans %}
+      Du hast keine aktiven Angebote.
+      {% endblocktrans %}
+    </p>
+    {% endfor %}
   </div>
+
+
   <h3 style="margin-bottom: 25px; margin-top:35px;">{% blocktrans %}Deine pausierten Angebote
     {{pausedOffers|length}}{% endblocktrans %}</h3>
 
 
   <div class="container cards row paused-offer">
-    {% if pausedOffers %}
     {% for entry in pausedOffers %}
-    {{entry.genericOffer.offerType}}
-    {% if entry.offer.genericOffer.offerType == "AC"  %}
-    {% include 'offers/accommodation-card.html' %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "TL"  %}
-    {% include 'offers/translation-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "TR"  %}
-    {% include 'offers/transportation-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "BU"  %}
-    {% include 'offers/buerocratic-card.html' %}
-    {% endif %}
-    {% if entry.offer.genericOffer.offerType == "MP"  %}
-    {% include 'offers/manpower-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "CL"  %}
-    {% include 'offers/childcare-card.html' %}
-    {%endif%}
-    {% if entry.offer.genericOffer.offerType == "WE"  %}
-    {% include 'offers/welfare-card.html' %}
-    {% endif%}
-    {% if entry.offer.genericOffer.offerType == "JO"  %}
-    {% include 'offers/job-card.html' %}
-    {%endif%}
-    {% endfor %}
-    {% else %}
+    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+    {% empty %}
     <p style="padding: 0px 15px;">
     {% blocktrans %}
     Du hast keine pausierten Angebote.
     {% endblocktrans %}
     </p>
-    {% endif %}
-
-
+    {% endfor %}
   </div>
 
 

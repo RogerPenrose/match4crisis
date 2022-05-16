@@ -8,7 +8,7 @@ from apps.iamorganisation.models import HelpRequest
 from apps.iamorganisation.filters import HelpRequestFilter
 from apps.accounts.views import DashboardView
 from apps.accounts.decorator import helperRequired
-from apps.offers.models import GenericOffer, getSpecificOffers, OFFER_MODELS
+from apps.offers.models import OFFER_CARD_NAMES, GenericOffer, getSpecificOffers, OFFER_MODELS
 from apps.offers.views import mergeImages
 
 from .forms import ChooseHelpForm
@@ -24,9 +24,6 @@ class HelperDashboardView(DashboardView):
 
     def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
 
-        pausedOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=False, incomplete=False).count()
-        incompleteOffersCount = GenericOffer.objects.filter(userId=request.user.id, incomplete=True).count()
-        runningOffersCount = GenericOffer.objects.filter(userId=request.user.id, active=True, incomplete=False).count()
         firstname = request.user.first_name
         userOffers =GenericOffer.objects.filter(userId=request.user.id)
         incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
@@ -38,7 +35,8 @@ class HelperDashboardView(DashboardView):
             "pausedOffers": pausedOffers,
             "incompleteOffers": incompleteOffers,
             "activeOffers": activeOffers,
-            "firstname": firstname
+            "firstname": firstname,
+            "offercardnames" : OFFER_CARD_NAMES,
         }
 
         return self.render_to_response(context)

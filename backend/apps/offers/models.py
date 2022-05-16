@@ -181,63 +181,16 @@ OFFER_MODELS = {
     'JO' : JobOffer,
 }
 
-SPECIAL_CASE_OFFERS = {
-    'transportation_people': {
-        'offerTypeAbbr': 'TR',
-        'helpType': {
-            'helpType': 'PT'
-        },
-        'helpTypeChoiceLabel': TransportationOffer.HELP_CHOICES[0][1]
-    },
-    'transportation_goods': {
-        'offerTypeAbbr': 'TR',
-        'helpType': {
-            'helpType': 'GT'
-        },
-        'helpTypeChoiceLabel': TransportationOffer.HELP_CHOICES[1][1]
-    },
-    'buerocracy_companion': {
-        'offerTypeAbbr': 'BU',
-        'helpType': {
-            'helpType': 'AM'
-        },
-        'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[0][1]
-    },
-    'buerocracy_legal': {
-        'offerTypeAbbr': 'BU',
-        'helpType': {
-            'helpType': 'LE'
-        },
-        'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[1][1]
-    },
-    'buerocracy_other': {
-        'offerTypeAbbr': 'BU',
-        'helpType': {
-            'helpType': 'OT'
-        },
-        'helpTypeChoiceLabel': BuerocraticOffer.HELP_CHOICES[2][1]
-    },
-    'welfare_elderly': {
-        'offerTypeAbbr': 'WE',
-        'helpType': {
-            'helpType': 'ELD'
-        },
-        'helpTypeChoiceLabel': WelfareOffer.HELP_CHOICES[0][1]
-    },
-    'welfare_disabled': {
-        'offerTypeAbbr': 'WE',
-        'helpType': {
-            'helpType': 'DIS'
-        },
-        'helpTypeChoiceLabel': WelfareOffer.HELP_CHOICES[1][1]
-    },
-    'welfare_psych': {
-        'offerTypeAbbr': 'WE',
-        'helpType': {
-            'helpType': 'PSY'
-        },
-        'helpTypeChoiceLabel': WelfareOffer.HELP_CHOICES[2][1]
-    },
+# TODO when adding new offer types this needs to be updated
+OFFER_CARD_NAMES = {
+    'AC' : 'offers/accommodation-card.html',
+    'TL' : 'offers/translation-card.html',
+    'TR' : 'offers/transportation-card.html',
+    'BU' : 'offers/buerocratic-card.html',
+    'CL' : 'offers/childcare-card.html',
+    'WE' : 'offers/welfare-card.html',
+    'MP' : 'offers/manpower-card.html',
+    'JO' : 'offers/job-card.html',
 }
 
 def getSpecificOffers(genericOffers: list):
