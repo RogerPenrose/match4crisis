@@ -2,6 +2,12 @@
 {% load static %}
 {% load i18n %}
 
+{% block title %}
+{% blocktrans %}
+Bereich wählen
+{% endblocktrans %}
+{% endblock %}
+
 {% block header %}
 {{ translationForm.media.js }}
 {{ translationForm.media.css }}
