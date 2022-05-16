@@ -367,7 +367,7 @@ Dashboard - Helfende
 
   <div class="container cards row incomplete-offer">
     {% for entry in incompleteOffers %}
-    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType with redirectToEdit=True %}
     {% endfor %}
   </div>
   {% endif %}
