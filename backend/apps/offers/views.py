@@ -19,7 +19,6 @@ from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
-from apps.accounts.decorator import helperRequired, refugeeRequired
 from apps.iamorganisation.models import Organisation
 from .utils import send_manpower_offer_message, send_offer_message
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
@@ -454,7 +453,6 @@ def selectOfferType(request):
         return render(request, 'offers/select_offer_type.html', context)
 
 @login_required
-@helperRequired
 def toggle_active(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, generic.userId.id)
@@ -582,7 +580,6 @@ def check_user_is_allowed(request, target_id, raise_permission_denied = True):
     return False
 
 @login_required
-@helperRequired
 def delete_image(request, offer_id, image_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
     check_user_is_allowed(request, generic.userId.id)
