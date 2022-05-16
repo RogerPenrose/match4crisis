@@ -17,7 +17,7 @@ mapViewPage = {
             className: `leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive ${ className }`,
             html: `<div><span>${count}</span></div>`,
             iconSize: [40, 40],
-            popupAnchor: [-10,-10],
+            popupAnchor: [0,-60],
         })
     },
 
@@ -48,22 +48,10 @@ mapViewPage = {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
     
-        getParamUrlCenter = [Number(urlParams.get('lat')), Number(urlParams.get('lng'))]
-
-        let mapOptions;
-        
-        if (!isNaN(getParamUrlCenter[0]) && !isNaN(getParamUrlCenter[1])) {
-            mapOptions = {
-                center: getParamUrlCenter,
-                zoom: this.options.zoom
-            }
-        } else {
-            this.setGetParameter([["lng", this.options.startPosition[0]], ["lat", this.options.startPosition[1]]])
-            mapOptions = {
+        let mapOptions = {
                 center: this.options.startPosition,
                 zoom: this.options.zoom
             }
-        }
 
         let tileLayerURL = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}@2x?access_token=' + this.options.mapboxToken
         let tileLayerOptions = {
@@ -73,7 +61,7 @@ mapViewPage = {
             tileSize: 512,
             zoomOffset: -1,
             preferCanvas: true
-          }
+            }
     
         this.mapObject = L.map(this.options.mapViewContainerId, mapOptions);
         const bb = urlParams.get('bb')
@@ -83,10 +71,7 @@ mapViewPage = {
                 mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.south, vp.west], [vp.north, vp.east]]));
             } catch(e){
                 console.log("Url_param bb is damaged!")
-                mapViewPage.mapObject.fitBounds(new L.latLngBounds([[49.27, 7.86], [53.1, 13.04]]));
             }
-        } else {
-            mapViewPage.mapObject.fitBounds(new L.latLngBounds([[49.27, 7.86], [53.1, 13.04]]));
         }
 
         L.tileLayer(tileLayerURL, tileLayerOptions).addTo(this.mapObject);    
