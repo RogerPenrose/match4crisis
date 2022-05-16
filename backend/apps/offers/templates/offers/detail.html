@@ -2,6 +2,11 @@
 {% load static %}
 {% load i18n %}
 
+{% block title %}
+{{ generic.offerTitle }}
+{% endblock %}
+
+
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>

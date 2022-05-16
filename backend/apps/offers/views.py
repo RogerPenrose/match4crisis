@@ -465,7 +465,7 @@ def create(request):
     if request.method == 'POST':
         return update(request, newly_created=True)
     elif request.method == 'GET':
-        context = {}
+        context = {'edit' : False}
         offerType = request.GET.get("type")
         offerSubtype = request.GET.get("subtype")
         context["requestForHelp"] = False
@@ -650,8 +650,8 @@ def edit(request, offer_id):
         offerType = genOffer.offerType
         specOffer = OFFER_MODELS[offerType].objects.get(genericOffer=genOffer)
 
-        context = {}
-        context["requestForHelp"] = genOffer.userId.isRefugee
+        context = {'edit' : True}
+        context["requestForHelp"] = genOffer.requestForHelp
         context["genericForm"]  = GenericForm(instance=genOffer)
         context["detailForm"] = OFFER_FORMS[offerType](instance=specOffer)
         if offerType == "AC" or offerType =="CL":

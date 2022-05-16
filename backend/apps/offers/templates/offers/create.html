@@ -2,6 +2,21 @@
 {% load static %}
 {% load i18n %}
 
+{% block title %}
+{% if requestForHelp %}
+{% if edit %}
+{% blocktrans %}Hilfsgesuch bearbeiten:{% endblocktrans %}
+{% else %}
+{% blocktrans %}Hilfsgesuch erstellen:{% endblocktrans %}
+{% endif %}
+{% else %}
+{% if edit %}
+{% blocktrans %}Hilfsangebot bearbeiten:{% endblocktrans %}
+{% else %}
+{% blocktrans %}Hilfsangebot erstellen:{% endblocktrans %}
+{% endif %}
+{% endif %}{% endblock %}
+
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
@@ -96,9 +111,17 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
                <div class="col-12 col-lg-6" style="margin: 0 auto">
                 <h2 class="title" style="margin-bottom: 5px">
                     {% if requestForHelp %}
+                    {% if edit %}
+                    {% blocktrans %}Hilfsgesuch bearbeiten:{% endblocktrans %}
+                    {% else %}
                     {% blocktrans %}Hilfsgesuch erstellen:{% endblocktrans %}
+                    {% endif %}
+                    {% else %}
+                    {% if edit %}
+                    {% blocktrans %}Hilfsangebot bearbeiten:{% endblocktrans %}
                     {% else %}
                     {% blocktrans %}Hilfsangebot erstellen:{% endblocktrans %}
+                    {% endif %}
                     {% endif %}
                     {{genericForm.instance.get_offerType_display}} {% if request.GET.subtype %} | {{detailForm.instance.get_helpType_display}} {% endif %}
                 </h2>
