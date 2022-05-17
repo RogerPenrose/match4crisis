@@ -25,14 +25,7 @@ mapViewPage = {
         return (function (cluster) {
             var childCount = cluster.getChildCount();
             var cssClasses = ['marker-cluster']
-            var c = ' marker-cluster-'
-            if (childCount < 10) {
-                c += 'small'
-            } else if (childCount < 100) {
-                c += 'medium'
-            } else {
-                c += 'large'
-            }
+            var c = ' marker-cluster-' + (childCount < 10 ? 'small' : (childCount < 100 ? 'medium' : 'large'))
             cssClasses.push(c)
             cssClasses.push(cssClass)
             return new L.DivIcon({
@@ -130,31 +123,31 @@ mapViewPage = {
                 markerGroup.addTo(this.mapObject)
                 markers.addTo(this.mapObject)
                 offerOverlays[entries[i].legend+"("+entries[i].offers.length+")"] = markers
-                
-            if (show.includes(entries[i].type)){
-                this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": true})
+                    
+                if (show.includes(entries[i].type)){
+                    this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": true})
+                }
+                else this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": false})
             }
-            else this.offers.push({"type":entries[i].type, "amt": entries[i].offers.length, "show": false})
-        }
-        if (entries[i].requests.length > 0){
-            var requestMarkerGroup = L.markerClusterGroup({
-                iconCreateFunction: this.cssClassedIconCreateFunction('request'),
-            });
-            let requestMarkers = L.featureGroup.subGroup(requestMarkerGroup, this.createBlankMapMarker(entries[i].requests,(marker) => {
-                return L.marker([marker.lat,marker.lng],{ 
-                    icon:  this.createIcon(1, "request"),
-                    itemCount: 1,
-               }).bindPopup(marker.text)
-            }))
-            requestMarkerGroup.addTo(this.mapObject)
-            requestMarkers.addTo(this.mapObject)
-            requestOverlays[entries[i].legend+"("+entries[i].requests.length+")"] = requestMarkers
-            if (show.includes(entries[i].type)){
-                this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": true})
+            if (entries[i].requests.length > 0){
+                var requestMarkerGroup = L.markerClusterGroup({
+                    iconCreateFunction: this.cssClassedIconCreateFunction('request'),
+                });
+                let requestMarkers = L.featureGroup.subGroup(requestMarkerGroup, this.createBlankMapMarker(entries[i].requests,(marker) => {
+                    return L.marker([marker.lat,marker.lng],{ 
+                        icon:  this.createIcon(1, "request"),
+                        itemCount: 1,
+                }).bindPopup(marker.text)
+                }))
+                requestMarkerGroup.addTo(this.mapObject)
+                requestMarkers.addTo(this.mapObject)
+                requestOverlays[entries[i].legend+"("+entries[i].requests.length+")"] = requestMarkers
+                if (show.includes(entries[i].type)){
+                    this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": true})
+                }
+                else this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": false})
             }
-            else this.requests.push({"type":entries[i].type, "amt": entries[i].requests.length, "show": false})
         }
-    }
         var offerString = "Angebote ("+genericParameters.offerCount+")"
         var requestString = "Gesuche ("+genericParameters.requestCount+")"
         console.log(JSON.stringify(this.requests))
@@ -292,6 +285,7 @@ mapViewPage = {
         const autocomplete = initMapsAutocomplete();
         autocomplete.addListener("place_changed", () => {
             const place = autocomplete.getPlace();
+            console.log(place)
     
             if (!place.geometry || !place.geometry.location) {
                 // User entered the name of a Place that was not suggested and
@@ -306,11 +300,12 @@ mapViewPage = {
 
             if (place.geometry.viewport) {
                 const vp = place.geometry.viewport
+                console.log(vp)
 
                 // seems like they changed vp param_names 
                 // TODO: -> fix google maps import version to specific value when finished with developing
                 try{
-                    mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.Ab.h, vp.Ua.h], [vp.Ab.j, vp.Ua.j]]));
+                    mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.Ab.h, vp.Va.h], [vp.Ab.j, vp.Va.j]]));
                 } catch(e){
                     mapViewPage.mapObject.fitBounds(new L.latLngBounds([[vp.zb.h, vp.Ua.h], [vp.zb.j, vp.Ua.j]]));
                 }
