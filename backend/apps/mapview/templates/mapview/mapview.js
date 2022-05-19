@@ -80,13 +80,24 @@ mapViewPage = {
             
             this.layers = this.createControlGroups(counts)            
 
-            const control = L.control.groupedLayers(null, this.layers, { collapsed: false, position: 'topright', groupCheckboxes: true}).addTo(this.mapObject)
-            $("#controlContainer").append(control.getContainer())
+            this.control = L.control.groupedLayers(null, this.layers, { collapsed: false, position: 'topright', groupCheckboxes: true}).addTo(this.mapObject)
+            $("#controlContainer").append(this.control.getContainer())
+
+            // Hide the empty group label
+            for(const groupLabel of $(".leaflet-control-layers-group-label")){
+                if(groupLabel.innerText===""){
+                    groupLabel.style.display = "none"
+                }
+            }
+        })
+
+        this.mapObject.on('overlayadd', (e) => {
+            this.loadMapMarkers(e.layer)
         })
 
     },
 
-    createControlGroups: function createControlGroups(counts){
+    createControlGroups: function createControlGroups(counts, parentLabel=""){
         const newLayer = {}
         for (let [entryType, entry] of Object.entries(counts)) {
             if(typeof entry !== 'object'){
@@ -101,13 +112,33 @@ mapViewPage = {
 
                 markerGroup.addTo(this.mapObject)
                 markers.addTo(this.mapObject)
-                newLayer[`${entry['label']} (${entry['count']})`] = markers
+                markers.typeIdentifier = parentLabel + entryType
+                if(parentLabel){
+                    newLayer[`${entry['label']} (${entry['count']})`] = markers
+                }else{
+                    if(!newLayer.hasOwnProperty("")){
+                        newLayer[""] = {}
+                    }
+                    newLayer[""][`${entry['label']} (${entry['count']})`] = markers
+                }
 
             }else{
-                newLayer[`${entry['label']} (${entry['groupCount']})`] = this.createControlGroups(entry);
+                newLayer[`${entry['label']} (${entry['groupCount']})`] = this.createControlGroups(entry, entryType);
             }
         }
         return newLayer
+    },
+
+    loadMapMarkers : async function loadMapMarkers(layer){
+        
+        const data = await $.get("data?type=" + layer.typeIdentifier);
+
+        for(const k of data['entries']){
+            layer.addLayer(L.marker([k['lat'], k['lng']], { 
+                icon:  this.createIcon(1, layer.typeIdentifier + "Marker"),
+                itemCount: 1,
+            }).bindPopup(k['popupContent']))
+        }
     },
 
     onResizeWindow: function onResizeWindow() {
@@ -126,7 +157,7 @@ mapViewPage = {
     },
 
 // @todo : Optimize this logic to only gather those Offer types that are requested..
-    loadMapMarkers : async function loadMapMarkers() {
+    //loadMapMarkers : async function loadMapMarkers() {
         //const  [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
         
         /*const genericParameters = await $.get("/mapview/generalInformationJSON")
@@ -258,7 +289,7 @@ mapViewPage = {
                 }
         }
         mapViewPage.updateViewAsListBtn();*/
-    },
+    //},
 
     handleCheckBoxClick: (e, isOffer=true) => {
         if (e.target.name == "allOffers"){
@@ -418,7 +449,7 @@ $.extend(mapViewPage.options, pageOptions)
 
 document.addEventListener("DOMContentLoaded", function domReady() {
     mapViewPage.initializeMap()
-    mapViewPage.loadMapMarkers()
+    //mapViewPage.loadMapMarkers()
     mapViewPage.registerEventHandlers(document, window)
-
+    
 })

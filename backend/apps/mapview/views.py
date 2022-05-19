@@ -6,9 +6,10 @@ from django.shortcuts import render
 from os.path import dirname, abspath, join
 from django.db.models import Q
 from django.conf import settings
-from django.http import HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponseBadRequest, HttpResponseNotAllowed, JsonResponse
 from django.views.decorators.gzip import gzip_page
 from django.utils.translation import gettext_lazy as _
+from django.template.loader import render_to_string  
 
 from apps.iamorganisation.models import HelpRequest
 
@@ -74,10 +75,37 @@ def index(request):
     context.update(request.GET.dict())
     return render(request, "mapview/map.html", context )
 
-def getOffersJSON(request):
-    if request.method != "POST":
+def getJSONData(request):
+    if request.method != "GET":
         return HttpResponseNotAllowed
-    postData = request.POST
+    if "type" not in request.GET:
+        return HttpResponseBadRequest
+    type = request.GET["type"]
+
+    if type == "helpRequests":
+        helpRequests = HelpRequest.objects.all()
+    elif type == "manpower":
+        mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False)
+    elif type[:-2] == "offers" and len(type) == 8:
+        offerType = type[-2:]
+        offers = OFFER_MODELS[offerType].objects.filter(genericOffer__requestForHelp=False)
+        data = {'entries' : []}
+        for offer in offers:
+            context = {
+                'generic' : offer.genericOffer,
+                'detail' : offer
+            }
+            data['entries'].append({
+                'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
+                'lat' : offer.genericOffer.lat,
+                'lng' : offer.genericOffer.lng,
+            })
+    elif type[:-2] == "requests" and len(type) == 10:
+        requestType = type[-2:]
+        requests = OFFER_MODELS[requestType].objects.filter(genericOffer__requestForHelp=True)
+
+    return JsonResponse(data, safe=False)
+
     
 def getCountsJSON(request):
     if request.method != "GET":
@@ -88,10 +116,10 @@ def getCountsJSON(request):
 
     counts = {}
     if "helpRequests" in getData:
-        counts["helpRequests"] = {"count": HelpRequest.objects.count(), "label" : _("Hilfeaufrufe")}
+        counts["helpRequests"] = {"count": HelpRequest.objects.count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(_("Hilfeaufrufe"))}
 
     if "manpower" in getData:
-        counts["manpower"] = {"count": ManpowerOffer.objects.filter(requestForHelp=False).count(), "label" : offerLabels['MP']} 
+        counts["manpower"] = {"count": ManpowerOffer.objects.filter(genericOffer__requestForHelp=False).count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(offerLabels['MP'])}
 
     if "offers" in getData:
         counts["offers"] = {"label" : _("Angebote")}
@@ -99,7 +127,7 @@ def getCountsJSON(request):
         for abbr, offerType in OFFER_MODELS.items():
             if abbr != 'MP':
                 specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False).count()
-                counts["offers"][abbr] = {"count": specOfferCount, "label" : offerLabels[abbr]}
+                counts["offers"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr])}
                 groupCount += specOfferCount
         counts["offers"]["groupCount"] = groupCount
 
@@ -108,7 +136,7 @@ def getCountsJSON(request):
         groupCount = 0
         for abbr, offerType in OFFER_MODELS.items():
             specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False).count()
-            counts["requests"][abbr] = {"count": specOfferCount, "label" : offerLabels[abbr]}
+            counts["requests"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr])}
             groupCount += specOfferCount
         counts["requests"]["groupCount"] = groupCount
 
@@ -116,19 +144,6 @@ def getCountsJSON(request):
     return JsonResponse(counts)
 
 
-def generalInformationJSON(request):
-    returnVal = {}
-    if request.user.is_anonymous or not request.user.isOrganisation:
-        returnVal = {
-            "offerCount": GenericOffer.objects.filter( ~Q(offerType="MP"), ~Q(offerType="DO"), active=True, requestForHelp=False, isDigital=False).count(),
-            "requestCount":GenericOffer.objects.filter( ~Q(offerType="MP"), ~Q(offerType="DO"),active=True, requestForHelp=True, isDigital=False).count()
-        }
-    else:
-        returnVal = {
-            "offerCount": GenericOffer.objects.filter(active=True, requestForHelp=False, isDigital=False, offerType="MP").count(),
-            "requestCount":GenericOffer.objects.filter(active=True, requestForHelp=True, isDigital=False, offerType="MP").count()
-        }
-    return JsonResponse(returnVal)
 
 def accommodationOffersJSON(request):
     requests = []
