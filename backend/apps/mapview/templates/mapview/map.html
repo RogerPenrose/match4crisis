@@ -77,7 +77,7 @@
 {% endblock %}
 
 {% block content %}
-
+{{counts}}
 <div id="mapContainer" style="z-index:1; position: relative;">
   <div class="container"><input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}" class="search-input"/></div>
   <div id="controlContainer" class="container control-container" {% if request.GET.no_controls%}style="visibility: hidden;"{% endif %}></div>

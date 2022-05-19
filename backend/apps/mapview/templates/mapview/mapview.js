@@ -37,7 +37,7 @@ mapViewPage = {
     },
 
 
-    initializeMap:  function initializeMap() {
+    initializeMap: function initializeMap() {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
     
@@ -75,6 +75,39 @@ mapViewPage = {
             return children.reduce((sum,marker) => (sum + marker.options.itemCount),0)
         }
 
+        $.get("/mapview/counts" + window.location.search, (counts, status) => {
+
+            
+            this.layers = this.createControlGroups(counts)            
+
+            const control = L.control.groupedLayers(null, this.layers, { collapsed: false, position: 'topright', groupCheckboxes: true}).addTo(this.mapObject)
+            $("#controlContainer").append(control.getContainer())
+        })
+
+    },
+
+    createControlGroups: function createControlGroups(counts){
+        const newLayer = {}
+        for (let [entryType, entry] of Object.entries(counts)) {
+            if(typeof entry !== 'object'){
+                continue
+            }
+            if ("count" in entry){
+
+                var markerGroup = L.markerClusterGroup({
+                    iconCreateFunction: this.cssClassedIconCreateFunction(entryType),
+                });
+                let markers = L.layerGroup()
+
+                markerGroup.addTo(this.mapObject)
+                markers.addTo(this.mapObject)
+                newLayer[`${entry['label']} (${entry['count']})`] = markers
+
+            }else{
+                newLayer[`${entry['label']} (${entry['groupCount']})`] = this.createControlGroups(entry);
+            }
+        }
+        return newLayer
     },
 
     onResizeWindow: function onResizeWindow() {
@@ -95,7 +128,8 @@ mapViewPage = {
 // @todo : Optimize this logic to only gather those Offer types that are requested..
     loadMapMarkers : async function loadMapMarkers() {
         //const  [ manpowers, childcares,medicals,buerocratics,jobs,accommodations, transportations, translations ] = await Promise.all([$.get(this.options.manpowerOfferURL),$.get(this.options.childcareOfferURL),$.get(this.options.medicalOfferURL),$.get(this.options.buerocraticOfferURL),$.get(this.options.jobOfferURL),$.get(this.options.accommodationOfferURL),$.get(this.options.transportationOfferURL),$.get(this.options.translationOfferURL)])
-        const genericParameters = await $.get("/mapview/generalInformationJSON")
+        
+        /*const genericParameters = await $.get("/mapview/generalInformationJSON")
         const generic = [] // we could remove that from lelfeat, since we only need it to activate / deactivate the others but it is easier to deal with it that way
 
         var entries =[]
@@ -223,7 +257,7 @@ mapViewPage = {
                     this.setGetParameter([[this.requests[i].type+"RequestsVisible", "True"]])
                 }
         }
-        mapViewPage.updateViewAsListBtn();
+        mapViewPage.updateViewAsListBtn();*/
     },
 
     handleCheckBoxClick: (e, isOffer=true) => {
