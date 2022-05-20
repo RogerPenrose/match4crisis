@@ -11,11 +11,12 @@ mapViewPage = {
     requests: [],
     offers: [],
     mapObject: null,
+    markerIcons : {},
     
-    createIcon: function createIcon(count, className) {
+    createIcon: function createIcon(iconContent, className) {
         return L.divIcon({
             className: `leaflet-marker-icon marker-cluster marker-cluster-single leaflet-zoom-animated leaflet-interactive ${ className }`,
-            html: `<div><span>${count}</span></div>`,
+            html: `<div><span>${iconContent}</span></div>`,
             iconSize: [40, 40],
             popupAnchor: [0,-60],
         })
@@ -25,8 +26,7 @@ mapViewPage = {
         return (function (cluster) {
             var childCount = cluster.getChildCount();
             var cssClasses = ['marker-cluster']
-            var c = ' marker-cluster-' + (childCount < 10 ? 'small' : (childCount < 100 ? 'medium' : 'large'))
-            cssClasses.push(c)
+            cssClasses.push('marker-cluster-' + (childCount < 10 ? 'small' : (childCount < 100 ? 'medium' : 'large')))
             cssClasses.push(cssClass)
             return new L.DivIcon({
                  html: '<div><span>' + childCount + '</span></div>',
@@ -92,7 +92,12 @@ mapViewPage = {
         })
 
         this.mapObject.on('overlayadd', (e) => {
-            this.loadMapMarkers(e.layer)
+            const layer = e.layer
+
+            if(!layer.loaded){
+                this.loadMapMarkers(e.layer)
+                layer.loaded = true
+            }
         })
 
     },
@@ -108,7 +113,7 @@ mapViewPage = {
                 var markerGroup = L.markerClusterGroup({
                     iconCreateFunction: this.cssClassedIconCreateFunction(entryType),
                 });
-                let markers = L.layerGroup()
+                let markers = L.featureGroup.subGroup(markerGroup)
 
                 markerGroup.addTo(this.mapObject)
                 markers.addTo(this.mapObject)
@@ -135,7 +140,7 @@ mapViewPage = {
 
         for(const k of data['entries']){
             layer.addLayer(L.marker([k['lat'], k['lng']], { 
-                icon:  this.createIcon(1, layer.typeIdentifier + "Marker"),
+                icon:  this.createIcon(k['icon'], layer.typeIdentifier + "Marker"),
                 itemCount: 1,
             }).bindPopup(k['popupContent']))
         }

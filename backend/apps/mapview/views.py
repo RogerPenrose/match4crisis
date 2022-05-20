@@ -88,7 +88,7 @@ def getJSONData(request):
         mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False)
     elif type[:-2] == "offers" and len(type) == 8:
         offerType = type[-2:]
-        offers = OFFER_MODELS[offerType].objects.filter(genericOffer__requestForHelp=False)
+        offers = OFFER_MODELS[offerType].objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
         data = {'entries' : []}
         for offer in offers:
             context = {
@@ -99,6 +99,7 @@ def getJSONData(request):
                 'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
+                'icon': '<img src="/static/img/icons/icon_{}.svg">'.format(offerType), 
             })
     elif type[:-2] == "requests" and len(type) == 10:
         requestType = type[-2:]
@@ -126,7 +127,7 @@ def getCountsJSON(request):
         groupCount = 0
         for abbr, offerType in OFFER_MODELS.items():
             if abbr != 'MP':
-                specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False).count()
+                specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
                 counts["offers"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr])}
                 groupCount += specOfferCount
         counts["offers"]["groupCount"] = groupCount
