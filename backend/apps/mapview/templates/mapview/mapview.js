@@ -94,13 +94,9 @@ mapViewPage = {
             }
         })
 
-        this.mapObject.on('overlayadd', (e) => {
-            const layer = e.layer
 
-            if(!layer.loaded){
-                this.loadMapMarkers(e.layer)
-                layer.loaded = true
-            }
+        this.mapObject.on('overlayadd', (e) => {
+            this.loadMapMarkers(e.layer)
         })
 
     },
@@ -117,9 +113,13 @@ mapViewPage = {
                 //     iconCreateFunction: this.cssClassedIconCreateFunction(entryType),
                 // });
                 let markers = L.featureGroup.subGroup(this.markerGroup)
-
-                markers.addTo(this.mapObject)
                 markers.typeIdentifier = parentLabel + entryType
+
+                if(entry['selected']){
+                    this.loadMapMarkers(markers)
+                    this.mapObject.addLayer(markers)
+                }
+
                 if(parentLabel){
                     newLayer[`${entry['label']} (${entry['count']})`] = markers
                 }else{
@@ -137,6 +137,10 @@ mapViewPage = {
     },
 
     loadMapMarkers : async function loadMapMarkers(layer){
+
+        if(layer.loaded){
+            return
+        }
         
         const layerID = layer.typeIdentifier
         const data = await $.get("data?type=" + layerID)
@@ -148,7 +152,6 @@ mapViewPage = {
             var svgIcon = await $.get(data['iconSrc'])
             this.markerIcons[layerID] = svgIcon
         }
-        console.log(svgIcon)
 
         for(const k of data['entries']){
             layer.addLayer(L.marker([k['lat'], k['lng']], { 
@@ -156,6 +159,8 @@ mapViewPage = {
                 itemCount: 1,
             }).bindPopup(k['popupContent']))
         }
+
+        layer.loaded = true
     },
 
     onResizeWindow: function onResizeWindow() {

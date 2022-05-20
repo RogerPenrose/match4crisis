@@ -125,13 +125,14 @@ def getCountsJSON(request):
     getData = request.GET
 
     offerLabels = dict(GenericOffer.OFFER_CHOICES)
+    selected = getData.getlist('selected') or []
 
     counts = {}
     if "helpRequests" in getData:
-        counts["helpRequests"] = {"count": HelpRequest.objects.count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(_("Hilfeaufrufe"))}
+        counts["helpRequests"] = {"count": HelpRequest.objects.count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(_("Hilfeaufrufe")), 'selected': 'helpRequests' in selected}
 
     if "manpower" in getData:
-        counts["manpower"] = {"count": ManpowerOffer.objects.filter(genericOffer__requestForHelp=False).count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(offerLabels['MP'])}
+        counts["manpower"] = {"count": ManpowerOffer.objects.filter(genericOffer__requestForHelp=False).count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(offerLabels['MP']), 'selected': 'manpower' in selected or 'offersMP' in selected}
 
     if "offers" in getData:
         counts["offers"] = {"label" : _("Angebote")}
@@ -139,7 +140,7 @@ def getCountsJSON(request):
         for abbr, offerType in OFFER_MODELS.items():
             if abbr != 'MP':
                 specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
-                counts["offers"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr])}
+                counts["offers"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr]), 'selected': 'offers{}'.format(abbr) in selected}
                 groupCount += specOfferCount
         counts["offers"]["groupCount"] = groupCount
 
@@ -148,7 +149,7 @@ def getCountsJSON(request):
         groupCount = 0
         for abbr, offerType in OFFER_MODELS.items():
             specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False).count()
-            counts["requests"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr])}
+            counts["requests"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr]), 'selected': 'requests{}'.format(abbr) in selected}
             groupCount += specOfferCount
         counts["requests"]["groupCount"] = groupCount
 
