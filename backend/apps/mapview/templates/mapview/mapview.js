@@ -77,7 +77,10 @@ mapViewPage = {
 
         $.get("/mapview/counts" + window.location.search, (counts, status) => {
 
-            
+            this.markerGroup = L.markerClusterGroup({
+                iconCreateFunction: this.cssClassedIconCreateFunction(""),
+            }).addTo(this.mapObject); 
+
             this.layers = this.createControlGroups(counts)            
 
             this.control = L.control.groupedLayers(null, this.layers, { collapsed: false, position: 'topright', groupCheckboxes: true}).addTo(this.mapObject)
@@ -110,12 +113,11 @@ mapViewPage = {
             }
             if ("count" in entry){
 
-                var markerGroup = L.markerClusterGroup({
-                    iconCreateFunction: this.cssClassedIconCreateFunction(entryType),
-                });
-                let markers = L.featureGroup.subGroup(markerGroup)
+                // var markerGroup = L.markerClusterGroup({
+                //     iconCreateFunction: this.cssClassedIconCreateFunction(entryType),
+                // });
+                let markers = L.featureGroup.subGroup(this.markerGroup)
 
-                markerGroup.addTo(this.mapObject)
                 markers.addTo(this.mapObject)
                 markers.typeIdentifier = parentLabel + entryType
                 if(parentLabel){

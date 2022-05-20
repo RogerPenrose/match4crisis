@@ -84,6 +84,17 @@ def getJSONData(request):
 
     if type == "helpRequests":
         helpRequests = HelpRequest.objects.all()
+        data = {'entries' : [], 'iconSrc': '/static/img/icons/icon_MP.svg'}
+        for hr in helpRequests:
+            context = {
+                'helpRequest': hr,
+            }
+            data['entries'].append({
+                #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
+                'popupContent' : render_to_string("mapview/help-request-popup-card.html", context),
+                'lat' : hr.lat,
+                'lng' : hr.lng,
+            })
     elif type == "manpower":
         mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False)
     elif type[:-2] == "offers" and len(type) == 8:
@@ -96,6 +107,7 @@ def getJSONData(request):
                 'detail' : offer
             }
             data['entries'].append({
+                #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
                 'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
