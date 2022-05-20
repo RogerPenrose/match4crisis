@@ -95,7 +95,7 @@
 </nav>
 <div class="content"> {% block content %}
   {% endblock %} </div>
-<footer class="footer">
+<footer class="footer" {% if "/mapview/" == request.path %}hidden{% endif %}>
   <div class="container">
     <p style="margin-bottom:5px !important;">
       <a style="text-decoration: none; display: inline;"
