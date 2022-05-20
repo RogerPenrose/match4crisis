@@ -136,11 +136,21 @@ mapViewPage = {
 
     loadMapMarkers : async function loadMapMarkers(layer){
         
-        const data = await $.get("data?type=" + layer.typeIdentifier);
+        const layerID = layer.typeIdentifier
+        const data = await $.get("data?type=" + layerID)
+        
+
+        if(layerID in this.markerIcons){
+            var svgIcon = this.markerIcons[layerID]
+        }else{
+            var svgIcon = await $.get(data['iconSrc'])
+            this.markerIcons[layerID] = svgIcon
+        }
+        console.log(svgIcon)
 
         for(const k of data['entries']){
             layer.addLayer(L.marker([k['lat'], k['lng']], { 
-                icon:  this.createIcon(k['icon'], layer.typeIdentifier + "Marker"),
+                icon:  this.createIcon(svgIcon.documentElement.outerHTML, layer.typeIdentifier + "Marker"),
                 itemCount: 1,
             }).bindPopup(k['popupContent']))
         }

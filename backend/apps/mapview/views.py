@@ -89,7 +89,7 @@ def getJSONData(request):
     elif type[:-2] == "offers" and len(type) == 8:
         offerType = type[-2:]
         offers = OFFER_MODELS[offerType].objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-        data = {'entries' : []}
+        data = {'entries' : [], 'iconSrc': '/static/img/icons/icon_{}.svg'.format(offerType), }
         for offer in offers:
             context = {
                 'generic' : offer.genericOffer,
@@ -99,7 +99,6 @@ def getJSONData(request):
                 'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
-                'icon': '<img src="/static/img/icons/icon_{}.svg">'.format(offerType), 
             })
     elif type[:-2] == "requests" and len(type) == 10:
         requestType = type[-2:]
