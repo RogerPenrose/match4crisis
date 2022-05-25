@@ -456,14 +456,14 @@
           {% if counts.requests %}
           <div class="offer-types-group" id="offer-types-group-requests">
             <label class="offer-types-group-label">
-              <input type="checkbox" class="offer-types-group-selector" id="offer-types-group-selector-requests">
+              <input type="checkbox" class="offer-types-group-selector" id="offer-types-group-selector-requests" {% if counts.requests.allSelected %}checked{% endif %}>
               <span class="offer-types-group-name">{{counts.requests.label}}</span>
             </label>
-            {% for abbr, requestsTypeData in counts.requests.types.items%}
+            {% for abbr, requestTypeData in counts.requests.types.items%}
             <label class="offer-types-label">
-              <input type="checkbox" name="requests{{abbr}}" class="offer-types-selector">
+              <input type="checkbox" name="requests{{abbr}}" class="offer-types-selector" {% if requestTypeData.selected %}checked{% endif %}>
               <span>
-                <img src="/static/img/icons/icon_{{abbr}}.svg">{{requestsTypeData.label}}
+                <img src="/static/img/icons/icon_{{abbr}}.svg">{{requestTypeData.label}}
               </span>
             </label>
             {% endfor %}
@@ -476,15 +476,9 @@
     </div>
   </div>
 
-  <div class="row align-self-center align-items-center" style="margin-top:35px;">
+  <div class="row align-self-center align-items-center" style="margin-top:15px;">
     <div class="col-12 text-center" style="text-align:center;">
       <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2>
-    </div>
-    <div class="col-12 text-center" style="text-decoration: underline;">
-      <p><a
-          href="/mapview/?{% if city %}city={{ city }}&{%endif%}{{mapparameter}}{% if requestForHelp == True %}&showRequests=true{%endif%} ">{% if requestForHelp == "Offer" %}{% blocktrans %}{{ ResultCount }}
-          Angebote auf Karte anzeigen{% endblocktrans %}{% elif requestForHelp == "Request" %} {{ResultCount}} Gesuche
-          auf Karte anzeigen {% else %} {{ResultCount}} Inserate auf Karte anzeigen {%endif%}</a></p>
     </div>
   </div>
 </div>
@@ -525,6 +519,12 @@
       }
       $('#offerTypesForm').trigger("submit");
     });
+
+    for(const groupLabel of $(".offer-types-group-label")){
+      if(groupLabel.innerText===""){
+          groupLabel.style.display = "none"
+      }
+    }
   });
 </script>
 {% endblock %}

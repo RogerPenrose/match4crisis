@@ -397,6 +397,8 @@ def apply_filter(request):
         queryParameters['offers'] = request.GET['offers']
     if "requests" in request.GET:
         queryParameters['requests'] = request.GET['requests']
+    if "manpower" in request.GET:
+        queryParameters['manpower'] = request.GET['manpower']
 
     queryParameters['selected'] = []
 
@@ -460,8 +462,8 @@ def index(request):
                 counts["offers"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': isSelected}
                 allSelected &= isSelected
                 groupCount += specOfferCount
-            if ('offers' + abbr) in selected:
-                offers = OFFER_MODELS[abbr].objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
+            if isSelected:
+                offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
                 context['entries'] += [{"offer": o} for o in offers]
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
         counts["offers"]["allSelected"] = allSelected
@@ -469,14 +471,28 @@ def index(request):
     if "requests" in getData:
         counts["requests"] = {"types" : {}}
         groupCount = 0
+        allSelected = True
         for abbr, offerType in OFFER_MODELS.items():
             specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False).count()
-            counts["requests"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': ('requests' + abbr) in selected}
+            isSelected = ('requests' + abbr) in selected
+            counts["requests"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': isSelected}
+            allSelected &= isSelected
             groupCount += specOfferCount
-            if ('requests' + abbr) in selected:
-                requests = OFFER_MODELS[abbr].objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
-                context['entries'] += requests
+            if isSelected:
+                requests = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
+                context['entries'] += [{"offer": o} for o in requests]
         counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
+        counts["requests"]["allSelected"] = allSelected
+
+    if "manpower" in getData:
+        if 'offers' not in counts:
+            counts["offers"] = {"types" : {}}
+        mpOfferCount = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
+        isSelected = 'manpower' in selected or 'offersMP' in selected
+        counts["offers"]["types"]['MP'] = {"label" : "{} ({})".format(offerLabels['MP'], mpOfferCount), 'selected': isSelected}
+        if isSelected:
+            mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
+            context['entries'] += [{"offer": o} for o in mpOffers]
 
     context["counts"] = counts
     context["offercardnames"] = OFFER_CARD_NAMES
