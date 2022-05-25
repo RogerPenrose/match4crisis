@@ -1,5 +1,6 @@
 import re
 from tabnanny import check
+from urllib.parse import urlencode
 from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
@@ -23,7 +24,7 @@ from apps.ineedhelp.models import Refugee
 from apps.iamorganisation.models import Organisation
 from .utils import send_manpower_offer_message, send_offer_message
 from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
-from .models import OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
+from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
 from django.contrib.auth.decorators import login_required
 import re
@@ -285,6 +286,7 @@ def filter_get(request):
     context["requestForHelp"] = isRequestForHelp
     context["ResultCount"] = numEntries
     return context
+
 def filter(request):
     N_ENTRIES = 5
     isRequestForHelp = "Offer"
@@ -386,6 +388,24 @@ def filter(request):
         'filter': {'manpower' : manpower}, 'page': pageCount, 'maxPage': maxPage}
     return  context
 
+def apply_filter(request):
+    filterData = request.POST
+
+    queryParameters = {}
+
+    if "offers" in request.GET:
+        queryParameters['offers'] = request.GET['offers']
+    if "requests" in request.GET:
+        queryParameters['requests'] = request.GET['requests']
+
+    queryParameters['selected'] = []
+
+    for entry, value in filterData.items():
+        if entry != 'csrfmiddlewaretoken' and value == 'on':
+            queryParameters['selected'].append(entry)
+
+    return HttpResponseRedirect('/offers/list?' + urlencode(queryParameters, doseq=True))
+
 def handle_filter(request):
     #if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
     context = filter(request)
@@ -418,8 +438,49 @@ def mergeImages(offers):
     return resultOffers
 N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
 def index(request):
-    context = filter(request)
-    
+    #context = filter(request)
+
+    context = {}
+
+    getData = request.GET
+    offerLabels = dict(GenericOffer.OFFER_CHOICES)
+    selected = getData.getlist('selected') or []
+    context['entries'] = []
+
+    counts = {}
+
+    if "offers" in getData:
+        counts["offers"] = {"types" : {}}
+        groupCount = 0
+        allSelected = True
+        for abbr, offerType in OFFER_MODELS.items():
+            if abbr != 'MP':
+                specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
+                isSelected = ('offers' + abbr) in selected
+                counts["offers"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': isSelected}
+                allSelected &= isSelected
+                groupCount += specOfferCount
+            if ('offers' + abbr) in selected:
+                offers = OFFER_MODELS[abbr].objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
+                context['entries'] += [{"offer": o} for o in offers]
+        counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
+        counts["offers"]["allSelected"] = allSelected
+
+    if "requests" in getData:
+        counts["requests"] = {"types" : {}}
+        groupCount = 0
+        for abbr, offerType in OFFER_MODELS.items():
+            specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False).count()
+            counts["requests"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': ('requests' + abbr) in selected}
+            groupCount += specOfferCount
+            if ('requests' + abbr) in selected:
+                requests = OFFER_MODELS[abbr].objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
+                context['entries'] += requests
+        counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
+
+    context["counts"] = counts
+    context["offercardnames"] = OFFER_CARD_NAMES
+
     return render(request, 'offers/index.html', context)
 
 @login_required

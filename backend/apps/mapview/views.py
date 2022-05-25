@@ -77,9 +77,9 @@ def index(request):
 
 def getJSONData(request):
     if request.method != "GET":
-        return HttpResponseNotAllowed
+        return HttpResponseNotAllowed()
     if "type" not in request.GET:
-        return HttpResponseBadRequest
+        return HttpResponseBadRequest()
     type = request.GET["type"]
 
     if type == "helpRequests":
@@ -121,7 +121,7 @@ def getJSONData(request):
     
 def getCountsJSON(request):
     if request.method != "GET":
-        return HttpResponseNotAllowed
+        return HttpResponseNotAllowed()
     getData = request.GET
 
     offerLabels = dict(GenericOffer.OFFER_CHOICES)

@@ -8,6 +8,7 @@ urlpatterns = [
     path('list', views.index, name='index'),
     path('select_category', views.select_category, name='select_category'),
     path('handle_filter', views.handle_filter, name="filter"),
+    path('apply_filter', views.apply_filter, name="apply_filter"),
     path('search/', views.search, name='search'),
     path('search_requests/', views.search, name='search_requests'),
     path('createOffer', views.create, name='createOffer'),
