@@ -48,7 +48,7 @@
   h4.popup-title { font-size: 14px; margin-top: 10px;}
       div.content { position: relative; }
       .leaflet-popup-content { padding-bottom: 10px; padding-top: 10px; min-width: 180px;}
-      .btn { color: #fff !important; background-color: #ed0061; border-radius: 10px; font-size: 14px;}
+      .btn { color: #fff !important; background-color: #ed0061; border-radius: 10px; font-size: 14px; padding: 0.8rem 1.8rem;}
    .leaflet-popup-content .btn { padding: .2rem 1rem; width: 100% }
 
    @media only screen and (max-width: 767px) {
@@ -96,7 +96,7 @@
   <div id="controlContainer" class="container control-container" {% if request.GET.no_controls%}style="visibility: hidden;"{% endif %}></div>
 	 <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
    <p class="listview">
-    <a id="results_as_list" href="/offers/list" class="btn btn-yellow" role="button" aria-pressed="true">
+    <a id="results_as_list" href="{% url 'offers-index' %}?{{request.GET.urlencode}}" class="btn btn-yellow" role="button" aria-pressed="true">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16" style="margin-right: 10px; margin-top:-2px;">
       <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
     </svg>{%blocktrans%}Liste anzeigen{%endblocktrans%}
