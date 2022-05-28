@@ -1,6 +1,6 @@
 import re
 from tabnanny import check
-from urllib.parse import urlencode
+from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse
 from django.shortcuts import get_object_or_404,render, redirect
 import logging
 from os.path import dirname, abspath, join
@@ -9,6 +9,7 @@ import googlemaps
 from django.conf import settings
 import math
 import base64
+from django.db.models.query import QuerySet
 from django.template.loader import get_template
 from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
@@ -23,7 +24,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.iamorganisation.models import Organisation
 from .utils import send_manpower_offer_message, send_offer_message
-from .filters import GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
+from .filters import OFFER_FILTERS, GenericFilter, AccommodationFilter, LocationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
 from django.contrib.auth.decorators import login_required
@@ -160,8 +161,6 @@ def select_category(request):
     return render(request, 'offers/category_select.html', context)
     
 def search(request):
-    # Ideally: Associate Postcode with city here...
-    #Get list of all PostCodes within the City: 
     if  request.user.is_anonymous or not request.user.isOrganisation:
         context ={"searchRequests": False}
         if request.GET.get("requests", "False") == "true":
@@ -388,30 +387,39 @@ def filter(request):
         'filter': {'manpower' : manpower}, 'page': pageCount, 'maxPage': maxPage}
     return  context
 
-def apply_filter(request):
-    filterData = request.POST
+def alter_offer_type_selection(request):
+    referrerURL = urlparse(request.META["HTTP_REFERER"])
+    query = parse_qs(referrerURL.query)
+    referrerQueryKeys = list(query.keys())
+    prevSelected = query['selected'].copy() if 'selected' in query else []
 
-    queryParameters = {}
+    for oldSel in prevSelected:
+        if oldSel not in request.GET:
+            query['selected'].remove(oldSel)
+            abbr = oldSel[-2:]
+            for k in referrerQueryKeys:
+                if k.startswith(abbr):
+                    del query[k]
 
-    if "offers" in request.GET:
-        queryParameters['offers'] = request.GET['offers']
-    if "requests" in request.GET:
-        queryParameters['requests'] = request.GET['requests']
-    if "manpower" in request.GET:
-        queryParameters['manpower'] = request.GET['manpower']
+    if request.GET:
+        if 'selected' not in query:
+            query['selected'] = []
+        for newSel in request.GET:
+            if newSel not in prevSelected:
+                query['selected'].append(newSel)
+    
+    newQueryString = urlencode(query, doseq=True)
+    return redirect(referrerURL._replace(query=newQueryString).geturl())
 
-    queryParameters['selected'] = []
+def alter_url_query(request):
+    """Alters the query parameters of the current url by adding/replacing with those sent to this function"""
+    referrerURLString = request.META["HTTP_REFERER"]
+    referrerURL = urlparse(referrerURLString)
+    query = parse_qs(referrerURL.query)
+    query.update({k:v for k,v in request.GET.items() if v != ''})
+    newQueryString = urlencode(query, doseq=True)
 
-    for entry, value in filterData.items():
-        if entry != 'csrfmiddlewaretoken' and value == 'on':
-            queryParameters['selected'].append(entry)
-
-    return HttpResponseRedirect('/offers/list?' + urlencode(queryParameters, doseq=True))
-
-def handle_filter(request):
-    #if request.POST.get("show_list") == "True" or request.GET.get("show_list"):
-    context = filter(request)
-    return render(request, 'offers/index.html', context)
+    return redirect(referrerURL._replace(query=newQueryString).geturl())
   
 def mergeImages(offers):
     resultOffers = []
@@ -439,16 +447,16 @@ def mergeImages(offers):
         resultOffers.append(newEntry)
     return resultOffers
 N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
+
 def index(request):
     #context = filter(request)
 
-    context = {}
+    context = {"filters" : {}}
 
     getData = request.GET
     offerLabels = dict(GenericOffer.OFFER_CHOICES)
     selected = getData.getlist('selected') or []
-    context['entries'] = []
-
+    entries = []
     counts = {}
 
     if "offers" in getData:
@@ -464,7 +472,9 @@ def index(request):
                 groupCount += specOfferCount
             if isSelected:
                 offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-                context['entries'] += [{"offer": o} for o in offers]
+                curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix=abbr)
+                entries += curFilter.qs
+                context["filters"][abbr] = curFilter
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
         counts["offers"]["allSelected"] = allSelected
 
@@ -480,7 +490,7 @@ def index(request):
             groupCount += specOfferCount
             if isSelected:
                 requests = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
-                context['entries'] += [{"offer": o} for o in requests]
+                entries += requests
         counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
         counts["requests"]["allSelected"] = allSelected
 
@@ -492,10 +502,16 @@ def index(request):
         counts["offers"]["types"]['MP'] = {"label" : "{} ({})".format(offerLabels['MP'], mpOfferCount), 'selected': isSelected}
         if isSelected:
             mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-            context['entries'] += [{"offer": o} for o in mpOffers]
+            entries += mpOffers
+
+    
 
     context["counts"] = counts
+
     context["offercardnames"] = OFFER_CARD_NAMES
+    context["entries"] = [{"offer" : o} for o in entries]
+
+    # TODO pagination
 
     return render(request, 'offers/index.html', context)
 

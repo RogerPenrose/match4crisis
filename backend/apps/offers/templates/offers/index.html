@@ -314,7 +314,7 @@
 
   <div class="row align-self-center align-items-center">
     <div class="col-lg-12">
-      <form action="/offers/handle_filter" name="searchForm" id="searchForm" method="POST">
+      <form action="/offers/handle_filter" name="searchForm" id="searchForm" method="GET">
         {% csrf_token %}
         <div style="position: relative;" class="search-bar">
           <input type="text" style="display:none" name="range" value="{{range}}" />
@@ -334,6 +334,7 @@
               clip-rule="evenodd" />
           </svg>
         </div>
+      </form>
 
         <div class="modal" tabindex="-1" id="exampleModal" role="dialog">
           <div class="modal-dialog" role="document">
@@ -345,47 +346,11 @@
                 </button>
               </div>
               <div class="modal-body">
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="accommodationVisible" value="1"
-                    name="accommodationVisible" {% if currentFilter.accommodationVisible  %}checked {%endif%}><label
-                    for="accommodationVisible"
-                    class="custom-control-label">{% blocktrans %}Unterkünfte{% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="translationVisible" value="1"
-                    name="translationVisible" {% if currentFilter.translationVisible  %}checked {%endif%}><label
-                    for="translationVisible"
-                    class="custom-control-label">{% blocktrans %}Übersetzungen{% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="transportationVisible" value="1"
-                    name="transportationVisible" {% if currentFilter.transportationVisible  %}checked {%endif%}><label
-                    for="transportationVisible"
-                    class="custom-control-label">{% blocktrans %}Transport{% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="jobVisible" value="1" name="jobVisible"
-                    {% if currentFilter.jobVisible  %}checked {%endif%}><label for="jobVisible"
-                    class="custom-control-label">{% blocktrans %}Jobs{% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="manpowerVisible" value="1" name="manpowerVisible"
-                    {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible"
-                    class="custom-control-label">{% blocktrans %}Hilfe vor Ort{% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="welfareVisible" value="1" name="welfareVisible"
-                    {% if currentFilter.welfareVisible  %}checked {%endif%}><label for="welfareVisible"
-                    class="custom-control-label">{% blocktrans %}Medizinische Unterstützung{% endblocktrans %}</label>
-                </p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="buerocraticVisible" value="1"
-                    name="buerocraticVisible" {% if currentFilter.buerocraticVisible  %}checked {%endif%}><label
-                    for="buerocraticVisible" class="custom-control-label">{% blocktrans %}Bürokratische
-                    Hilfe{% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="childShortVisible" value="1" name="childShortVisible"
-                    {% if currentFilter.childShortVisible  %}checked {%endif%}><label for="childShortVisible"
-                    class="custom-control-label">{% blocktrans %}Babysitten (short-term){% endblocktrans %}</label></p>
-                <p class="custom-control custom-checkbox"><input type="checkbox"
-                    class="checkboxinput custom-control-input" id="childLongVisible" value="1" name="childLongVisible"
-                    {% if currentFilter.childLongVisible  %}checked {%endif%}><label for="childLongVisible"
-                    class="custom-control-label">{% blocktrans %}Babysitten (long-term){% endblocktrans %}</label></p>
+                <form method="GET" id="filter-form" style="margin-top: 35px;" action="{% url 'alter_url_query' %}">
+                  {% for name,filter in filters.items %}
+                  {{filter.form.as_p}}
+                  {% endfor %}
+
                 <hr> {% if currentFilter.accommodationVisible  %} <p class="filter-title">
                   {% blocktrans %}Wohnungen{% endblocktrans %} </p>
                 <p> {{ filter.accommodation.form.as_p }}</p>
@@ -422,9 +387,10 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-yellow" data-dismiss="modal"
-                  onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="button"
-                  class="btn btn-primary" data-dismiss="modal"
+                  onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="submit"
+                  class="btn btn-primary"
                   onclick="search_with_current_filter()">{% blocktrans %}Anwenden{% endblocktrans %}</button>
+                </form>
               </div>
             </div>
           </div>
@@ -435,8 +401,7 @@
 
 
       <div id="offerTypes" class="offer-types">
-        <form id="offerTypesForm" action="{% url 'apply_filter' %}?{{request.GET.urlencode}}" method="POST">
-          {% csrf_token %}
+        <form id="offerTypesForm" action="{% url 'alter_offer_type_selection' %}" method="GET">
           {% if counts.offers %}
           <div class="offer-types-group" id="offer-types-group-offers">
             <label class="offer-types-group-label">

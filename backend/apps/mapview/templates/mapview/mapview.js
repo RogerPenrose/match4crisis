@@ -98,6 +98,12 @@ mapViewPage = {
 
         this.mapObject.on('overlayadd', (e) => {
             this.loadMapMarkers(e.layer)
+
+            this.alterGetParameters({"selected" : e.layer.typeIdentifier}, alteringType='append')
+        })
+
+        this.mapObject.on('overlayremove', (e) => {
+            this.alterGetParameters({"selected" : e.layer.typeIdentifier}, alteringType='delete')
         })
 
     },
@@ -220,19 +226,19 @@ mapViewPage = {
                 const vp = Object.values(place.geometry.viewport)
 
                 mapViewPage.mapObject.fitBounds([[vp[0].h, vp[1].h], [vp[0].j, vp[1].j]]);
-                mapViewPage.setGetParameter([
-                    ["location", input.value], 
-                    ["lat", lat], 
-                    ["lng", lng], 
-                    ["bb", JSON.stringify(place.geometry.viewport)]
-                ])
+                mapViewPage.alterGetParameters({
+                    "location": input.value, 
+                    "lat" : lat,
+                    "lng" : lng,
+                    "bb" : JSON.stringify(place.geometry.viewport)
+                })
             } else {
                 mapViewPage.mapObject.setView(new L.LatLng(lat, lng), 15);
-                mapViewPage.setGetParameter([
-                    ["location", input.value], 
-                    ["lat", lat], 
-                    ["lng", lng], 
-                ])
+                mapViewPage.alterGetParameters({
+                    "location": input.value, 
+                    "lat" : lat,
+                    "lng" : lng,
+                })
             }        
         });
     
@@ -254,16 +260,46 @@ mapViewPage = {
         mapViewPage.update_link_element_params(update_link_params);
     },
 
-    setGetParameter: function setGetParameter(params)
-        {
+    alterGetParameters: function alterGetParameters(params, alteringType="replace"){
+        /** Altering types:
+         *      replace/set: replace the current query string entries with the given new values if there are any.
+         *      append/add: append the new key-value-pairs regardless of whether they already exist
+         *      delete/remove: Removes the given key-value-pairs (!!! Doesn't work if there are multiple pairs with the same key !!!)
+         */
 
-            // Source: https://stackoverflow.com/questions/5999118/how-can-i-add-or-update-a-query-string-parameter
             if ('URLSearchParams' in window) {
                 var searchParams = new URLSearchParams(window.location.search)
-                searchParams.set("foo", "bar"); // TODO
+                Object.entries(params).forEach(([key, val]) => {
+                    switch (alteringType) {
+                        case "replace":
+                        case "set":
+                            searchParams.set(key, val);
+                            break;
+                        case "append":
+                        case "add":
+                            searchParams.append(key, val);
+                            break;
+                        case "delete":
+                        case "remove":
+                            let keyEntries = searchParams.getAll(key)
+                            searchParams.delete(key)
+                            for(let curEntry of keyEntries){
+                                if(curEntry != val){
+                                    searchParams.append(key, curEntry)
+                                }
+                            }
+                            break;
+                    }
+                })
                 var newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
                 history.pushState(null, '', newRelativePathQuery);
+
+                viewInListButton = $("#results_as_list")[0]
+                if(viewInListButton){
+                    viewInListButton.href = viewInListButton.href.split("?")[0] + '?' + searchParams.toString();
+                }
             }
+
 
             // this.update_link_element_params(params);
         },

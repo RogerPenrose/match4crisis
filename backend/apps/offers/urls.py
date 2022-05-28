@@ -7,8 +7,8 @@ urlpatterns = [
     # ex: /polls/
     path('list', views.index, name='offers-index'),
     path('select_category', views.select_category, name='select_category'),
-    path('handle_filter', views.handle_filter, name="filter"),
-    path('apply_filter', views.apply_filter, name="apply_filter"),
+    path('alter_url_query', views.alter_url_query, name="alter_url_query"),
+    path('alter_offer_type_selection', views.alter_offer_type_selection, name="alter_offer_type_selection"),
     path('search/', views.search, name='search'),
     path('search_requests/', views.search, name='search_requests'),
     path('createOffer', views.create, name='createOffer'),
