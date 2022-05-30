@@ -105,7 +105,7 @@ class ImageClass(models.Model):
     offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
     image_id = models.IntegerField(primary_key=True)
 class ManpowerOffer(models.Model):
-    DISTANCE_CHOICES=[('1', _('0-50km')),('1', _('50-100km')),('2', _('100-200km')), ('3', _('200-400km')), ('4', _('400-600km')), ('5', 'Komplett Flexibel')]
+    DISTANCE_CHOICES=[('0', _('0-50km')),('1', _('50-100km')),('2', _('100-200km')), ('3', _('200-400km')), ('4', _('400-600km')), ('5', _('Komplett Flexibel'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     distanceChoices = models.CharField(_("Entfernung"), max_length=1, choices=DISTANCE_CHOICES, default="0")
     canGoforeign = models.BooleanField(_("Auslandseinsatz möglich"), default=False)
@@ -154,8 +154,16 @@ class TransportationOffer(models.Model):
         ('MI', _("Minivan")),
         ('TR', _("Transporter"))
     ]
+    DISTANCE_CHOICES=[
+        ('0', _('0-50km')),
+        ('1', _('50-100km')),
+        ('2', _('100-200km')), 
+        ('3', _('200-400km')), 
+        ('4', _('400-600km')), 
+        ('5', _('Komplett Flexibel')),
+    ]
     helpType = models.CharField(_("Art des Transports"), max_length=2, choices=HELP_CHOICES, default="PT" )
-    distance = models.IntegerField(_("Entfernung"), default=100)
+    distance = models.CharField(_("Entfernung (Bereit zu fahren)"), max_length=1, choices=DISTANCE_CHOICES, default='0')
     numberOfPassengers = models.IntegerField(_("Anzahl freier Plätze"), default=2)
     typeOfCar = models.CharField(_("Fahrzeugtyp"), max_length=2, choices=CARCHOICES, default="KW")
 
