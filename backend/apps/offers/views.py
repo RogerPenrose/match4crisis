@@ -416,7 +416,17 @@ def alter_url_query(request):
     referrerURLString = request.META["HTTP_REFERER"]
     referrerURL = urlparse(referrerURLString)
     query = parse_qs(referrerURL.query)
-    query.update({k:v for k,v in request.GET.items() if v != ''})
+    for k in request.GET:
+        entries = request.GET.getlist(k)
+        logger.info("%s %s" % (k, entries))
+        if len(entries) == 1:        
+            if entries[0] == '':
+                query.pop(k, None)
+            else:
+                query[k] = entries[0]
+        else:
+            query[k] = [e for e in entries if e != '']
+
     newQueryString = urlencode(query, doseq=True)
 
     return redirect(referrerURL._replace(query=newQueryString).geturl())
@@ -464,9 +474,9 @@ def index(request):
         groupCount = 0
         allSelected = True
         for abbr, offerType in OFFER_MODELS.items():
+            isSelected = ('offers' + abbr) in selected
             if abbr != 'MP':
                 specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
-                isSelected = ('offers' + abbr) in selected
                 counts["offers"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': isSelected}
                 allSelected &= isSelected
                 groupCount += specOfferCount
@@ -474,7 +484,7 @@ def index(request):
                 offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
                 curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix=abbr)
                 entries += curFilter.qs
-                context["filters"][abbr] = curFilter
+                context["filters"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
         counts["offers"]["allSelected"] = allSelected
 

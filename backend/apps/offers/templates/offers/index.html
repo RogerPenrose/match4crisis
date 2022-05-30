@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load getdictvalue %}
+{% load widget_type_filter %}
 
 {% block title %}
 {% blocktrans %}Listenansicht Angebote{% endblocktrans %}{% endblock %}
@@ -226,7 +227,86 @@
   p.mapview a {color: #fff !important; }
 
   .btn { color: #fff !important; background-color: #ed0061; border-radius: 10px; font-size: 14px;}
+
+  .subtitle{
+    font-size : 1em;
+    font-weight: 400;
+    margin-bottom : 25px;
+}
+
+input[type=checkbox]~label { position: relative;
+  display: inline-block;
+ margin-right: .5rem;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  transition: all 0.3s linear;
+margin-bottom: 0px;
+border-radius: 1rem;
+    box-shadow: 0px 0px 5px rgb(0 0 0 / 8%);
+    width: 100%;
+    padding: 10px 10px 10px 70px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.form-control { border-radius: 1rem; }
+
+input[type=checkbox]~label::before {
+content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 42px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+  transition: all 0.25s linear; 
+  box-shadow: 0 0 0px 2px #e6e6e6;
+}
+
+input[type=checkbox]~label::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+  transform: translate3d(2px, 2px, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+
+input[type=checkbox] { display: none; }
+
+input[type=checkbox]:checked~label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+
+input[type=checkbox]:checked~label::after  { transform: translate3d(22px, 2px, 0); }
+
+.custom-control { padding-left: 0px; }
+#isDigital label::before { border: 0px;}
+table { width: 100%}
+
+label { margin-bottom: 5px; font-weight: 600;}
+.form-control { margin-bottom: 15px;}
+
+input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
+
+.select2 {width: 100% !important}
+.select2-dropdown { border: 0px !important;}
+.select2-container .select2-search--inline .select2-search__field {  font-weight: 300 !important;}
+
+.filter-card {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+}
 </style>
+
+{% comment "This is necessary for rendering of the select2 widget for the translation offer filter form" %}{% endcomment %}
+{{ filters.TL.filter.form.media.css }}
 
 {% endblock %}
 
@@ -346,44 +426,28 @@
                 </button>
               </div>
               <div class="modal-body">
-                <form method="GET" id="filter-form" style="margin-top: 35px;" action="{% url 'alter_url_query' %}">
-                  {% for name,filter in filters.items %}
-                  {{filter.form.as_p}}
+                <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
+                  {% for f in filters.values %}
+                  <div class="filter-card">
+                    <h4 class="filter-title">{{f.label}}</h2>
+                    {% for field in f.filter.form %}
+                        <p>
+                        {% if field.field.widget|is_checkbox %}
+                          <input type="hidden" name="{{field.html_name}}" value="">
+                          {{ field }}{{ field.label_tag }}
+                        {% elif field.field.widget|is_select2widget %}
+                          <input type="hidden" name="{{field.html_name}}" value="">
+                          {{ field.label_tag }}{{ field }}
+                        {% else %}
+                          {{ field.label_tag }}{{ field }}
+                        {% endif %}
+                        </p>
+                    {% endfor %}
+                  </div>
+                  {% if forloop.last is False %}
+                  <hr style="margin-bottom: 1rem">
+                  {% endif %}
                   {% endfor %}
-
-                <hr> {% if currentFilter.accommodationVisible  %} <p class="filter-title">
-                  {% blocktrans %}Wohnungen{% endblocktrans %} </p>
-                <p> {{ filter.accommodation.form.as_p }}</p>
-                <hr>{% endif%}
-                {% if currentFilter.translationVisible  %} <p class="filter-title">
-                  {% blocktrans %}Übersetzungen{% endblocktrans %} </p>
-                <p>{{ filter.translation.form.as_p }}</p>
-                <hr>{% endif%}
-                {% if currentFilter.transportationVisible  %} <p class="filter-title">
-                  {% blocktrans %}Transportat{% endblocktrans %} </p>
-                <p>{{ filter.transportation.form.as_p }}</p>
-                <hr>{% endif%}
-                {% if currentFilter.jobVisible  %} <p class="filter-title"> {% blocktrans %}Jobs{% endblocktrans %} </p>
-                <p>{{ filter.job.form.as_p }}</p>
-                <hr>{% endif%}
-                {% if currentFilter.manpowerVisible  %} <p class="filter-title"> {% blocktrans %}Hilfe vor
-                  Ort{% endblocktrans %} </p>
-                <p>{{ filter.manpower.form.as_p }}</p>
-                <hr>{% endif%}
-                {% if currentFilter.welfareVisible  %} <p class="filter-title"> {% blocktrans %}Mediznische
-                  Unterstützung{% endblocktrans %} </p>
-                <p>{{ filter.welfare.form.as_p }}</p>
-                <hr>{% endif%}
-                {% if currentFilter.buerocraticVisible  %} <p class="filter-title">
-                  {% blocktrans %}Bürokratie{% endblocktrans %} </p>
-                <p>{{ filter.buerocratic.form.as_p }}</p>
-                <hr>{% endif%}
-
-                {% if currentFilter.childcareVisible  %} <p class="filter-title">
-                  {% blocktrans %}Kinderbetreuung{% endblocktrans %} </p>
-                <p>{{ filter.childcare.form.as_p }}</p>
-                <hr>{% endif%}
-
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-yellow" data-dismiss="modal"
@@ -470,6 +534,11 @@
 </a></p>
 
 </div>
+
+{{filters.TL}}
+
+{% comment "This is necessary for rendering of the select2 widget for the translation offer filter form" %}{% endcomment %}
+{{ filters.TL.filter.form.media.js }}
 
 <script type="text/javascript">
   $(document).ready(function () {
