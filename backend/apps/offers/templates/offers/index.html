@@ -305,8 +305,8 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 }
 </style>
 
-{% comment "This is necessary for rendering of the select2 widget for the translation offer filter form" %}{% endcomment %}
-{{ filters.TL.filter.form.media.css }}
+{% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
+{% firstof filters.TL.filter.form.media.css filters.JO.filter.form.media.css %}
 
 {% endblock %}
 
@@ -535,10 +535,8 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
 </div>
 
-{{filters.TL}}
-
-{% comment "This is necessary for rendering of the select2 widget for the translation offer filter form" %}{% endcomment %}
-{{ filters.TL.filter.form.media.js }}
+{% comment "This is necessary for rendering of the select2 widget for the translation and job offer filter form" %}{% endcomment %}
+{% firstof filters.TL.filter.form.media.js filters.JO.filter.form.media.js %}
 
 <script type="text/javascript">
   $(document).ready(function () {

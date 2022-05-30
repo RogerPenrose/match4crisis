@@ -93,15 +93,31 @@ class LocationFilter(django_filters.FilterSet):
 class ChildcareFilter(OfferFilter):
     class Meta:
         model = ChildcareOffer
-        fields = ['helpType_childcare', "timeOfDay", "numberOfChildren","isRegular"]
+        fields = {
+            "helpType_childcare" : ['exact'],
+            "timeOfDay" : ['exact'], 
+            "numberOfChildren" : ['gte'],
+            "isRegular" : ['exact'],
+            "hasExperience" : ['exact'],
+            "hasEducation" : ['exact'],
+            "hasSpace" : ['exact'],
+        }
         filter_overrides = FILTER_OVERRIDES
 
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data, queryset, request=request, prefix=prefix)
+        self.filters['numberOfChildren__gte'].label = _("Anzahl Kinder (mindestens)")
+        self.filters['isRegular'].label = _("Reguläre Betreuung gewünscht")
+        self.filters['hasExperience'].label = _("Sollte Erfahrung haben")
+        self.filters['hasEducation'].label = _("Sollte Ausbildung haben")
+        self.filters['hasSpace'].label = _("Sollte Räumlichkeiten bei sich haben")
 
 class JobFilter(OfferFilter):
+    jobType = django_filters.MultipleChoiceFilter(widget=s2forms.Select2MultipleWidget, choices=JobOffer.JOB_CHOICES)
     class Meta:
         model = JobOffer
         fields = ['jobType']
-        filter_overrides = FILTER_OVERRIDES
+        #filter_overrides = FILTER_OVERRIDES
 
 class BuerocraticFilter(OfferFilter):
     class Meta:
@@ -115,6 +131,12 @@ class ManpowerFilter(OfferFilter):
         fields = ['distanceChoices', 'canGoforeign', 'hasDriverslicense', 'hasMedicalExperience', 'hasExperience_crisis']
         filter_overrides = FILTER_OVERRIDES
 
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data, queryset, request=request, prefix=prefix)
+        self.filters['hasDriverslicense'].label = _("Sollte Fahrerlaubnis haben")
+        self.filters['hasMedicalExperience'].label = _("Sollte medizinische Erfahrung haben")
+        self.filters['hasExperience_crisis'].label = _("Sollte Erfahrung mit Krisenmanagement haben")
+
 class AccommodationFilter(OfferFilter):
     
     startDateAccommodation__gte = django_filters.DateFilter("startDateAccommodation", "gte", widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
@@ -127,23 +149,40 @@ class AccommodationFilter(OfferFilter):
             'startDateAccommodation' : ['gte']
         }
         filter_overrides = FILTER_OVERRIDES
+
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data, queryset, request=request, prefix=prefix)
+        self.filters['numberOfPeople__gte'].label = _("Personenanzahl (mindestens)")
+        self.filters['startDateAccommodation__gte'].label = _("Startdatum der Unterbringung")
         
 class WelfareFilter(OfferFilter):
     class Meta:
         model = WelfareOffer
         fields = ['helpType', 'hasEducation_welfare']
         filter_overrides = FILTER_OVERRIDES
+    
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data, queryset, request=request, prefix=prefix)
+        self.filters['hasEducation_welfare'].label = _("Sollte medizinische Vorerfahrung haben")
 
 class TransportationFilter(OfferFilter):
-    date = django_filters.DateFilter(widget=forms.DateInput(format="%Y-%m-%d",attrs={'class':'form-control', 'type': 'date'}))
+    #distance = django_filters.ChoiceFilter(choices=TransportationOffer.)
     class Meta:
         model = TransportationOffer
-        fields = [ 'numberOfPassengers','distance', 'helpType', 'typeOfCar']
+        fields = { 
+            'numberOfPassengers' : ['gte'],
+            'distance' : ['exact'], 
+            'helpType' : ['exact'], 
+            'typeOfCar' : ['exact']
+            }
         filter_overrides = FILTER_OVERRIDES
+
+    def __init__(self, data=None, queryset=None, *, request=None, prefix=None):
+        super().__init__(data, queryset, request=request, prefix=prefix)
+        self.filters['numberOfPassengers__gte'].label = _("Anzahl freier Plätze (mindestens)")
 
 class TranslationFilter(OfferFilter):
 
-    #languages = django_filters.ModelMultipleChoiceFilter(widget=s2forms.Select2MultipleWidget(), conjoined=True)
     class Meta:
         model = TranslationOffer
         fields = ['languages']
