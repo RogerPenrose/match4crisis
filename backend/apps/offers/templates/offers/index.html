@@ -330,6 +330,15 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
     padding: 0.7rem 0.7rem;
   }
 }
+
+  svg.remove-location {
+    cursor: pointer;
+    position: absolute;
+    padding: 1px;
+    top: 11px;
+    right: 15px;
+  }
+
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
@@ -421,17 +430,25 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
       <form method="GET" id="locationForm" name="locationForm" action="{% url 'alter_url_query' %}">
         <div style="position: relative;" class="search-bar">
           <input type="text" style="display:none" name="range" value="{{range}}" />
-          <input type="text" id="id_location" name="location" class="input-form-search"
-            placeholder="{% blocktrans %}Standort an dem du Hilfe suchst ...{% endblocktrans %}" />
-          <svg class="bi bi-search" style="margin-left: 3px; position: absolute; top: 13px; left: 10px;" 
-          width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd"
-              d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
-              clip-rule="evenodd" />
-            <path fill-rule="evenodd"
-              d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-              clip-rule="evenodd" />
-          </svg>
+          <div >
+            <input type="text" class="input-form-search" id="id_location" name="location" placeholder="{% blocktrans %}Standort an dem du Hilfe suchst ...{% endblocktrans %}" />
+            <svg class="bi bi-search" style="margin-left: 3px; position: absolute; top: 13px; left: 10px;" 
+            width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+                clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                clip-rule="evenodd" />
+            </svg>
+
+            <svg class="remove-location" title="{% trans "Standort entfernen" %}" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" 
+            fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16" onclick="clearLocationSearch();">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+              <path
+                  d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+          </div>
 
           <input type="number" style="display:none" name="lat" />
           <input type="number" style="display:none" name="lng" />
@@ -636,14 +653,20 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
           const place = autocomplete.getPlace();
       
-          if (!place.geometry || !place.geometry.location) {
-              // User entered the name of a Place that was not suggested and
-              // pressed the Enter key, or the Place Details request failed.
-              return;
+          if (place.name == "" || (place.geometry & place.geometry.location)) {
+              // User entered the name of a Place that was  suggested and
+              // pressed the Enter key, or the Place Details request succeeded.
+              // Or place was empty
+              document.locationForm.submit();
           }
 
-          document.locationForm.submit();
+          
         });
   });
+
+  function clearLocationSearch(){
+    $('#id_location')[0].value="";
+    document.locationForm.submit();
+  }
 </script>
 {% endblock %}
