@@ -303,6 +303,12 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
   border-radius: 10px;
   padding: 15px;
 }
+
+.pagination-container {
+  text-align: center;
+  font-size: 14pt;
+}
+
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
@@ -519,12 +525,49 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
   </a>{%endif%}
 </div>{% endif %}
 </form>
+
 <div class="container cards">
-  {% for entry in entries %}
+  {% for entry in page_obj %}
   {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
   {% endfor %}
 </div>
 
+<div class="pagination-container container">
+
+  <hr>
+{% if page_obj.has_previous %}
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page=1" title="{% trans "Erste Seite" %}">
+  <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="6 14 0 8 6 2"></polyline>
+    <polyline points="12 14 6 8 12 2"></polyline>
+  </svg>
+</a>
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.previous_page_number }}" title="{% trans "Vorherige Seite" %}">
+  <svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="6 14 0 8 6 2"></polyline>
+  </svg>
+</a>
+{% endif %}
+
+<span class="current">
+  {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+</span>
+
+{% if page_obj.has_next %}
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.next_page_number }}" title="{% trans "Nächste Seite" %}">
+  <svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="0 14 6 8 0 2"></polyline>
+  </svg>
+</a>
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.paginator.num_pages }}" title="{% trans "Letzte Seite" %}">
+  <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="0 14 6 8 0 2"></polyline>
+    <polyline points="6 14 12 8 6 2"></polyline>
+  </svg>
+</a>
+{% endif %}
+
+</div>
 
 <p class="mapview">
   <a id="results_as_list" href="{% url 'mapview-index' %}?{{request.GET.urlencode}}" class="btn btn-yellow" role="button" aria-pressed="true">
@@ -532,7 +575,6 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
     <path fill-rule="evenodd" d="M31.245 3.747a2.285 2.285 0 0 0-1.01-1.44A2.286 2.286 0 0 0 28.501 2l-7.515 1.67-10-2L2.5 3.557A2.286 2.286 0 0 0 .7 5.802v21.95a2.284 2.284 0 0 0 1.065 1.941A2.29 2.29 0 0 0 3.498 30l7.515-1.67 10 2 8.484-1.886a2.285 2.285 0 0 0 1.802-2.245V4.247a2.3 2.3 0 0 0-.055-.5zM12.5 25.975l-1.514-.303L9.508 26H9.5V4.665l1.514-.336 1.486.297v21.349zm10 1.36l-1.515.337-1.485-.297V6.025l1.514.304L22.493 6h.007v21.335z"/>
   </svg>{%blocktrans%}Karte anzeigen{%endblocktrans%}
 </a></p>
-
 </div>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation and job offer filter form" %}{% endcomment %}

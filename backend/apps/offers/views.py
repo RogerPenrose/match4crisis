@@ -15,6 +15,7 @@ from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
 from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.contrib.sites.shortcuts import get_current_site
 from apps.accounts.models import User
 from django.utils import timezone
@@ -458,6 +459,9 @@ def mergeImages(offers):
     return resultOffers
 N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
 
+# Number of offer/request cards to be shown per page by the paginator
+ENTRIES_PER_PAGE = 25
+
 def index(request):
     #context = filter(request)
 
@@ -519,9 +523,15 @@ def index(request):
     context["counts"] = counts
 
     context["offercardnames"] = OFFER_CARD_NAMES
-    context["entries"] = [{"offer" : o} for o in entries]
+    #context["entries"] = [{"offer" : o} for o in entries]
 
     # TODO pagination
+
+    paginator = Paginator([{"offer" : o} for o in entries], ENTRIES_PER_PAGE)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context["page_obj"] = page_obj
 
     return render(request, 'offers/index.html', context)
 
