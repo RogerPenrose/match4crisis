@@ -22,17 +22,22 @@ div.organisation-card > .row {
     padding: 20px;
     min-height: 115px; }
 
-    @media only screen and (min-width: 768px) {
+@media only screen and (min-width: 768px) {
     div.organisation-card .row {
     margin-right: 0px;
     margin-left: 0px;
-}
-
-div.organisation-card > .row {
-    margin-bottom: 30px;
-}
     }
 
+    div.organisation-card > .row {
+        margin-bottom: 30px;
+    }
+    }
+
+.pagination-container {
+    text-align: center;
+    font-size: 14pt;
+  }
+  
 </style>
 {% endblock %}
 
@@ -57,21 +62,42 @@ div.organisation-card > .row {
     {% endblocktrans %}
     {% endfor %}
 </div>
-<div class="container" style="text-align: center; margin: 0 auto; margin-top: 55px;">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-        <a href="?page=1">&laquo; {% blocktrans %}Erste{% endblocktrans %}</a>
-        <a href="?page={{ page_obj.previous_page_number }}">{% blocktrans %}Vorherige{% endblocktrans %}</a>
-        {% endif %}
 
-        <span class="current">
-            {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
-        </span>
+<div class="pagination-container container">
 
-        {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}">{% blocktrans %}Nächste{% endblocktrans %}</a>
-        <a href="?page={{ page_obj.paginator.num_pages }}">{% blocktrans %}Letzte{% endblocktrans %} &raquo;</a>
-        {% endif %}
-    </span>
-</div>
+    <hr>
+  {% if page_obj.has_previous %}
+  <a class="pagination-controls" href="{% url 'alter_url_query' %}?page=1" title="{% trans "Erste Seite" %}">
+    <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+      <polyline points="6 14 0 8 6 2"></polyline>
+      <polyline points="12 14 6 8 12 2"></polyline>
+    </svg>
+  </a>
+  <a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.previous_page_number }}" title="{% trans "Vorherige Seite" %}">
+    <svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+      <polyline points="6 14 0 8 6 2"></polyline>
+    </svg>
+  </a>
+  {% endif %}
+  
+  <span class="current">
+    {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+  </span>
+  
+  {% if page_obj.has_next %}
+  <a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.next_page_number }}" title="{% trans "Nächste Seite" %}">
+    <svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+      <polyline points="0 14 6 8 0 2"></polyline>
+    </svg>
+  </a>
+  <a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.paginator.num_pages }}" title="{% trans "Letzte Seite" %}">
+    <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+      <polyline points="0 14 6 8 0 2"></polyline>
+      <polyline points="6 14 12 8 6 2"></polyline>
+    </svg>
+  </a>
+  {% endif %}
+  
+  </div>
+  
 {% endblock %}

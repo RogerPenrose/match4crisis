@@ -23,8 +23,8 @@ from .utils import send_email_to_organisation, send_help_request_emails
 
 
 # CONSTANTS
-ORGANISATIONS_PER_PAGE = 10
-DONATIONS_PER_PAGE = 10
+ORGANISATIONS_PER_PAGE = 20
+DONATIONS_PER_PAGE = 20
 
 @method_decorator(organisationRequired, name='dispatch')
 class OrganisationDashboardView(DashboardView):
