@@ -418,10 +418,10 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
   <div class="row no-gutters align-self-center align-items-center">
     <div class="col location-search">
-      <form method="GET" id="location-form" name="location-form" action="{% url 'alter_url_query' %}">
+      <form method="GET" id="locationForm" name="locationForm" action="{% url 'alter_url_query' %}">
         <div style="position: relative;" class="search-bar">
           <input type="text" style="display:none" name="range" value="{{range}}" />
-          <input type="text" id="id_location" name="city" class="input-form-search"
+          <input type="text" id="id_location" name="location" class="input-form-search"
             placeholder="{% blocktrans %}Standort an dem du Hilfe suchst ...{% endblocktrans %}" />
           <svg class="bi bi-search" style="margin-left: 3px; position: absolute; top: 13px; left: 10px;" 
           width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
@@ -432,6 +432,10 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
               d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
               clip-rule="evenodd" />
           </svg>
+
+          <input type="number" style="display:none" name="lat" />
+          <input type="number" style="display:none" name="lng" />
+          <input type="text" style="display:none" name="bb"/>
         </div>
       </form>
     </div>
@@ -626,6 +630,20 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
           groupLabel.style.display = "none"
       }
     }
+
+    const autocomplete = initMapsAutocomplete();
+        autocomplete.addListener("place_changed", () => {
+
+          const place = autocomplete.getPlace();
+      
+          if (!place.geometry || !place.geometry.location) {
+              // User entered the name of a Place that was not suggested and
+              // pressed the Enter key, or the Place Details request failed.
+              return;
+          }
+
+          document.locationForm.submit();
+        });
   });
 </script>
 {% endblock %}
