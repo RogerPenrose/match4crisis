@@ -408,6 +408,9 @@ def alter_offer_type_selection(request):
         for newSel in request.GET:
             if newSel not in prevSelected:
                 query['selected'].append(newSel)
+
+    # Remove the pagination id if present
+    query.pop('page', None)
     
     newQueryString = urlencode(query, doseq=True)
     return redirect(referrerURL._replace(query=newQueryString).geturl())
