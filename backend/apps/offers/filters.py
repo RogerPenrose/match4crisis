@@ -143,6 +143,7 @@ class AccommodationFilter(OfferFilter):
         super().__init__(data, queryset, request=request, prefix=prefix)
         self.filters['numberOfPeople__gte'].label = _("Personenanzahl (mindestens)")
         self.filters['startDateAccommodation__gte'].label = _("Startdatum der Unterbringung")
+        self.filters['petsAllowed'].label = _("Erlaubt Haustiere")
         
 class WelfareFilter(OfferFilter):
     class Meta:
