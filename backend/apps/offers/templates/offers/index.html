@@ -309,6 +309,27 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
   font-size: 14pt;
 }
 
+.location-search {
+  margin-right: 5px;
+}
+
+.filter-button {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 0.7rem 1.3rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+@media only screen and (max-width: 767px) {
+  .filter-button span {
+    display: none;
+  }
+
+  .filter-button {
+    padding: 0.7rem 0.7rem;
+  }
+}
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
@@ -393,25 +414,17 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
             d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
         </svg> <a href="{{request.META.HTTP_REFERER|escape}}">{%blocktrans%} Zurück {% endblocktrans%}</a></p>
     </div>
-    <div class="col-6 filter">
-      <p><a href="#" data-toggle="modal" data-target="#exampleModal">{% blocktrans %}Filter{% endblocktrans %}</a></p>
-    </div>
   </div>
 
-  <div class="row align-self-center align-items-center">
-    <div class="col-lg-12">
-      <form action="/offers/handle_filter" name="searchForm" id="searchForm" method="GET">
-        {% csrf_token %}
+  <div class="row no-gutters align-self-center align-items-center">
+    <div class="col location-search">
+      <form method="GET" id="location-form" name="location-form" action="{% url 'alter_url_query' %}">
         <div style="position: relative;" class="search-bar">
           <input type="text" style="display:none" name="range" value="{{range}}" />
           <input type="text" id="id_location" name="city" class="input-form-search"
             placeholder="{% blocktrans %}Standort an dem du Hilfe suchst ...{% endblocktrans %}" />
-          <svg class="bi bi-search" style="
-          margin-left: 3px;
-          position: absolute;
-          top: 13px;
-          left: 10px;
-        " width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+          <svg class="bi bi-search" style="margin-left: 3px; position: absolute; top: 13px; left: 10px;" 
+          width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"
               d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
               clip-rule="evenodd" />
@@ -421,56 +434,70 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
           </svg>
         </div>
       </form>
+    </div>
 
-        <div class="modal" tabindex="-1" id="exampleModal" role="dialog">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">{% blocktrans %}Filter{% endblocktrans %}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
+    <div class="col-auto">
+      <a class="filter-button" data-toggle="modal" data-target="#exampleModal">
+        <svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+          <g id="Layer_32" data-name="Layer 32">
+              <path d="M33.5,19.14V12a1.5,1.5,0,0,0-3,0v7.14a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V30.88C39.52,29.34,39.52,20.67,33.5,19.14ZM32,28.07a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,32,28.07Z" />
+              <path d="M53.5,32a6.07,6.07,0,0,0-4.56-5.87V12a1.5,1.5,0,0,0-3,0V26.13a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V37.87A6.07,6.07,0,0,0,53.5,32Zm-6,3.06a3.06,3.06,0,0,1,0-6.12A3.06,3.06,0,0,1,47.46,35.06Z" />
+              <path d="M18.06,37V12a1.5,1.5,0,1,0-3,0V37a6.07,6.07,0,0,0,0,11.73V52a1.5,1.5,0,0,0,3,0V48.74A6.07,6.07,0,0,0,18.06,37Zm-1.5,8.94a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,16.56,45.94Z" />
+          </g>
+      </svg>
+      <span>
+        {% blocktrans %}Filter{% endblocktrans %}
+      </span>
+      </a>
+    </div>
+  </div>
+
+    <div class="modal" tabindex="-1" id="exampleModal" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{% blocktrans %}Filter{% endblocktrans %}</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
+              {% for f in filters.values %}
+              <div class="filter-card">
+                <h4 class="filter-title">{{f.label}}</h2>
+                {% for field in f.filter.form %}
+                    <p>
+                    {% if field.field.widget|is_checkbox %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field }}{{ field.label_tag }}
+                    {% elif field.field.widget|is_select2widget %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field.label_tag }}{{ field }}
+                    {% else %}
+                      {{ field.label_tag }}{{ field }}
+                    {% endif %}
+                    </p>
+                {% endfor %}
               </div>
-              <div class="modal-body">
-                <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
-                  {% for f in filters.values %}
-                  <div class="filter-card">
-                    <h4 class="filter-title">{{f.label}}</h2>
-                    {% for field in f.filter.form %}
-                        <p>
-                        {% if field.field.widget|is_checkbox %}
-                          <input type="hidden" name="{{field.html_name}}" value="">
-                          {{ field }}{{ field.label_tag }}
-                        {% elif field.field.widget|is_select2widget %}
-                          <input type="hidden" name="{{field.html_name}}" value="">
-                          {{ field.label_tag }}{{ field }}
-                        {% else %}
-                          {{ field.label_tag }}{{ field }}
-                        {% endif %}
-                        </p>
-                    {% endfor %}
-                  </div>
-                  {% if forloop.last is False %}
-                  <hr style="margin-bottom: 1rem">
-                  {% endif %}
-                  {% endfor %}
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-yellow" data-dismiss="modal"
-                  onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="submit"
-                  class="btn btn-primary"
-                  onclick="search_with_current_filter()">{% blocktrans %}Anwenden{% endblocktrans %}</button>
-                </form>
-              </div>
-            </div>
+              {% if forloop.last is False %}
+              <hr style="margin-bottom: 1rem">
+              {% endif %}
+              {% endfor %}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-yellow" data-dismiss="modal"
+              onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="submit"
+              class="btn-primary"
+              onclick="search_with_current_filter()">{% blocktrans %}Anwenden{% endblocktrans %}</button>
+            </form>
           </div>
         </div>
-        <input type="checkbox" id="list_checkbox" style="display:none" name="show_list" value="True">
-        <input id="searchsubmit" type="submit" value="Submit" />
-      </form>
+      </div>
+    </div>
 
-
-      <div id="offerTypes" class="offer-types">
+      <div class="row align-self-center align-items-center">
+      <div id="offerTypes" class="offer-types col-lg-12">
         <form id="offerTypesForm" action="{% url 'alter_offer_type_selection' %}" method="GET">
           {% if counts.offers %}
           <div class="offer-types-group" id="offer-types-group-offers">
