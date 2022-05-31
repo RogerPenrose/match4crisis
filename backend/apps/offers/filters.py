@@ -31,11 +31,20 @@ RADIUS_CHOICES = (
     (100, _("100km")),
 )
 
+
+def checkbox_filter(queryset, name, value):
+    """Filter that returns all entries if value is false and only those where name is true if value is true."""
+    if value:
+        return queryset.filter(**{name: value})
+    else:
+        return queryset
+
 FILTER_OVERRIDES = {
     models.BooleanField: {
         'filter_class': django_filters.BooleanFilter,
         'extra': lambda f: {
             'widget': forms.CheckboxInput(attrs={'class':'form-control', 'value' : 'true'}),
+            'method': checkbox_filter,
         },
     },
     models.IntegerField: {

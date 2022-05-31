@@ -25,7 +25,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.iamorganisation.models import Organisation
 from .utils import send_manpower_offer_message, send_offer_message
-from .filters import OFFER_FILTERS, GenericFilter, AccommodationFilter, LocationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
+from .filters import OFFER_FILTERS, GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
 from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
 from django.contrib.auth.decorators import login_required
