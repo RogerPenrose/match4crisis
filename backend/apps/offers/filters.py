@@ -1,6 +1,7 @@
 import django_filters
 import googlemaps
 import logging
+import json
 from math import cos, radians
 from datetime import datetime, timedelta
 from django.db import models
@@ -60,7 +61,7 @@ class OfferFilter(django_filters.FilterSet):
         # Necessary as long as https://github.com/carltongibson/django-filter/issues/1475 isn't resolved
         for f in self.filters.values():
             if isinstance(f, django_filters.ChoiceFilter):
-                    f.extra.update({'widget': forms.Select(attrs={'class' : 'form-control'})})
+                f.extra.update({'widget': forms.Select(attrs={'class' : 'form-control'})})
 
 class GenericFilter(django_filters.FilterSet):
     cost_lt = django_filters.NumberFilter(field_name="cost", lookup_expr="lt")
@@ -68,27 +69,6 @@ class GenericFilter(django_filters.FilterSet):
     class Meta:
         model = GenericOffer
         fields = ["created_at"]
-
-class LocationFilter(django_filters.FilterSet):
-    location = django_filters.CharFilter(method="filter_location", label="", widget=forms.TextInput(attrs={'placeholder': _("Gib hier einen Standort ein")}))
-    radius = django_filters.ChoiceFilter(choices=RADIUS_CHOICES, method='no_filter', label=_("Umkreis"), empty_label=None)
-
-    def no_filter(self, queryset, name, value):
-        return queryset
-
-    def filter_location(self, queryset, name, value):
-        gc = gmaps.geocode(value)
-        latVal = gc[0]['geometry']['location']['lat']
-        lngVal = gc[0]['geometry']['location']['lng']
-        radiusKM = int(self.data['radius'])
-        latMin = latVal - radiusKM/110.574
-        latMax = latVal + radiusKM/110.574
-        lngDist = cos(radians(latVal)) * 111.320
-        lngMin = lngVal - radiusKM/lngDist
-        lngMax = lngVal + radiusKM/lngDist
-        return queryset.filter(lat__range=(latMin,latMax), lng__range=(lngMin,lngMax))
-
-    
 
 class ChildcareFilter(OfferFilter):
     class Meta:

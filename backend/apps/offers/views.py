@@ -463,7 +463,7 @@ def mergeImages(offers):
 N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce load.. )
 
 # Number of offer/request cards to be shown per page by the paginator
-ENTRIES_PER_PAGE = 25
+ENTRIES_PER_PAGE = 20
 
 def index(request):
     #context = filter(request)
@@ -492,6 +492,7 @@ def index(request):
                 curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix=abbr)
                 entries += curFilter.qs
                 context["filters"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
+                logger.info("%s %s %s" % (len(entries), offers.count(), len(curFilter.qs)))
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
         counts["offers"]["allSelected"] = allSelected
 
@@ -521,14 +522,14 @@ def index(request):
             mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
             entries += mpOffers
 
-    
+    if 'bb' in request.GET:
+        bb = json.loads(request.GET.get('bb'))
+        entries = [e for e in entries if e.genericOffer.lat and e.genericOffer.lng and bb['south'] <= e.genericOffer.lat <= bb['north']  and bb['west']  <= e.genericOffer.lng <= bb['east']]
 
     context["counts"] = counts
 
     context["offercardnames"] = OFFER_CARD_NAMES
     #context["entries"] = [{"offer" : o} for o in entries]
-
-    # TODO pagination
 
     paginator = Paginator([{"offer" : o} for o in entries], ENTRIES_PER_PAGE)
     page_number = request.GET.get('page')

@@ -449,7 +449,6 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
                   d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
             </svg>
           </div>
-
           <input type="number" style="display:none" name="lat" />
           <input type="number" style="display:none" name="lng" />
           <input type="text" style="display:none" name="bb"/>
@@ -653,7 +652,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
           const place = autocomplete.getPlace();
       
-          if (place.name == "" || (place.geometry & place.geometry.location)) {
+          if (place.name == "" || (place.geometry && place.geometry.location)) {
               // User entered the name of a Place that was  suggested and
               // pressed the Enter key, or the Place Details request succeeded.
               // Or place was empty
