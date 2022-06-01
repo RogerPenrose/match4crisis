@@ -342,7 +342,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
-{% firstof filters.TL.filter.form.media.css filters.JO.filter.form.media.css %}
+{% firstof filters.offers.TL.filter.form.media.css filters.offers.JO.filter.form.media.css filters.requests.TL.filter.form.media.css filters.requests.JO.filter.form.media.css %}
 
 {% endblock %}
 
@@ -627,7 +627,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 </div>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation and job offer filter form" %}{% endcomment %}
-{% firstof filters.TL.filter.form.media.js filters.JO.filter.form.media.js %}
+{% firstof filters.offers.TL.filter.form.media.js filters.offers.JO.filter.form.media.js filters.requests.TL.filter.form.media.js filters.requests.JO.filter.form.media.js %}
 
 <script type="text/javascript">
   $(document).ready(function () {

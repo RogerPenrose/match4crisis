@@ -58,21 +58,27 @@ def index(request):
     startPosition =  [51.13, 10.018]
     zoom = 6
     getString = request.GET.urlencode()
-    logger.warning("Received Request in Mapview: "+str(request.GET))
     if request.GET.get("city"):
         startPosition = getCenterOfCity(request.GET.get("city"))
         zoom = 10
-        logger.warning("Received: "+str(startPosition))
     elif 'lat' in request.GET and 'lng' in request.GET:
         startPosition = [float(request.GET.get("lat")),  float(request.GET.get("lng"))]
         zoom = 10
 
-    context = {
+    # create the filters
+    context = {'filters' : {'offers' : {}, 'requests' : {}}}
+    offerLabels = dict(GenericOffer.OFFER_CHOICES)
+    for sel in request.GET.getlist('selected'):
+        abbr = sel[-2:]
+        curFilter = OFFER_FILTERS[abbr](request.GET, prefix=sel)
+        context["filters"][sel[:-2]][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
+
+    context.update({
     "startPosition":  startPosition,
     "zoom": zoom,
     "mapbox_token": settings.MAPBOX_TOKEN,
     "get_params": getString,
-    }
+    })
     context.update(request.GET.dict())
     return render(request, "mapview/map.html", context )
 
