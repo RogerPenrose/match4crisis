@@ -20,12 +20,12 @@ from apps.offers.filters import OFFER_FILTERS, ManpowerFilter
 POPUP_CARDS = {
     'AC' : 'accommodation-popup-card.html',
     'TL' : 'translation-popup-card.html',
-    'TR' : 'accommodation-popup-card.html',
+    'TR' : 'transportation-popup-card.html',
     'BU' : 'buerocratic-popup-card.html',
     'MP' : 'manpower-popup-card.html',
-    'CL' : 'accommodation-popup-card.html',
+    'CL' : 'childcare-popup-card.html',
     'WE' : 'welfare-popup-card.html',
-    'JO' : 'accommodation-popup-card.html',
+    'JO' : 'job-popup-card.html',
 }
 
 logger = logging.getLogger("django")
