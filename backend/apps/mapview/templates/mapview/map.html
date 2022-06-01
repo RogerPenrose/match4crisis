@@ -326,7 +326,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-          {% if filters.requests %}{% trans "Hilfsgesuche filtern" %}{% else %}{% trans "Angebote filtern" %}{% endif %}
+          {{filterTitle}}
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -334,27 +334,29 @@
       </div>
       <div class="modal-body">
         <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
-          {% for offerOrRequestFilters in filters.values %}
-          {% for f in offerOrRequestFilters.values %}
-          <div class="filter-card">
-            <h4 class="filter-title">{{f.label}}</h2>
-              {% for field in f.filter.form %}
-              <p>
-                {% if field.field.widget|is_checkbox %}
-                <input type="hidden" name="{{field.html_name}}" value="">
-                {{ field }}{{ field.label_tag }}
-                {% elif field.field.widget|is_select2widget %}
-                <input type="hidden" name="{{field.html_name}}" value="">
-                {{ field.label_tag }}{{ field }}
-                {% else %}
-                {{ field.label_tag }}{{ field }}
-                {% endif %}
-              </p>
-              {% endfor %}
+          {% for offersOrRequests,offerOrRequestFilters in filters.items %}
+          {% for abbr,f in offerOrRequestFilters.items %}
+          <div id="filter-card-{{offersOrRequests}}{{abbr}}" style="display:none">
+            <div class="filter-card">
+              <h4 class="filter-title">{{f.label}}</h2>
+                {% for field in f.filter.form %}
+                <p>
+                  {% if field.field.widget|is_checkbox %}
+                  <input type="hidden" name="{{field.html_name}}" value="">
+                  {{ field }}{{ field.label_tag }}
+                  {% elif field.field.widget|is_select2widget %}
+                  <input type="hidden" name="{{field.html_name}}" value="">
+                  {{ field.label_tag }}{{ field }}
+                  {% else %}
+                  {{ field.label_tag }}{{ field }}
+                  {% endif %}
+                </p>
+                {% endfor %}
+            </div>
+            {% if forloop.last is False %}
+            <hr style="margin-bottom: 1rem">
+            {% endif %}
           </div>
-          {% if forloop.last is False %}
-          <hr style="margin-bottom: 1rem">
-          {% endif %}
           {% endfor %}
           {% endfor %}
       </div>

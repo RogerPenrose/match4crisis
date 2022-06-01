@@ -65,19 +65,21 @@ def index(request):
         startPosition = [float(request.GET.get("lat")),  float(request.GET.get("lng"))]
         zoom = 10
 
-    # create the filters
+    # create all filters
     context = {'filters' : {'offers' : {}, 'requests' : {}}}
     offerLabels = dict(GenericOffer.OFFER_CHOICES)
-    for sel in request.GET.getlist('selected'):
-        abbr = sel[-2:]
-        curFilter = OFFER_FILTERS[abbr](request.GET, prefix=sel)
-        context["filters"][sel[:-2]][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
+    for abbr in OFFER_MODELS:
+        offerFilter = OFFER_FILTERS[abbr](request.GET, prefix="offers"+abbr)
+        requestFilter = OFFER_FILTERS[abbr](request.GET, prefix="requests"+abbr)
+        context["filters"]["offers"][abbr] = {'filter' : offerFilter, 'label' : offerLabels[abbr]}
+        context["filters"]["requests"][abbr] = {'filter' : requestFilter, 'label' : offerLabels[abbr]}
 
     context.update({
     "startPosition":  startPosition,
     "zoom": zoom,
     "mapbox_token": settings.MAPBOX_TOKEN,
     "get_params": getString,
+    "filterTitle": _("Hilfsgesuche filtern") if 'requests' in request.GET else _("Angebote filtern")
     })
     context.update(request.GET.dict())
     return render(request, "mapview/map.html", context )

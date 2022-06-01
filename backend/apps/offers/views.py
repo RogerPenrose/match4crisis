@@ -397,9 +397,8 @@ def alter_offer_type_selection(request):
     for oldSel in prevSelected:
         if oldSel not in request.GET:
             query['selected'].remove(oldSel)
-            abbr = oldSel[-2:]
             for k in referrerQueryKeys:
-                if k.startswith(abbr):
+                if k.startswith(oldSel):
                     del query[k]
 
     if request.GET:

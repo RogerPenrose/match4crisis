@@ -97,13 +97,28 @@ mapViewPage = {
 
 
         this.mapObject.on('overlayadd', (e) => {
+            console.log("yeee");
             this.loadMapMarkers(e.layer)
+
+            $("#filter-card-" + e.layer.typeIdentifier).show()
 
             this.alterGetParameters({"selected" : e.layer.typeIdentifier}, alteringType='append')
         })
 
         this.mapObject.on('overlayremove', (e) => {
-            this.alterGetParameters({"selected" : e.layer.typeIdentifier}, alteringType='delete')
+            let typeID = e.layer.typeIdentifier
+
+            let queryParams = new URLSearchParams(window.location.search)
+            let paramsToRemove = Array.from(queryParams.keys()).filter(k => {
+                return k.indexOf(typeID) == 0;
+            }).reduce((newData, k) => {
+                newData[k] = queryParams.getAll(k);
+                return newData;
+            }, {});
+            paramsToRemove['selected'] = typeID
+            this.alterGetParameters(paramsToRemove, alteringType='delete')
+
+            $("#filter-card-" + typeID).hide()
         })
 
     },
@@ -124,7 +139,8 @@ mapViewPage = {
 
                 if(entry['selected']){
                     this.loadMapMarkers(markers)
-                    this.mapObject.addLayer(markers)
+                    console.log(this.mapObject.addLayer(markers))
+                    $("#filter-card-" + markers.typeIdentifier).show()
                 }
 
                 if(parentLabel){
