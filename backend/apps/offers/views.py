@@ -422,7 +422,6 @@ def alter_url_query(request):
     query = parse_qs(referrerURL.query)
     for k in request.GET:
         entries = request.GET.getlist(k)
-        logger.info("%s %s" % (k, entries))
         if len(entries) == 1:        
             if entries[0] == '':
                 query.pop(k, None)
@@ -466,7 +465,7 @@ N_ENTRIES = 25 # Number of Entries that are calculated per category (to reduce l
 ENTRIES_PER_PAGE = 20
 
 def index(request):
-    #context = filter(request)
+    """Filters offers/requests for help using the data given in the supplied ```request.GET``` parameters."""
 
     context = {"filters" : {}}
 
@@ -478,26 +477,27 @@ def index(request):
 
     if "offers" in getData:
         counts["offers"] = {"types" : {}}
+        context["filters"]["offers"] = {}
         groupCount = 0
         allSelected = True
         for abbr, offerType in OFFER_MODELS.items():
-            isSelected = ('offers' + abbr) in selected
             if abbr != 'MP':
+                isSelected = ('offers' + abbr) in selected
                 specOfferCount = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
                 counts["offers"]["types"][abbr] = {"label" : "{} ({})".format(offerLabels[abbr], specOfferCount), 'selected': isSelected}
                 allSelected &= isSelected
                 groupCount += specOfferCount
-            if isSelected:
-                offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-                curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix=abbr)
-                entries += curFilter.qs
-                context["filters"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
-                logger.info("%s %s %s" % (len(entries), offers.count(), len(curFilter.qs)))
+                if isSelected:
+                    offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
+                    curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix=abbr)
+                    entries += curFilter.qs
+                    context["filters"]["offers"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
         counts["offers"]["allSelected"] = allSelected
 
     if "requests" in getData:
         counts["requests"] = {"types" : {}}
+        context["filters"]["requests"] = {}
         groupCount = 0
         allSelected = True
         for abbr, offerType in OFFER_MODELS.items():
@@ -508,19 +508,25 @@ def index(request):
             groupCount += specOfferCount
             if isSelected:
                 requests = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
-                entries += requests
+                curFilter = OFFER_FILTERS[abbr](request.GET, queryset=requests, prefix=abbr)
+                entries += curFilter.qs
+                context["filters"]["requests"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
         counts["requests"]["allSelected"] = allSelected
 
     if "manpower" in getData:
         if 'offers' not in counts:
             counts["offers"] = {"types" : {}}
+        if 'offers' not in context['filters']:
+            context["filters"]["requests"] = {}
         mpOfferCount = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
         isSelected = 'manpower' in selected or 'offersMP' in selected
         counts["offers"]["types"]['MP'] = {"label" : "{} ({})".format(offerLabels['MP'], mpOfferCount), 'selected': isSelected}
         if isSelected:
             mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-            entries += mpOffers
+            mpFilter = ManpowerFilter(request.GET, queryset=mpOffers, prefix='MP')
+            entries += mpFilter.qs
+            context["filters"]["offers"]["MP"] = {'filter' : mpFilter, 'label' : offerLabels['MP']}
 
     if 'bb' in request.GET:
         bb = json.loads(request.GET.get('bb'))
@@ -529,7 +535,6 @@ def index(request):
     context["counts"] = counts
 
     context["offercardnames"] = OFFER_CARD_NAMES
-    #context["entries"] = [{"offer" : o} for o in entries]
 
     paginator = Paginator([{"offer" : o} for o in entries], ENTRIES_PER_PAGE)
     page_number = request.GET.get('page')

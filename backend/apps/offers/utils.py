@@ -1,8 +1,13 @@
+import json
 import logging
 
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.template.loader import render_to_string  
+from django.http import QueryDict
+from django.template.loader import render_to_string
+
+from apps.offers.models import OFFER_MODELS, GenericOffer, ManpowerOffer
+from .filters import OFFER_FILTERS  
 
 logger = logging.getLogger("django")
 
