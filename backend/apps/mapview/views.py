@@ -14,6 +14,7 @@ from django.template.loader import render_to_string
 from apps.iamorganisation.models import HelpRequest
 
 from apps.offers.models import *
+from apps.offers.filters import OFFER_FILTERS, ManpowerFilter
 
 
 logger = logging.getLogger("django")
@@ -97,8 +98,9 @@ def getJSONData(request):
             })
     elif type == "manpower":
         mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
+        mpFilter = ManpowerFilter(request.GET, queryset=mpOffers, prefix="offersMP")
         data = {'entries' : [], 'iconSrc': '/static/img/icons/icon_MP.svg', }
-        for offer in mpOffers:
+        for offer in mpFilter.qs:
             context = {
                 'generic' : offer.genericOffer,
                 'detail' : offer
@@ -112,8 +114,9 @@ def getJSONData(request):
     elif type[:-2] == "offers" and len(type) == 8:
         offerType = type[-2:]
         offers = OFFER_MODELS[offerType].objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
+        curFilter = OFFER_FILTERS[offerType](request.GET, queryset=offers, prefix="offers"+offerType)
         data = {'entries' : [], 'iconSrc': '/static/img/icons/icon_{}.svg'.format(offerType), }
-        for offer in offers:
+        for offer in curFilter.qs:
             context = {
                 'generic' : offer.genericOffer,
                 'detail' : offer
@@ -127,8 +130,9 @@ def getJSONData(request):
     elif type[:-2] == "requests" and len(type) == 10:
         requestType = type[-2:]
         requests = OFFER_MODELS[requestType].objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
+        curFilter = OFFER_FILTERS[requestType](request.GET, queryset=requests, prefix="requests"+requestType)
         data = {'entries' : [], 'iconSrc': '/static/img/icons/icon_{}.svg'.format(requestType), }
-        for request in requests:
+        for request in curFilter.qs:
             context = {
                 'generic' : request.genericOffer,
                 'detail' : request

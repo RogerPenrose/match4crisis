@@ -150,7 +150,9 @@ mapViewPage = {
         }
         
         const layerID = layer.typeIdentifier
-        const data = await $.get("data?type=" + layerID)
+        const urlParams = new URLSearchParams(window.location.search)
+        urlParams.set('type', layerID)
+        const data = await $.get("data?" + urlParams.toString())
         
 
         if(layerID in this.markerIcons){

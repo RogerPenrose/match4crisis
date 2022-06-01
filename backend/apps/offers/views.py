@@ -489,7 +489,7 @@ def index(request):
                 groupCount += specOfferCount
                 if isSelected:
                     offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-                    curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix=abbr)
+                    curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix="offers" + abbr)
                     entries += curFilter.qs
                     context["filters"]["offers"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
@@ -508,7 +508,7 @@ def index(request):
             groupCount += specOfferCount
             if isSelected:
                 requests = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
-                curFilter = OFFER_FILTERS[abbr](request.GET, queryset=requests, prefix=abbr)
+                curFilter = OFFER_FILTERS[abbr](request.GET, queryset=requests, prefix="requests" + abbr)
                 entries += curFilter.qs
                 context["filters"]["requests"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
@@ -524,7 +524,7 @@ def index(request):
         counts["offers"]["types"]['MP'] = {"label" : "{} ({})".format(offerLabels['MP'], mpOfferCount), 'selected': isSelected}
         if isSelected:
             mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-            mpFilter = ManpowerFilter(request.GET, queryset=mpOffers, prefix='MP')
+            mpFilter = ManpowerFilter(request.GET, queryset=mpOffers, prefix='offersMP')
             entries += mpFilter.qs
             context["filters"]["offers"]["MP"] = {'filter' : mpFilter, 'label' : offerLabels['MP']}
 
