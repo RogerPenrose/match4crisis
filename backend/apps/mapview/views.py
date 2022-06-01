@@ -21,10 +21,10 @@ POPUP_CARDS = {
     'AC' : 'accommodation-popup-card.html',
     'TL' : 'translation-popup-card.html',
     'TR' : 'accommodation-popup-card.html',
-    'BU' : 'accommodation-popup-card.html',
-    'MP' : 'accommodation-popup-card.html',
+    'BU' : 'buerocratic-popup-card.html',
+    'MP' : 'manpower-popup-card.html',
     'CL' : 'accommodation-popup-card.html',
-    'WE' : 'accommodation-popup-card.html',
+    'WE' : 'welfare-popup-card.html',
     'JO' : 'accommodation-popup-card.html',
 }
 
@@ -181,9 +181,6 @@ def getCountsJSON(request):
     if "helpRequests" in getData:
         counts["helpRequests"] = {"count": HelpRequest.objects.count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(_("Hilfeaufrufe")), 'selected': 'helpRequests' in selected}
 
-    if "manpower" in getData:
-        counts["manpower"] = {"count": ManpowerOffer.objects.filter(genericOffer__active=True, genericOffer__incomplete=False, genericOffer__requestForHelp=False).count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(offerLabels['MP']), 'selected': 'manpower' in selected or 'offersMP' in selected}
-
     if "offers" in getData:
         counts["offers"] = {"label" : _("Angebote")}
         groupCount = 0
@@ -202,6 +199,10 @@ def getCountsJSON(request):
             counts["requests"][abbr] = {"count": specOfferCount, "label" : '<img src="/static/img/icons/icon_{}.svg">{}'.format(abbr,offerLabels[abbr]), 'selected': 'requests{}'.format(abbr) in selected}
             groupCount += specOfferCount
         counts["requests"]["groupCount"] = groupCount
+
+    if "manpower" in getData:
+        counts["offersMP"] = {"count": ManpowerOffer.objects.filter(genericOffer__active=True, genericOffer__incomplete=False, genericOffer__requestForHelp=False).count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(offerLabels['MP']), 'selected': 'manpower' in selected or 'offersMP' in selected}
+
 
 
     return JsonResponse(counts)

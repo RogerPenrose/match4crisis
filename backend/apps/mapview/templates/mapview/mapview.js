@@ -129,10 +129,6 @@ mapViewPage = {
                 continue
             }
             if ("count" in entry){
-
-                // var markerGroup = L.markerClusterGroup({
-                //     iconCreateFunction: this.cssClassedIconCreateFunction(entryType),
-                // });
                 let markers = L.featureGroup.subGroup(this.markerGroup)
                 markers.typeIdentifier = parentLabel + entryType
 
