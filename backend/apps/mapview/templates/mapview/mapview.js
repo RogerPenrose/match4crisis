@@ -97,7 +97,6 @@ mapViewPage = {
 
 
         this.mapObject.on('overlayadd', (e) => {
-            console.log("yeee");
             this.loadMapMarkers(e.layer)
 
             $("#filter-card-" + e.layer.typeIdentifier).show()

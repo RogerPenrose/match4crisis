@@ -17,7 +17,19 @@ from apps.offers.models import *
 from apps.offers.filters import OFFER_FILTERS, ManpowerFilter
 
 
+POPUP_CARDS = {
+    'AC' : 'accommodation-popup-card.html',
+    'TL' : 'translation-popup-card.html',
+    'TR' : 'accommodation-popup-card.html',
+    'BU' : 'accommodation-popup-card.html',
+    'MP' : 'accommodation-popup-card.html',
+    'CL' : 'accommodation-popup-card.html',
+    'WE' : 'accommodation-popup-card.html',
+    'JO' : 'accommodation-popup-card.html',
+}
+
 logger = logging.getLogger("django")
+
 def getCenterOfCity(city):
     current_location = dirname(abspath(__file__))
     with open(join(current_location,"files/cities_to_center.json"), "r") as read_file:
@@ -115,7 +127,7 @@ def getJSONData(request):
             }
             data['entries'].append({
                 #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
-                'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
+                'popupContent' : render_to_string("mapview/" + POPUP_CARDS['MP'], context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
             })
@@ -131,7 +143,7 @@ def getJSONData(request):
             }
             data['entries'].append({
                 #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
-                'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
+                'popupContent' : render_to_string("mapview/" + POPUP_CARDS[offerType], context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
             })
@@ -147,7 +159,7 @@ def getJSONData(request):
             }
             data['entries'].append({
                 #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
-                'popupContent' : render_to_string("mapview/accommodation-popup-card.html", context),
+                'popupContent' : render_to_string("mapview/" + POPUP_CARDS[offerType], context),
                 'lat' : request.genericOffer.lat,
                 'lng' : request.genericOffer.lng,
             })
