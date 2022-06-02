@@ -77,10 +77,9 @@ def index(request):
     "startPosition":  startPosition,
     "zoom": zoom,
     "mapbox_token": settings.MAPBOX_TOKEN,
-    "get_params": getString,
     "filterTitle": _("Hilfsgesuche filtern") if 'requests' in request.GET else _("Angebote filtern")
     })
-    context.update(request.GET.dict())
+    
     return render(request, "mapview/map.html", context )
 
 def getJSONData(request):

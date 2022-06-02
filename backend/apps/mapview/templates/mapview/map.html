@@ -269,6 +269,27 @@
     border-radius: 10px;
     padding: 15px;
   }
+
+  svg.bi-search {
+    z-index: 999; 
+    margin-left: 3px; 
+    position: absolute; 
+    top: 28px; 
+    left: 10px;
+  }
+
+  svg.remove-location {
+    z-index: 999; 
+    cursor: pointer;
+    position: absolute;
+    padding: 1px;
+    top: 26px;
+    right: 15px;
+  }
+
+  #location:placeholder-shown~svg.remove-location {
+    display:none;
+  }
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
@@ -276,13 +297,27 @@
 {% endblock %}
 
 {% block content %}
-{{counts}}
 <div id="mapContainer" style="z-index:1; position: relative;">
   <div class="container">
     <div class="row no-gutters">
       <div class="col">
         <input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}"
           class="search-input" />
+        <svg class="bi bi-search" width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd"
+            d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+            clip-rule="evenodd" />
+          <path fill-rule="evenodd"
+            d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+            clip-rule="evenodd" />
+        </svg>
+
+        <svg class="remove-location bi bi-x-circle" title="{% trans "Standort entfernen" %}" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" 
+          fill="currentColor" viewBox="0 0 17 16" onclick="mapViewPage.clearLocationSearch();">
+          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+          <path
+              d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+        </svg>
       </div>
       <div class="col-auto filter-button-container">
         <a class="filter-button" data-toggle="modal" data-target="#exampleModal">

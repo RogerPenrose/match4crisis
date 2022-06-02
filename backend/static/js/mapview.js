@@ -3,6 +3,8 @@ mapViewPage = {
         mapViewContainerId: '',
         mapboxToken: '',
         startPosition: '',
+        defaultStartPosition: [ 51.13, 10.018 ],
+        defaultZoom: 6,
     },
     requests: [],
     offers: [],
@@ -190,7 +192,7 @@ mapViewPage = {
         })
     },
 
-    initAutocomplete: () => {
+    initAutocomplete: function initAutocomplete() {
         const input = document.getElementById("location");
     
         const autocomplete = initMapsAutocomplete();
@@ -211,22 +213,34 @@ mapViewPage = {
             if (place.geometry.viewport) {
                 const vp = Object.values(place.geometry.viewport)
 
-                mapViewPage.mapObject.fitBounds([[vp[0].h, vp[1].h], [vp[0].j, vp[1].j]]);
-                mapViewPage.alterGetParameters({
+                this.mapObject.fitBounds([[vp[0].h, vp[1].h], [vp[0].j, vp[1].j]]);
+                this.alterGetParameters({
                     "location": input.value, 
                     "lat" : lat,
                     "lng" : lng,
                     "bb" : JSON.stringify(place.geometry.viewport)
                 })
             } else {
-                mapViewPage.mapObject.setView(new L.LatLng(lat, lng), 15);
-                mapViewPage.alterGetParameters({
+                this.mapObject.setView(new L.LatLng(lat, lng), 15);
+                this.alterGetParameters({
                     "location": input.value, 
                     "lat" : lat,
                     "lng" : lng,
                 })
             }        
         });
+    },
+
+    clearLocationSearch: function clearLocationSearch(){
+        $('#location')[0].value="";
+        this.alterGetParameters({
+            "location": '', 
+            "lat" : '',
+            "lng" : '',
+            "bb" :''
+        }, alteringType='remove')
+
+        this.mapObject.setView(this.options.defaultStartPosition, this.options.defaultZoom)
     },
 
     alterGetParameters: function alterGetParameters(params, alteringType="replace"){
@@ -252,9 +266,11 @@ mapViewPage = {
                         case "remove":
                             let keyEntries = searchParams.getAll(key)
                             searchParams.delete(key)
-                            for(let curEntry of keyEntries){
-                                if(curEntry != val){
-                                    searchParams.append(key, curEntry)
+                            if(val != ''){
+                                for(let curEntry of keyEntries){
+                                    if(curEntry != val){
+                                        searchParams.append(key, curEntry)
+                                    }
                                 }
                             }
                             break;
