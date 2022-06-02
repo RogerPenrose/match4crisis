@@ -1,5 +1,6 @@
 from functools import lru_cache
 import os
+import time
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -10,11 +11,12 @@ from django.utils.translation import gettext as _
 import django_tables2 as tables
 import pandas as pd
 
-from apps.mapview.views import get_ttl_hash
-
 logged_data_names = ["time", "status_line", "status", "request_time"]
 threshold_to_filter = 50
 
+def get_ttl_hash(seconds=300):
+    """Return the same value within `seconds` time period."""
+    return round(time.time() / seconds)
 
 @login_required
 @staff_member_required
