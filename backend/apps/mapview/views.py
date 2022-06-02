@@ -98,7 +98,6 @@ def getJSONData(request):
                 'helpRequest': hr,
             }
             data['entries'].append({
-                #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
                 'popupContent' : render_to_string("mapview/help-request-popup-card.html", context),
                 'lat' : hr.lat,
                 'lng' : hr.lng,
@@ -114,7 +113,6 @@ def getJSONData(request):
                 'detail' : offer
             }
             data['entries'].append({
-                #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
                 'popupContent' : render_to_string("mapview/" + POPUP_CARDS['MP'], context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
@@ -131,7 +129,6 @@ def getJSONData(request):
                 'detail' : offer
             }
             data['entries'].append({
-                #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
                 'popupContent' : render_to_string("mapview/" + POPUP_CARDS[offerType], context),
                 'lat' : offer.genericOffer.lat,
                 'lng' : offer.genericOffer.lng,
@@ -148,8 +145,7 @@ def getJSONData(request):
                 'detail' : request
             }
             data['entries'].append({
-                #'popupContent' : render_to_string("offers/accommodation-card.html", {"entry" : {"offer" : offer}}),
-                'popupContent' : render_to_string("mapview/" + POPUP_CARDS[offerType], context),
+                'popupContent' : render_to_string("mapview/" + POPUP_CARDS[requestType], context),
                 'lat' : request.genericOffer.lat,
                 'lng' : request.genericOffer.lng,
             })
