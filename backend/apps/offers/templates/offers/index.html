@@ -487,10 +487,29 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
           </div>
           <div class="modal-body">
             <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
+              {% if helpRequestsFilter %}
+              <div class="filter-card" style="margin-bottom: 1rem">
+                <h4 class="filter-title">{{helpRequestsFilter.label}}</h4>
+                {% for field in helpRequestsFilter.filter.form %}
+                    <p>
+                    {% if field.field.widget|is_checkbox %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field }}{{ field.label_tag }}
+                    {% elif field.field.widget|is_select2widget %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field.label_tag }}{{ field }}
+                    {% else %}
+                      {{ field.label_tag }}{{ field }}
+                    {% endif %}
+                    </p>
+                {% endfor %}
+              </div>
+              {% endif %}
+
               {% for offerOrRequestFilters in filters.values %}
               {% for f in offerOrRequestFilters.values %}
               <div class="filter-card">
-                <h4 class="filter-title">{{f.label}}</h2>
+                <h4 class="filter-title">{{f.label}}</h4>
                 {% for field in f.filter.form %}
                     <p>
                     {% if field.field.widget|is_checkbox %}
@@ -525,6 +544,17 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
       <div class="row align-self-center align-items-center">
       <div id="offerTypes" class="offer-types col-lg-12">
         <form id="offerTypesForm" action="{% url 'alter_offer_type_selection' %}" method="GET">
+          {% if counts.helpRequests %}
+          <div class="offer-types-group" id="offer-types-group-requests">
+            <label class="offer-types-label">
+              <input type="checkbox" name="helpRequests" class="offer-types-selector" {% if counts.helpRequests.selected %}checked{% endif %}>
+              <span>
+                <img src="/static/img/icons/icon_MP.svg">{{counts.helpRequests.label}}
+              </span>
+            </label>
+          </div>
+          {% endif %}
+          
           {% if counts.offers %}
           <div class="offer-types-group" id="offer-types-group-offers">
             <label class="offer-types-group-label">
@@ -541,6 +571,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
             {% endfor %}
           </div>
           {% endif %}
+
           {% if counts.requests %}
           <div class="offer-types-group" id="offer-types-group-requests">
             <label class="offer-types-group-label">
@@ -581,7 +612,11 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
 <div class="container cards">
   {% for entry in page_obj %}
+  {% if entry.offer %}
   {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+  {% else %}
+  {% include 'help-request-card.html' %}
+  {% endif %}
   {% endfor %}
 </div>
 
@@ -647,6 +682,7 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
       $('#offerTypesForm').trigger("submit");
     });
 
+    // Hide the empty group label if only manpower offers are shown
     for(const groupLabel of $(".offer-types-group-label")){
       if(groupLabel.innerText===""){
           groupLabel.style.display = "none"
