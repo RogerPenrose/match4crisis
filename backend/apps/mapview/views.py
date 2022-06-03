@@ -13,6 +13,7 @@ from apps.iamorganisation.models import HelpRequest
 
 from apps.offers.models import *
 from apps.offers.filters import OFFER_FILTERS, ManpowerFilter
+from apps.iamorganisation.filters import HelpRequestFilter
 
 
 POPUP_CARDS = {
@@ -73,11 +74,15 @@ def index(request):
             requestFilter = OFFER_FILTERS[abbr](request.GET, prefix="requests"+abbr)
             context["filters"]["requests"][abbr] = {'filter' : requestFilter, 'label' : offerLabels[abbr]}
 
+    if 'helpRequests' in request.GET:
+        hrFilter = HelpRequestFilter(request.GET, prefix="helpRequests", queryset=HelpRequest.objects.none())
+        context['helpRequestsFilter'] = {'filter' : hrFilter, 'label' : _('Hilfeaufrufe')}
+
     context.update({
     "startPosition":  startPosition,
     "zoom": zoom,
     "mapbox_token": settings.MAPBOX_TOKEN,
-    "filterTitle": _("Hilfsgesuche filtern") if 'requests' in request.GET else _("Angebote filtern")
+    "filterTitle": _("Aufrufe der Hilfsorganisationen filtern") if 'helpRequests' in request.GET else (_("Hilfsgesuche filtern") if 'requests' in request.GET else _("Angebote filtern"))
     })
     
     return render(request, "mapview/map.html", context )

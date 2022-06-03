@@ -99,20 +99,3 @@ def running_offers(request):
     runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
     context = {"offers": runningOffers}
     return render(request, "running_offers.html", context)
-
-@login_required
-@helperRequired
-def help_requests_view(request):
-    HELP_REQUEST_PER_PAGE = 25
-    helper = Helper.objects.get(user=request.user)
-    helpRequests = HelpRequest.objects.all()
-    filter = HelpRequestFilter(request.GET, queryset=helpRequests)
-    paginator = Paginator(list(filter.qs), HELP_REQUEST_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    context = {
-        "page_obj" : page_obj,
-        "filter" : filter,
-    }
-    return render(request, "help_requests_overview.html", context)

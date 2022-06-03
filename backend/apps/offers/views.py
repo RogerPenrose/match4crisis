@@ -23,7 +23,8 @@ from django.forms.models import model_to_dict
 from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
-from apps.iamorganisation.models import Organisation
+from apps.iamorganisation.models import HelpRequest, Organisation
+from apps.iamorganisation.filters import HelpRequestFilter
 from .utils import send_manpower_offer_message, send_offer_message
 from .filters import OFFER_FILTERS, GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
@@ -414,7 +415,7 @@ def alter_offer_type_selection(request):
         if oldSel not in request.GET:
             query['selected'].remove(oldSel)
             for k in referrerQueryKeys:
-                if k.startswith(oldSel):
+                if k.startswith(oldSel) and k != oldSel:
                     del query[k]
 
     if request.GET:
@@ -543,15 +544,27 @@ def index(request):
             entries += mpFilter.qs
             context["filters"]["offers"]["MP"] = {'filter' : mpFilter, 'label' : offerLabels['MP']}
 
+    helpRequests = []
+    if "helpRequests" in getData:
+        isSelected = "helpRequests" in selected
+        hrCount = HelpRequest.objects.count()
+        counts["helpRequests"] = {"label" : "{} ({})".format(_("Hilfeaufrufe"), hrCount), 'selected': isSelected}
+        if isSelected:
+            helpRequestsUnfiltered = HelpRequest.objects.all()
+            curFilter = HelpRequestFilter(request.GET, queryset=helpRequestsUnfiltered, prefix="helpRequests")
+            helpRequests = list(curFilter.qs)
+            context["helpRequestsFilter"] = {'filter' : curFilter, 'label' : _("Hilfeaufrufe")}
+
     if 'bb' in request.GET:
         bb = json.loads(request.GET.get('bb'))
         entries = [e for e in entries if e.genericOffer.lat and e.genericOffer.lng and bb['south'] <= e.genericOffer.lat <= bb['north']  and bb['west']  <= e.genericOffer.lng <= bb['east']]
+        helpRequests = [e for e in helpRequests if e.lat and e.lng and bb['south'] <= e.lat <= bb['north']  and bb['west']  <= e.lng <= bb['east']]
 
     context["counts"] = counts
 
     context["offercardnames"] = OFFER_CARD_NAMES
 
-    paginator = Paginator([{"offer" : o} for o in entries], ENTRIES_PER_PAGE)
+    paginator = Paginator([{"offer" : o} for o in entries] + helpRequests, ENTRIES_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

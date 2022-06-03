@@ -170,6 +170,7 @@ mapViewPage = {
         this.mapObject.on('overlayadd', (e) => {
             this.loadMapMarkers(e.layer)
 
+            console.log(e.layer)
             $("#filter-card-" + e.layer.typeIdentifier).show()
 
             this.alterGetParameters({"selected" : e.layer.typeIdentifier}, alteringType='append')
@@ -180,7 +181,7 @@ mapViewPage = {
 
             let queryParams = new URLSearchParams(window.location.search)
             let paramsToRemove = Array.from(queryParams.keys()).filter(k => {
-                return k.indexOf(typeID) == 0;
+                return k.indexOf(typeID) == 0 && k != typeID;
             }).reduce((newData, k) => {
                 newData[k] = queryParams.getAll(k);
                 return newData;
