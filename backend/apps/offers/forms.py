@@ -112,7 +112,7 @@ class ManpowerForm(OfferForm):
 
         labels = {
             "helpType_manpower" : HELPTYPE_MP,
-            "distanceChoices" : _("Umkreis des Einsatzortes"),
+            "distanceChoices" : _("Maximale Entfernung des Einsatzortes"),
             "canGoforeign": _("Auslandseinsatz ist denkbar"),
             "hasExperience_crisis": _("Habe Erfahrung im Krisenmanagement"),
             "hasMedicalExperience": _("Habe eine Medizinische Ausbildung"),
@@ -209,3 +209,38 @@ OFFER_FORMS = {
     'MP' : ManpowerForm,
     'JO' : JobForm,
 }
+
+RADIUS_CHOICES = (
+    ('', _("Umkreis wählen")),
+    (5, "5km"),
+    (10, "10km"),
+    (20, "20km"),
+    (50, "50km"),
+    (100, "100km"),
+    (200, "200km"),
+)
+
+OFFER_DESCRIPTIONS = {
+    'AC' : _('Vorübergehender oder längerfristiger Wohnraum'),
+    'TL' : _('z.B. für offizielle Dokumente'),
+    'TR' : _('Transport von Personen oder Hilfsgütern'),
+    'BU' : _('z.B. Unterstützung bei Behördengängen'),
+    'CL' : _('Babysitting oder einfach nur Zeit verbringen'),
+    'WE' : _('z.B. für ältere Personen oder Personen mit Behinderungen'),
+    'MP' : _('Anpacken dort wo Hilfe gebraucht wird'),
+    'JO' : _('Jobangebote speziell für Hilfesuchende'),
+}
+
+
+class LocationSearchForm(forms.Form):
+    location = forms.CharField(required=False, label='', widget=forms.TextInput(attrs={'placeholder' : _('Gib hier einen Standort ein...'), 'class' : 'form-control'}))
+    lat = forms.FloatField(required=False, widget=forms.HiddenInput())
+    lng = forms.FloatField(required=False, widget=forms.HiddenInput())
+    bb = forms.CharField(required=False, widget=forms.HiddenInput())
+    radius = forms.ChoiceField(required=False, label='', choices=RADIUS_CHOICES, widget=forms.Select(attrs={'class' : 'form-control'}))
+
+class OfferTypeSearchForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for abbr, label in GenericOffer.OFFER_CHOICES:
+            self.fields[abbr] = forms.BooleanField(required=False, label=label, help_text=OFFER_DESCRIPTIONS[abbr])

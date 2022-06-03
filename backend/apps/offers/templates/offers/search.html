@@ -7,214 +7,166 @@
 
 {% block header %}
 <style>
-.content { background-color: #f7f7f7; background-image: url('{% static 'img/bg-wave.png' %}'); background-size: 100%; background-position: top; background-repeat: no-repeat; padding-bottom: 55px;}
-.footer { margin-top: 0px; }
-  .radius {float: left; display: block;
-  height: calc(1.5em + 1rem + 2px);
-  padding: 0.375rem .75rem 0.375rem 1.2rem;
-  font-size: 1rem;
-  font-weight: 300;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1) !important;
-  border: 0px;
-  border-radius: 1rem; }
-.btn-2 { margin-top: 35px; }
-  div.description { padding: 10px; position: relative; }
-  .count { text-align: right; }
-.count p { display: inline; margin-bottom: 0px !important; padding:5px; border-radius: 5px; background-color: #ed0061; color: #fff;  }
-div.background-photo-search {  border-radius: 20px; padding-top: 100%;  max-width: 100%; background-size: cover;}
-.pointer { cursor: pointer; }
-@media only screen and (max-width: 767px) { div.background-photo-search {padding-top: 80%;max-width: 100%;  }  
+  .content {
+    background-color: #f7f7f7;
+    padding-bottom: 55px;
+  }
 
-.radius, .pac-target-input { margin-bottom: 15px;} 
-}
+  .footer {
+    margin-top: 0px;
+  }
 
-@media only screen and (min-width: 768px) { 
-.radius { width: 25%; }
-.pac-target-input { float: left; width: calc(50% - 15px); margin-right: 15px;}
-#searchsubmit-button { width:calc(25% - 15px); display: inline-block; margin-left: 15px;}
-}
+  .title {
+    margin-top: 35px;
+    margin-bottom: 25px;
+  }
 
-@media only screen and (min-width: 992px) { 
-.radius { width: 25%; }
-.pac-target-input { float: left; width: calc(55% - 25px); margin-right: 25px;}
-#searchsubmit-button { width:calc(20% - 25px); display: inline-block; margin-left: 25px;}
-}
+  .form-control {
+    margin-bottom: 15px;
+  }
 
+  #id_location {
+    padding-left: 2.2rem;
+  }
+
+  .hint-text{
+    font-size: 11pt;
+    margin-top: -20px;
+    color: #6c757d !important;
+  }
+
+  .form-control {
+    height: calc(1.5em + 1rem);
+  }
+
+  .custom-control-input,
+  .custom-control-label::before {
+    display: none;
+  }
+
+  .custom-control-input:checked~.custom-control-label {
+    background-color: #ed0061;
+    color: #fff;
+  }
+
+  .custom-control-input:checked~.custom-control-label h3 {
+    color: #fff;
+  }
+
+  .custom-control-input:checked~.custom-control-label img {
+    filter: invert(100%);
+  }
+
+  .custom-control-label,
+  .custom-control-label * {
+    transition: all 0.3s linear;
+  }
+
+  .btn {
+    width: 100%;
+  }
 </style>
-
-<script type="text/javascript">
-  window.addEventListener('load', function() {
-      $(window).on("resize", function() {
-
-          var height = $(window).height();
-          var navHeight = $('.navbar').outerHeight();
-          var footerHeight = $('.footer').outerHeight( true );
-
-          var newHeight = height - footerHeight - navHeight;
-
-          $(".content").css('min-height', newHeight);
-
-      }).trigger("resize");
-
-  });
-</script>
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
-    <div style="height:40px"></div>
-    <div class="row align-self-center align-items-center top-menu">
-<div class="col-6 left">
- <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-      </svg> <a href="/">{%blocktrans%} Zurück {% endblocktrans%}</a> </p></div>
+  <div style="height:40px"></div>
+  <div class="row align-self-center align-items-center top-menu">
+    <div class="col-6 left">
+      <p class="font-weight-bold">
+        <a href="/">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" style="margin-top: -2px;"
+            class="bi bi-chevron-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+          </svg>
+          {%blocktrans%} Zurück {% endblocktrans%}
+        </a>
+      </p>
+    </div>
+  </div>
 
+  <div class="row align-self-center align-items-center" style="margin-bottom: 55px;">
+    <div class="col-lg-12">
+
+      <form id="searchForm" action="{% url 'search' %}" method="POST">
+        {% csrf_token %}
+
+        <h2 class="title">
+          <img src="{% static 'img/step-1.svg' %}"
+            style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" />
+          {% if searchingRequests %}
+          {% blocktrans %}Wo willst du helfen?{% endblocktrans %}
+          {% else %}
+          {% blocktrans %}Wo suchst du nach Hilfe?{% endblocktrans %}
+          {% endif %}
+        </h2>
+        <p class="hint-text">
+          {% if searchingRequests %}
+          {% blocktrans %}Um alle Hilfsgesuche zu sehen, kannst du diese Felder auch frei lassen.{% endblocktrans %}
+          {% else %}
+          {% blocktrans %}Um alle Angebote zu sehen, kannst du diese Felder auch frei lassen.{% endblocktrans %}
+          {% endif %}
+        </p>
+
+        <div class="row">
+          <div class="col-lg-8">
+            {{ locationForm.location }}
+            <svg class="bi bi-search" style="margin-left: 3px; position: absolute; top: 12px; left: 27px;" width="14px"
+              height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+                clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </div>
+          <div class="col-lg-4">
+            {{locationForm.radius}}
+          </div>
+          {% for hidden in locationForm.hidden_fields %}
+          {{ hidden }}
+          {% endfor %}
         </div>
 
-        <div class="row align-self-center align-items-center" style="margin-bottom: 55px;">
-<div class="col-lg-12">
+        <h2 class="title">
+          <img src="{% static 'img/step-2.svg' %}"
+            style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" />
+          {% if searchingRequests %}
+          {% blocktrans %}Welche Art von Hilfe könntest du bieten?{% endblocktrans %}
+          {%else%}
+          {% blocktrans %}Welche Art von Hilfe benötigst du?{% endblocktrans %}
+          {%endif%}
+        </h2>
 
-  <h2 class="title" style="margin-bottom: 35px;margin-top: 35px;"><img src="{% static 'img/step-1.svg' %}" style="width: 35px; margin-top: -4px; margin-right: 5px; height: auto;" /> {% if searchRequests == False %}{% blocktrans %}Wo suchst du nach Hilfe?{% endblocktrans %}{%else%}{%blocktrans%}Wo willst du helfen?{%endblocktrans%}{%endif%}</h2>
-  <form id="searchForm" action="/offers/select_category" onsubmit="doSubmit();">
-    <div style="position: relative">
-      <input
-        type="text"
-        id="id_location"
-        name="location"
-        class="input-form-search"
-        placeholder="{% blocktrans %}Standort hier eingeben ...{% endblocktrans %}"
-        value=""
-      >
-      <input type="hidden" value="" name="lat">
-      <input type="hidden" value="" name="lng">
-      <input type="hidden" value="" name="bb">
-      <input type="hidden" value="0" name="requests" id="id_requests">
-      <svg
-        class="bi bi-search"
-        style="
-          margin-left: 3px;
-          position: absolute;
-          top: 13px;
-          left: 10px;
-        "
-        width="14px"
-        height="14px"
-        viewBox="0 0 18 14"
-        fill="#495057"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
-          clip-rule="evenodd"
-        />
-        <path
-          fill-rule="evenodd"
-          d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-          clip-rule="evenodd"
-        />
-      </svg>
+        {% for field in selectionForm %}
+        <div class="form-group">
+
+          <div class="col-lg-6 offer-card" id="div_id_{{field.name}}">
+            <input type="checkbox" name="{{field.name}}" class="checkboxinput custom-control-input"
+              id="id_{{field.name}}">
+            <label class="row align-self-center align-items-center custom-control-label" for="id_{{field.name}}">
+              <div class="col-4 col-sm-2" style="padding: 5px;">
+                {% with 'img/icons/icon_'|add:field.name|add:'.svg' as iconLink %}
+                <img src="{% static iconLink %}">
+                {% endwith %}
+              </div>
+              <div class="description col-8 col-sm-10">
+                <h3>{{ field.label|safe }}</h3>
+                <p>{{ field.help_text }}</p>
+              </div>
+            </label>
+          </div>
+        </div>
+        {% endfor %}
+
+        <div class="form-group">
+          <input type="submit" name="submit" value="{% trans "Suchen" %}" class="btn btn-primary" id="submit-id-submit">
+        </div>
+      </form>
     </div>
-    <select class="form-control radius" id="id_range" name="range">
-      <option value="5" selected>{% blocktrans %}Umkreis wählen:{% endblocktrans %}</option>
-      <option value="10" {% if range == "10"%}selected{%endif%}>10 km</option>
-      <option value="25"{% if range == "25"%}selected{%endif%}>25 km</option>
-      <option value="50"{% if range == "50"%}selected{%endif%}>50 km</option>
-      <option value="100"{% if range == "100"%}selected{%endif%}>100 km</option>
-    </select>
-    <button type="submit" id="searchsubmit-button" type="button" value="Suchen" class="btn btn-search" onclick="triggerGoogleSearch()" >
-     {% blocktrans %}Suchen{% endblocktrans %} <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-right-circle" style="margin-top: -2px; margin-left: 10px" viewBox="0 0 16 16">
-      <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"></path>
-    </svg>
-    </button>
-    <button  type="submit" class="btn btn-search btn-2 "style="background-color:orange !important" onclick="submitWithoutLocation()">Egal wo, zeige mir alle Angebote</button>
-  </form>
-
-</div></div> 
-
-
+  </div>
 </div>
-
-
-</div>
-
-<script>
-  var unsure = false
-  function doSubmit(){
-    console.log("submitting")
-    {% if searchRequests == True%}
-    console.log("Searching requests. ")
-    document.getElementById("id_requests").value = 1
-    {%endif%}
-    if (unsure)
-    {
-      console.log("Unsure !")
-      document.getElementById("id_location").value= -1
-      document.getElementsByName("lat")[0].value= -1
-      document.getElementsByName("lng")[0].value= -1
-      document.getElementsByName("bb")[0].value= -1
-      range.value = -1
-
-    }
-  }
-  function submitWithoutLocation(){
-    unsure = true
-    document.getElementById("searchForm").submit()
-  }
-  function findGetParameters() {
-    var result = {},
-        tmp = [];
-    location.search
-        .substr(1)
-        .split("&")
-        .forEach(function (item) {
-          tmp = item.split("=");
-          result[tmp[0]] = tmp[1] 
-        });
-    return result;
-}
-  window.onload=function(){
-    console.log("Onload")
-    results = findGetParameters()
-    if ("city" in results)
-      {
-        document.getElementById("id_location").value = results.city
-      }
-    if ("range" in results)
-      {
-        range = results.range
-        document.getElementById("id_range").value = range
-      }
-  }
-  function selectFirstOnEnter(input) {  // store the original event binding function
-    console.log(input)
-    var _addEventListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
-    function addEventListenerWrapper(type, listener) {  // Simulate a 'down arrow' keypress on hitting 'return' when no pac suggestion is selected, and then trigger the original listener.
-        if (type == "keydown") { 
-            var orig_listener = listener;
-            listener = function(event) {
-                var suggestion_selected = $(".pac-item-selected").length > 0;
-                if (event.which == 13 && !suggestion_selected) { 
-                    var simulated_downarrow = $.Event("keydown", {keyCode: 40, which: 40}); 
-                    orig_listener.apply(input, [simulated_downarrow]); 
-                }
-                orig_listener.apply(input, [event]);
-            };
-        }
-        _addEventListener.apply(input, [type, listener]); // add the modified listener
-    }
-
-    if (input.addEventListener) { 
-        input.addEventListener = addEventListenerWrapper; 
-    } else if (input.attachEvent) { 
-        input.attachEvent = addEventListenerWrapper; 
-    }
-}
-var input = document.getElementById("id_location")
-selectFirstOnEnter(input)
-</script>
 {% endblock %}

@@ -27,7 +27,7 @@ from apps.iamorganisation.models import Organisation
 from .utils import send_manpower_offer_message, send_offer_message
 from .filters import OFFER_FILTERS, GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
 from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
-from .forms import OFFER_FORMS, AccommodationForm, GenericForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
+from .forms import OFFER_FORMS, AccommodationForm, GenericForm, LocationSearchForm, OfferTypeSearchForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
 from django.contrib.auth.decorators import login_required
 import re
 
@@ -162,13 +162,29 @@ def select_category(request):
     return render(request, 'offers/category_select.html', context)
     
 def search(request):
-    if  request.user.is_anonymous or not request.user.isOrganisation:
-        context ={"searchRequests": False}
-        if request.GET.get("requests", "False") == "true":
-            context["searchRequests"] = True
-        return render(request, 'offers/search.html', context)
+    searchingRequests = request.user.is_authenticated and request.user.isHelper
+    if request.method == 'POST':
+        locationForm = LocationSearchForm(request.POST)
+        selectionForm = OfferTypeSearchForm(request.POST)
+        if locationForm.is_valid():
+            getParams = {k:v for k,v in locationForm.cleaned_data.items() if v}
+            offersOrRequests = 'requests' if searchingRequests else 'offers'
+            getParams[offersOrRequests] = 'true'
+
+            if selectionForm.is_valid():
+                getParams['selected'] = [offersOrRequests + offerType for offerType, selected in selectionForm.cleaned_data.items() if selected]
+
+            queryString = urlencode(getParams, doseq=True)
+            return redirect('/offers/list?' + queryString)
     else:
-        return handle_filter(request)
+        locationForm = LocationSearchForm()
+        selectionForm = OfferTypeSearchForm()
+        context = {
+            'locationForm' : locationForm,
+            'selectionForm' : selectionForm,
+            'searchingRequests' : searchingRequests,
+        }
+        return render(request, 'offers/search.html', context)
 
 def getTranslationImage(request):
     logger.warning("Received: "+str(request.GET.dict()))

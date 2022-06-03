@@ -343,7 +343,7 @@
     {% if request.GET.no_controls%}style="visibility: hidden;" {% endif %}></div>
   <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
   <p class="listview">
-    <a id="results_as_list" href="{% url 'offers-index' %}?{{request.GET.urlencode}}" class="btn btn-yellow"
+    <a id="results_as_list" href="{% url 'listview' %}?{{request.GET.urlencode}}" class="btn btn-yellow"
       role="button" aria-pressed="true">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list"
         viewBox="0 0 16 16" style="margin-right: 10px; margin-top:-2px;">
