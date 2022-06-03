@@ -107,7 +107,7 @@ class ImageClass(models.Model):
 class ManpowerOffer(models.Model):
     DISTANCE_CHOICES=[('0', _('0-50km')),('1', _('50-100km')),('2', _('100-200km')), ('3', _('200-400km')), ('4', _('400-600km')), ('5', _('Komplett Flexibel'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    distanceChoices = models.CharField(_("Entfernung"), max_length=1, choices=DISTANCE_CHOICES, default="0")
+    distanceChoices = models.CharField(_("Einsatzradius"), max_length=1, choices=DISTANCE_CHOICES, default="0")
     canGoforeign = models.BooleanField(_("Auslandseinsatz möglich"), default=False)
     hasExperience_crisis = models.BooleanField(_("Erfahrung mit Krisenmanagement"), default=False)
     hasDriverslicense = models.BooleanField(_("Hat Fahrerlaubnis"), default=False)

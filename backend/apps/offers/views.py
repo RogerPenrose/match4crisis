@@ -534,7 +534,7 @@ def index(request):
         if 'offers' not in counts:
             counts["offers"] = {"types" : {}}
         if 'offers' not in context['filters']:
-            context["filters"]["requests"] = {}
+            context["filters"]["offers"] = {}
         mpOfferCount = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False).count()
         isSelected = 'manpower' in selected or 'offersMP' in selected
         counts["offers"]["types"]['MP'] = {"label" : "{} ({})".format(offerLabels['MP'], mpOfferCount), 'selected': isSelected}

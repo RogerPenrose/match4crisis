@@ -1,6 +1,6 @@
 import logging
 import json
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from os.path import dirname, abspath, join
 from django.db.models import Q
 from django.conf import settings
@@ -52,6 +52,16 @@ def mapviewjs(request):
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
+    # If there are no query parameters redirect to the default mapviews for the different user types
+    if not request.GET:
+        user = request.user
+        if not user.is_authenticated or user.isRefugee:
+            return redirect('/mapview/?offers=true')
+        elif user.isHelper:
+            return redirect('/mapview/?requests=true')
+        elif user.isOrganisation:
+            return redirect('/mapview/?manpower=true&selected=offersMP')
+
     startPosition =  [51.13, 10.018]
     zoom = 6
     getString = request.GET.urlencode()
