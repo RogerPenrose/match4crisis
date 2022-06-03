@@ -29,26 +29,6 @@ POPUP_CARDS = {
 
 logger = logging.getLogger("django")
 
-def mapviewjs(request):
-    context = {}
-    context["show"] = []
-    BASE= "/mapview/"
-    logger.warning(str(request.GET.dict()))
-    if not request.user.is_authenticated or not request.user.isOrganisation :
-        if request.GET.get("show_mp", ""):
-            context["categories"] = [BASE+"HelpRequests"]
-        else:
-            context["categories"] = [BASE+"AccommodationOffers",  BASE+"BuerocraticOffers", BASE+"ChildcareOffers", BASE+"JobOffers", BASE+"MedicalOffers", BASE+"TransportationOffers", BASE+"TranslationOffers"]
-    else:
-        #get only MP
-        context["categories"] = [BASE+"ManpowerOffers"]
-    for key,value in request.GET.dict().items():
-        if value == "True" and key != "show_mp":
-            context["show"].append(key.replace("Offers","").replace("Requests", ""))
-    logger.warning(str(request.GET.dict()))
-    logger.warning("rendering mapview JS ? "+str(context))
-    return render(request, 'mapview/mapview.js', context , content_type='text/javascript')
-
 # Should be safe against BREACH attack because we don't have user input in reponse body
 @gzip_page
 def index(request):
@@ -64,7 +44,6 @@ def index(request):
 
     startPosition =  [51.13, 10.018]
     zoom = 6
-    getString = request.GET.urlencode()
     if 'lat' in request.GET and 'lng' in request.GET:
         startPosition = [float(request.GET.get("lat")),  float(request.GET.get("lng"))]
         zoom = 10

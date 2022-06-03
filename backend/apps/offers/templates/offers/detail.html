@@ -99,7 +99,7 @@
   }
 </script>
 
-<script type="text/javascript" src="{% url 'create_js' %}" async></script>
+<script type="text/javascript" src="{% static 'js/create_js' %}" async></script>
 {% endblock %}
 
 {% load crispy_forms_tags %}
@@ -310,7 +310,8 @@
 
 
       {% elif generic.offerType == "CL"%}
-      <p><span>{%blocktrans%}Art der Kinderbetreuung:{%endblocktrans%} {{ detail.get_helpType_childcare_display}}</span></p>
+      <p><span>{%blocktrans%}Art der Kinderbetreuung:{%endblocktrans%} {{ detail.get_helpType_childcare_display}} 
+        {%if detail.helpType_childcare == "HT"%}({{ detail.get_timeOfDay_display }}){%endif%}</span></p>
       <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person"
           viewBox="0 0 16 16">
@@ -318,9 +319,6 @@
             d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
         </svg><span>{%blocktrans%}Anzahl an Kindern:{%endblocktrans%} {{ detail.numberOfChildren }}</span>
       </p>
-      {% if detail.helpType_childcare != "GT"%}
-      <p><span>{{ detail.get_timeOfDay_display }}</span></p>
-      {%endif%}
       {% if detail.hasExperience %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
           viewBox="0 0 16 16">
@@ -422,11 +420,13 @@
       {%endif%}
 
       {% elif generic.offerType == "MP" %}
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar"
-          viewBox="0 0 16 16">
-          <path
-            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
-        </svg>
+      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" stroke-width="1.5" stroke="currentColor" class="bi bi-calendar"
+          viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-width="2" fill="white" />
+          <circle cx="12" cy="12" r="1" fill="black"/>
+          <polyline points="12 12 20 12"></polyline>
+          <polyline points="18 14 20 12 18 10"></polyline>
+  </svg>
         <span>{%blocktrans %}Umkreis:{% endblocktrans%} {{detail.get_distanceChoices_display }}</span>
       </p>
       {% if detail.hasExperience_crisis %}
