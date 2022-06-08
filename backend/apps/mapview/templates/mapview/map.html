@@ -53,10 +53,6 @@
     padding: 10px 0px;
   }
 
-  .control-container {
-    margin-top: 5px;
-  }
-
   .leaflet-overlay-pane svg {
     display: none;
   }
@@ -290,6 +286,16 @@
   #location:placeholder-shown~svg.remove-location {
     display:none;
   }
+
+  .map-overlay{
+    position: absolute;
+    left: 0;
+    right: 0; 
+  }
+
+  #controlContainer {
+    margin-top: 60px;
+  }
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
@@ -297,50 +303,52 @@
 {% endblock %}
 
 {% block content %}
-<div id="mapContainer" style="z-index:1; position: relative;">
-  <div class="container">
-    <div class="row no-gutters">
-      <div class="col">
-        <input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}"
-          class="search-input" />
-        <svg class="bi bi-search" width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd"
-            d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
-            clip-rule="evenodd" />
-          <path fill-rule="evenodd"
-            d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-            clip-rule="evenodd" />
-        </svg>
+<div id="searchContainer" class="container map-overlay">
+  <div class="row no-gutters">
+    <div class="col">
+      <input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}"
+        class="search-input" />
+      <svg class="bi bi-search" width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+          clip-rule="evenodd" />
+        <path fill-rule="evenodd"
+          d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+          clip-rule="evenodd" />
+      </svg>
 
-        <svg class="remove-location bi bi-x-circle" title="{% trans "Standort entfernen" %}" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" 
-          fill="currentColor" viewBox="0 0 17 16" onclick="mapViewPage.clearLocationSearch();">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-          <path
-              d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+      <svg class="remove-location bi bi-x-circle" title="{% trans "Standort entfernen" %}" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" 
+        fill="currentColor" viewBox="0 0 17 16" onclick="mapViewPage.clearLocationSearch();">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+        <path
+            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+      </svg>
+    </div>
+    <div class="col-auto filter-button-container">
+      <a class="filter-button" data-toggle="modal" data-target="#exampleModal">
+        <svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+          <g id="Layer_32" data-name="Layer 32">
+            <path
+              d="M33.5,19.14V12a1.5,1.5,0,0,0-3,0v7.14a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V30.88C39.52,29.34,39.52,20.67,33.5,19.14ZM32,28.07a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,32,28.07Z" />
+            <path
+              d="M53.5,32a6.07,6.07,0,0,0-4.56-5.87V12a1.5,1.5,0,0,0-3,0V26.13a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V37.87A6.07,6.07,0,0,0,53.5,32Zm-6,3.06a3.06,3.06,0,0,1,0-6.12A3.06,3.06,0,0,1,47.46,35.06Z" />
+            <path
+              d="M18.06,37V12a1.5,1.5,0,1,0-3,0V37a6.07,6.07,0,0,0,0,11.73V52a1.5,1.5,0,0,0,3,0V48.74A6.07,6.07,0,0,0,18.06,37Zm-1.5,8.94a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,16.56,45.94Z" />
+          </g>
         </svg>
-      </div>
-      <div class="col-auto filter-button-container">
-        <a class="filter-button" data-toggle="modal" data-target="#exampleModal">
-          <svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-            <g id="Layer_32" data-name="Layer 32">
-              <path
-                d="M33.5,19.14V12a1.5,1.5,0,0,0-3,0v7.14a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V30.88C39.52,29.34,39.52,20.67,33.5,19.14ZM32,28.07a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,32,28.07Z" />
-              <path
-                d="M53.5,32a6.07,6.07,0,0,0-4.56-5.87V12a1.5,1.5,0,0,0-3,0V26.13a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V37.87A6.07,6.07,0,0,0,53.5,32Zm-6,3.06a3.06,3.06,0,0,1,0-6.12A3.06,3.06,0,0,1,47.46,35.06Z" />
-              <path
-                d="M18.06,37V12a1.5,1.5,0,1,0-3,0V37a6.07,6.07,0,0,0,0,11.73V52a1.5,1.5,0,0,0,3,0V48.74A6.07,6.07,0,0,0,18.06,37Zm-1.5,8.94a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,16.56,45.94Z" />
-            </g>
-          </svg>
-          <span>
-            {% blocktrans %}Filter{% endblocktrans %}
-          </span>
-        </a>
-      </div>
+        <span>
+          {% blocktrans %}Filter{% endblocktrans %}
+        </span>
+      </a>
     </div>
   </div>
+</div>
 
-  <div id="controlContainer" class="container control-container"
-    {% if request.GET.no_controls%}style="visibility: hidden;" {% endif %}></div>
+<div id="controlContainer" class="container control-container map-overlay"
+  {% if request.GET.no_controls%}style="visibility: hidden;" {% endif %}></div>
+
+<div id="mapContainer" style="z-index:1; position: relative;">
+  
   <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
   <p class="listview">
     <a id="results_as_list" href="{% url 'listview' %}?{{request.GET.urlencode}}" class="btn btn-yellow"
