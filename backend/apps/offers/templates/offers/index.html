@@ -351,72 +351,6 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 {% endblock %}
 
 {% block content %}
-
-<script>
-  /*
-  function search() {
-    document.getElementById("list_checkbox").checked = true
-    form = new FormData(document.searchForm)
-
-    console.log("Sending:" + JSON.stringify(form))
-    document.searchForm.submit()
-  } {
-    %
-    if currentFilter %
-  }
-
-  function search_with_current_filter(target) {
-    var page = {
-      {
-        page
-      }
-    }
-    var myForm = document.getElementById('searchForm');
-    //var data = {{ currentFilter|safe}}
-    var data = new FormData(myForm)
-    for (var pair of data.entries()) {
-      if (pair[1] != "") {
-        data[pair[0]] = pair[1]
-      }
-    }
-    var city = "{{currentFilter.city|safe}}"
-    data.city = city.slice(2, city.length - 2)
-    console.log(data.city)
-    data.show_list = "True"
-    var csrfmiddlewaretoken = '{{ csrf_token }}'
-    if (target == "+1")
-      data.page = page + 1
-    else if (target == "-1")
-      data.page = page - 2
-    data.show_list = "True"
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "handle_filter", true);
-    xhr.setRequestHeader("X-CSRFToken", csrfmiddlewaretoken);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    var formBody = [];
-    for (var property in data) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(data[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        document.open();
-        document.write(xhr.responseText);
-        document.close();
-
-      } else {
-        // Handle error
-      }
-    }
-    xhr.send(formBody);
-  } {
-    %
-    endif %
-  }
-  */
-</script>
 <div class="container">
   <div style="height:40px"></div>
   <div class="row align-self-center align-items-center top-menu">
@@ -590,25 +524,9 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
           {% endif %}
         </form>
       </div>
-
-
-    </div>
-  </div>
-
-  <div class="row align-self-center align-items-center" style="margin-top:15px;">
-    <div class="col-12 text-center" style="text-align:center;">
-      <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2>
     </div>
   </div>
 </div>
-{% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;"> {% if page|add:"0" > 1 %}<a
-    href="#" onclick="search_with_current_filter('-1')">
-    </a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page|add:"1"  }} {% blocktrans %}von{% endblocktrans %}
-      {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#"
-      onclick="search_with_current_filter('+1')">>
-  </a>{%endif%}
-</div>{% endif %}
-</form>
 
 <div class="container cards">
   {% for entry in page_obj %}
