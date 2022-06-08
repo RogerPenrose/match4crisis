@@ -9,7 +9,6 @@ from apps.iamorganisation.filters import HelpRequestFilter
 from apps.accounts.views import DashboardView
 from apps.accounts.decorator import helperRequired
 from apps.offers.models import OFFER_CARD_NAMES, GenericOffer, getSpecificOffers, OFFER_MODELS
-from apps.offers.views import mergeImages
 
 from .forms import ChooseHelpForm
 from .models import Helper
@@ -26,9 +25,9 @@ class HelperDashboardView(DashboardView):
 
         firstname = request.user.first_name
         userOffers = GenericOffer.objects.filter(userId=request.user.id)
-        incompleteOffers = mergeImages(getSpecificOffers(userOffers.filter(incomplete=True)))
-        activeOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=True)))
-        pausedOffers =  mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
+        incompleteOffers = getSpecificOffers(userOffers.filter(incomplete=True))
+        activeOffers =  getSpecificOffers(userOffers.filter(active=True))
+        pausedOffers =  getSpecificOffers(userOffers.filter(active=False, incomplete=False))
 
         context = {
             "pausedOffers": pausedOffers,
@@ -77,7 +76,7 @@ def choose_help(request):
 @helperRequired
 def paused_offers(request):
     userOffers = GenericOffer.objects.filter(userId=request.user.id)
-    pausedOffers = mergeImages(getSpecificOffers(userOffers.filter(active=False, incomplete=False)))
+    pausedOffers = getSpecificOffers(userOffers.filter(active=False, incomplete=False))
     context = {"offers": pausedOffers}
     return render(request, "paused_offers.html", context)
 
@@ -96,6 +95,6 @@ def running_offers(request):
     logger.warning("Getting: "+str(userOffers.count()))
     for offer in userOffers:
         logger.warning("Type: "+offer.get_offerType_display())
-    runningOffers = mergeImages(getSpecificOffers(userOffers.filter(active=True, incomplete=False)))
+    runningOffers = getSpecificOffers(userOffers.filter(active=True, incomplete=False))
     context = {"offers": runningOffers}
     return render(request, "running_offers.html", context)

@@ -612,8 +612,8 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
 
 <div class="container cards">
   {% for entry in page_obj %}
-  {% if entry.offer %}
-  {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+  {% if entry.genericOffer %}
+  {% include offercardnames|getdictvalue:entry.genericOffer.offerType %}
   {% else %}
   {% include 'help-request-card.html' %}
   {% endif %}

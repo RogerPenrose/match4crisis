@@ -381,8 +381,19 @@
         </span>
       </p>
       {% else %}
-      <span>{%blocktrans with radius=detail.distance%} Bin mobil im Umkreis von
-        {{radius}}km{%endblocktrans%}</span>
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" stroke-width="1.5" stroke="currentColor"
+          class="bi bi-radius" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" stroke-width="2" fill="white" />
+          <circle cx="12" cy="12" r="1" fill="black" />
+          <polyline points="12 12 20 12"></polyline>
+          <polyline points="18 14 20 12 18 10"></polyline>
+        </svg>
+        <span>
+        {% blocktrans with distance=detail.distance %}Kann im Umkreis von {{distance}}km
+        helfen{% endblocktrans %}
+        </span>
+      </p>
       {%endif%}
 
       {% elif generic.offerType == "BU" %}

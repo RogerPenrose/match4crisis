@@ -102,7 +102,7 @@ class BuerocraticOffer(models.Model):
 
 class ImageClass(models.Model):
     image = models.ImageField(upload_to='users/%Y/%m/%d/', default = 'no-img.png', blank=False)
-    offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT)
+    offerId = models.ForeignKey(GenericOffer, on_delete=models.PROTECT, related_name="images")
     image_id = models.IntegerField(primary_key=True)
 class ManpowerOffer(models.Model):
     DISTANCE_CHOICES=[('0', _('0-50km')),('1', _('50-100km')),('2', _('100-200km')), ('3', _('200-400km')), ('4', _('400-600km')), ('5', _('Komplett Flexibel'))]

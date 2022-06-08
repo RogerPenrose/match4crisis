@@ -1,32 +1,61 @@
 {% load static %}
 {% load i18n %}
 
-<a href="/offers/{{ entry.offer.genericOffer.id }}/{% if redirectToEdit %}edit{% endif %}">        
-    <div class="col-12 col-lg-6 offer-card"> 
+<a href="/offers/{{ entry.genericOffer.id }}/{% if redirectToEdit %}edit{% endif %}">
+  <div class="col-12 col-lg-6 offer-card">
+    <div class="row align-self-center align-items-center">
 
-        <div class="row align-self-center align-items-center">
-        <div class="col-5 col-sm-4">
-          {% if entry.image.url|length > 0 %}
-          <div class="background-photo" style="background-image: url({{ entry.image.url }})"></div>
-          {% else %}
-            <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
-          {%endif%}
-          </div>
-        <div class="description col-7 col-sm-8">
-<h3>{% if entry.offer.genericOffer.requestForHelp %}{% trans "Gesuch: " %}{%else%}{% trans "Angebot: "%}{%endif%}{{ entry.offer.genericOffer.get_offerType_display }} | {{entry.offer.get_helpType_display }} </h3>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt-fill" viewBox="0 0 16 16">
-  <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-</svg>   {% trans "Keine Angabe" as noLocation %} {% firstof entry.offer.genericOffer.location noLocation %}</p>
-{% if entry.offer.hasEducation_welfare %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
-</svg>{%blocktrans%} Ausbildung vorhanden {%endblocktrans%}</p>
-<p>{{ entry.offer.typeOfEducation}}</p>{%endif%}
-<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-text" viewBox="0 0 16 16">
-<path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-<path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
-</svg> {% blocktrans %}Beschreibung{% endblocktrans %}: {{entry.offer.genericOffer.offerDescription}} </p>
-</div><div class="col-1 col-sm-1 status"> <p></p></div>
-        </div>
+      <div class="col-4">
+        {% if entry.genericOffer.images.count > 0 %}
+        <div class="background-photo"
+          style="background-image: url({{entry.genericOffer.images.first.image.url}})"></div>
+        {% else %}
+        <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
+        {%endif%}
+      </div>
 
-    </div>   
-    </a>  
+      <div class="description col-8">
+        <h3>
+          {{entry.genericOffer.offerTitle}}
+        </h3>
+        <p class="offer-type-title" style="font-weight: 400">
+          {% if entry.genericOffer.requestForHelp %}{% trans "Gesuch: " %}{%else%}{% trans "Angebot: "%}{%endif%}{{ entry.genericOffer.get_offerType_display }}
+        </p>
+
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buggy"
+            viewBox="0 0 50 43">
+            <path class="cls-1"
+              d="M45.48 4A13.81 13.81 0 0 0 26 4l-1.32 1.32L23.4 4A13.8 13.8 0 0 0 3.89 4c-5.37 5.37-5.09 14.44.28 19.81l1 1 16.77 16.81a3.88 3.88 0 0 0 5.48 0L44.2 24.84l1-1c5.36-5.36 5.65-14.43.28-19.84zm-1 10.33a9.21 9.21 0 0 1-2.77 5.87l-1.05 1.1-16 16-16-16-1.02-1.06a9.22 9.22 0 0 1-2.78-5.87A8.8 8.8 0 0 1 14.21 5a9.17 9.17 0 0 1 5.87 2.8l1.07 1.06L23 10.71l2.64 2.64a2.61 2.61 0 1 0 3.69-3.7l-.95-1 1.12-1.07a8.8 8.8 0 0 1 15 6.79z" />
+          </svg>
+          {{ entry.get_helpType_display }}
+        </p>
+
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt"
+            viewBox="0 0 16 16">
+            <path
+              d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+          </svg>
+          {% trans "Kein Standort angegeben" as noLocation %}
+          {% firstof entry.genericOffer.location noLocation %}
+        </p>
+
+        {% if entry.hasEducation_welfare %}
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
+            viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
+          </svg>
+          {% if entry.genericOffer.requestForHelp %}{% trans "Sollte medizinische Erfahrung haben" %}{% else %}{% trans "Hat medizinische Erfahrung" %}{% endif %}
+        </p>
+        {% endif %}
+      </div>
+      <div class="col-1 col-sm-1 status">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+</a>

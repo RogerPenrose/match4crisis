@@ -124,7 +124,7 @@ def index(request):
 
     context["offercardnames"] = OFFER_CARD_NAMES
 
-    paginator = Paginator([{"offer" : o} for o in entries] + helpRequests, ENTRIES_PER_PAGE)
+    paginator = Paginator(entries + helpRequests, ENTRIES_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -176,22 +176,6 @@ def alter_url_query(request):
     newQueryString = urlencode(query, doseq=True)
 
     return redirect(referrerURL._replace(query=newQueryString).geturl())
-
-def getCityFromCoordinates(locationData):
-    reverse_geocode_result = gmaps.reverse_geocode(locationData)
-    returnVal = {}
-    for entry in reverse_geocode_result:
-        if "administrative_area_level_2" in entry["types"]:
-            returnVal = {
-            "latMin": entry["geometry"]["bounds"]["southwest"]["lat"], 
-            "lngMin": entry["geometry"]["bounds"]["southwest"]["lng"], 
-            "lngMax": entry["geometry"]["bounds"]["northeast"]["lng"], 
-            "latMax": entry["geometry"]["bounds"]["northeast"]["lat"],}
-    for x in reverse_geocode_result[0]['address_components']:
-        if 'locality' in x["types"]:
-            returnVal["city"] = x["long_name"]
-    
-    return returnVal
 
 def kmInLng(km, lat):
     lng = float(km)/111.320*math.cos(math.radians(lat))
@@ -281,32 +265,6 @@ def getTranslationImage(request):
         context = {"firstLanguage" : rawData[0].decode("utf-8"), "secondLanguage" : rawData[1].decode("utf-8"), "thirdLanguage": rawData[2].decode("utf-8"),"fourthLanguage": rawData[3].decode("utf-8")}
         return render(request, 'offers/4-languages.svg', context=context,content_type="image/svg+xml")
         
-  
-def mergeImages(offers):
-    resultOffers = []
-    for entry in  offers: 
-        images = ImageClass.objects.filter(offerId= entry.genericOffer.id)
-        location = {}
-        if entry.genericOffer.location == "" or entry.genericOffer.location == " " :
-            if  entry.genericOffer.lat is not None and entry.genericOffer.lng is not None:
-                location = getCityFromCoordinates({"lat":entry.genericOffer.lat, "lng": entry.genericOffer.lng})
-                if location.get("city"):
-                    entry.genericOffer.location =  location["city"]
-                else:
-                    entry.genericOffer.location = ""
-            else:
-                entry.genericOffer.location = ""
-            entry.genericOffer.save()  
-        location = {"city": entry.genericOffer.location}
-        newEntry =  {
-            "image" : None,
-            "offer" : entry,
-            "location": location
-        }
-        if len(images) > 0:
-            newEntry["image"] = images[0].image
-        resultOffers.append(newEntry)
-    return resultOffers
 
 @login_required
 def delete_offer(request, offer_id):

@@ -160,9 +160,9 @@ class TransportationFilter(OfferFilter):
     class Meta:
         model = TransportationOffer
         fields = { 
+            'helpType' : ['exact'], 
             'numberOfPassengers' : ['gte'],
             'distance' : ['exact'], 
-            'helpType' : ['exact'], 
             'typeOfCar' : ['exact']
             }
         filter_overrides = FILTER_OVERRIDES

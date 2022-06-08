@@ -1,38 +1,79 @@
 {% load static %}
 {% load i18n %}
 
-<a href="/offers/{{ entry.offer.genericOffer.id }}/{% if redirectToEdit %}edit{% endif %}">        
-    <div class="col-12 col-lg-6 offer-card"> 
+<a href="/offers/{{ entry.genericOffer.id }}/{% if redirectToEdit %}edit{% endif %}">
+  <div class="col-12 col-lg-6 offer-card">
 
-        <div class="row align-self-center align-items-center">
-        <div class="col-5 col-sm-4">
-          {% if entry.image.url|length > 0 %}
-          <div class="background-photo" style="background-image: url({{ entry.image.url }})"></div>
-          {% else %}
-            <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
-          {%endif%}
-          </div>
-        <div class="description col-7 col-sm-8">
-<h3>{% if entry.offer.genericOffer.requestForHelp %}{% trans "Gesuch: " %}{%else%}{% trans "Angebot: "%}{%endif%}{{ entry.offer.genericOffer.get_offerType_display }} </h3>
-<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
-<path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-</svg> {% blocktrans %}Standort{% endblocktrans %}:  {% trans "Keine Angabe" as noLocation %} {% firstof entry.offer.genericOffer.location noLocation %} | {%blocktrans%} Einsatzradius: {%endblocktrans%}{{entry.offer.get_distanceChoices_display}} </p>
-{% if entry.offer.hasExperience_crisis %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
-</svg>{%blocktrans%} Krisenerfahrung {%endblocktrans%}</p>{%endif%}
-{% if entry.offer.hasMedicalExperience %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
-</svg>{%blocktrans%} Medizinische Ausbildung {%endblocktrans%}</p>{%endif%}
-{% if entry.offer.hasDriverslicense %}<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
-  <path fill-rule="evenodd" d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z"/>
-</svg>{%blocktrans%} Führerschein {%endblocktrans%}</p>{%endif%}
-<p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-text" viewBox="0 0 16 16">
-<path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"/>
-<path d="M3 5.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM3 8a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9A.5.5 0 0 1 3 8zm0 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
-</svg> {% blocktrans %}Beschreibung{% endblocktrans %}: {{entry.offer.genericOffer.offerDescription}} </p>
-</div><div class="col-1 col-sm-1 status"> <p></p></div>
-        </div>
+    <div class="row align-self-center align-items-center">
+      <div class="col-4">
+        {% if entry.genericOffer.images.count > 0 %}
+        <div class="background-photo" style="background-image: url({{entry.genericOffer.images.first.image.url}})"></div>
+        {% else %}
+        <div class="background-photo" style="background-image: url({% static 'img/offers/no-acc-img.jpg' %})"></div>
+        {%endif%}
+      </div>
+      <div class="description col-8">
+        <h3>
+          {{entry.genericOffer.offerTitle}}
+        </h3>
+        <p class="offer-type-title" style="font-weight: 400">
+          {% if entry.genericOffer.requestForHelp %}{% trans "Gesuch: " %}{%else%}{% trans "Angebot: "%}{%endif%}{{ entry.genericOffer.get_offerType_display }}
+        </p>
 
-    </div>   
-    </a>  
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt"
+            viewBox="0 0 16 16">
+            <path
+              d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
+            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+          </svg> {% trans "Kein Standort angegeben" as noLocation %}
+          {% firstof entry.genericOffer.location noLocation %}
+        </p>
+
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" stroke-width="1.5" stroke="currentColor" class="bi bi-radius"
+          viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-width="2" fill="white" />
+            <circle cx="12" cy="12" r="1" fill="black"/>
+            <polyline points="12 12 20 12"></polyline>
+            <polyline points="18 14 20 12 18 10"></polyline>
+          </svg>
+          {%blocktrans%} Einsatzradius:{%endblocktrans%} {{entry.get_distanceChoices_display}} 
+        </p>
+          
+         
+        {% if entry.hasExperience_crisis %}
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+            fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
+          </svg>
+          {% if entry.genericOffer.requestForHelp %}{% trans "Sollte Krisenerfahrung haben" %}{% else %}{% trans "Hat Krisenerfahrung" %}{% endif %}
+          </p>
+        {%endif%}
+        {% if entry.hasMedicalExperience %}
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+            fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
+          </svg>
+          {% if entry.genericOffer.requestForHelp %}{% trans "Sollte medizinische Erfahrung haben" %}{% else %}{% trans "Hat medizinische Erfahrung" %}{% endif %}
+        </p>
+        {%endif%}
+        {% if entry.hasDriverslicense %}
+        <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+            fill="currentColor" class="bi bi-node-plus" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
+          </svg>
+          {% if entry.genericOffer.requestForHelp %}{% trans "Sollte Führerschein haben" %}{% else %}{% trans "Hat Führerschein" %}{% endif %}
+        </p>
+        {%endif%}
+        
+      </div>
+      <div class="col-1 col-sm-1 status">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+</a>

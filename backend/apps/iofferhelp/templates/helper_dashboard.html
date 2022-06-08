@@ -19,7 +19,7 @@ Dashboard - Helfende
     cursor: pointer;
   }
   .settings { display: flow-root;}
-.incomplete-offer .description p { display:none;}
+.incomplete-offer .description p:not(.offer-type-title) { display:none;}
   .status p {  padding: 8px; border-radius: 10px;}
   .active-offer .status p { background-color: rgb(0, 165, 0); }
   .incomplete-offer .status p { background-color: red; }
@@ -367,7 +367,7 @@ Dashboard - Helfende
 
   <div class="container cards row incomplete-offer">
     {% for entry in incompleteOffers %}
-    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType with redirectToEdit=True %}
+    {% include offercardnames|getdictvalue:entry.genericOffer.offerType with redirectToEdit=True %}
     {% endfor %}
   </div>
   {% endif %}
@@ -381,7 +381,7 @@ Dashboard - Helfende
 
   <div class="container cards row active-offer">
     {% for entry in activeOffers %}
-    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+    {% include offercardnames|getdictvalue:entry.genericOffer.offerType %}
     {% empty %}
     <p style="padding: 0px 15px;">
       {% blocktrans %}
@@ -398,7 +398,7 @@ Dashboard - Helfende
 
   <div class="container cards row paused-offer">
     {% for entry in pausedOffers %}
-    {% include offercardnames|getdictvalue:entry.offer.genericOffer.offerType %}
+    {% include offercardnames|getdictvalue:entry.genericOffer.offerType %}
     {% empty %}
     <p style="padding: 0px 15px;">
     {% blocktrans %}
