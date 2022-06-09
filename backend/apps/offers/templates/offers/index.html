@@ -341,6 +341,12 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
     display:none;
   }
 
+  #noResultsNotice {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
 </style>
 
 {% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
@@ -533,6 +539,12 @@ input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
   {% else %}
   {% include 'help-request-card.html' %}
   {% endif %}
+
+  {% empty %}
+  <p id="noResultsNotice">
+    {{ noResultsNotice }}
+  </p>
+  <hr>
   {% endfor %}
 </div>
 

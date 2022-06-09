@@ -1,36 +1,26 @@
 import re
-from tabnanny import check
-from urllib.parse import parse_qs, parse_qsl, urlencode, urlparse
+from urllib.parse import parse_qs, urlencode, urlparse
 from django.shortcuts import get_object_or_404,render, redirect
 import logging
-from os.path import dirname, abspath, join
 import json
 import googlemaps
-from django.conf import settings
 import math
 import base64
-from django.db.models.query import QuerySet
-from django.template.loader import get_template
-from django.templatetags.static import static
 from django.utils.translation import gettext_lazy as _
-from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.contrib.sites.shortcuts import get_current_site
-from apps.accounts.models import User
-from django.utils import timezone
 from django.forms.models import model_to_dict
-from django.http import Http404, HttpResponse, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect, JsonResponse
 from django.contrib.staticfiles.storage import staticfiles_storage
 from apps.ineedhelp.models import Refugee
 from apps.iamorganisation.models import HelpRequest, Organisation
 from apps.iamorganisation.filters import HelpRequestFilter
 from .utils import send_manpower_offer_message, send_offer_message
-from .filters import OFFER_FILTERS, GenericFilter, AccommodationFilter, TranslationFilter, TransportationFilter, BuerocraticFilter, ManpowerFilter,  ChildcareFilter, WelfareFilter, JobFilter
-from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, AccommodationOffer, TranslationOffer, TransportationOffer, ImageClass, BuerocraticOffer, ManpowerOffer, ChildcareOffer, WelfareOffer, JobOffer
-from .forms import OFFER_FORMS, AccommodationForm, GenericForm, LocationSearchForm, OfferTypeSearchForm, TransportationForm, TranslationForm, ImageForm, BuerocraticForm, ManpowerForm, ChildcareForm, WelfareForm, JobForm
+from .filters import OFFER_FILTERS, ManpowerFilter
+from .models import OFFER_CARD_NAMES, OFFER_MODELS, GenericOffer, ImageClass, ManpowerOffer
+from .forms import OFFER_FORMS, GenericForm, LocationSearchForm, OfferTypeSearchForm, ImageForm
 from django.contrib.auth.decorators import login_required
-import re
 
 gmaps = googlemaps.Client(key='AIzaSyAuyDEd4WZh-OrW8f87qmS-0sSrY47Bblk')
 # Helper object to map some unfortunate misnamings etc and to massively reduce clutter below.      
@@ -65,7 +55,7 @@ def index(request):
                 groupCount += specOfferCount
                 if isSelected:
                     offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-                    curFilter = OFFER_FILTERS[abbr](request.GET, queryset=offers, prefix="offers" + abbr)
+                    curFilter = OFFER_FILTERS[abbr](getData, queryset=offers, prefix="offers" + abbr)
                     entries += curFilter.qs
                     context["filters"]["offers"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
@@ -84,7 +74,7 @@ def index(request):
             groupCount += specOfferCount
             if isSelected:
                 requests = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
-                curFilter = OFFER_FILTERS[abbr](request.GET, queryset=requests, prefix="requests" + abbr)
+                curFilter = OFFER_FILTERS[abbr](getData, queryset=requests, prefix="requests" + abbr)
                 entries += curFilter.qs
                 context["filters"]["requests"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
@@ -100,7 +90,7 @@ def index(request):
         counts["offers"]["types"]['MP'] = {"label" : "{} ({})".format(offerLabels['MP'], mpOfferCount), 'selected': isSelected}
         if isSelected:
             mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
-            mpFilter = ManpowerFilter(request.GET, queryset=mpOffers, prefix='offersMP')
+            mpFilter = ManpowerFilter(getData, queryset=mpOffers, prefix='offersMP')
             entries += mpFilter.qs
             context["filters"]["offers"]["MP"] = {'filter' : mpFilter, 'label' : offerLabels['MP']}
 
@@ -111,12 +101,12 @@ def index(request):
         counts["helpRequests"] = {"label" : "{} ({})".format(_("Hilfeaufrufe"), hrCount), 'selected': isSelected}
         if isSelected:
             helpRequestsUnfiltered = HelpRequest.objects.all()
-            curFilter = HelpRequestFilter(request.GET, queryset=helpRequestsUnfiltered, prefix="helpRequests")
+            curFilter = HelpRequestFilter(getData, queryset=helpRequestsUnfiltered, prefix="helpRequests")
             helpRequests = list(curFilter.qs)
             context["helpRequestsFilter"] = {'filter' : curFilter, 'label' : _("Hilfeaufrufe")}
 
-    if 'bb' in request.GET:
-        bb = json.loads(request.GET.get('bb'))
+    if 'bb' in getData:
+        bb = json.loads(getData.get('bb'))
         entries = [e for e in entries if e.genericOffer.lat and e.genericOffer.lng and bb['south'] <= e.genericOffer.lat <= bb['north']  and bb['west']  <= e.genericOffer.lng <= bb['east']]
         helpRequests = [e for e in helpRequests if e.lat and e.lng and bb['south'] <= e.lat <= bb['north']  and bb['west']  <= e.lng <= bb['east']]
 
@@ -124,8 +114,21 @@ def index(request):
 
     context["offercardnames"] = OFFER_CARD_NAMES
 
-    paginator = Paginator(entries + helpRequests, ENTRIES_PER_PAGE)
-    page_number = request.GET.get('page')
+    joinedEntries = entries + helpRequests
+
+    if not joinedEntries:
+        if not selected:
+            context['noResultsNotice'] = _("Keine Ergebnisse. Probiere, eine der Kategorien auszuwählen.")
+        elif 'location' in getData:
+            context['noResultsNotice'] = _("Keine Ergebnisse um {location}. Probiere, in einem größeren Umkreis zu suchen.").format(location=getData.get('location'))
+        elif any(re.match('.+-.+', k) for k in getData.keys()):
+            context['noResultsNotice'] = _("Keine Ergebnisse. Probiere, ein Paar der ausgewählten Filter zu entfernen.")
+        else:
+            context['noResultsNotice'] = _("Keine Ergebnisse. Probiere es später noch einmal.")
+
+
+    paginator = Paginator(joinedEntries, ENTRIES_PER_PAGE)
+    page_number = getData.get('page')
     page_obj = paginator.get_page(page_number)
 
     context["page_obj"] = page_obj
