@@ -1,109 +1,52 @@
 #mapContainer {
   min-height: 480px;
 }
-@media only screen and (max-width: 767px) {
-  .map-dropdown,
-  .map-input {
-    margin-bottom: 5px;
-  }
-}
-.map-dropdown {
-  height: 2.35rem;
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-.map-input {
-  height: calc(2.25rem + 2px);
-  padding: 0.375rem 0.75rem;
-  font-size: 1rem;
-  line-height: 1.5;
-  color: #495057;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  transition: border-color 0.15s ease-in-out, box-;
-}
-head {
-  background-color: #7dd1c5;
-  font-family: "proxima-nova", sans-serif;
-}
-.mt-2 {
-  background-color: black;
-  color: white;
-  text-align: center;
-  font-family: "proxima-nova", sans-serif;
-}
-h2 {
-  font-family: "proxima-nova", sans-serif;
-  text-align: center;
-}
-/*form {
-	font-family:'Open Sans', sans-serif;
-  margin: 2%;
-	text-align:left;
-	border-left: 10px solid #36a0d9;
-	border-radius: 5px;
-	background-color:#7eaac2;
-	padding-top:15px;
-	padding-bottom:15px;
-	padding-right:10px;
-	padding-left:10px;
+
+.map-overlay{
+  position: absolute;
+  left: 0;
+  right: 0; 
 }
 
-
-label[for=id_gender]::before {
-	content: "\A \A Allgemeines \A";
-
-    white-space: pre;
+#controlContainer {
+  margin-top: 60px;
 }
 
-label[for=id_gender] {
-	margin-right:2px;
-
-    white-space: pre;
-}
-
-label[for=id_famulaturreife]::before {
-	content: "\A \A Skills  \A ";
-    white-space: pre;
-}
-
-label[for=id_availability_start]::before {
-	content: "\A \A Verfügbarkeit  \A";
-    white-space: pre;
-}
-
-label[for=id_phone_number]::before {
-	content: "\A ";
-    white-space: pre;
-}
-
-label[for=id_braucht_bezahlung]::before {
-	content: "\A \A Bezahlung  \A";
-    white-space: pre;
-    text-align:center;
-}*/
-
-
-.leaflet-container a {
-  color: #ed0061;
+#controlContainer>div {
+  overflow: auto;
 }
 
 .leaflet-popup-content-wrapper {
   border-radius: 15px;
 }
 
-.leaflet-container {
-  font: 14px/1.5 "proxima-nova", Arial, Helvetica, sans-serif;
-  font-weight: 300;
+.leaflet-popup-content {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  min-width: 180px;
+}
+
+.leaflet-popup-content h4 {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.leaflet-popup-content svg {
+  margin-top: -2px;
+  margin-right: 2px;
+}
+
+.leaflet-popup-content p {
+  margin: 2px 0;
+  font-size: 13px;
+}
+
+.leaflet-popup-content .btn {
+  padding: .2rem 1rem;
+  width: 100%
+}
+.leaflet-container a {
+  color: #ed0061;
 }
 
 .leaflet-container a.leaflet-popup-close-button {
@@ -112,48 +55,62 @@ label[for=id_braucht_bezahlung]::before {
   font: 30px/30px proxima-nova, Verdana, sans-serif;
 }
 
-.footer {
-  z-index: 2;
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #1f3a50;
 }
 
-.user-container {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-.leaflet-control-layers-expanded  { background: transparent;}
-/*
-.user-container,
-.leaflet-control-layers-expanded {
-  color: #000943;
-  z-index: 99999;
-  padding: 10px 15px;
-  font-weight: 700;
-  border-radius: 15px;
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-@supports (-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px)) {
-  .user-container,
-  .leaflet-control-layers-expanded {
-    -webkit-backdrop-filter: blur(4px);
-    backdrop-filter: blur(4px);
-    background-color: rgba(255, 255, 255, 0.6);
+@media only screen and (max-width: 767px) {
+  .leaflet-pane {
+    padding-top: 100px;
   }
 }
-*/
 
-/* Disable css that would overwrite JS color
-path.leaflet-interactive  {
-	stroke: #ed0a71;
-	fill: #ed0a71;
+@media only screen and (min-width: 768px) {
+  .leaflet-pane {
+    padding-top: 60px;
+  }
+
+  .leaflet-control {
+    display: inline-block;
+  }
 }
-*/
+
+.leaflet-overlay-pane svg {
+  display: none;
+}
+
+div.leaflet-top.leaflet-right {
+  width: 100%;
+}
+
+.leaflet-top .leaflet-control {
+  margin-top: 0px;
+  margin-right: 0px;
+  border-radius: 0px;
+  width: 100%;
+}
+
+.leaflet-control {
+  float: none;
+  display: block;
+}
+
+.leaflet-container {
+  font: 14px/1.5 "proxima-nova", Arial, Helvetica, sans-serif;
+  font-weight: 300;
+}
+
+.leaflet-control-layers-expanded {
+  background: transparent;
+  padding: 0px !important;
+  z-index: 999 !important;
+}
 
 a.leaflet-control-zoom-in,
 a.leaflet-control-zoom-out {
   color: #000943 !important;
 }
+
 .mapbox-wordmark {
   position: absolute;
   display: block;
@@ -172,13 +129,17 @@ a.leaflet-control-zoom-out {
   background-size: 65px 20px;
 }
 
-div.leaflet-control-layers-overlays, div.leaflet-control-layers-base {
+div.leaflet-control-layers-overlays,
+div.leaflet-control-layers-base {
   display: inline-block;
   flex-direction: column;
   font-size: 12pt;
 }
+
 @media only screen and (max-width: 767px) {
-  div.leaflet-control-layers-overlays, div.leaflet-control-layers-base {
+
+  div.leaflet-control-layers-overlays,
+  div.leaflet-control-layers-base {
     display: flex;
     flex-direction: row;
     text-align: center;
@@ -193,44 +154,76 @@ div.leaflet-control-layers-overlays, div.leaflet-control-layers-base {
   }
 
 }
-.leaflet-control-layers-group > label {
-  padding: 10px;
-}
+
 .leaflet-control-layers-overlays img {
   height: 20pt;
 }
-.leaflet-control-layers-overlays input[type="checkbox"], input[type="radio"]{
+
+.leaflet-control-layers-overlays input[type="checkbox"],
+input[type="radio"] {
   display: none;
 }
-.leaflet-control-layers-base input:checked + span {
-  background:#ed0061;
-  color:#fff;
-  }
-  .leaflet-control-layers-base input:checked + span img {
+
+.leaflet-control-layers-base input:checked+span {
+  background: #ed0061;
+  color: #fff;
+}
+
+.leaflet-control-layers-base input:checked+span img {
   filter: invert(100%);
-  }
-  
-  
-  .leaflet-control-layers-base span {  padding: 10px 10px; border-radius: 10px; background: #fff;}
-  .leaflet-control-layers-base span img {  width: 20px; height: 20px; margin-right: 5px;} 
-
-.leaflet-control-layers-overlays input:checked + span {
-background:#ed0061;
-color:#fff;
-}
-.leaflet-control-layers-overlays input:checked + span img {
-filter: invert(100%);
 }
 
 
-.leaflet-control-layers-overlays > .leaflet-control-layers-group span { padding: 10px 10px; border-radius: 10px; background: #fff;}
-.leaflet-control-layers-overlays > .leaflet-control-layers-group span img {  width: 20px; height: 20px; margin-right: 5px;} 
+.leaflet-control-layers-base span {
+  padding: 10px 10px;
+  border-radius: 10px;
+  background: #fff;
+}
 
-.leaflet-control-layers-expanded { padding: 0px !important;}
-.search-input { margin-top: 15px; position: relative; z-index:999; width: 100%;     display: block;
+.leaflet-control-layers-base span img {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.leaflet-control-layers-overlays input:checked+span {
+  background: #ed0061;
+  color: #fff;
+}
+
+.leaflet-control-layers-overlays input:checked+span img {
+  filter: invert(100%);
+}
+
+.leaflet-control-layers-group {
+  display: inline;
+}
+
+.leaflet-control-layers-group-name {
+  margin-left: 0px;
+}
+
+.leaflet-control-layers-overlays>.leaflet-control-layers-group span {
+  padding: 10px 10px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.leaflet-control-layers-overlays>.leaflet-control-layers-group span img {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+}
+
+.search-input {
+  margin-top: 15px;
+  position: relative;
+  z-index: 999;
+  width: 100%;
+  display: block;
   width: 100%;
   height: calc(1.5em + 1rem + 2px);
-  padding: 0.375rem 0.75rem 0.375rem 2.2rem;
+  padding: 0.375rem 2.5rem 0.375rem 2.2rem;
   font-size: 1rem;
   font-weight: 300;
   line-height: 1.5;
@@ -238,7 +231,60 @@ filter: invert(100%);
   background-color: #fff;
   box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
   border: 0px;
-  border-radius: 1rem;}
+  border-radius: 1rem;
+}
+
+svg.bi-search {
+  z-index: 999; 
+  margin-left: 3px; 
+  position: absolute; 
+  top: 28px; 
+  left: 10px;
+}
+
+svg.remove-location {
+  z-index: 999; 
+  cursor: pointer;
+  position: absolute;
+  padding: 1px;
+  top: 26px;
+  right: 15px;
+}
+
+#location:placeholder-shown~svg.remove-location {
+  display:none;
+}
+
+.filter-button-container {
+  z-index: 999;
+  margin-left: 5px;
+}
+
+.filter-button {
+  position: relative;
+  display: block;
+  height: calc(1.5em + 1rem + 2px);
+  padding: 0.375rem 0.75rem 0.375rem 1.2rem;
+  margin-top: 15px;
+  font-weight: 400;
+  font-size: 16px;
+  color: #495057 !important;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 10px rgb(0 0 0 / 10%);
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 767px) {
+  .filter-button span {
+    display: none;
+  }
+
+  .filter-button {
+    padding: 0.4rem 0.7rem;
+  }
+}
+
 .marker-cluster-single div,
 .marker-cluster-small div,
 .marker-cluster-medium div,
@@ -251,30 +297,104 @@ filter: invert(100%);
   background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
-}
-/*
-.request div{
-  background-color: #28445b !important;
-}
-*/
-.marker-cluster, .marker-cluster div {   border-radius: 30px !important; }
-
-.genericMarker { background-color: #ed0061; border-radius: 30px !important;}
-
-.marker-cluster-single div,
-.marker-cluster-small div,
-.marker-cluster-medium div,
-.marker-cluster-large div {
   color: white;
 }
 
+.marker-cluster-single svg {
+  fill: white;
+  width: 85%;
+}
+
+.marker-cluster,
+.marker-cluster div {
+  border-radius: 30px !important;
+}
 
 div.leaflet-control-layers-overlays label {
   margin: 0;
   margin-right: 20px;
+  padding: 10px 0px;
+  display: inline-block;
 }
 
-/* Just a crutch to debug the control menu: */
-#controlContainer > div{
-  overflow:scroll;
+p.listview {
+  margin-top: 25px;
+  position: absolute;
+  bottom: 20px;
+  z-index: 900;
+  text-align: center;
+  width: 100%;
+}
+
+p.listview a {
+  color: #fff !important;
+}
+
+input[type=checkbox]~label { position: relative;
+  display: inline-block;
+ margin-right: .5rem;
+  border-radius: 23px;
+  vertical-align: text-bottom;
+  transition: all 0.3s linear;
+margin-bottom: 0px;
+border-radius: 1rem;
+    box-shadow: 0px 0px 5px rgb(0 0 0 / 8%);
+    width: 100%;
+    padding: 10px 10px 10px 70px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+.form-control { border-radius: 1rem; }
+
+input[type=checkbox]~label::before {
+content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 42px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
+  transition: all 0.25s linear; 
+  box-shadow: 0 0 0px 2px #e6e6e6;
+}
+
+input[type=checkbox]~label::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 22px;
+  height: 22px;
+  background-color: #fff;
+  border-radius: 11px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
+  transform: translate3d(2px, 2px, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+input[type=checkbox] { display: none; }
+
+input[type=checkbox]:checked~label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
+
+input[type=checkbox]:checked~label::after  { transform: translate3d(22px, 2px, 0); }
+
+.custom-control { padding-left: 0px; }
+#isDigital label::before { border: 0px;}
+table { width: 100%}
+
+label { margin-bottom: 5px; font-weight: 600;}
+.form-control { margin-bottom: 15px;}
+
+input[type=checkbox] { box-shadow: none; width: auto; height: auto;}
+
+.select2 {width: 100% !important}
+.select2-dropdown { border: 0px !important;}
+.select2-container .select2-search--inline .select2-search__field {  font-weight: 300 !important;}
+
+.filter-card {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 15px;
 }

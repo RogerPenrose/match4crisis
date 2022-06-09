@@ -60,7 +60,8 @@ def request_help(request):
             helpRequestEntry = form.save(commit=False)
             helpRequestEntry.organisation = organisation
 
-            offers = GenericOffer.objects.filter(offerType="MP", requestForHelp=False)
+            # TODO filter by location / distance to organisation
+            offers = GenericOffer.objects.filter(offerType="MP", requestForHelp=False, active=True, incomplete=False)
             users = User.objects.filter(genericoffer__in=offers).distinct()
 
             recipientCount = users.count()
