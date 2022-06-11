@@ -5,6 +5,7 @@ services:
   backend:
     volumes:
       - './backend:/match4crisis-backend'
+      - '/var/www/media:/match4crisis-backend/run/media'
 #    ports:
 #      Port definitions from the .dev file will be carried on to prod
 #      so even if there is no port defined here, the docker image will be exposed

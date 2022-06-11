@@ -204,17 +204,17 @@ LOGGING = {
         },
         "apps": {  # Logging Configuration for all Django apps, i.e. our software, matches any loggers under apps subdirectory using __name__
             "level": "INFO",
-            "handlers": ["auditlogfile"],
+            "handlers": ["discord","auditlogfile"],
             "propagate": False,
         },
         "django.request": {  # Main error logger and last line of defense for #500 Errors, will log all errors
             "level": "WARNING",
-            "handlers": ["errorlogfile", "console", "discord"],
+            "handlers": ["discord", "console"],
             "propagate": False,
         },
         "django.server": {  # Only for development server, all of these are mirrored on django.request anyway
             "level": "ERROR",
-            "handlers": ["null"],
+            "handlers": ["discord"],
             "propagate": False,
         },
     },
