@@ -95,7 +95,7 @@
       {% if isMaterial %}
         <p>{% blocktrans %}Art der Sachspende{% endblocktrans%}: {{ donationRequest.donationType }}</p>
         <p>{% blocktrans %}Abgabeort{% endblocktrans%}: {{ donationRequest.location }}</p>
-        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ donationRequest.location }}" width="100%" height="350" style="border:0; margin-top: 35px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ donationRequest.location|urlencode}}" width="100%" height="350" style="border:0; margin-top: 35px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       {% else %}
         <p>{% blocktrans %}Begünstigte*r{% endblocktrans%}: {{ donationRequest.beneficiary }}</p>
         <p>{% blocktrans %}IBAN{% endblocktrans%}: {{ donationRequest.iban }}</p>

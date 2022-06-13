@@ -21,7 +21,12 @@
     <polyline points="12 12 20 12"></polyline>
     <polyline points="18 14 20 12 18 10"></polyline>
     </svg>
+    {% if entry.distance == '5' %}
+    {% blocktrans %}Länge der Fahrstrecke ist komplett flexibel.{% endblocktrans %}
+    {% else %}
     {% blocktrans with radius=detail.get_distance_display %}Bereit, {{radius}} zu fahren{% endblocktrans %}
+    {% endif %}
+    
   </p>
  <p style="padding-top: 5px;">
    <a href="{% url 'detail' generic.id %}" class="btn">{% trans "Mehr dazu" %}</a>

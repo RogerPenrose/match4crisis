@@ -55,12 +55,18 @@ class ChildcareOffer(models.Model):
         ('NM', _('Nachmittags')),
         ('AB', _('Abends'))
     ]
+    DISTANCE_CHOICES=[
+        ('0', _('5km')),
+        ('1', _('10km')),
+        ('2', _('20km')), 
+        ('3', _('50km')), 
+    ]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     isRegular = models.BooleanField(_("Ist regulär"), default=False)
     hasExperience = models.BooleanField(_("Hat Erfahrung"), default=False)
     hasEducation = models.BooleanField(_("Hat Ausbildung"), default=False)
     hasSpace = models.BooleanField(_("Hat Räumlichkeiten"), default=False)
-    distance = models.IntegerField(_("Entfernung"), default=5)
+    distance = models.CharField(_("Maximale Entfernung"), max_length=1, choices=DISTANCE_CHOICES, default='0')
     numberOfChildren = models.IntegerField(_("Anzahl Kinder"), default=1)
     helpType_childcare = models.CharField(_("Art der Betreuung"), max_length=2, choices=CHILDCARE_CHOICES, default="GT")
     timeOfDay = models.CharField(_("Tageszeit"), max_length=2, choices=TIME_CHOICES, default="VM")
@@ -98,6 +104,7 @@ class BuerocraticOffer(models.Model):
     # Don't change this variable name!
     HELP_CHOICES= [('AM', _('Begleitung')), ('LE', _('Juristische Hilfe')), ('OT', _('Andere Bürokratische Hilfe'))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
+    # Don't change this variable name!
     helpType = models.CharField(_("Art der Hilfe"), max_length=2, choices=HELP_CHOICES, default="AM")
 
 class ImageClass(models.Model):
@@ -118,7 +125,7 @@ class ManpowerOffer(models.Model):
 class AccommodationOffer(models.Model):
 
     ACCOMMODATIONCHOICES = [
-        ('SO', _('Sofa / Bed')),
+        ('SO', _('Sofa / Bett')),
         ('RO', _('Eigener Raum')),
         ('HO', _('Gesamte Wohnung / Haus'))
     ]
@@ -134,7 +141,7 @@ class WelfareOffer(models.Model):
     # Don't change this variable name!
     HELP_CHOICES = [("ELD", _("Altenpflege")),("DIS", _("Behindertenpflege")), ("PSY", _("Psychologische Hilfe"))]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    
+    # Don't change this variable name!
     helpType = models.CharField(_("Art der Hilfe"), max_length=3, choices=HELP_CHOICES, default="ELD") 
     hasEducation_welfare = models.BooleanField(_("Hat Vorerfahrung"), default=False)
     typeOfEducation = models.TextField(_("Beschreibung der Erfahrung"), default="", blank=True)
@@ -162,6 +169,7 @@ class TransportationOffer(models.Model):
         ('4', _('400-600km')), 
         ('5', _('Komplett Flexibel')),
     ]
+    # Don't change this variable name!
     helpType = models.CharField(_("Art des Transports"), max_length=2, choices=HELP_CHOICES, default="PT" )
     distance = models.CharField(_("Entfernung (Bereit zu fahren)"), max_length=1, choices=DISTANCE_CHOICES, default='0')
     numberOfPassengers = models.IntegerField(_("Anzahl freier Plätze"), default=2)
