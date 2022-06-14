@@ -5,7 +5,7 @@ from apps.accounts.models import User
 from apps.accounts.models import Languages
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from django.core.validators import MinValueValidator 
+from django.core.validators import MinValueValidator
 from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger("django")
@@ -67,7 +67,7 @@ class ChildcareOffer(models.Model):
     hasEducation = models.BooleanField(_("Hat Ausbildung"), default=False)
     hasSpace = models.BooleanField(_("Hat Räumlichkeiten"), default=False)
     distance = models.CharField(_("Maximale Entfernung"), max_length=1, choices=DISTANCE_CHOICES, default='0')
-    numberOfChildren = models.IntegerField(_("Anzahl Kinder"), default=1)
+    numberOfChildren = models.IntegerField(_("Anzahl Kinder"), default=1, validators=[MinValueValidator(1)])
     helpType_childcare = models.CharField(_("Art der Betreuung"), max_length=2, choices=CHILDCARE_CHOICES, default="GT")
     timeOfDay = models.CharField(_("Tageszeit"), max_length=2, choices=TIME_CHOICES, default="VM")
     
@@ -130,8 +130,8 @@ class AccommodationOffer(models.Model):
         ('HO', _('Gesamte Wohnung / Haus'))
     ]
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
-    numberOfPeople = models.IntegerField(_("Anzahl Personen"), default=2)
-    petsAllowed = models.BooleanField(_("Haustiere erlaubt"), default=0, blank=True)
+    numberOfPeople = models.IntegerField(_("Anzahl Personen"), default=2, validators=[MinValueValidator(1)])
+    petsAllowed = models.BooleanField(_("Haustiere erlaubt"), default=False, blank=True)
     typeOfResidence = models.CharField(_("Art der Unterkunft"), max_length=2, choices=ACCOMMODATIONCHOICES, default="SO" )
     startDateAccommodation = models.DateField(_("Startdatum der Unterbringung"), default=timezone.now)
     def __str__(self):
@@ -172,14 +172,12 @@ class TransportationOffer(models.Model):
     # Don't change this variable name!
     helpType = models.CharField(_("Art des Transports"), max_length=2, choices=HELP_CHOICES, default="PT" )
     distance = models.CharField(_("Entfernung (Bereit zu fahren)"), max_length=1, choices=DISTANCE_CHOICES, default='0')
-    numberOfPassengers = models.IntegerField(_("Anzahl freier Plätze"), default=2)
+    numberOfPassengers = models.IntegerField(_("Anzahl freier Plätze"), default=2, validators=[MinValueValidator(1)])
     typeOfCar = models.CharField(_("Fahrzeugtyp"), max_length=2, choices=CARCHOICES, default="KW")
 
 class TranslationOffer(models.Model):
     genericOffer = models.OneToOneField(GenericOffer, on_delete=models.CASCADE, primary_key=True)
     languages = models.ManyToManyField(Languages, through='LanguageOfferMap', blank=True, verbose_name=_("Übersetzte Sprachen"))
-
-
 
 class LanguageOfferMap(models.Model):
     offer = models.ForeignKey(TranslationOffer, on_delete=models.CASCADE)

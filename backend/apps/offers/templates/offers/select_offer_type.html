@@ -40,9 +40,7 @@ Bereich wählen
         benötigst.{% endblocktrans %}</p>
       {%endif%}
       {% for entry in entries %}
-      {% if requestForHelp == False %}<a href="{% url 'create' %}?type={{ entry.shortForm }}">
-        {% else %}<a href="{% url 'create' %}?type={{ entry.shortForm }}&rfh=True">
-          {%endif%}
+        <a href="{% url 'create' %}?type={{ entry.shortForm }}">
           <div class="col-12 col-lg-6 offer-card">
             <div class="row align-self-center align-items-center">
               <div class="col-5 col-sm-4">
@@ -61,7 +59,7 @@ Bereich wählen
             </div>
           </div>
         </a>
-        {%endfor%}
+      {%endfor%}
     </div>
   </div>
   {% endblock %}

@@ -39,23 +39,19 @@ Bereich wählen
       <p style="margin-bottom: 35px;">{% blocktrans %}Sag uns genau, welche Art von Hilfe du benötigst.{% endblocktrans %}</p>
       {%endif%}
       {% for subtype in subtypes %}
-      {% if requestForHelp == False %}
       <a href="{% url 'createOffer' %}?type={{request.GET.type }}&subtype={{ subtype.shortForm }}">
-        {% else %}
-        <a href="{% url 'createOffer' %}?type={{request.GET.type }}&subtype={{ subtype.shortForm }}&rfh=True">
-          {%endif%}
-          <div class="col-12 offer-card">
-            <div class="row align-self-center align-items-center">
-              <div class="col-5 col-sm-4">
-                <div class="background-photo" style=" padding: 0 0 0 0">{{subtype.svg|safe}}</div>
-              </div>
-              <div class="description col-7 col-sm-8">
-                <h3>{{ subtype.longForm }} </h3>
-              </div>
+        <div class="col-12 offer-card">
+          <div class="row align-self-center align-items-center">
+            <div class="col-5 col-sm-4">
+              <div class="background-photo" style=" padding: 0 0 0 0">{{subtype.svg|safe}}</div>
+            </div>
+            <div class="description col-7 col-sm-8">
+              <h3>{{ subtype.longForm }} </h3>
             </div>
           </div>
-        </a>
-        {%endfor%}
+        </div>
+      </a>
+      {%endfor%}
     </div>
   </div>
   {% endblock %}

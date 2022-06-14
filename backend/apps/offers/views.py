@@ -282,22 +282,18 @@ def selectOfferType(request):
         specType = request.GET.get('type')
         specModel = OFFER_MODELS[specType]
         if hasattr(specModel, 'HELP_CHOICES'):
-            context= {"subtypes": [], "requestForHelp": False, "offerTypeName" : dict(GenericOffer.OFFER_CHOICES)[specType]}
+            context= {"subtypes": [], "requestForHelp": request.user.isRefugee, "offerTypeName" : dict(GenericOffer.OFFER_CHOICES)[specType]}
             for subtypeEntry in specModel.HELP_CHOICES:
                 context["subtypes"].append({'longForm' : subtypeEntry[1], 'shortForm' : subtypeEntry[0], 'svg' : open('static/img/icons/icon_%s.svg' % specType, 'r').read()})
-            if request.GET.get("rfh", "False") == "True":
-                context["requestForHelp"] = True
             return render(request, 'offers/select_offer_subtype.html', context)
         else:
             response = redirect('createOffer')
             response['Location'] += '?%s' % request.GET.urlencode()
             return response
     else:
-        context= {"entries": [], "requestForHelp": False}
+        context= {"entries": [], "requestForHelp": request.user.isRefugee}
         for entry in GenericOffer.OFFER_CHOICES:
             context["entries"].append({"longForm": entry[1],"shortForm": entry[0], "svg":  open('static/img/icons/icon_%s.svg' % entry[0], 'r').read()})
-        if request.GET.get("rfh", "False") == "True":
-            context["requestForHelp"] = True
         return render(request, 'offers/select_offer_type.html', context)
 
 @login_required
@@ -310,24 +306,30 @@ def toggle_active(request, offer_id):
 
 @login_required
 def create(request):
+    requestForHelp = request.user.isRefugee
+    offerType = request.GET.get("type")
+    offerSubtype = request.GET.get("subtype")
     if request.method == 'POST':
-        return update(request, newly_created=True)
-    elif request.method == 'GET':
-        context = {'edit' : False}
-        offerType = request.GET.get("type")
-        offerSubtype = request.GET.get("subtype")
-        context["requestForHelp"] = False
-        newOffer = GenericOffer(offerType=offerType)
-        newSpecOffer = OFFER_MODELS[offerType]()
+        result = update(request, newly_created=True)
+        if type(result) != tuple:
+            return result
+        else:
+            genForm, specForm = result
+    else:
+        newOffer = GenericOffer(offerType=offerType, requestForHelp=requestForHelp)
+        newSpecOffer = OFFER_MODELS[offerType](genericOffer=newOffer)
         if offerSubtype:
             newSpecOffer.helpType = offerSubtype
-        if request.GET.get("rfh", "False") == "True":
-            context["requestForHelp"] = True
-        context["genericForm"]  = GenericForm(instance=newOffer)
-        context["detailForm"] = OFFER_FORMS[offerType](instance=newSpecOffer)
-        if offerType == "AC":
-            context["imageForm"] = ImageForm()
-        return render(request, 'offers/create.html', context)
+        genForm = GenericForm(instance=newOffer)
+        specForm = OFFER_FORMS[offerType](instance=newSpecOffer)
+
+    context = {'edit' : False}
+    context["genericForm"]  = genForm
+    context["detailForm"] = specForm
+    context["requestForHelp"] = requestForHelp
+    if offerType == "AC":
+        context["imageForm"] = ImageForm()
+    return render(request, 'offers/create.html', context)
 
 @login_required
 def save(request, offer_id=None):
@@ -344,6 +346,7 @@ def save(request, offer_id=None):
             genOffer = get_object_or_404(GenericOffer, pk=offer_id)
             check_user_is_allowed(request, genOffer.userId.id)
             specOffer = OFFER_MODELS[genOffer.offerType].objects.get(genericOffer=genOffer)
+        genOffer.active=False
         genOffer.incomplete=True
         logger.warning(str(model_to_dict(genOffer)))
         genForm = GenericForm(request.POST, instance=genOffer)
@@ -352,24 +355,26 @@ def save(request, offer_id=None):
             genForm.fields[field].required = False
         for field in specForm.fields:
             specForm.fields[field].required = False
-        genForm.save()
-        specForm.save()
+        if genForm.is_valid() and specForm.is_valid():
+            genForm.save()
+            specForm.save()
 
-        if request.FILES.get("image") != None:
-            counter = 0
-            images = request.FILES.getlist('image')
-            for image in images:
-                counter = counter + 1
-                image = ImageClass(image=image, offerId = genOffer)
-                image.save()
+            if request.FILES.get("image") != None:
+                counter = 0
+                images = request.FILES.getlist('image')
+                for image in images:
+                    counter = counter + 1
+                    image = ImageClass(image=image, offerId = genOffer)
+                    image.save()
+        else:
+            logger.error("Validation error when trying to save incomplete offer (shouldn't happen)!\n" + genForm.errors + "\n" + specForm.errors)
 
     return redirect("login_redirect")
 
 @login_required
 def update(request, offer_id = None, newly_created = False):
-    logger.warning("request: "+str(request.POST.dict))
     if offer_id is None:
-        genOffer = GenericOffer(userId = request.user, offerType=request.POST["offerType"])
+        genOffer = GenericOffer(userId = request.user, offerType=request.POST.get('offerType'))
         if request.user.isRefugee:
             genOffer.requestForHelp = True
         specOffer = OFFER_MODELS[genOffer.offerType](genericOffer = genOffer)
@@ -381,8 +386,14 @@ def update(request, offer_id = None, newly_created = False):
     genOffer.active=True
     genForm = GenericForm(request.POST, instance=genOffer)
     specForm = OFFER_FORMS[genOffer.offerType](request.POST, instance=specOffer)
-    genForm.save()
-    specForm.save()
+
+    logger.info(str(genForm.is_valid()) + str(specForm.is_valid()))
+    if genForm.is_valid() and specForm.is_valid():
+        genForm.save()
+        specForm.save()
+    else:
+        return genForm, specForm
+
 
     if request.FILES.get("image") != None:
         counter = 0

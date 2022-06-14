@@ -87,93 +87,41 @@ function offer_autocomplete(){
     return autocompletes
 }
 
-function toggleMedicalExperience(){
-    if(document.getElementById("id_hasMedicalExperience").checked != true){
-        document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "none"
-        document.getElementById("id_describeMedicalExperience").required = false
-    }
-    else{
-        document.getElementById("id_describeMedicalExperience").parentElement.parentElement.style.display = "table-row"
-        document.getElementById("id_describeMedicalExperience").required = true
-    }
-    }
-function toggleChildcareCredentials(){
-if(document.getElementById("id_hasExperience").checked == true){
-    document.getElementById("id_hasEducation").parentElement.parentElement.style.display = "table-row"
+/**
+ * Binds an action to a checkbox to show/hide another field.
+ * @param checkbox The id of the Checkbox that toggles if the other field is displayed
+ * @param toggled The id of the field that is toggled by the checkbox  
+ * @param reverse If true `toggled` will hide when `checkbox` is checked and vice versa
+ */
+function bindCheckboxToggle(checkbox, toggled, reverse=false){
+    $(`#id_${checkbox}`).on('change', function() {
+        if (this.checked != reverse) {
+            $(`#div_id_${toggled}`).show()
+        } else {
+            $(`#div_id_${toggled}`).hide()
+        }
+    }).change()
 }
-else{
-    document.getElementById("id_hasEducation").parentElement.parentElement.style.display = "none"
-}
-}
-function toggleHasSpace(){
-    if(document.getElementById("id_hasSpace").checked == false){
-        document.getElementById("id_distance").parentElement.parentElement.style.display = "table-row"
-    }
-    else{
-        document.getElementById("id_distance").parentElement.parentElement.style.display = "none"
-    }
-    }
-function toggleChildcareTimes(){
-if(document.getElementById("id_helpType_childcare").value != "HT"){
-    document.getElementById("id_timeOfDay").parentElement.parentElement.style.display = "none"
-}
-else{
-    document.getElementById("id_timeOfDay").parentElement.parentElement.style.display = "table-row"
-}
-}
-function toggleTransport(){
-if(document.getElementById("id_helpType").value == "GT"){
-    document.getElementById("id_typeOfCar").parentElement.parentElement.style.display = "table-row"
-    document.getElementById("id_numberOfPassengers").parentElement.parentElement.style.display ="none"
-}
-else{
-    document.getElementById("id_typeOfCar").parentElement.parentElement.style.display = "none"
-    document.getElementById("id_numberOfPassengers").parentElement.parentElement.style.display ="table-row"
 
-}
-}
-function validateForm(){
-    let allAreFilled = true;
-    document.getElementById("thisForm").querySelectorAll("[required]").forEach(function(i) {
-      if (!allAreFilled) return;
-      if (i.type === "radio") {
-        let at_least_one_filled = false;
-        document.getElementById("thisForm").querySelectorAll(`[name=${i.name}]`).forEach(function(r) {
-            at_least_one_filled = at_least_one_filled || r.checked;
-        })
-        allAreFilled = allAreFilled && at_least_one_filled;
-      } else {
-        allAreFilled = allAreFilled && i.value;
-      }
-  });
-  return allAreFilled;
+/**
+ * Binds an action to a select to show/hide another field depending on which option is chosen
+ * @param select The id of the Select that toggles if the other field is displayed
+ * @param value If this is chosen `toggled` will be shown, otherwise hidden
+ * @param toggled The id of the field that is toggled by the select  
+ */
+function bindSelectToggle(select, value, toggled){
+    $(`#id_${select}`).on('change', function() {
+        if (this.value == value) {
+            $(`#div_id_${toggled}`).show()
+        } else {
+            $(`#div_id_${toggled}`).hide()
+        }
+    }).change()
 }
 
 function save_without_active(){
-    var checkbox= document.getElementById("id_active")
-    checkbox.checked = false
-    var form = document.getElementById("thisForm");
-    
+    var form = $("#offerForm")
     var pathArray = window.location.pathname.split('/');
-    if(pathArray[pathArray.length - 1] === "edit"){
-        form.action = "/offers/" + pathArray[pathArray.length - 2] + "/save";
-    }else{
-        form.action = "/offers/save";
-    }
+    form.attr('action', pathArray[pathArray.length - 1] === "edit" ? ("/offers/" + pathArray[pathArray.length - 2] + "/save") : "/offers/save");
     form.submit();
-}
-
-function save_with_active(){
-    var checkbox= document.getElementById("id_active")
-    checkbox.checked = true
-    var form = document.getElementById("thisForm");
-    var pathArray = window.location.pathname.split('/');
-    if(pathArray[pathArray.length - 1] === "edit"){
-        form.action = "/offers/" + pathArray[pathArray.length - 2] + "/edit";
-    }else{
-        form.action = "/offers/createOffer";
-    }
-    // if(validateForm()){
-    //     form.submit();
-    // }
 }
