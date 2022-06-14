@@ -1,14 +1,14 @@
-import uuid
-from django.conf import settings
-from django.core.exceptions import ValidationError
+import logging
+import traceback
 from django.db import models
 from apps.accounts.models import User
 from apps.accounts.models import Languages
 from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
-from match4crisis.constants.choices import GENDER_CHOICES
-from match4crisis.constants.countries import countries
-from apps.iofferhelp.models import Helper
+from django.core.validators import MinValueValidator 
+from django.core.exceptions import ObjectDoesNotExist
+
+logger = logging.getLogger("django")
 
 class GenericOffer(models.Model):
     OFFER_CHOICES = [
@@ -215,8 +215,12 @@ def getSpecificOffers(genericOffers: list):
     """    
     specificOffers = []
 
-    for offer in genericOffers:       
-        specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer)
-        specificOffers.append(specOff)
+    for offer in genericOffers:
+        try:
+            specOff = OFFER_MODELS[offer.offerType].objects.get(genericOffer=offer)
+            specificOffers.append(specOff)
+        except ObjectDoesNotExist:
+            logger.error("Specific offer for generic offer with id %s not found: %s" % (offer.pk, traceback.format_exc()))
+
 
     return specificOffers
