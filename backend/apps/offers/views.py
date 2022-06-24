@@ -56,7 +56,7 @@ def index(request):
                 if isSelected:
                     offers = offerType.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
                     curFilter = OFFER_FILTERS[abbr](getData, queryset=offers, prefix="offers" + abbr)
-                    entries += curFilter.qs
+                    entries += curFilter.qs.order_by('-genericOffer__created_at')
                     context["filters"]["offers"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["offers"]["label"] = "{} ({})".format(_("Angebote"), groupCount) 
         counts["offers"]["allSelected"] = allSelected
@@ -75,7 +75,7 @@ def index(request):
             if isSelected:
                 requests = offerType.objects.filter(genericOffer__requestForHelp=True, genericOffer__active=True, genericOffer__incomplete=False)
                 curFilter = OFFER_FILTERS[abbr](getData, queryset=requests, prefix="requests" + abbr)
-                entries += curFilter.qs
+                entries += curFilter.qs.order_by('-genericOffer__created_at')
                 context["filters"]["requests"][abbr] = {'filter' : curFilter, 'label' : offerLabels[abbr]}
         counts["requests"]["label"] = "{} ({})".format(_("Gesuche"), groupCount) 
         counts["requests"]["allSelected"] = allSelected
@@ -91,7 +91,7 @@ def index(request):
         if isSelected:
             mpOffers = ManpowerOffer.objects.filter(genericOffer__requestForHelp=False, genericOffer__active=True, genericOffer__incomplete=False)
             mpFilter = ManpowerFilter(getData, queryset=mpOffers, prefix='offersMP')
-            entries += mpFilter.qs
+            entries += mpFilter.qs.order_by('-genericOffer__created_at')
             context["filters"]["offers"]["MP"] = {'filter' : mpFilter, 'label' : offerLabels['MP']}
 
     helpRequests = []
@@ -102,7 +102,7 @@ def index(request):
         if isSelected:
             helpRequestsUnfiltered = HelpRequest.objects.all()
             curFilter = HelpRequestFilter(getData, queryset=helpRequestsUnfiltered, prefix="helpRequests")
-            helpRequests = list(curFilter.qs)
+            helpRequests = list(curFilter.qs.order_by('-createdAt'))
             context["helpRequestsFilter"] = {'filter' : curFilter, 'label' : _("Hilfeaufrufe")}
 
     if 'bb' in getData:
