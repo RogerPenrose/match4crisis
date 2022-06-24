@@ -176,6 +176,10 @@ def alter_url_query(request):
         else:
             query[k] = [e for e in entries if e != '']
 
+    # Remove the pagination id if present and not the targeted change
+    if 'page' not in request.GET:
+        query.pop('page', None)
+
     newQueryString = urlencode(query, doseq=True)
 
     return redirect(referrerURL._replace(query=newQueryString).geturl())
