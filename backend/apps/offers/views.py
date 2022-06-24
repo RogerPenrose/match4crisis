@@ -6,6 +6,7 @@ import json
 import googlemaps
 import math
 import base64
+from math import cos, radians
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
@@ -105,14 +106,25 @@ def index(request):
             helpRequests = list(curFilter.qs.order_by('-createdAt'))
             context["helpRequestsFilter"] = {'filter' : curFilter, 'label' : _("Hilfeaufrufe")}
 
-    if 'bb' in getData:
-        bb = json.loads(getData.get('bb'))
-        entries = [e for e in entries if e.genericOffer.lat and e.genericOffer.lng and bb['south'] <= e.genericOffer.lat <= bb['north']  and bb['west']  <= e.genericOffer.lng <= bb['east']]
-        helpRequests = [e for e in helpRequests if e.lat and e.lng and bb['south'] <= e.lat <= bb['north']  and bb['west']  <= e.lng <= bb['east']]
+    locationForm = LocationSearchForm(getData, emptyChoice=False)
+
+    if locationForm.is_valid() and locationForm.cleaned_data['bb']:
+        bb = json.loads(locationForm.cleaned_data['bb'])
+        try:
+            radiusKM = int(locationForm.cleaned_data['radius'])
+        except:
+            radiusKM = 0
+        latMin = bb['south'] - radiusKM/110.574
+        latMax = bb['north'] + radiusKM/110.574
+        lngDist = cos(radians(int(locationForm.cleaned_data['lat']))) * 111.320
+        lngMin = bb['west'] - radiusKM/lngDist
+        lngMax = bb['east'] + radiusKM/lngDist
+        entries = [e for e in entries if e.genericOffer.lat and e.genericOffer.lng and latMin <= e.genericOffer.lat <= latMax and lngMin <= e.genericOffer.lng <= lngMax]
+        helpRequests = [e for e in helpRequests if e.lat and e.lng and latMin <= e.lat <= latMax and lngMin <= e.lng <= lngMax]
 
     context["counts"] = counts
-
     context["offercardnames"] = OFFER_CARD_NAMES
+    context["locationForm"] = locationForm
 
     joinedEntries = entries + helpRequests
 
@@ -120,7 +132,7 @@ def index(request):
         if not selected:
             context['noResultsNotice'] = _("Keine Ergebnisse. Probiere, eine der Kategorien auszuwählen.")
         elif 'location' in getData:
-            context['noResultsNotice'] = _("Keine Ergebnisse um {location}. Probiere, in einem größeren Umkreis zu suchen.").format(location=getData.get('location'))
+            context['noResultsNotice'] = _("Keine Ergebnisse im Umkreis von {radius}km um {location}. Probiere, in einem größeren Umkreis zu suchen.").format(radius=getData.get('radius'), location=getData.get('location'))
         elif any(re.match('.+-.+', k) for k in getData.keys()):
             context['noResultsNotice'] = _("Keine Ergebnisse. Probiere, ein Paar der ausgewählten Filter zu entfernen.")
         else:

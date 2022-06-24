@@ -248,12 +248,13 @@ OFFER_FORMS = {
 
 RADIUS_CHOICES = (
     ('', _("Umkreis wählen")),
+    (0, "0km"),
+    (1, "1km"),
+    (2, "2km"),
     (5, "5km"),
     (10, "10km"),
     (20, "20km"),
     (50, "50km"),
-    (100, "100km"),
-    (200, "200km"),
 )
 
 OFFER_DESCRIPTIONS = {
@@ -274,6 +275,12 @@ class LocationSearchForm(forms.Form):
     lng = forms.FloatField(required=False, widget=forms.HiddenInput())
     bb = forms.CharField(required=False, widget=forms.HiddenInput())
     radius = forms.ChoiceField(required=False, label='', choices=RADIUS_CHOICES, widget=forms.Select(attrs={'class' : 'form-control'}))
+
+    def __init__(self, *args, emptyChoice=True, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not emptyChoice:
+            self.fields["radius"].choices = RADIUS_CHOICES[1:]
+
 
 class OfferTypeSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):

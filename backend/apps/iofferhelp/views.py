@@ -2,10 +2,6 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
-
-from apps.iamorganisation.models import HelpRequest
-from apps.iamorganisation.filters import HelpRequestFilter
 from apps.accounts.views import DashboardView
 from apps.accounts.decorator import helperRequired
 from apps.offers.models import OFFER_CARD_NAMES, GenericOffer, getSpecificOffers, OFFER_MODELS
