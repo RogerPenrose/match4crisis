@@ -17,6 +17,13 @@
     })
   }
 </script>
+
+<style>
+  #mapIframe{
+    border-radius: 25px;
+    margin-bottom: 20px;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -82,13 +89,30 @@
 
     <div class="col-sm-12 col-lg-8 description">
       <h1 class="title">{{ helpRequest.title }}</h1>
-      <p>{% blocktrans %}Organisation{% endblocktrans%}: {{ helpRequest.organisation }}</p>
-        <p>{% blocktrans %}Ort{% endblocktrans%}: {{ helpRequest.location }}</p>
-        <br>
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-organisation" viewBox="0 0 1600 1600">
+          <path
+            d="M40 462V352L800 24l760 328v110h-100c0 15-5 28-16 38-10 10-24 16-38 16H200c-15 0-28-5-38-16-10-10-16-24-16-38M40 1447c0-15 5-28 16-38 10-10 24-16 38-16h1413c15 0 28 5 38 16 10 10 16 24 16 38v110H40v-110m100-110v-55c0-15 5-28 16-38 10-10 24-16 38-16h46V570h210v657h100V570h203v657h102V570h205v657h100V570h203v657h47c15 0 28 5 38 16 10 10 16 24 16 38v55H140" />
+        </svg>
+        {% blocktrans %}Organisation{% endblocktrans%}: {{ helpRequest.organisation }}
+      </p>
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+          <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+          <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+        </svg>
+        {{ helpRequest.location }}
+      </p>
+      <br>
       <h5>{% blocktrans %}Beschreibung{% endblocktrans%}</h5>
       <p>{{ helpRequest.description|linebreaks }}</p>
-      <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ helpRequest.location|urlencode}}" width="100%" height="350" style="border:0; margin-top: 35px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      <p class="map">
+        <iframe id="mapIframe" src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ helpRequest.location|urlencode}}" width="100%" height="350" style="border:0; margin-top: 35px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </p>
 
+      <p style="font-weight:400;">
+        {% blocktrans %}Erstellt am {{createdAt}}{% endblocktrans %}
+      </p>
 
       {% if editAllowed %}
         <p style="margin-top: 25px;" class="edit">

@@ -5,7 +5,14 @@
 {% load widget_type_filter %}
 
 {% block title %}
-{% blocktrans %}Listenansicht Angebote{% endblocktrans %}{% endblock %}
+{% if counts.requests %}
+{% blocktrans %}Listenansicht Hilfsgesuche{% endblocktrans %}
+{% elif counts.helpRequests %}
+{% blocktrans %}Listenansicht Hilfsaufrufe{% endblocktrans %}
+{% else %}
+{% blocktrans %}Listenansicht Angebote{% endblocktrans %}
+{% endif %}
+{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" href="{% static 'css/forms.css' %}">

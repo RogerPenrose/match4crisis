@@ -314,7 +314,7 @@ def donation_detail(request, donation_request_id):
         donationRequest = get_object_or_404(MaterialDonationRequest, pk=donation_request_id)
         isMaterial = True
     organisation = donationRequest.organisation
-    images = Image.objects.filter(request=donationRequest)
+    images = donationRequest.images.all()
     editAllowed = request.user.is_authenticated and request.user.isOrganisation and donationRequest.organisation == Organisation.objects.get(user = request.user)
 
     context = {
@@ -323,6 +323,7 @@ def donation_detail(request, donation_request_id):
         "images" : images if images.count() > 0 else None,
         "editAllowed" : editAllowed,
         "isMaterial" : isMaterial,
+        "createdAt" : donationRequest.createdAt.strftime("%d.%m.%Y"),
     }
     return render(request, "donation_detail.html", context)
 
@@ -339,6 +340,7 @@ def help_request_detail(request, help_request_id, contacted=False):
         "images" : images if images.count() > 0 else None,
         "editAllowed" : editAllowed,
         "contacted" : contacted,
+        "createdAt" : helpRequest.createdAt.strftime("%d.%m.%Y"),
     }
     return render(request, "help_request_detail.html", context)
 
