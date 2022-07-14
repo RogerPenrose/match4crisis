@@ -15,8 +15,10 @@ urlpatterns = [
     path("donation_detail/<donation_request_id>/", views.donation_detail, name="donation_detail"),
     path("donation_detail/<donation_request_id>/edit", views.edit_redirect, name="edit_donation_request"),
     path("donation_detail/<donation_request_id>/delete", views.delete_donation_request, name="delete_donation_request"),
+    path("donation_detail/<request_id>/toggle_active", views.toggle_active, name="toggle_active_donation_request"),
     path("help_request_detail/<help_request_id>/", views.help_request_detail, name="help_request_detail"),
     path("help_request_detail/<help_request_id>/contact", views.contact_help_request, name="contact_help_request"),
     path("help_request_detail/<help_request_id>/edit", views.edit_help_request, name="edit_help_request"),
     path("help_request_detail/<help_request_id>/delete", views.delete_help_request, name="delete_help_request"),
+    path("help_request_detail/<request_id>/toggle_active", views.toggle_active, name="toggle_active_help_request"),
 ]

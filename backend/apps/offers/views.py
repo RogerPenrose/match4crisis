@@ -98,10 +98,10 @@ def index(request):
     helpRequests = []
     if "helpRequests" in getData:
         isSelected = "helpRequests" in selected
-        hrCount = HelpRequest.objects.count()
+        hrCount = HelpRequest.objects.filter(active=True).count()
         counts["helpRequests"] = {"label" : "{} ({})".format(_("Hilfeaufrufe"), hrCount), 'selected': isSelected}
         if isSelected:
-            helpRequestsUnfiltered = HelpRequest.objects.all()
+            helpRequestsUnfiltered = HelpRequest.objects.filter(active=True)
             curFilter = HelpRequestFilter(getData, queryset=helpRequestsUnfiltered, prefix="helpRequests")
             helpRequests = list(curFilter.qs.order_by('-createdAt'))
             context["helpRequestsFilter"] = {'filter' : curFilter, 'label' : _("Hilfeaufrufe")}
@@ -213,10 +213,13 @@ def padByRange(locationData, rangeKm):
 
 @login_required
 def contact(request, offer_id):
+    offer = get_object_or_404(GenericOffer, pk=offer_id)
+    if not offer.active:
+        raise PermissionDenied
+        
     if request.method == "POST":
 
         user = request.user
-        offer = GenericOffer.objects.get(pk=offer_id)
         recipient = offer.userId
 
         if user.isOrganisation:

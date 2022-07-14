@@ -48,6 +48,7 @@ class Request(models.Model):
     title = models.CharField(max_length=256, default="")
     description = models.TextField(max_length=100000, default="")
     createdAt = models.DateTimeField(verbose_name=_("Erstellt am"), default=timezone.now)
+    active = models.BooleanField(_("Ist aktiv"), default=True)
 
 class HelpRequest(Request):
     radius = models.IntegerField(default=5)

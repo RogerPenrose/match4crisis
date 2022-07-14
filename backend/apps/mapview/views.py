@@ -84,7 +84,7 @@ def getJSONData(request):
     type = request.GET["type"]
 
     if type == "helpRequests":
-        helpRequests = HelpRequest.objects.all()
+        helpRequests = HelpRequest.objects.filter(active=True)
         data = {'entries' : [], 'iconSrc': '/static/img/icons/icon_MP.svg'}
         for hr in helpRequests:
             context = {
@@ -158,7 +158,7 @@ def getCountsJSON(request):
 
     counts = {}
     if "helpRequests" in getData:
-        counts["helpRequests"] = {"count": HelpRequest.objects.count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(_("Hilfeaufrufe")), 'selected': 'helpRequests' in selected}
+        counts["helpRequests"] = {"count": HelpRequest.objects.filter(active=True).count(), "label" : '<img src="/static/img/icons/icon_MP.svg">{}'.format(_("Hilfeaufrufe")), 'selected': 'helpRequests' in selected}
 
     if "offers" in getData:
         counts["offers"] = {"label" : _("Angebote")}

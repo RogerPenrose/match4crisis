@@ -281,6 +281,23 @@ Dashboard - Organisationen
     min-height: 115px;
     margin: 30px;
 }
+
+.status p {  
+  padding: 8px; 
+  border-radius: 10px;
+}
+.status.active p { 
+  background-color: rgb(0, 165, 0); 
+}
+.status.inactive p {
+    background-color: red; 
+}
+.status {
+  position: absolute;
+  right: 20px;
+  top: 40%; 
+  display: block !important;
+}
 </style>
 {% endblock %}
 
