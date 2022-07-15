@@ -2,8 +2,12 @@
 {% load static %}
 {% load i18n %}
 
+{% block title %}
+{{ generic.offerTitle }}
+{% endblock %}
+
+
 {% block header %}
-<link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
   .title-image img {
     width: 100%;
@@ -54,6 +58,29 @@
   .confirmation p {
     margin-bottom: 0px;
   }
+
+  .subtitle {
+    font-size: 1.3rem;
+    font-family: "proxima-nova", sans-serif;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  @media only screen and (max-width: 1200px) {
+    .btn {
+        width: 100%;
+    }
+  }
+
+  .row.custom-gutter {
+    margin-left: -5px;
+    margin-right: -5px;
+  }
+  
+  .row.custom-gutter > [class*="col-"] {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
 </style>
 
 <script type="text/javascript">
@@ -94,7 +121,7 @@
   }
 </script>
 
-<script type="text/javascript" src="{% url 'create_js' %}" async></script>
+<script type="text/javascript" src="{% static 'js/create_offers.js' %}" async></script>
 {% endblock %}
 
 {% load crispy_forms_tags %}
@@ -138,7 +165,7 @@
           <path fill-rule="evenodd"
             d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
         </svg>
-        {% if "offers/list" in request.META.HTTP_REFERER or "offers/handle_filter" in request.META.HTTP_REFERER %}
+        {% if "offers/list" in request.META.HTTP_REFERER %}
         <input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" />
         {% else %}
         <a class="back" href="{{request.META.HTTP_REFERER|escape}}">{% blocktrans %}Zurück{% endblocktrans %}</a>
@@ -216,10 +243,11 @@
 
     <div class="col-sm-12 col-lg-8 description">
 
-      <h2 class="title">{% if requestForHelp %}{% trans "Hilfsgesuch" %}{%else%}{% trans "Angebot" %}{%endif%}:
-        {{ offerType }}{% if detail.helpType %} - {{detail.get_helpType_display}}{% endif %} | {{ generic.offerTitle }}</h2>
+      <h2 class="title">{{ generic.offerTitle }}</h2>
+      <h4 class="subtitle"> {% if requestForHelp %}{% trans "Hilfsgesuch" %}{%else%}{% trans "Angebot" %}{%endif%}:
+        {{ offerType }}{% if detail.helpType %} - {{detail.get_helpType_display}}{% endif %} </h4>
       <p>
-        <div>{{ generic.offerDescription }}</div>
+        <div>{{ generic.offerDescription |linebreaksbr}}</div>
       </p>
       <hr>
 
@@ -229,11 +257,30 @@
           <path
             d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
         </svg>
-        <span>{% blocktrans with numberOfPeople=detail.numberOfPeople petsAllowed=detail.petsAllowed|yesno:_("Ja,Nein") %}
-          {{numberOfPeople}} Bewohner | Haustiere erlaubt: {{petsAllowed}}
+        <span>
+          {% blocktrans with numberOfPeople=detail.numberOfPeople %}
+          {{numberOfPeople}} Bewohner
           {% endblocktrans %}
         </span>
       </p>
+      {% if detail.petsAllowed or not requestForHelp %}
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-pets" viewBox="0 0 20 20">
+          <path d="M2.5 9a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5ZM7 5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Zm6 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Zm4.5 4a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5Zm-2.16 2.86c1.31 1.31 2.92 2.76 2.61 4.8a3.15 3.15 0 0 1-2.33 2.32c-.73.14-3.06-.44-5.54-.44H9.9c-2.48 0-4.81.59-5.54.44a3.14 3.14 0 0 1-2.33-2.32c-.3-2.03 1.31-3.48 2.62-4.79l2.48-2.91a4.3 4.3 0 0 1 1.75-1.32l.33-.09c.26-.05.53-.05.79-.05s.53 0 .78.04l.33.09c.7.24 1.29.78 1.75 1.32l2.48 2.91Z"/>
+        </svg>
+      <span>
+        {% if requestForHelp %}
+        {% trans "Habe ein Haustier dabei" %}
+        {% else %}
+        {% if detail.petsAllowed %}
+        {% trans "Haustiere erlaubt" %}
+        {% else %}
+        {% trans "Haustiere nicht erlaubt" %}
+        {% endif %}
+        {% endif %}
+      </span>
+    </p>
+    {% endif %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar"
           viewBox="0 0 16 16">
           <path
@@ -248,13 +295,18 @@
             d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
           <path fill-rule="evenodd"
             d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
-        </svg> {{ detail.get_typeOfResidence_display }}
+        </svg> 
+        <span>
+          {% if requestForHelp %}
+          {% blocktrans %}Gewünschte Art der Unterkunft:{% endblocktrans %}
+          {% endif %}
+          {{ detail.get_typeOfResidence_display }}
+        </span>
       </p>
       <hr>
 
       {% elif generic.offerType == "TR" %}
       {%if detail.helpType == "PT" %}
-      <p><span>{%blocktrans%}Personentransport{%endblocktrans%}</span></p>
       <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people"
           viewBox="0 0 16 16">
           <path
@@ -267,12 +319,11 @@
         </span>
       </p>
 
-      {% elif detail.helpType == "GT" %}
-      <p><span>{%blocktrans%}Gütertransport{%endblocktrans%}</span></p>
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase"
-          viewBox="0 0 16 16">
-          <path
-            d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z" />
+      {% elif not requestForHelp %}
+      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-car"
+        viewBox="0 0 15 15">
+        <path
+          d="M14,7c-0.004-0.6904-0.4787-1.2889-1.15-1.45l-1.39-3.24l0,0l0,0l0,0C11.3833,2.1233,11.2019,2.001,11,2H4&#xA;&#x9;C3.8124,2.0034,3.6425,2.1115,3.56,2.28l0,0l0,0l0,0L2.15,5.54C1.475,5.702,0.9994,6.3059,1,7v3.5h1v1c0,0.5523,0.4477,1,1,1&#xA;&#x9;s1-0.4477,1-1v-1h7v1c0,0.5523,0.4477,1,1,1s1-0.4477,1-1v-1h1V7z M4.3,3h6.4l1.05,2.5h-8.5L4.3,3z M3,9C2.4477,9,2,8.5523,2,8&#xA;&#x9;s0.4477-1,1-1s1,0.4477,1,1S3.5523,9,3,9z M12,9c-0.5523,0-1-0.4477-1-1s0.4477-1,1-1s1,0.4477,1,1S12.5523,9,12,9z" />
         </svg>
         <span>
           {%blocktrans%}Fahrzeugtyp:{%endblocktrans%} {{detail.get_typeOfCar_display}}
@@ -280,42 +331,59 @@
       </p>
       {%endif%}
 
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar"
-          viewBox="0 0 16 16">
-          <path
-            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
-        </svg><span>
-          {%blocktrans with radius=detail.distance %} Umkreis: {{radius}}km{% endblocktrans%}
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-radius" width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" />
+          <circle cx="12" cy="12" r="1" fill="black" />
+          <polyline points="12 12 20 12"></polyline>
+          <polyline points="18 14 20 12 18 10"></polyline>
+        </svg>
+        <span>
+          {% if entry.distance == '5' %}
+          {% blocktrans %}Länge der Fahrstrecke ist komplett flexibel.{% endblocktrans %}
+          {% else %}
+          {% if requestForHelp %}
+          {% blocktrans with radius=detail.get_distance_display %}Sollte bereit sein, {{radius}} zu fahren{% endblocktrans %}
+          {% else %}
+          {% blocktrans with radius=detail.get_distance_display %}Bereit, {{radius}} zu fahren{% endblocktrans %}
+          {% endif %}
+          {% endif %}
         </span>
       </p>
 
       {% elif generic.offerType == "TL" %}
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people"
-          viewBox="0 0 16 16">
-          <path
-            d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
-        </svg> <span> {% blocktrans %}Übersetzung zwischen{% endblocktrans %}</span>
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+        class="bi bi-globe" viewBox="0 0 16 16">
+        <path
+          d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z" />
+        </svg> 
+        <span> {% blocktrans %}Übersetzung zwischen{% endblocktrans %}</span>
         <ul>
           {% for language in detail.languages.all %}
           <li> {{language}} </li>
           {%endfor%}
         </ul>
       </p>
-
-
+      <hr>
 
       {% elif generic.offerType == "CL"%}
-      <p><span>{%blocktrans%}Art der Kinderbetreuung:{%endblocktrans%} {{ detail.get_helpType_childcare_display}}</span></p>
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-buggy"
+            viewBox="0 0 512 512">
+            <path
+              d="M144.8 17c-11.3-17.8-37.2-22.8-54-9.4C35.3 51.9 0 118 0 192h256L144.8 17zM496 96h-48c-35.3 0-64 28.7-64 64v64H0c0 50.6 23 96.4 60.3 130.7C25.7 363.6 0 394.7 0 432c0 44.2 35.8 80 80 80s80-35.8 80-80c0-8.9-1.8-17.2-4.4-25.2 21.6 5.9 44.6 9.2 68.4 9.2s46.9-3.3 68.4-9.2c-2.7 8-4.4 16.3-4.4 25.2 0 44.2 35.8 80 80 80s80-35.8 80-80c0-37.3-25.7-68.4-60.3-77.3C425 320.4 448 274.6 448 224v-64h48c8.8 0 16-7.2 16-16v-32c0-8.8-7.2-16-16-16zM80 464c-17.6 0-32-14.4-32-32s14.4-32 32-32 32 14.4 32 32-14.4 32-32 32zm320-32c0 17.6-14.4 32-32 32s-32-14.4-32-32 14.4-32 32-32 32 14.4 32 32z" />
+          </svg>
+          <span>{%blocktrans%}Art der Kinderbetreuung{%endblocktrans%}: {{ detail.get_helpType_childcare_display}} 
+        {%if detail.helpType_childcare == "HT"%}({{ detail.get_timeOfDay_display }}){%endif%}</span></p>
       <p>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person"
           viewBox="0 0 16 16">
           <path
             d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
-        </svg><span>{%blocktrans%}Anzahl an Kindern:{%endblocktrans%} {{ detail.numberOfChildren }}</span>
+        </svg><span>{%blocktrans%}Anzahl der Kinder{%endblocktrans%}: {{ detail.numberOfChildren }}</span>
       </p>
-      {% if detail.helpType_childcare != "GT"%}
-      <p><span>{{ detail.get_timeOfDay_display }}</span></p>
-      {%endif%}
       {% if detail.hasExperience %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
           viewBox="0 0 16 16">
@@ -363,24 +431,39 @@
       </p>
       {%endif%}
 
-      {% if detail.hasSpace %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
           viewBox="0 0 16 16">
           <path fill-rule="evenodd"
             d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
         </svg>
         <span>
-          {% if requestForHelp %}
-          {%blocktrans%}Sollte Platz bei sich haben{%endblocktrans%}
-          {% else %}
+          {% if detail.hasSpace %}
           {%blocktrans%}Habe Platz bei mir{%endblocktrans%}
+          {% else %}
+          {%blocktrans%}Habe keinen Platz bei mir{%endblocktrans%}
           {% endif %}
         </span>
       </p>
-      {% else %}
-      <span>{%blocktrans with radius=detail.distance%} Bin mobil im Umkreis von
-        {{radius}}km{%endblocktrans%}</span>
+      {% if not detail.hasSpace%}
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-radius" width="18" height="18" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" />
+            <circle cx="12" cy="12" r="1" fill="black" />
+            <polyline points="12 12 20 12"></polyline>
+            <polyline points="18 14 20 12 18 10"></polyline>
+          </svg>
+        <span>
+          {% if requestForHelp%}
+          {% blocktrans with distance=detail.get_distance_display %}Helfer*in sollte im Umkreis von {{distance}} wohnen{% endblocktrans %}
+          {% else %}
+          {% blocktrans with distance=detail.get_distance_display %}Kann im Umkreis von {{distance}} helfen{% endblocktrans %}
+          {% endif %}
+        </span>
+      </p>
       {%endif%}
+
+      <hr>
 
       {% elif generic.offerType == "BU" %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people"
@@ -388,18 +471,19 @@
           <path
             d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
         </svg>
-        <span> {%blocktrans%} Art der Unterstützung: {%endblocktrans%}{{detail.get_helpType_display}} </span>
+        <span> {%blocktrans%} Art der Unterstützung:{%endblocktrans%} {{detail.get_helpType_display}} </span>
       </p>
 
       {% elif generic.offerType == "WE"%}
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people"
-          viewBox="0 0 16 16">
-          <path
-            d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
-        </svg>
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart"
+            viewBox="0 0 50 43">
+            <path class="cls-1"
+              d="M45.48 4A13.81 13.81 0 0 0 26 4l-1.32 1.32L23.4 4A13.8 13.8 0 0 0 3.89 4c-5.37 5.37-5.09 14.44.28 19.81l1 1 16.77 16.81a3.88 3.88 0 0 0 5.48 0L44.2 24.84l1-1c5.36-5.36 5.65-14.43.28-19.84zm-1 10.33a9.21 9.21 0 0 1-2.77 5.87l-1.05 1.1-16 16-16-16-1.02-1.06a9.22 9.22 0 0 1-2.78-5.87A8.8 8.8 0 0 1 14.21 5a9.17 9.17 0 0 1 5.87 2.8l1.07 1.06L23 10.71l2.64 2.64a2.61 2.61 0 1 0 3.69-3.7l-.95-1 1.12-1.07a8.8 8.8 0 0 1 15 6.79z" />
+          </svg>
         <span> {%blocktrans%} Art der Unterstützung: {%endblocktrans%}{{detail.get_helpType_display }} </span>
       </p>
-      {% if detail.hasEducation %}
+      {% if detail.hasEducation_welfare %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
           viewBox="0 0 16 16">
           <path fill-rule="evenodd"
@@ -407,42 +491,47 @@
         </svg>
         <span>
           {% if requestForHelp %}
-          {%blocktrans%}Ausbildung erwünscht{%endblocktrans%}
+          {%blocktrans%}Sollte medizinische Erfahrung haben{%endblocktrans%}
           {% else %}
-          {%blocktrans%}Ausbildung vorhanden{%endblocktrans%}
+          {%blocktrans%}Habe medizinische Erfahrung:{%endblocktrans%}
           {% endif %}
         </span>
       </p>
-      <p>{{detail.typeOfEducation}}</p>
-      {%endif%}
+      {% if not requestForHelp %}
+      <p style="margin-left: 1.6rem">
+      {{detail.typeOfEducation|linebreaksbr}}
+      </p>
+      <hr>
+      {% endif %}
+      {% endif %}
 
       {% elif generic.offerType == "MP" %}
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar"
-          viewBox="0 0 16 16">
-          <path
-            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+      {% if not requestForHelp %}
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" class="bi bi-radius" width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" stroke="black" stroke-width="1" />
+          <circle cx="12" cy="12" r="1" fill="black" />
+          <polyline points="12 12 20 12"></polyline>
+          <polyline points="18 14 20 12 18 10"></polyline>
         </svg>
-        <span>{%blocktrans %}Umkreis:{% endblocktrans%} {{detail.get_distanceChoices_display }}</span>
+        <span>{%blocktrans with distance=detail.get_distanceChoices_display %}Kann im Umkreis von {{distance}} helfen{% endblocktrans%}</span>
       </p>
+      {% endif %}
       {% if detail.hasExperience_crisis %}
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
           viewBox="0 0 16 16">
           <path fill-rule="evenodd"
             d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
         </svg>
-        <span>{%blocktrans%}Krisenerfahrung{%endblocktrans%}</span>
+        <span>
+          {% if requestForHelp %}
+          {%blocktrans%}Sollte Erfahrung mit Krisenmanagement haben{%endblocktrans%}
+          {% else %}
+          {%blocktrans%}Habe Erfahrung mit Krisenmanagement{%endblocktrans%}
+          {% endif %}
+        </span>
       </p>
-      {%endif%}
-
-      {% if detail.hasMedicalExperience %}
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
-          viewBox="0 0 16 16">
-          <path fill-rule="evenodd"
-            d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
-        </svg>
-        <span>{%blocktrans%}Medizinische Ausbildung{%endblocktrans%}</span>
-      </p>
-      <p>{{detail.describeMedicalExperience}}</p>
       {%endif%}
 
       {% if detail.hasDriverslicense %}
@@ -451,7 +540,14 @@
           <path fill-rule="evenodd"
             d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
         </svg>
-        <span>{%blocktrans%}Führerschein{%endblocktrans%}</span>
+        <span>
+          {% if requestForHelp %}
+          {%blocktrans%}Sollte Führerschein haben{%endblocktrans%}
+          {% else %}
+          {%blocktrans%}Habe Führerschein{%endblocktrans%}
+          {% endif %}
+        </span>
+
       </p>
       {%endif%}
 
@@ -461,24 +557,69 @@
           <path fill-rule="evenodd"
             d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
         </svg>
-        <span>{%blocktrans%}Auslandseinsatz denkbar{%endblocktrans%}</span>
+        <span>
+          {% if requestForHelp %}
+          {%blocktrans%}Sollte bereit für Auslandseinsatz sein{%endblocktrans%}
+          {% else %}
+          {%blocktrans%}Bin bereit für Auslandseinsatz{%endblocktrans%}
+          {% endif %}
+        </span>
       </p>
       {%endif%}
 
-      {% elif generic.offerType == "JO" %}
-      <p>
-        <span>{% blocktrans %}Art des Jobs{% endblocktrans %}: {{ detail.get_jobType_display}}</span>
-      </p>
-      <p><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-people"
+      {% if detail.hasMedicalExperience %}
+      <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-node-plus"
           viewBox="0 0 16 16">
-          <path
-            d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1h8zm-7.978-1A.261.261 0 0 1 7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002a.274.274 0 0 1-.014.002H7.022zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM6.936 9.28a5.88 5.88 0 0 0-1.23-.247A7.35 7.35 0 0 0 5 9c-4 0-5 3-5 4 0 .667.333 1 1 1h4.216A2.238 2.238 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816zM4.92 10A5.493 5.493 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275zM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+          <path fill-rule="evenodd"
+            d="M11 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM6.025 7.5a5 5 0 1 1 0 1H4A1.5 1.5 0 0 1 2.5 10h-1A1.5 1.5 0 0 1 0 8.5v-1A1.5 1.5 0 0 1 1.5 6h1A1.5 1.5 0 0 1 4 7.5h2.025zM11 5a.5.5 0 0 1 .5.5v2h2a.5.5 0 0 1 0 1h-2v2a.5.5 0 0 1-1 0v-2h-2a.5.5 0 0 1 0-1h2v-2A.5.5 0 0 1 11 5zM1.5 7a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1z" />
         </svg>
-        <span> {% blocktrans with jobTitle=detail.jobTitle%}Suche: {{jobTitle}}{% endblocktrans %}</span>
+        <span>
+          {% if requestForHelp %}
+          {%blocktrans%}Sollte medizinische Ausbildung haben{%endblocktrans%}
+          {% else %}
+          {%blocktrans%}Habe medizinische Ausbildung{%endblocktrans%}
+          {% endif %}
+        </span>
+      </p>
+      {% if not requestForHelp %}
+      <p style="margin-left:1.7rem;">
+       {{ detail.describeMedicalExperience|linebreaksbr }}  
+      </p>
+      <hr>
+      {% endif %}
+      {% endif %}
+      
+
+      {% elif generic.offerType == "JO" %}
+      <p style="font-weight:400;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person"
+            viewBox="0 0 16 16">
+            <path
+              d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z" />
+          </svg>
+      <span> {{detail.jobTitle}}</span>
       </p>
       <p>
-        <span>{% blocktrans %}Anforderungen:{% endblocktrans %} {{ detail.requirements }}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-briefcase"
+            viewBox="0 0 16 16">
+            <path
+              d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z" />
+          </svg>
+        <span>{% blocktrans %}Arbeitsfeld{% endblocktrans %}: {{ detail.get_jobType_display}}</span>
       </p>
+
+      {% if not requestForHelp %}
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-checklist" viewBox="0 0 92 92">
+          <path d="M36.2 14c0-2.8 2.2-5 5-5H85c2.8 0 5 2.2 5 5s-2.2 5-5 5H41.2c-2.7 0-5-2.2-5-5zM85 41H41.2c-2.8 0-5 2.2-5 5s2.2 5 5 5H85c2.8 0 5-2.2 5-5s-2.2-5-5-5zm0 32H41.2c-2.8 0-5 2.2-5 5s2.2 5 5 5H85c2.8 0 5-2.2 5-5s-2.2-5-5-5zM25 6.5C25 4.6 23.4 3 21.5 3h-15C4.6 3 3 4.6 3 6.5v15C3 23.4 4.6 25 6.5 25h15c1.9 0 3.5-1.6 3.5-3.5v-15zm0 47c0 1.9-1.6 3.5-3.5 3.5h-15C4.6 57 3 55.4 3 53.5v-15C3 36.6 4.6 35 6.5 35h15c1.9 0 3.5 1.6 3.5 3.5v15zM19 42h-9v8h9v-8zm6 43.5c0 1.9-1.6 3.5-3.5 3.5h-15C4.6 89 3 87.4 3 85.5v-15C3 68.6 4.6 67 6.5 67h15c1.9 0 3.5 1.6 3.5 3.5v15zM19 74h-9v9h9v-9z"/>
+        </svg>
+        <span>{% blocktrans %}Anforderungen:{% endblocktrans %}</span>
+      </p>
+      <p style="margin-left:1.7rem;">
+      {{ detail.requirements|linebreaksbr }}  
+      </p>
+      <hr>
+      {% endif %}
       {%endif%}
 
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-piggy-bank"
@@ -488,7 +629,32 @@
           <path fill-rule="evenodd"
             d="M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069c0-.145-.007-.29-.02-.431.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a.95.95 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.735.735 0 0 0-.375.562c-.024.243.082.48.32.654a2.112 2.112 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595zM2.516 6.26c.455-2.066 2.667-3.733 5.448-3.733 3.146 0 5.536 2.114 5.536 4.542 0 1.254-.624 2.41-1.67 3.248a.5.5 0 0 0-.165.535l.66 2.175h-.985l-.59-1.487a.5.5 0 0 0-.629-.288c-.661.23-1.39.359-2.157.359a6.558 6.558 0 0 1-2.157-.359.5.5 0 0 0-.635.304l-.525 1.471h-.979l.633-2.15a.5.5 0 0 0-.17-.534 4.649 4.649 0 0 1-1.284-1.541.5.5 0 0 0-.446-.275h-.56a.5.5 0 0 1-.492-.414l-.254-1.46h.933a.5.5 0 0 0 .488-.393zm12.621-.857a.565.565 0 0 1-.098.21.704.704 0 0 1-.044-.025c-.146-.09-.157-.175-.152-.223a.236.236 0 0 1 .117-.173c.049-.027.08-.021.113.012a.202.202 0 0 1 .064.199z" />
         </svg>
-        <span> {{generic.cost| default:"0"}} €</span>
+        <span>
+          {% if generic.offerType == "JO" %}
+            {% if requestForHelp %}
+            {% trans "Gewünschter Stundenlohn:" %}
+            {% else %}
+            {% trans "Stundenlohn:" %}
+            {% endif %}
+          {% elif generic.offerType == "AC" %}
+            {% if requestForHelp %}
+            {% trans "Bereit zu zahlen (täglich):" %}
+            {% else %}
+            {% trans "Gewünschte Tagesmiete:" %}
+            {% endif %}
+          {% elif generic.offerType == "WE" or generic.offerType == "CL" or generic.offerType == "MP" %}
+            {% if requestForHelp %}
+            {% trans "Bereit zu zahlen (Stundenlohn):" %}
+            {% else %}
+            {% trans "Gewünschter Stundenlohn:" %}
+            {% endif %}
+          {% else %}
+            {% if requestForHelp %}
+            {% trans "Bereit zu zahlen:" %}
+            {% endif %} 
+          {% endif %}
+          {{generic.cost| default:"0"}} €
+        </span>
       </p>
 
       <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt"
@@ -496,12 +662,16 @@
           <path
             d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z" />
           <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-        </svg>{%if location %} {{location}} {%else%}{%blocktrans%}Kein Ort angegeben{%endblocktrans%}{% endif %}</p>
+        </svg>
+        {% if generic.offerType == "TR" %}
+        {% trans "Startpunkt:" %}
+        {% endif %}
+        {%if location %} {{location}} {%else%}{%blocktrans%}Kein Ort angegeben{%endblocktrans%}{% endif %}</p>
       <p>
 
         {%if location %}
         <p class="map"><iframe
-            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location }}"
+            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&q={{ location |urlencode}}"
             width="100%" height="350" style="border:0;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"></iframe>
 
@@ -513,7 +683,7 @@
         </p>
         {% endif%}
 
-        <p>
+        <p style="font-weight:400;">
           {% if requestForHelp %}
           {% blocktrans with creatorName=username|default:"Anonym" %}
           Ein Gesuch von {{ creatorName }}, erstellt am {{createdAt }}
@@ -524,42 +694,47 @@
           {% endblocktrans %}
           {% endif %}
         </p>
+        <br>
 
         {% if edit_allowed %}
-        <p style="margin-top: 25px;" class="edit">
-          <a href="edit" class="btn btn-green" role="button">
-            <svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor"
-              class="bi bi-pencil-fill" viewBox="0 0 16 16">
-              <path
-                d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
-            </svg>
-            {% blocktrans %}Bearbeiten{% endblocktrans %}
-          </a>
-        </p>
-        <p style="margin-top: 25px;" class="edit">
-          <a href="#toggleActiveModal" class="btn {% if generic.active %}btn-yellow{% else %}btn-green{% endif%}"
-            data-toggle="modal" data-target="#toggleActiveModal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
-              viewBox="0 0 16 16">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-              <path
-                d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
-            </svg>
-            {% if generic.active %}{% blocktrans %}Deaktivieren{% endblocktrans %}
-            {% else %}{% blocktrans %}Aktivieren{% endblocktrans %}{% endif %}
-          </a>
-        </p>
-        <p style="margin-top: 25px;" class="edit">
-          <a href="#deleteOfferModal" class="btn btn-red" data-toggle="modal" data-target="#deleteOfferModal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-              class="bi bi-delete bi-wastebin" viewBox="0 0 105.16 122.88">
-              <path
-                d="M11.17,37.16H94.65a8.4,8.4,0,0,1,2,.16,5.93,5.93,0,0,1,2.88,1.56,5.43,5.43,0,0,1,1.64,3.34,7.65,7.65,0,0,1-.06,1.44L94,117.31v0l0,.13,0,.28v0a7.06,7.06,0,0,1-.2.9v0l0,.06v0a5.89,5.89,0,0,1-5.47,4.07H17.32a6.17,6.17,0,0,1-1.25-.19,6.17,6.17,0,0,1-1.16-.48h0a6.18,6.18,0,0,1-3.08-4.88l-7-73.49a7.69,7.69,0,0,1-.06-1.66,5.37,5.37,0,0,1,1.63-3.29,6,6,0,0,1,3-1.58,8.94,8.94,0,0,1,1.79-.13ZM5.65,8.8H37.12V6h0a2.44,2.44,0,0,1,0-.27,6,6,0,0,1,1.76-4h0A6,6,0,0,1,43.09,0H62.46l.3,0a6,6,0,0,1,5.7,6V6h0V8.8h32l.39,0a4.7,4.7,0,0,1,4.31,4.43c0,.18,0,.32,0,.5v9.86a2.59,2.59,0,0,1-2.59,2.59H2.59A2.59,2.59,0,0,1,0,23.62V13.53H0a1.56,1.56,0,0,1,0-.31v0A4.72,4.72,0,0,1,3.88,8.88,10.4,10.4,0,0,1,5.65,8.8Zm42.1,52.7a4.77,4.77,0,0,1,9.49,0v37a4.77,4.77,0,0,1-9.49,0v-37Zm23.73-.2a4.58,4.58,0,0,1,5-4.06,4.47,4.47,0,0,1,4.51,4.46l-2,37a4.57,4.57,0,0,1-5,4.06,4.47,4.47,0,0,1-4.51-4.46l2-37ZM25,61.7a4.46,4.46,0,0,1,4.5-4.46,4.58,4.58,0,0,1,5,4.06l2,37a4.47,4.47,0,0,1-4.51,4.46,4.57,4.57,0,0,1-5-4.06l-2-37Z" />
-            </svg>
-            {% blocktrans %}Löschen{% endblocktrans %}
-          </a>
-        </p>
 
+        <div class="row no-gutters custom-gutter">
+          <div class="form-group col-xl-auto"> 
+            <a href="edit" class="btn btn-green" role="button">
+              <svg xmlns="http://www.w3.org/2000/svg" id="editButton" width="16" height="16" fill="currentColor"
+                class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                <path
+                  d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z" />
+              </svg>
+              {% blocktrans %}Bearbeiten{% endblocktrans %}
+            </a>
+          </div>
+
+          <div class="form-group col-xl-auto"> 
+            <a href="#toggleActiveModal" class="btn btn-yellow"
+            data-toggle="modal" data-target="#toggleActiveModal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
+                viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                <path
+                  d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+              </svg>
+              {% if generic.active %}{% blocktrans %}Deaktivieren{% endblocktrans %}
+              {% else %}{% blocktrans %}Aktivieren{% endblocktrans %}{% endif %}
+            </a>
+          </div>
+
+          <div class="col-xl-auto">
+            <a href="#deleteOfferModal" class="btn btn-red" data-toggle="modal" data-target="#deleteOfferModal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-delete bi-wastebin" viewBox="0 0 105.16 122.88">
+                <path
+                  d="M11.17,37.16H94.65a8.4,8.4,0,0,1,2,.16,5.93,5.93,0,0,1,2.88,1.56,5.43,5.43,0,0,1,1.64,3.34,7.65,7.65,0,0,1-.06,1.44L94,117.31v0l0,.13,0,.28v0a7.06,7.06,0,0,1-.2.9v0l0,.06v0a5.89,5.89,0,0,1-5.47,4.07H17.32a6.17,6.17,0,0,1-1.25-.19,6.17,6.17,0,0,1-1.16-.48h0a6.18,6.18,0,0,1-3.08-4.88l-7-73.49a7.69,7.69,0,0,1-.06-1.66,5.37,5.37,0,0,1,1.63-3.29,6,6,0,0,1,3-1.58,8.94,8.94,0,0,1,1.79-.13ZM5.65,8.8H37.12V6h0a2.44,2.44,0,0,1,0-.27,6,6,0,0,1,1.76-4h0A6,6,0,0,1,43.09,0H62.46l.3,0a6,6,0,0,1,5.7,6V6h0V8.8h32l.39,0a4.7,4.7,0,0,1,4.31,4.43c0,.18,0,.32,0,.5v9.86a2.59,2.59,0,0,1-2.59,2.59H2.59A2.59,2.59,0,0,1,0,23.62V13.53H0a1.56,1.56,0,0,1,0-.31v0A4.72,4.72,0,0,1,3.88,8.88,10.4,10.4,0,0,1,5.65,8.8Zm42.1,52.7a4.77,4.77,0,0,1,9.49,0v37a4.77,4.77,0,0,1-9.49,0v-37Zm23.73-.2a4.58,4.58,0,0,1,5-4.06,4.47,4.47,0,0,1,4.51,4.46l-2,37a4.57,4.57,0,0,1-5,4.06,4.47,4.47,0,0,1-4.51-4.46l2-37ZM25,61.7a4.46,4.46,0,0,1,4.5-4.46,4.58,4.58,0,0,1,5,4.06l2,37a4.47,4.47,0,0,1-4.51,4.46,4.57,4.57,0,0,1-5-4.06l-2-37Z" />
+              </svg>
+              {% blocktrans %}Löschen{% endblocktrans %}
+            </a>
+          </div>
+        </div>
 
         <div class="modal fade" id="toggleActiveModal" tabindex="-1" role="dialog"
           aria-labelledby="toggleActiveModalLabel" aria-hidden="true">
@@ -690,10 +865,10 @@
         <p style="margin-top: 25px;" class="contact">
           <a {% if contactable %} href="contact" {% else %} href="#infoContactModal" data-toggle="modal"
             data-target="#infoContactModal" {% endif %} class="btn btn-green" role="button">
-            {% if not user.is_authenticated %}
-            {% blocktrans %}Registrieren und Kontakt aufnehmen{% endblocktrans %}
-            {% else %}
+            {% if user.is_authenticated %}
             {% blocktrans %}Jetzt kontaktieren{% endblocktrans %}
+            {% else %}
+            {% blocktrans %}Registrieren und Kontakt aufnehmen{% endblocktrans %}
             {%endif %}
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
               class="bi bi-arrow-right-circle" style="margin-top: -2px; margin-left: 10px" viewBox="0 0 16 16">

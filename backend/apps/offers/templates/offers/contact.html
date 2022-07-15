@@ -20,7 +20,6 @@
     .btn:hover { background-color: #1eb159; color: #fff;}
     
     </style>
-<link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -28,6 +27,22 @@
     <div class="row align-self-center">
         <div class="col-md-8" style="margin: 0 auto; ">
   	<div style="height:40px"></div>
+
+      <div class="row align-self-center align-items-center top-menu">
+        <div class="col-4 left">
+            <p class="font-weight-bold"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+            </svg>
+            {% if "offers/list" in request.META.HTTP_REFERER %}
+            <input type="button" class="back" value="{% blocktrans %}Zurück{% endblocktrans %}" onclick="window.history.back()" />
+            {% else %}
+            <a class="back" href="{{request.META.HTTP_REFERER|escape}}">{% blocktrans %}Zurück{% endblocktrans %}</a>
+            {% endif %}
+            </p>
+        </div>
+    </div>
 
 <h3 style="margin-bottom: 35px;">
     {% blocktrans %}In Kontakt treten{% endblocktrans %}</h3>

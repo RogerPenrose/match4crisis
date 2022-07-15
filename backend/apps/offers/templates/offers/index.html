@@ -1,299 +1,554 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load getdictvalue %}
+{% load widget_type_filter %}
 
 {% block title %}
-{% blocktrans %}Listenansicht Angebote{% endblocktrans %}{% endblock %}
+{% if counts.requests %}
+{% blocktrans %}Listenansicht Hilfsgesuche{% endblocktrans %}
+{% elif counts.helpRequests %}
+{% blocktrans %}Listenansicht Hilfsaufrufe{% endblocktrans %}
+{% else %}
+{% blocktrans %}Listenansicht Angebote{% endblocktrans %}
+{% endif %}
+{% endblock %}
 
 {% block header %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
 <style>
-  .modal-content { border:0px; border-radius: 25px;}
-  .modal-header span { font-size: 50px;}
-  .modal-header .close {padding: .5rem 1rem 0rem 1rem }
-  div.description { padding: 10px; position: relative; }
-  div.description:after { content:url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>"); position: absolute; top: 45%; right: 15px;}
-.filter-title { font-weight: 700;}
-  .custom-control { margin-bottom: 0px;}
-  div.offer-card > .row { min-height: 200px;}
-  ul { margin-bottom: 0px;}
-  label.custom-control-label { position: relative;
-  display: inline-block;
- margin-right: .5rem;
-  border-radius: 23px;
-  vertical-align: text-bottom;
-  transition: all 0.3s linear;
-margin-bottom: 0px;
+  .modal-content {
+    border: 0px;
+    border-radius: 25px;
+  }
+
+  .modal-header span {
+    font-size: 50px;
+  }
+
+  .modal-header .close {
+    padding: .5rem 1rem 0rem 1rem
+  }
+
+  div.description {
+    padding: 10px;
+    position: relative;
+  }
+
+  div.description:after {
+    content: url("data:image/svg+xml; utf8, <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-right' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/></svg>");
+    position: absolute;
+    top: 45%;
+    right: 15px;
+  }
+
+  .filter-title {
+    font-weight: 700;
+  }
+
+  div.offer-card>.row {
+    min-height: 200px;
+  }
+
+  ul {
+    margin-bottom: 0px;
+  }
+
+  select {
     width: 100%;
-    padding: 10px 10px 10px 70px;
-    font-weight: 600;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: .8rem 1.5rem;
+    border-radius: 10px;
+  }
+
+  .search-bar {
+    margin-bottom: 5px;
+  }
+
+
+  div.offer-types-group {
+    display: inline-block;
+    flex-direction: column;
+    font-size: 12pt;
+    user-select: none;
+  }
+
+  @media only screen and (max-width: 767px) {
+    div.offer-types-group {
+      display: flex;
+      flex-direction: row;
+      text-align: center;
+      overflow-x: auto;
+      width: auto;
+      transition: all 0.3s ease 0s;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      -webkit-overflow-scrolling: touch;
+      -ms-overflow-style: none;
+    }
+
+  }
+
+  .offer-types-group>label {
+    padding: 10px 15px 5px 0px;
+  }
+
+  .offer-types-group img {
+    height: 20pt;
+  }
+
+  .offer-types-group input[type="checkbox"],
+  input[type="radio"] {
+    display: none;
+  }
+
+
+  .offer-types-group-name {
+    font-weight: 700;
+    margin-bottom: .2em;
+  }
+
+  .offer-types-group input:checked+span {
+    background: #ed0061;
+    color: #fff;
+  }
+
+  .offer-types-group input:checked+span img {
+    filter: invert(100%);
+  }
+
+
+  .offer-types-group span {
+    padding: 10px 10px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .offer-types-group span img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+
+  #mapview-button { 
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    bottom: 20px;
+    z-index: 900;
+    text-align: center;
+    width: 100%;}
+
+    #mapview-button a {color: #fff !important; }
+
+  .subtitle{
+    font-size : 1em;
+    font-weight: 400;
+    margin-bottom : 25px;
 }
-input :not(.back) { width: 100%; display: inline-block;
-  font-weight: 300 !important;
-line-height: 1.5 !important;
-color: #495057;
-background-color: #fff;
-border: 0px !important;
-border-radius: .75rem !important;
-box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
-padding: .275rem .75rem; }
-.custom-checkbox .custom-control-label::before {
-content: "";
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  width: 42px;
-  height: 22px;
-  background-color: #fff;
-  border-radius: 11px;
-  transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
-  transition: all 0.25s linear; 
-  box-shadow: 0 0 0px 2px #e6e6e6;
-}
-
-.custom-control-label::after {
-  content: "";
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  width: 22px;
-  height: 22px;
-  background-color: #fff;
-  border-radius: 11px;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
-  transform: translate3d(2px, 2px, 0);
-  transition: all 0.2s ease-in-out;
-}
-
-.custom-control-label:active .custom-control-label::after {
-  width: 28px;
-  transform: translate3d(2px, 2px, 0);
-}
-
-.custom-control input { display: none; }
-
-.custom-control-input:checked~.custom-control-label::before {  background-color: #4BD763;  box-shadow: 0 0 0px 2px #4BD763;}
-
-.custom-control-input:checked~.custom-control-label::after { transform: translate3d(22px, 2px, 0); }
 
 .custom-control { padding-left: 0px; }
+#isDigital label::before { border: 0px;}
+table { width: 100%}
 
 
-.custom-control-label::before { border: 0px;}
-select {
-  width:100%;
+.filter-card {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 15px;
 }
-.btn {     background-color: #32bd69;
-    font-size: 1rem;
-    color: #fff;
-    padding: .8rem 2.5rem;
-    border-radius: 15px;
-    border: 0px;
-    font-weight: bold;
-margin-top: 20px; }
 
-    .btn:hover { background-color: #1eb159; }
+.pagination-container {
+  text-align: center;
+  font-size: 14pt;
+}
+
+.filter-control {
+  margin-left: 5px;
+}
+
+.filter-button {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 0.7rem 1.3rem;
+  cursor: pointer;
+  font-weight: 400;
+}
+
+#id_radius{
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='bi bi-radius' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10' stroke='black' stroke-width='1' /%3E%3Ccircle cx='12' cy='12' r='1' fill='black' /%3E%3Cpolyline points='12 12 20 12'%3E%3C/polyline%3E%3Cpolyline points='18 14 20 12 18 10'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10% 50%;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  border: 0px;
+  border-radius: 1rem;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+  padding: 0.7rem 0rem 0.7rem 1.7rem;
+  margin-bottom: 5px;
+  height: 100%;
+}
+
+@media only screen and (max-width: 767px) {
+  .filter-button span {
+    display: none;
+  }
+
+  .filter-button {
+    padding: 0.7rem 0.7rem;
+  }
+}
+
+  svg.remove-location {
+    cursor: pointer;
+    position: absolute;
+    padding: 1px;
+    top: 11px;
+    right: 15px;
+  }
+
+  #id_location:placeholder-shown~svg.remove-location {
+    display:none;
+  }
+
+  #id_location:placeholder-shown~#select_radius {
+      display: none;
+  }
+
+  #id_location {
+    padding: 0.45rem 2.25rem 0.45rem 2.2rem;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border: 0px;
+    border-radius: 1rem;
+    margin-bottom: 0px;
+  }
+
+  #noResultsNotice {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 7rem;
+    margin-top: 5rem;
+  }
 
 </style>
+
+{% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
+{% firstof filters.offers.TL.filter.form.media.css filters.offers.JO.filter.form.media.css filters.requests.TL.filter.form.media.css filters.requests.JO.filter.form.media.css %}
+
 {% endblock %}
 
 {% block content %}
-
-<script>
-  function search(){
-    document.getElementById("list_checkbox").checked = true
-    form = new FormData(document.searchForm)
-    
-    console.log("Sending:"+JSON.stringify(form))
-    document.searchForm.submit()
-  }
-    {% if currentFilter %}
-    function search_with_current_filter(target){
-      var page = {{ page }}
-      var myForm = document.getElementById('searchForm');
-     //var data = {{ currentFilter|safe}}
-     var data = new FormData(myForm)
-     for (var pair of data.entries()) {
-        if (pair[1] != ""){
-          data[pair[0]]  = pair[1]}
-      }
-      var city= "{{currentFilter.city|safe}}"
-      data.city = city.slice(2,city.length - 2)
-      console.log(data.city)
-      data.show_list = "True"
-      var csrfmiddlewaretoken = '{{ csrf_token }}'
-      if (target == "+1")
-        data.page = page+1
-      else if (target == "-1") 
-        data.page = page -2 
-      data.show_list = "True"
-      var xhr = new XMLHttpRequest();
-    xhr.open("POST", "handle_filter", true);
-    xhr.setRequestHeader( "X-CSRFToken", csrfmiddlewaretoken);
-  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-  var formBody = [];
-  for (var property in data) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(data[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-          document.open();
-      document.write(xhr.responseText);
-      document.close();
-  
-      } else {
-          // Handle error
-      }
-  }
-    xhr.send(formBody);
-    }
-  {% endif %}
-</script>
 <div class="container">
-    <div style="height:40px"></div>
-    <div class="row align-self-center align-items-center top-menu">
-<div class="col-6 left">
- <p class="font-weight-bold">  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"  style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-      </svg> <a href="{{request.META.HTTP_REFERER|escape}}">{%blocktrans%} Zurück {% endblocktrans%}</a></p></div>
-    <div class="col-6 filter">
-        <p><a href="#" data-toggle="modal" data-target="#exampleModal">{% blocktrans %}Filter{% endblocktrans %}</a></p></div>
-        </div>
-
-        <div class="row align-self-center align-items-center">
-<div class="col-lg-12">
-<form action="/offers/handle_filter" name="searchForm" id="searchForm" method="POST">
-  {% csrf_token %}
-    <div style="position: relative;">
-      <input type="text" style="display:none" name="range" value="{{range}}"/>
-      <input
-        type="text"
-        id="id_location"
-        name="city"
-        class="input-form-search"
-        placeholder="{% blocktrans %}Standort an dem du Hilfe suchst ...{% endblocktrans %}"
-      />
-      <svg
-        class="bi bi-search"
-        style="
-          margin-left: 3px;
-          position: absolute;
-          top: 13px;
-          left: 10px;
-        "
-        width="14px"
-        height="14px"
-        viewBox="0 0 18 14"
-        fill="#495057"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
-          clip-rule="evenodd"
-        />
-        <path
-          fill-rule="evenodd"
-          d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-          clip-rule="evenodd"
-        />
-      </svg>
+  <div style="height:40px"></div>
+  <div class="row align-self-center align-items-center top-menu">
+    <div class="col-6 left">
+      <p class="font-weight-bold"> <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+          style="margin-top: -2px;" class="bi bi-chevron-left" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+        </svg> <a href="{{request.META.HTTP_REFERER|escape}}">{%blocktrans%} Zurück {% endblocktrans%}</a></p>
     </div>
-    <div class="modal" tabindex="-1"  id="exampleModal"role="dialog">
+  </div>
+
+  <form method="GET" id="locationForm" name="locationForm" action="{% url 'alter_url_query' %}">
+    <div class="row no-gutters align-self-center align-items-center">
+      <div class="col location-search">
+        <div style="position: relative;" class="search-bar">
+          <input type="text" style="display:none" name="range" value="{{range}}" />
+          <div >
+            {{locationForm.location}}
+            {% comment %} <input type="text" class="input-form-search" id="id_location" name="location" placeholder="{% blocktrans %}Gib hier einen Standort ein...{% endblocktrans %}" /> {% endcomment %}
+            <svg class="bi bi-search" style="margin-left: 3px; position: absolute; top: 13px; left: 10px;" 
+            width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+                clip-rule="evenodd" />
+              <path fill-rule="evenodd"
+                d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+                clip-rule="evenodd" />
+            </svg>
+
+            <svg class="remove-location bi bi-x-circle" title="{% trans "Standort entfernen" %}" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" 
+            fill="currentColor" viewBox="0 0 16 16" onclick="clearLocationSearch();">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+              <path
+                  d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+            </svg>
+          </div>
+          {% for hidden in locationForm.hidden_fields %}
+            {{ hidden }}
+          {% endfor %}
+          {% comment %} <input type="number" style="display:none" name="lat" />
+          <input type="number" style="display:none" name="lng" />
+          <input type="text" style="display:none" name="bb"/> {% endcomment %}
+        </div>
+      </div>
+
+      <div class="col-auto filter-control">
+        {{locationForm.radius}}
+        {% comment %} <select name="radius" id="select_radius">
+          <option value="0">0km</option>
+          <option value="1">1km</option>
+          <option value="2">2km</option>
+          <option value="5">5km</option>
+          <option value="10">10km</option>
+          <option value="20">20km</option>
+        </select> {% endcomment %}
+      </div>
+
+    <div class="col-auto filter-control">
+      <a class="filter-button" data-toggle="modal" data-target="#exampleModal">
+        <svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+            <path d="M33.5,19.14V12a1.5,1.5,0,0,0-3,0v7.14a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V30.88C39.52,29.34,39.52,20.67,33.5,19.14ZM32,28.07a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,32,28.07Z" />
+            <path d="M53.5,32a6.07,6.07,0,0,0-4.56-5.87V12a1.5,1.5,0,0,0-3,0V26.13a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V37.87A6.07,6.07,0,0,0,53.5,32Zm-6,3.06a3.06,3.06,0,0,1,0-6.12A3.06,3.06,0,0,1,47.46,35.06Z" />
+            <path d="M18.06,37V12a1.5,1.5,0,1,0-3,0V37a6.07,6.07,0,0,0,0,11.73V52a1.5,1.5,0,0,0,3,0V48.74A6.07,6.07,0,0,0,18.06,37Zm-1.5,8.94a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,16.56,45.94Z" />
+      </svg>
+      <span>
+        {% blocktrans %}Filter{% endblocktrans %}
+      </span>
+      </a>
+    </div>
+  </div>
+</form>
+
+
+    <div class="modal" tabindex="-1" id="exampleModal" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{% blocktrans %}Filter{% endblocktrans %}</h5>
+            <h5 class="modal-title">{% if filters.requests %}{% trans "Hilfsgesuche filtern" %}{% else %}{% trans "Angebote filtern" %}{% endif %}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="accommodationVisible" value="1" name="accommodationVisible" {% if currentFilter.accommodationVisible  %}checked {%endif%}><label for="accommodationVisible" class="custom-control-label">{% blocktrans %}Unterkünfte{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="translationVisible" value="1" name="translationVisible" {% if currentFilter.translationVisible  %}checked {%endif%}><label for="translationVisible" class="custom-control-label">{% blocktrans %}Übersetzungen{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="transportationVisible" value="1" name="transportationVisible"  {% if currentFilter.transportationVisible  %}checked {%endif%}><label for="transportationVisible" class="custom-control-label">{% blocktrans %}Transport{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="jobVisible" value="1" name="jobVisible"  {% if currentFilter.jobVisible  %}checked {%endif%}><label for="jobVisible" class="custom-control-label">{% blocktrans %}Jobs{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="manpowerVisible" value="1" name="manpowerVisible"  {% if currentFilter.manpowerVisible  %}checked {%endif%}><label for="manpowerVisible" class="custom-control-label">{% blocktrans %}Hilfe vor Ort{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="welfareVisible" value="1" name="welfareVisible"  {% if currentFilter.welfareVisible  %}checked {%endif%}><label for="welfareVisible" class="custom-control-label">{% blocktrans %}Medizinische Unterstützung{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="buerocraticVisible" value="1" name="buerocraticVisible"  {% if currentFilter.buerocraticVisible  %}checked {%endif%}><label for="buerocraticVisible" class="custom-control-label">{% blocktrans %}Bürokratische Hilfe{% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="childShortVisible" value="1" name="childShortVisible"  {% if currentFilter.childShortVisible  %}checked {%endif%}><label for="childShortVisible" class="custom-control-label">{% blocktrans %}Babysitten (short-term){% endblocktrans %}</label></p>
-            <p class="custom-control custom-checkbox"><input type="checkbox" class="checkboxinput custom-control-input"  id="childLongVisible" value="1" name="childLongVisible"  {% if currentFilter.childLongVisible  %}checked {%endif%}><label for="childLongVisible" class="custom-control-label">{% blocktrans %}Babysitten (long-term){% endblocktrans %}</label></p>
-            <hr>      {% if currentFilter.accommodationVisible  %}    <p class="filter-title"> {% blocktrans %}Wohnungen{% endblocktrans %} </p>
-        <p> {{ filter.accommodation.form.as_p }}</p>
-        <hr>{% endif%}
-        {% if currentFilter.translationVisible  %}     <p class="filter-title"> {% blocktrans %}Übersetzungen{% endblocktrans %} </p>
-        <p>{{ filter.translation.form.as_p }}</p>
-        <hr>{% endif%}
-        {% if currentFilter.transportationVisible  %}    <p class="filter-title"> {% blocktrans %}Transportat{% endblocktrans %} </p>
-        <p>{{ filter.transportation.form.as_p }}</p>
-        <hr>{% endif%}
-        {% if currentFilter.jobVisible  %}     <p class="filter-title"> {% blocktrans %}Jobs{% endblocktrans %} </p>
-        <p>{{ filter.job.form.as_p }}</p>
-        <hr>{% endif%}
-        {% if currentFilter.manpowerVisible  %}     <p class="filter-title"> {% blocktrans %}Hilfe vor Ort{% endblocktrans %} </p>
-        <p>{{ filter.manpower.form.as_p }}</p>
-        <hr>{% endif%}
-        {% if currentFilter.welfareVisible  %}    <p class="filter-title"> {% blocktrans %}Mediznische Unterstützung{% endblocktrans %} </p>
-        <p>{{ filter.welfare.form.as_p }}</p>
-        <hr>{% endif%}
-        {% if currentFilter.buerocraticVisible  %}    <p class="filter-title"> {% blocktrans %}Bürokratie{% endblocktrans %} </p>
-        <p>{{ filter.buerocratic.form.as_p }}</p>
-        <hr>{% endif%}
-        
-        {% if currentFilter.childcareVisible  %}     <p class="filter-title"> {% blocktrans %}Kinderbetreuung{% endblocktrans %} </p>
-        <p>{{ filter.childcare.form.as_p }}</p>
-        <hr>{% endif%}
-        
+            <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
+              {% if helpRequestsFilter %}
+              <div class="filter-card" style="margin-bottom: 1rem">
+                <h4 class="filter-title">{{helpRequestsFilter.label}}</h4>
+                {% for field in helpRequestsFilter.filter.form %}
+                    <p>
+                    {% if field.field.widget|is_checkbox %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field }}{{ field.label_tag }}
+                    {% elif field.field.widget|is_select2widget %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field.label_tag }}{{ field }}
+                    {% else %}
+                      {{ field.label_tag }}{{ field }}
+                    {% endif %}
+                    </p>
+                {% endfor %}
               </div>
+              {% endif %}
+
+              {% for offerOrRequestFilters in filters.values %}
+              {% for f in offerOrRequestFilters.values %}
+              <div class="filter-card">
+                <h4 class="filter-title">{{f.label}}</h4>
+                {% for field in f.filter.form %}
+                    <p>
+                    {% if field.field.widget|is_checkbox %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field }}{{ field.label_tag }}
+                    {% elif field.field.widget|is_select2widget %}
+                      <input type="hidden" name="{{field.html_name}}" value="">
+                      {{ field.label_tag }}{{ field }}
+                    {% else %}
+                      {{ field.label_tag }}{{ field }}
+                    {% endif %}
+                    </p>
+                {% endfor %}
+              </div>
+              {% if forloop.last is False %}
+              <hr style="margin-bottom: 1rem">
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
+          </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-yellow"  data-dismiss="modal" onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="button" class="btn btn-primary"  data-dismiss="modal" onclick="search_with_current_filter()">{% blocktrans %}Anwenden{% endblocktrans %}</button>
+            <button type="button" class="btn-yellow" data-dismiss="modal"
+              onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="submit"
+              class="btn-primary"
+              onclick="search_with_current_filter()">{% blocktrans %}Anwenden{% endblocktrans %}</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
-    <input type="checkbox" id="list_checkbox" style="display:none" name="show_list" value="True">
-    <input id="searchsubmit" type="submit" value="Submit" />
-  </form>
 
-</div></div> 
+      <div class="row align-self-center align-items-center">
+      <div id="offerTypes" class="offer-types col-lg-12">
+        <form id="offerTypesForm" action="{% url 'alter_offer_type_selection' %}" method="GET">
+          {% if counts.helpRequests %}
+          <div class="offer-types-group" id="offer-types-group-requests">
+            <label class="offer-types-label">
+              <input type="checkbox" name="helpRequests" class="offer-types-selector" {% if counts.helpRequests.selected %}checked{% endif %}>
+              <span>
+                <img src="/static/img/icons/icon_MP.svg">{{counts.helpRequests.label}}
+              </span>
+            </label>
+          </div>
+          {% endif %}
+          
+          {% if counts.offers %}
+          <div class="offer-types-group" id="offer-types-group-offers">
+            <label class="offer-types-group-label">
+              <input type="checkbox" class="offer-types-group-selector" id="offer-types-group-selector-offers" {% if counts.offers.allSelected %}checked{% endif %}>
+              <span class="offer-types-group-name">{{counts.offers.label}}</span>
+            </label>
+            {% for abbr, offerTypeData in counts.offers.types.items%}
+            <label class="offer-types-label">
+              <input type="checkbox" name="offers{{abbr}}" class="offer-types-selector" {% if offerTypeData.selected %}checked{% endif %}>
+              <span>
+                <img src="/static/img/icons/icon_{{abbr}}.svg">{{offerTypeData.label}}
+              </span>
+            </label>
+            {% endfor %}
+          </div>
+          {% endif %}
 
-    <div class="row align-self-center align-items-center" style="margin-top:35px;">
- <div class="col-12 text-center" style="text-align:center;" >
-    <h2 class="title">{{Title }} {% if city  %} in {{ city }} {%endif%}</h2></div>
-    <div class="col-12 text-center" style="text-decoration: underline;" >
-        <p><a href="/mapview/?{% if city %}city={{ city }}&{%endif%}{{mapparameter}}{% if requestForHelp == True %}&showRequests=true{%endif%} ">{% if requestForHelp == "Offer" %}{% blocktrans %}{{ ResultCount }} Angebote auf Karte anzeigen{% endblocktrans %}{% elif requestForHelp == "Request" %}  {{ResultCount}} Gesuche auf Karte anzeigen {% else %}  {{ResultCount}} Inserate auf Karte anzeigen {%endif%}</a></p></div>
-        </div>
-        </div>
-        {% if pagination  %}<div class="col-12 text-center" style="text-decoration: underline;" >  {% if page|add:"0" > 1 %}<a href="#" onclick="search_with_current_filter('-1')"><</a> {%endif%} {% blocktrans %}Seite{% endblocktrans %} {{ page|add:"1"  }} {% blocktrans %}von{% endblocktrans %} {{ maxPage|add:"1" }} {% if page|add:"0" < maxPage|add:"0" %}<a href="#" onclick="search_with_current_filter('+1')">></a>{%endif%}
-          </div>{% endif %}
+          {% if counts.requests %}
+          <div class="offer-types-group" id="offer-types-group-requests">
+            <label class="offer-types-group-label">
+              <input type="checkbox" class="offer-types-group-selector" id="offer-types-group-selector-requests" {% if counts.requests.allSelected %}checked{% endif %}>
+              <span class="offer-types-group-name">{{counts.requests.label}}</span>
+            </label>
+            {% for abbr, requestTypeData in counts.requests.types.items%}
+            <label class="offer-types-label">
+              <input type="checkbox" name="requests{{abbr}}" class="offer-types-selector" {% if requestTypeData.selected %}checked{% endif %}>
+              <span>
+                <img src="/static/img/icons/icon_{{abbr}}.svg">{{requestTypeData.label}}
+              </span>
+            </label>
+            {% endfor %}
+          </div>
+          {% endif %}
         </form>
-        <div class="container cards">
-        {% for entry in  entries.accommodation %}
-          {% include 'offers/accommodation-card.html' %}
-        {% endfor %}
-        {% for entry in entries.translation %}  
-          {% include 'offers/translation-card.html' %}
-        {% endfor %}
-          {% for entry in entries.transportation %}  
-          {% include 'offers/transportation-card.html' %} 
-        {% endfor %}
-        {% for entry in entries.buerocratic %}
-          {% include 'offers/buerocratic-card.html' %}
-        {% endfor %}
-        {% for entry in entries.manpower %}
-          {% include 'offers/manpower-card.html' %}
-        {% endfor %}
-        {% for entry in entries.childcare %}
-          {% include 'offers/childcare-card.html' %}
-        {% endfor %}  
-        {% for entry in entries.welfare %}
-          {% include 'offers/welfare-card.html' %}
-        {% endfor %}
-        {% for entry in entries.job %}  
-          {% include 'offers/job-card.html' %}
-        {% endfor %}
+      </div>
+    </div>
   </div>
 </div>
+
+<div class="container cards">
+  {% for entry in page_obj %}
+  {% if entry.genericOffer %}
+  {% include offercardnames|getdictvalue:entry.genericOffer.offerType %}
+  {% else %}
+  {% include 'help-request-card.html' %}
+  {% endif %}
+
+  {% empty %}
+  <p id="noResultsNotice">
+    {{ noResultsNotice }}
+  </p>
+  <hr>
+  {% endfor %}
+</div>
+
+<p id="mapview-button">
+  <a href="{% url 'mapview-index' %}?{{request.GET.urlencode}}" class="btn btn-yellow" role="button" aria-pressed="true">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 32 32" style="margin-right: 10px; margin-top:-2px;">
+    <path fill-rule="evenodd" d="M31.245 3.747a2.285 2.285 0 0 0-1.01-1.44A2.286 2.286 0 0 0 28.501 2l-7.515 1.67-10-2L2.5 3.557A2.286 2.286 0 0 0 .7 5.802v21.95a2.284 2.284 0 0 0 1.065 1.941A2.29 2.29 0 0 0 3.498 30l7.515-1.67 10 2 8.484-1.886a2.285 2.285 0 0 0 1.802-2.245V4.247a2.3 2.3 0 0 0-.055-.5zM12.5 25.975l-1.514-.303L9.508 26H9.5V4.665l1.514-.336 1.486.297v21.349zm10 1.36l-1.515.337-1.485-.297V6.025l1.514.304L22.493 6h.007v21.335z"/>
+    </svg>
+    {%blocktrans%}Karte anzeigen{%endblocktrans%}
+  </a>
+</p>
+
+<div class="pagination-container container">
+
+  <hr>
+{% if page_obj.has_previous %}
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page=1" title="{% trans "Erste Seite" %}">
+  <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="6 14 0 8 6 2"></polyline>
+    <polyline points="12 14 6 8 12 2"></polyline>
+  </svg>
+</a>
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.previous_page_number }}" title="{% trans "Vorherige Seite" %}">
+  <svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="6 14 0 8 6 2"></polyline>
+  </svg>
+</a>
+{% endif %}
+
+<span class="current">
+  {% blocktrans with page_number=page_obj.number max_page_number=page_obj.paginator.num_pages%}Seite {{ page_number }} von {{ max_page_number }}{% endblocktrans %}
+</span>
+
+{% if page_obj.has_next %}
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.next_page_number }}" title="{% trans "Nächste Seite" %}">
+  <svg width="32px" height="32px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 6 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="0 14 6 8 0 2"></polyline>
+  </svg>
+</a>
+<a class="pagination-controls" href="{% url 'alter_url_query' %}?page={{ page_obj.paginator.num_pages }}" title="{% trans "Letzte Seite" %}">
+  <svg width="24px" height="24px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="0 14 6 8 0 2"></polyline>
+    <polyline points="6 14 12 8 6 2"></polyline>
+  </svg>
+</a>
+{% endif %}
+
+</div>
+</div>
+
+{% comment "This is necessary for rendering of the select2 widget for the translation and job offer filter form" %}{% endcomment %}
+{% firstof filters.offers.TL.filter.form.media.js filters.offers.JO.filter.form.media.js filters.requests.TL.filter.form.media.js filters.requests.JO.filter.form.media.js %}
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#offerTypesForm input:checkbox').bind('change', function (event) {
+      if(this.classList.contains("offer-types-group-selector")){
+        let inputsDivID = this.id.replace("-selector", "")
+        if (this.checked) {
+          $(`#${inputsDivID} input`).prop('checked', true);
+        } else {
+          $(`#${inputsDivID} input`).prop('checked', false);
+        }
+      }
+      $('#offerTypesForm').trigger("submit");
+    });
+
+    // Hide the empty group label if only manpower offers are shown
+    for(const groupLabel of $(".offer-types-group-label")){
+      if(groupLabel.innerText===""){
+          groupLabel.style.display = "none"
+      }
+    }
+
+    const autocomplete = initMapsAutocomplete();
+    autocomplete.addListener("place_changed", () => {
+
+      const place = autocomplete.getPlace();
+  
+      if (place.name == "" || (place.geometry && place.geometry.location)) {
+          // User entered the name of a Place that was  suggested and
+          // pressed the Enter key, or the Place Details request succeeded.
+          // Or place was empty
+          document.locationForm.submit();
+      }
+
+      
+    });
+
+    $('#id_radius').on('change', function() {
+      document.locationForm.submit();
+    });
+  });
+
+  function clearLocationSearch(){
+    $('#id_location')[0].value="";
+    $('#id_lat')[0].value="";
+    $('#id_lng')[0].value="";
+    $('#id_bb')[0].value="";
+    document.locationForm.submit();
+  }
+</script>
 {% endblock %}

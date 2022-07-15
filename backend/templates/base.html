@@ -95,7 +95,7 @@
 </nav>
 <div class="content"> {% block content %}
   {% endblock %} </div>
-<footer class="footer">
+<footer class="footer" {% if "/mapview/" == request.path %}hidden{% endif %}>
   <div class="container">
     <p style="margin-bottom:5px !important;">
       <a style="text-decoration: none; display: inline;"
@@ -125,7 +125,6 @@
 </footer>
 
 <script id="mapsJs" src="{% static 'js/maps_api.js' %}"></script>
-<script id="mapsJs" src="{% static 'js/util.js' %}"></script>
 <script
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkskVPigLS7pO4Oc82hDRjBmDGNgKcEv8&callback=init_google_maps&libraries=places&v=weekly"
   async

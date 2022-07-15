@@ -1,0 +1,16 @@
+{% load static %}
+{% load i18n %}
+
+<div style="margin-left: -19px; margin-right:-19px; margin-top:-13px;">
+</div>
+ <h4 class="popup-title">{{generic.offerTitle}}</h4>
+ <div class="background-photo" style=" padding: 0 0 0 0">
+  {% if detail.languages.count == 0%}
+  <img src="{% static 'img/offers/no-acc-img.jpg' %}" style="height:50%; width:50%; display: block; margin-left: auto; margin-right: auto;"/>
+  {% else %}
+    <img src="/offers/translation/?{% for language in detail.languages.all %}{{forloop.counter0}}={{language.country|default:'not'}}&{%endfor%}"  style="height:100%; width:100%" />
+  {%endif%}
+</div>
+ <p style="padding-top: 5px;">
+   <a href="{% url 'detail' generic.id %}" class="btn">{% trans "Mehr dazu" %}</a>
+ </p>

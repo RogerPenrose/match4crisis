@@ -149,10 +149,10 @@ class OrganisationFormInfoCreate(OrganisationFormO):
 class HelpRequestForm(forms.ModelForm):
     RADIUS_CHOICES = [
         ('', _('Radius wählen')),
-        (5, "<5km"),
-        (10, "<10km"),
-        (20, "<20km"),
-        (50, "<50km"),
+        (5, "5km"),
+        (10, "10km"),
+        (20, "20km"),
+        (50, "50km"),
     ]
 
     images = forms.ImageField(label=_('Laden Sie hier optional Bilder hoch.'), widget=forms.ClearableFileInput(attrs={'class': 'form-control', 'multiple': True}), required=False)

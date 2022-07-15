@@ -48,10 +48,10 @@ class DonationRequestFilter(filters.FilterSet):
     
 class HelpRequestFilter(filters.FilterSet):
 
-    search = filters.CharFilter(method="search_filter", label=_("Suchen"), widget=forms.TextInput(attrs={'placeholder': _("Suchen")}))
-    location = filters.CharFilter(method="filter_location", label=_("Ort"))
-    radius = filters.ChoiceFilter(choices=RADIUS_CHOICES, method='no_filter', label=_("Umkreis"), empty_label=None)
-    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Zeitraum wählen"))
+    search = filters.CharFilter(method="search_filter", label=_("Nach Organisation oder Titel filtern"), widget=forms.TextInput(attrs={'placeholder': _("Suchen"), 'class' : 'form-control'}))
+    #location = filters.CharFilter(method="filter_location", label=_("Ort"), widget=forms.TextInput(attrs={'placeholder': _("Gib hier einen Standort ein"), 'class' : 'form-control'}))
+    #radius = filters.ChoiceFilter(choices=RADIUS_CHOICES, method='no_filter', label=_("Umkreis"), empty_label=None, widget=forms.Select(attrs={'class' : 'form-control'}))
+    createdAt = filters.ChoiceFilter(choices=DATE_CHOICES, method=date_select_filter, label=_("Zeitraum"), empty_label=_("Zeitraum wählen"), widget=forms.Select(attrs={'class' : 'form-control'}))
 
     def search_filter(self, queryset, name, value):
         values = value.split(" ")
@@ -73,4 +73,4 @@ class HelpRequestFilter(filters.FilterSet):
         lngDist = cos(radians(latVal)) * 111.320
         lngMin = lngVal - radiusKM/lngDist
         lngMax = lngVal + radiusKM/lngDist
-        return queryset.filter(lat__gte=latMin, lat__lte=latMax, lng__gte=lngMin, lng__lte=lngMax)
+        return queryset.filter(lat__range=(latMin,latMax), lng__range=(lngMin,lngMax))

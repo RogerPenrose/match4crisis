@@ -1,0 +1,18 @@
+{% load i18n %}
+{% load static %}
+
+
+<div class="image">
+  <img class="d-block w-100"
+    src="{% if helpRequest.images.count > 0 %} {{helpRequest.images.first.image.url}} {% elif  helpRequest.organisation.logo.url|length > 0%} {{helpRequest.organisation.logo.url}} {% else %} {% static 'img/icons/icon_DO.svg'%} {% endif %}">
+</div>
+ <h4 class="popup-title">{% blocktrans with hrTitle=helpRequest.title%}Hilfsaufruf: {{hrTitle}}{% endblocktrans %}</h4>
+ <p><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-organisation" viewBox="0 0 1600 1600">
+  <path
+    d="M40 462V352L800 24l760 328v110h-100c0 15-5 28-16 38-10 10-24 16-38 16H200c-15 0-28-5-38-16-10-10-16-24-16-38M40 1447c0-15 5-28 16-38 10-10 24-16 38-16h1413c15 0 28 5 38 16 10 10 16 24 16 38v110H40v-110m100-110v-55c0-15 5-28 16-38 10-10 24-16 38-16h46V570h210v657h100V570h203v657h102V570h205v657h100V570h203v657h47c15 0 28 5 38 16 10 10 16 24 16 38v55H140" />
+  </svg>
+  {% blocktrans with hrOrganisation=helpRequest.organisation %}Organisation: {{hrOrganisation}}{% endblocktrans %}
+  </p>
+ <p style="padding-top: 5px;">
+   <a href="{% url 'help_request_detail' helpRequest.pk %}" target="_blank" class="btn">{% trans "Mehr dazu" %}</a>
+ </p>

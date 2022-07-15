@@ -2,119 +2,15 @@
 {% load static %}
 {% load i18n %}
 
+{% block title %}
+{% blocktrans %}
+Bereich wählen
+{% endblocktrans %}
+{% endblock %}
+
 {% block header %}
 
-<link rel="stylesheet" href="{% static 'css/form.css' %}">
 <style>
-  input[type=checkbox]~label {
-    position: relative;
-    display: inline-block;
-    margin-right: .5rem;
-    border-radius: 23px;
-    vertical-align: text-bottom;
-    transition: all 0.3s linear;
-    margin-bottom: 0px;
-    border-radius: 1rem;
-    box-shadow: 0px 0px 5px rgb(0 0 0 / 8%);
-    width: 100%;
-    padding: 10px 10px 10px 70px;
-    font-weight: 600;
-    margin-bottom: 15px;
-  }
-
-  .form-control {
-    border-radius: 1rem;
-  }
-
-  input[type=checkbox]~label::before {
-    content: "";
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: 42px;
-    height: 22px;
-    background-color: #fff;
-    border-radius: 11px;
-    transform: translate3d(2px, 2px, 0) scale3d(1, 1, 1);
-    transition: all 0.25s linear;
-    box-shadow: 0 0 0px 2px #e6e6e6;
-  }
-
-  input[type=checkbox]~label::after {
-    content: "";
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    width: 22px;
-    height: 22px;
-    background-color: #fff;
-    border-radius: 11px;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.24);
-    transform: translate3d(2px, 2px, 0);
-    transition: all 0.2s ease-in-out;
-  }
-
-
-  input[type=checkbox] {
-    display: none;
-  }
-
-  input[type=checkbox]:checked~label::before {
-    background-color: #4BD763;
-    box-shadow: 0 0 0px 2px #4BD763;
-  }
-
-  input[type=checkbox]:checked~label::after {
-    transform: translate3d(22px, 2px, 0);
-  }
-
-  .custom-control {
-    padding-left: 0px;
-  }
-
-  .btn {
-    background-color: #32bd69;
-    font-size: 1rem;
-    color: #fff;
-    padding: .8rem 2.5rem;
-    border-radius: 15px;
-    border: 0px;
-    font-weight: bold;
-    margin-top: 20px;
-  }
-
-  .btn:hover {
-    background-color: #1eb159;
-    color: #fff;
-  }
-
-  #isDigital label::before {
-    border: 0px;
-  }
-
-  table {
-    width: 100%
-  }
-
-  label {
-    margin-bottom: 5px;
-    font-weight: 600;
-  }
-
-  .form-control {
-    margin-bottom: 15px;
-  }
-
-  input[type=checkbox] {
-    box-shadow: none;
-    width: auto;
-    height: auto;
-  }
-
-  .select2 {
-    width: 100% !important
-  }
-
   .background-photo {
     text-align: center;
   }
@@ -122,6 +18,10 @@
   .background-photo svg {
     max-width: 50px;
     fill: #28445b;
+  }
+
+  div.offer-card > .row {
+    min-height: 115px;
   }
 </style>
 {% endblock %}
@@ -140,9 +40,7 @@
         benötigst.{% endblocktrans %}</p>
       {%endif%}
       {% for entry in entries %}
-      {% if requestForHelp == False %}<a href="{% url 'create' %}?type={{ entry.shortForm }}">
-        {% else %}<a href="{% url 'create' %}?type={{ entry.shortForm }}&rfh=True">
-          {%endif%}
+        <a href="{% url 'create' %}?type={{ entry.shortForm }}">
           <div class="col-12 col-lg-6 offer-card">
             <div class="row align-self-center align-items-center">
               <div class="col-5 col-sm-4">
@@ -161,7 +59,7 @@
             </div>
           </div>
         </a>
-        {%endfor%}
+      {%endfor%}
     </div>
   </div>
   {% endblock %}

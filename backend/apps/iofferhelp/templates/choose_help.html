@@ -137,7 +137,7 @@
         {% csrf_token %}
         {% for field in form %}
         <div class="form-group">
-          <div id="div_id_{{field_name}}" class="custom-control custom-checkbox">
+          <div id="div_id_{{field.name}}" class="custom-control custom-checkbox">
             {{ field.errors }}
             <input type="checkbox" name="{{field.name}}" class="checkboxinput custom-control-input"
               id="id_{{field.name}}" wfd-invisible="true">

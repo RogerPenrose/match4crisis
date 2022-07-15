@@ -2,6 +2,7 @@
 {% load static %}
 {% load i18n %}
 {% load l10n %}
+{% load widget_type_filter %}
 
 {% block title %}
 {% blocktrans %}Karte der Angebote{% endblocktrans %}
@@ -14,94 +15,176 @@
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.css' %}" />
 <link rel="stylesheet" href="{% static 'js/leaflet.markercluster-1.4.1/MarkerCluster.Default.css' %}" />
 <link rel="stylesheet" href="{% static 'css/map.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
 
 <!-- Make sure you put this AFTER Leaflet's CSS -->
-<script src="{% static 'js/leaflet-1.6.0/leaflet.js' %}" ></script>
-<script src="{% static 'js/leaflet.groupedlayercontrol.min.js' %}" ></script>
-<script src="{% static 'js/leaflet.markercluster-1.4.1/leaflet.markercluster.js' %}" ></script>
-<script src="{% static 'js/Leaflet.FeatureGroup.SubGroup-1.0.2/leaflet.featuregroup.subgroup.js' %}" ></script>
+<script src="{% static 'js/leaflet-1.6.0/leaflet.js' %}"></script>
+<script src="{% static 'js/leaflet.groupedlayercontrol.min.js' %}"></script>
+<script src="{% static 'js/leaflet.markercluster-1.4.1/leaflet.markercluster.js' %}"></script>
+<script src="{% static 'js/Leaflet.FeatureGroup.SubGroup-1.0.2/leaflet.featuregroup.subgroup.js' %}"></script>
 
-<style>
-#controlContainer > div {     -ms-overflow-style: none; /* IE 11 */
-    scrollbar-width: none; /* Firefox 64 */
-    scrollbar-color: transparent transparent; }
-.footer { margin-top:0px !important; }
-.leaflet-control-layers label { display: inline-block; }
-.leaflet-control-layers-group > label { padding: 10px 0px;}
-  .control-container { margin-top: 5px;}
-  .leaflet-overlay-pane svg { display: none;}
-  .user-container, .leaflet-control-layers-expanded { z-index: 999 !important;}
-  p.listview { margin-top: 25px;
-      position: absolute;
-      bottom: 20px;
-      z-index: 900;
-      text-align: center;
-      width: 100%;}
-      div.leaflet-top.leaflet-right { width: 100%; }
-      .leaflet-top .leaflet-control { margin-top: 0px; margin-right: 0px; border-radius: 0px; width: 100%;}
-      .icon svg { margin-top: -2px; margin-right: 2px;}
-      .leaflet-popup-content p { margin: 2px 0; font-size: 13px;}
-      .leaflet-control { float: none; display:block;}
-      .leaflet-control-layers-overlays > label > div { float: left;} 
-      .leaflet-control-layers-overlays > label { line-height: 50px; }
-      p.listview a {    color: #fff !important; }
-  h4.popup-title { font-size: 14px; margin-top: 10px;}
-      div.content { position: relative; }
-      .leaflet-popup-content { padding-bottom: 10px; padding-top: 10px; min-width: 180px;}
-      .btn { color: #fff !important; background-color: #ed0061; border-radius: 10px; font-size: 14px;}
-   .leaflet-popup-content .btn { padding: .2rem 1rem; width: 100% }
-
-   @media only screen and (max-width: 767px) {
-   .leaflet-pane { padding-top: 100px;}
-   }
-
-   @media only screen and (min-width: 768px) {
-   .leaflet-pane { padding-top: 60px;}
-   .leaflet-control { display: inline-block;}
-   }
-  
-</style>
 <script type="text/javascript">
   pageOptions = {
     mapViewContainerId: 'mapContainer',
-    startPosition: {{ startPosition }},
-    zoom: {{ zoom }},
-    mapboxToken       : "{{ mapbox_token }}",
+    startPosition: {{startPosition}},
+    zoom: {{zoom}},
+    mapboxToken: "{{ mapbox_token }}",
   }
-  
 </script>
-<!--<script type="text/javascript" src="mapview/?accommodation=False&translation=False&transportation=False&generic=True"></script> -->
-<script type="text/javascript" src="mapview/?{{get_params}}"></script> 
-  
+<script type="text/javascript" src="{% static 'js/mapview.js' %}"></script>
 
+<style>
+  div.content {
+    position: relative;
+  }
+
+  .leaflet-popup .btn {
+    color: #fff !important;
+    background-color: #ed0061;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  #results_as_list {
+    padding: 0.8rem 1.8rem;
+  }
+
+</style>
+
+{% comment "This is necessary for rendering of the select2 widget for the translation or job offer filter form" %}{% endcomment %}
+{% firstof filters.offers.TL.filter.form.media.css filters.offers.JO.filter.form.media.css filters.requests.TL.filter.form.media.css filters.requests.JO.filter.form.media.css %}
 {% endblock %}
 
 {% block content %}
+<div id="searchContainer" class="container map-overlay">
+  <div class="row no-gutters">
+    <div class="col">
+      <input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}"
+        class="search-input" />
+      <svg class="bi bi-search" width="14px" height="14px" viewBox="0 0 18 14" fill="#495057" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M10.442 10.442a1 1 0 011.415 0l3.85 3.85a1 1 0 01-1.414 1.415l-3.85-3.85a1 1 0 010-1.415z"
+          clip-rule="evenodd" />
+        <path fill-rule="evenodd"
+          d="M6.5 12a5.5 5.5 0 100-11 5.5 5.5 0 000 11zM13 6.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
+          clip-rule="evenodd" />
+      </svg>
 
-<div id="mapContainer" style="z-index:1; position: relative;">
-  <div class="container"><input id="location" type="text" placeholder="{% trans 'Gib hier einen Standort ein ... ' %}" class="search-input"/></div>
-  <div id="controlContainer" class="container control-container" {% if request.GET.no_controls%}style="visibility: hidden;"{% endif %}></div>
-	 <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
-   <p class="listview">
-     <span class="btn btn-yellow" id="no-offers" >{%blocktrans%} Derzeit sind keine Angebote für diese Ansicht vorhanden{%endblocktrans%}</span>
-    <a id="results_as_list" href="../offers/list" class="btn btn-yellow" role="button" aria-pressed="true">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16" style="margin-right: 10px; margin-top:-2px;">
-      <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-    </svg>{%blocktrans%} Zeige <span id="resultString" >0</span> Ergebnisse in einer Liste{%endblocktrans%}
-  </a></p>
+      <svg class="remove-location bi bi-x-circle" title="{% trans "Standort entfernen" %}" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" 
+        fill="currentColor" viewBox="0 0 17 16" onclick="mapViewPage.clearLocationSearch();">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+        <path
+            d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+      </svg>
+    </div>
+    <div class="col-auto filter-button-container">
+      <a class="filter-button" data-toggle="modal" data-target="#exampleModal">
+        <svg width="30px" height="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+          <path
+            d="M33.5,19.14V12a1.5,1.5,0,0,0-3,0v7.14a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V30.88C39.52,29.34,39.52,20.67,33.5,19.14ZM32,28.07a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,32,28.07Z" />
+          <path
+            d="M53.5,32a6.07,6.07,0,0,0-4.56-5.87V12a1.5,1.5,0,0,0-3,0V26.13a6.07,6.07,0,0,0,0,11.74V52a1.5,1.5,0,0,0,3,0V37.87A6.07,6.07,0,0,0,53.5,32Zm-6,3.06a3.06,3.06,0,0,1,0-6.12A3.06,3.06,0,0,1,47.46,35.06Z" />
+          <path
+            d="M18.06,37V12a1.5,1.5,0,1,0-3,0V37a6.07,6.07,0,0,0,0,11.73V52a1.5,1.5,0,0,0,3,0V48.74A6.07,6.07,0,0,0,18.06,37Zm-1.5,8.94a3.07,3.07,0,0,1,0-6.13A3.07,3.07,0,0,1,16.56,45.94Z" />
+        </svg>
+        <span>
+          {% blocktrans %}Filter{% endblocktrans %}
+        </span>
+      </a>
+    </div>
+  </div>
 </div>
 
-<script type="text/javascript">
-  var gototable = function() {
-      if ($('#search').val()) {
-        window.location = "/iamorganisation/helpers/" + $('#countrycode').val() + "/" + $('#search').val() + "/0"
-      }
-    };
-  $("#search").keyup(function(event) {
-      if (event.keyCode === 13) {
-          gototable();
-      }
-  });
-</script>
+<div id="controlContainer" class="container control-container map-overlay"
+  {% if request.GET.no_controls%}style="visibility: hidden;" {% endif %}></div>
+
+<div id="mapContainer" style="z-index:1; position: relative;">
+  
+  <a href="http://mapbox.com/about/maps" class="mapbox-wordmark" target="_blank">Mapbox</a>
+  <p class="listview">
+    <a id="results_as_list" href="{% url 'listview' %}?{{request.GET.urlencode}}" class="btn btn-yellow"
+      role="button" aria-pressed="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list"
+        viewBox="0 0 16 16" style="margin-right: 10px; margin-top:-2px;">
+        <path fill-rule="evenodd"
+          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+      </svg>{%blocktrans%}Liste anzeigen{%endblocktrans%}
+    </a></p>
+</div>
+
+<div class="modal" tabindex="-1" id="exampleModal" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{filterTitle}}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="GET" id="filter-form" action="{% url 'alter_url_query' %}">
+          {% if helpRequestsFilter %}
+          <div id="filter-card-helpRequests" style="margin-bottom: 1rem; display:none;">
+            <div class="filter-card">
+              <h4 class="filter-title">{{helpRequestsFilter.label}}</h4>
+              {% for field in helpRequestsFilter.filter.form %}
+                  <p>
+                  {% if field.field.widget|is_checkbox %}
+                    <input type="hidden" name="{{field.html_name}}" value="">
+                    {{ field }}{{ field.label_tag }}
+                  {% elif field.field.widget|is_select2widget %}
+                    <input type="hidden" name="{{field.html_name}}" value="">
+                    {{ field.label_tag }}{{ field }}
+                  {% else %}
+                    {{ field.label_tag }}{{ field }}
+                  {% endif %}
+                  </p>
+              {% endfor %}
+              </div>
+          </div>
+          {% endif %}
+
+          {% for offersOrRequests,offerOrRequestFilters in filters.items %}
+          {% for abbr,f in offerOrRequestFilters.items %}
+          <div id="filter-card-{{offersOrRequests}}{{abbr}}" style="display:none">
+            <div class="filter-card">
+              <h4 class="filter-title">{{f.label}}</h4>
+                {% for field in f.filter.form %}
+                <p>
+                  {% if field.field.widget|is_checkbox %}
+                  <input type="hidden" name="{{field.html_name}}" value="">
+                  {{ field }}{{ field.label_tag }}
+                  {% elif field.field.widget|is_select2widget %}
+                  <input type="hidden" name="{{field.html_name}}" value="">
+                  {{ field.label_tag }}{{ field }}
+                  {% else %}
+                  {{ field.label_tag }}{{ field }}
+                  {% endif %}
+                </p>
+                {% endfor %}
+            </div>
+            {% if forloop.last is False %}
+            <hr style="margin-bottom: 1rem">
+            {% endif %}
+          </div>
+          {% endfor %}
+          {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-yellow" data-dismiss="modal"
+          onclick="close()">{% blocktrans %}Schließen{% endblocktrans %}</button> <button type="submit"
+          class="btn-primary"
+          onclick="search_with_current_filter()">{% blocktrans %}Anwenden{% endblocktrans %}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% comment "This is necessary for rendering of the select2 widget for the translation and job offer filter form" %}{% endcomment %}
+{% firstof filters.offers.TL.filter.form.media.js filters.offers.JO.filter.form.media.js filters.requests.TL.filter.form.media.js filters.requests.JO.filter.form.media.js %}
+
 
 {% endblock %}
