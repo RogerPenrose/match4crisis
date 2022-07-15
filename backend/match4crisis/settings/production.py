@@ -70,3 +70,4 @@ if not IS_FORK:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = os.path.join(RUN_DIR, "sent_emails")
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10*1024*1024

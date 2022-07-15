@@ -9,8 +9,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - './backend:/match4crisis-backend'
+      - '/media:/var/www/media'
     ports:
-      - '127.0.0.1:8000:8000'
+      - '8000:8000'
     environment:
       - CI
       - TRAVIS

@@ -291,6 +291,9 @@ def getTranslationImage(request):
 @login_required
 def delete_offer(request, offer_id):
     generic = get_object_or_404(GenericOffer, pk=offer_id)
+    images = ImageClass.objects.filter(offerId=offer_id)
+    for image in images:
+        delete_image(request, offer_id, image.image_id)
     check_user_is_allowed(request, generic.userId.id)
     generic.delete()
     return redirect('login_redirect')
@@ -419,8 +422,8 @@ def update(request, offer_id = None, newly_created = False):
         images = request.FILES.getlist('image')
         for image in images:
             counter = counter + 1
-            image = ImageClass(image=image, offerId = genOffer)
-            image.save()
+            imageModel = ImageClass(image=image, offerId = genOffer)
+            imageModel.save()
 
     request.session['offer_newly_created'] = newly_created
     return HttpResponseRedirect("/offers/%s" % genOffer.id)
